@@ -57,7 +57,7 @@ func ProvideService(cfg *setting.Cfg, hooksService *hooks.HooksService) *OSSLice
 		for _, node := range indexData.NavTree {
 			if node.Id == "admin" {
 				node.Children = append(node.Children, &dtos.NavLink{
-					Text: "Stats and license",
+					Text: "Stats",
 					Id:   "upgrading",
 					Url:  l.LicenseURL(req.IsGrafanaAdmin),
 					Icon: "unlock",

@@ -19,7 +19,7 @@
 
     <link rel="icon" type="image/png" href="[[.FavIcon]]" />
     <link rel="apple-touch-icon" sizes="180x180" href="[[.AppleTouchIcon]]" />
-    <link rel="mask-icon" href="[[.ContentDeliveryURL]]public/img/grafana_mask_icon.svg" color="#F05A28" />
+    <link rel="mask-icon" href="[[.ContentDeliveryURL]]public/img/custom/grafana_mask_icon.svg" color="#F05A28" />
 
     [[ if eq .Theme "light" ]]
     <link rel="stylesheet" href="[[.ContentDeliveryURL]]public/build/<%= htmlWebpackPlugin.files.cssChunks.light %>" />
@@ -65,9 +65,6 @@
 
       .preloader__logo {
         display: inline-block;
-        animation-name: preloader-squash;
-        animation-duration: 0.9s;
-        animation-iteration-count: infinite;
         width: 60px;
         height: 60px;
         background-repeat: no-repeat;
@@ -178,31 +175,13 @@
 
     <div class="preloader">
       <div class="preloader__enter">
-        <div class="preloader__bounce">
-          <div class="preloader__logo"></div>
-        </div>
       </div>
-      <div class="preloader__text">Loading Grafana</div>
+      <div class="preloader__text">Loading....</div>
       <div class="preloader__text preloader__text--fail">
         <p>
-          <strong>If you're seeing this Grafana has failed to load its application files</strong>
+          <strong>If you're seeing this Dashboard has failed to load its application files</strong>
           <br />
           <br />
-        </p>
-        <p>
-          1. This could be caused by your reverse proxy settings.<br /><br />
-          2. If you host grafana under subpath make sure your grafana.ini root_url setting includes subpath. If not
-          using a reverse proxy make sure to set serve_from_sub_path to true.<br />
-          <br />
-          3. If you have a local dev build make sure you build frontend using: yarn start, yarn start:hot, or yarn
-          build<br />
-          <br />
-          4. Sometimes restarting grafana-server can help<br />
-          <br />
-          5. Check if you are using a non-supported browser. For more information, refer to the list of
-          <a href="https://grafana.com/docs/grafana/latest/installation/requirements/#supported-web-browsers">
-            supported browsers</a
-          >.
         </p>
       </div>
       <script nonce="[[.Nonce]]">

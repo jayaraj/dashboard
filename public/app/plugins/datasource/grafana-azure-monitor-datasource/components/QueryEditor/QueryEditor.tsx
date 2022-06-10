@@ -142,7 +142,7 @@ const EditorForQueryType: React.FC<EditorForQueryTypeProps> = ({
         <Alert title="Unknown query type">
           {(type === 'Application Insights' || type === 'Insights Analytics') && (
             <>
-              {type} was deprecated in Grafana 9. See the{' '}
+              {type} was deprecated in Dashboard 9. See the{' '}
               <a
                 href="https://grafana.com/docs/grafana/latest/datasources/azuremonitor/deprecated-application-insights/"
                 target="_blank"

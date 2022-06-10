@@ -82,7 +82,7 @@ var (
 		Role: accesscontrol.RoleDTO{
 			Name:        accesscontrol.FixedRolePrefix + "alerting.instances:editor",
 			DisplayName: "Silences Editor",
-			Description: "Can add and update silences in Grafana and external providers",
+			Description: "Can add and update silences in Dashboard and external providers",
 			Group:       AlertRolesGroup,
 			Version:     1,
 			Permissions: accesscontrol.ConcatPermissions(instancesReaderRole.Role.Permissions, []accesscontrol.Permission{
@@ -104,7 +104,7 @@ var (
 		Role: accesscontrol.RoleDTO{
 			Name:        accesscontrol.FixedRolePrefix + "alerting.notifications:reader",
 			DisplayName: "Notifications Reader",
-			Description: "Can read notification policies and contact points in Grafana and external providers",
+			Description: "Can read notification policies and contact points in Dashboard and external providers",
 			Group:       AlertRolesGroup,
 			Version:     1,
 			Permissions: []accesscontrol.Permission{
@@ -123,7 +123,7 @@ var (
 		Role: accesscontrol.RoleDTO{
 			Name:        accesscontrol.FixedRolePrefix + "alerting.notifications:editor",
 			DisplayName: "Notifications Editor",
-			Description: "Can add, update, and delete contact points and notification policies in Grafana and external providers",
+			Description: "Can add, update, and delete contact points and notification policies in Dashboard and external providers",
 			Group:       AlertRolesGroup,
 			Version:     2,
 			Permissions: accesscontrol.ConcatPermissions(notificationsReaderRole.Role.Permissions, []accesscontrol.Permission{
@@ -142,7 +142,7 @@ var (
 		Role: accesscontrol.RoleDTO{
 			Name:        accesscontrol.FixedRolePrefix + "alerting:reader",
 			DisplayName: "Full read-only access",
-			Description: "Can read alert rules, instances, silences, contact points, and notification policies in Grafana and all external providers",
+			Description: "Can read alert rules, instances, silences, contact points, and notification policies in Dashboard and all external providers",
 			Group:       AlertRolesGroup,
 			Version:     2,
 			Permissions: accesscontrol.ConcatPermissions(rulesReaderRole.Role.Permissions, instancesReaderRole.Role.Permissions, notificationsReaderRole.Role.Permissions),
@@ -154,7 +154,7 @@ var (
 		Role: accesscontrol.RoleDTO{
 			Name:        accesscontrol.FixedRolePrefix + "alerting:editor",
 			DisplayName: "Full access",
-			Description: "Can add,update and delete alert rules, instances, silences, contact points, and notification policies in Grafana and all external providers",
+			Description: "Can add,update and delete alert rules, instances, silences, contact points, and notification policies in Dashboard and all external providers",
 			Group:       AlertRolesGroup,
 			Version:     3,
 			Permissions: accesscontrol.ConcatPermissions(rulesEditorRole.Role.Permissions, instancesEditorRole.Role.Permissions, notificationsEditorRole.Role.Permissions),

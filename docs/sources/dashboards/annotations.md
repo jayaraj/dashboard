@@ -47,7 +47,7 @@ can still show them if you add a new **Annotation Query** and filter by tags. Bu
 
 ### Query by tag
 
-You can create new queries to fetch annotations from the native annotation store via the `-- Grafana --` data source by setting _Filter by_ to `Tags`.
+You can create new queries to fetch annotations from the native annotation store via the `-- Datasource --` data source by setting _Filter by_ to `Tags`.
 
 Grafana v8.1 and later versions also support typeahead of existing tags, provide at least one tag.
 

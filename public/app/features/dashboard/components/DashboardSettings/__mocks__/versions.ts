@@ -118,7 +118,7 @@ export const diffs = {
         list: [
           {
             builtIn: 1,
-            datasource: '-- Grafana --',
+            datasource: '-- Datasource --',
             enable: true,
             hide: true,
             iconColor: 'rgba(0, 211, 255, 1)',
@@ -161,7 +161,7 @@ export const diffs = {
         list: [
           {
             builtIn: 1,
-            datasource: '-- Grafana --',
+            datasource: '-- Datasource --',
             enable: true,
             hide: true,
             iconColor: 'rgba(0, 211, 255, 1)',

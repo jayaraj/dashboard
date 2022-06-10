@@ -567,6 +567,7 @@ func makeQueryResult(query *models.FindPersistedDashboardsQuery, res []dashboard
 				FolderUID:   item.FolderUID,
 				FolderTitle: item.FolderTitle,
 				Tags:        []string{},
+				Sort:        item.Sort,
 			}
 
 			if item.FolderID > 0 {

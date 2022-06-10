@@ -5,6 +5,7 @@ import ldapReducers from 'app/features/admin/state/reducers';
 import alertingReducers from 'app/features/alerting/state/reducers';
 import apiKeysReducers from 'app/features/api-keys/state/reducers';
 import panelEditorReducers from 'app/features/dashboard/components/PanelEditor/state/reducers';
+import dashboardNavsReducer from 'app/features/dashboard/containers/state/reducers';
 import dashboardReducers from 'app/features/dashboard/state/reducers';
 import dataSourcesReducers from 'app/features/datasources/state/reducers';
 import exploreReducers from 'app/features/explore/state/main';
@@ -41,6 +42,7 @@ const rootReducers = {
   ...panelEditorReducers,
   ...panelsReducers,
   ...templatingReducers,
+  ...dashboardNavsReducer,
   plugins: pluginsReducer,
 };
 

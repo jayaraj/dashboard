@@ -71,6 +71,7 @@ export { ModalTabsHeader } from './Modal/ModalTabsHeader';
 export { ModalTabContent } from './Modal/ModalTabContent';
 export { ModalsProvider, ModalRoot, ModalsController, ModalsContext } from './Modal/ModalsContext';
 export { PageToolbar } from './PageLayout/PageToolbar';
+export { CustomPageToolbar } from './PageLayout/CustomPageToolbar';
 
 // Renderless
 export { SetInterval } from './SetInterval/SetInterval';

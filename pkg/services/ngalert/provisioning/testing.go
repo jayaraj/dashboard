@@ -14,18 +14,18 @@ const defaultAlertmanagerConfigJSON = `
 	"template_files": null,
 	"alertmanager_config": {
 		"route": {
-			"receiver": "grafana-default-email",
+			"receiver": "dashboard-default-email",
 			"group_by": [
 				"..."
 			],
 			"routes": [{
-				"receiver": "grafana-default-email",
+				"receiver": "dashboard-default-email",
 				"object_matchers": [["a", "=", "b"]]
 			}]
 		},
 		"templates": null,
 		"receivers": [{
-			"name": "grafana-default-email",
+			"name": "dashboard-default-email",
 			"grafana_managed_receiver_configs": [{
 				"uid": "",
 				"name": "email receiver",

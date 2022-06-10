@@ -123,9 +123,6 @@ export class AlertRuleListUnconnected extends PureComponent<Props> {
                 Add NG Alert
               </LinkButton>
             )}
-            <Button variant="secondary" onClick={this.onOpenHowTo}>
-              How to add an alert
-            </Button>
           </div>
           <DeprecationNotice />
           <VerticalGroup spacing="none">

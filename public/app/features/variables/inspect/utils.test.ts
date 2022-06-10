@@ -361,7 +361,7 @@ const dashWithRepeatsAndRows: any = {
     list: [
       {
         builtIn: 1,
-        datasource: '-- Grafana --',
+        datasource: '-- Datasource --',
         enable: true,
         hide: true,
         iconColor: 'rgba(0, 211, 255, 1)',
@@ -1223,7 +1223,7 @@ const dashWithTemplateDependenciesAndPanels: any = {
     list: [
       {
         builtIn: 1,
-        datasource: '-- Grafana --',
+        datasource: '-- Datasource --',
         enable: true,
         hide: true,
         iconColor: 'rgba(0, 211, 255, 1)',
@@ -1722,7 +1722,7 @@ const dashWithAllVariables: any = {
     list: [
       {
         builtIn: 1,
-        datasource: '-- Grafana --',
+        datasource: '-- Datasource --',
         enable: true,
         hide: true,
         iconColor: 'rgba(0, 211, 255, 1)',

@@ -34,7 +34,6 @@ export const LoginLayout: FC = ({ children }) => {
         </div>
         <div className={loginStyles.loginOuterBox}>{children}</div>
       </div>
-      <Footer />
     </Branding.LoginBackground>
   );
 };

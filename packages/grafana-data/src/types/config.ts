@@ -137,6 +137,7 @@ export interface GrafanaConfig {
   panels: { [key: string]: PanelPluginMeta };
   minRefreshInterval: string;
   appSubUrl: string;
+  appTitle: string;
   windowTitlePrefix: string;
   buildInfo: BuildInfo;
   newPanelTitle: string;
