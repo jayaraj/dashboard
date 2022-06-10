@@ -35,6 +35,10 @@ export function GeneralSettingsUnconnected({ dashboard, updateTimeZone, updateWe
     dashboard.meta.hasUnsavedFolderChange = true;
   };
 
+  const onSortChange = (event: React.FocusEvent<HTMLInputElement>) => {
+    dashboard.meta.sort = Number(event.currentTarget.value);
+  };
+
   const onBlur = (event: React.FocusEvent<HTMLInputElement>) => {
     dashboard[event.currentTarget.name as 'title' | 'description'] = event.currentTarget.value;
   };
@@ -100,6 +104,9 @@ export function GeneralSettingsUnconnected({ dashboard, updateTimeZone, updateWe
         </Field>
         <Field label="Description">
           <Input id="description-input" name="description" onBlur={onBlur} defaultValue={dashboard.description} />
+        </Field>
+        <Field label="Sort Order">
+          <Input id="index-input" name="sort" onBlur={onSortChange} defaultValue={dashboard.meta.sort} />
         </Field>
         <Field label="Tags">
           <TagsInput id="tags-input" tags={dashboard.tags} onChange={onTagsChange} />

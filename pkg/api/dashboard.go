@@ -29,6 +29,7 @@ import (
 	pref "github.com/grafana/grafana/pkg/services/preference"
 	"github.com/grafana/grafana/pkg/services/star"
 	"github.com/grafana/grafana/pkg/services/store"
+	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/util"
 	"github.com/grafana/grafana/pkg/web"
 )
@@ -148,6 +149,7 @@ func (hs *HTTPServer) GetDashboard(c *models.ReqContext) response.Response {
 		FolderTitle:            "General",
 		AnnotationsPermissions: annotationPermissions,
 		IsPublic:               dash.IsPublic,
+		Sort:                   dash.Sort,
 	}
 
 	// lookup folder title
@@ -818,4 +820,31 @@ func (hs *HTTPServer) GetDashboardUIDs(c *models.ReqContext) {
 		uids = append(uids, q.Result.Uid)
 	}
 	c.JSON(http.StatusOK, uids)
+}
+
+func (hs *HTTPServer) redirectFromSlug(c *models.ReqContext) {
+	slug := web.Params(c.Req)[":slug"]
+
+	query := models.GetDashboardsBySlugQuery{OrgId: c.OrgId, Slug: slug}
+	err := hs.SQLStore.GetDashboardsBySlug(c.Req.Context(), &query)
+	if err != nil {
+		hs.log.Error("Failed to get slug from database", "err", err)
+		return
+	}
+	if len(query.Result) == 0 {
+		hs.log.Error("Failed to get folder from database", "err", err)
+		return
+	}
+
+	var hit *models.Dashboard
+	for i := range query.Result {
+		if i == 0 {
+			hit = query.Result[i]
+		} else {
+			if hit.Sort > query.Result[i].Sort {
+				hit = query.Result[i]
+			}
+		}
+	}
+	c.Redirect(fmt.Sprintf("%sd/%s/%s?folderId=%d", setting.AppUrl, hit.Uid, hit.Slug, hit.FolderId), 302)
 }

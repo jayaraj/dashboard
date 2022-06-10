@@ -41,7 +41,6 @@ export const Page: PageType = ({ navModel, children, className, ...otherProps })
         <div className="page-scrollbar-content">
           {navModel && <PageHeader model={navModel} />}
           {children}
-          <Footer />
         </div>
       </CustomScrollbar>
     </div>

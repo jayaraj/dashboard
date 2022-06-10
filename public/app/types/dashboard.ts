@@ -39,6 +39,7 @@ export interface DashboardMeta {
   hasUnsavedFolderChange?: boolean;
   annotationsPermissions?: AnnotationsPermissions;
   isPublic?: boolean;
+  sort?: number;
 }
 
 export interface AnnotationActions {
@@ -99,4 +100,18 @@ export interface DashboardState {
   initPhase: DashboardInitPhase;
   initError: DashboardInitError | null;
   permissions: DashboardAcl[];
+}
+
+export interface DashboardNav {
+  id: number;
+  sort: number;
+  title?: string;
+  type?: string;
+  url?: string;
+}
+
+export interface DashboardNavsState {
+  dashboardNavs: DashboardNav[];
+  id: string;
+  hasFetched: boolean;
 }

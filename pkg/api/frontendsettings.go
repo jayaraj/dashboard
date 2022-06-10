@@ -47,7 +47,7 @@ func (hs *HTTPServer) getFrontendSettingsMap(c *models.ReqContext) (map[string]i
 		return nil, err
 	}
 
-	defaultDS := "-- Grafana --"
+	defaultDS := "-- Datasource --"
 	for n, ds := range dataSources {
 		if ds.IsDefault {
 			defaultDS = n
@@ -94,6 +94,7 @@ func (hs *HTTPServer) getFrontendSettingsMap(c *models.ReqContext) (map[string]i
 		"panels":                              panels,
 		"appUrl":                              hs.Cfg.AppURL,
 		"appSubUrl":                           hs.Cfg.AppSubURL,
+		"appTitle":                            hs.Cfg.AppTitle,
 		"allowOrgCreate":                      (setting.AllowUserOrgCreate && c.IsSignedIn) || c.IsGrafanaAdmin,
 		"authProxyEnabled":                    setting.AuthProxyEnabled,
 		"ldapEnabled":                         hs.Cfg.LDAPEnabled,

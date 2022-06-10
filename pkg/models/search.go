@@ -62,6 +62,7 @@ type Hit struct {
 	FolderURL    string   `json:"folderUrl,omitempty"`
 	SortMeta     int64    `json:"sortMeta"`
 	SortMetaName string   `json:"sortMetaName,omitempty"`
+	Sort         int      `json:"sort,omitempty"`
 }
 
 type HitList []*Hit

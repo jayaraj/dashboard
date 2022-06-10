@@ -4,6 +4,7 @@ import React, { FC } from 'react';
 import { DataLink, GrafanaTheme2, PanelData } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Icon, useStyles2 } from '@grafana/ui';
+import { contextSrv } from 'app/core/services/context_srv';
 import { DashboardModel } from 'app/features/dashboard/state/DashboardModel';
 import { PanelModel } from 'app/features/dashboard/state/PanelModel';
 import { getPanelLinksSupplier } from 'app/features/panel/panellinks/linkSuppliers';
@@ -33,6 +34,11 @@ export const PanelHeader: FC<Props> = ({ panel, error, isViewing, isEditing, dat
   const className = cx('panel-header', !(isViewing || isEditing) ? 'grid-drag-handle' : '');
   const styles = useStyles2(panelStyles);
 
+  const isEditable = () => {
+    const signedInUser = contextSrv.user;
+    return signedInUser.isGrafanaAdmin;
+  };
+
   return (
     <>
       <PanelHeaderLoadingIndicator state={data.state} onClick={onCancelQuery} />
@@ -59,8 +65,15 @@ export const PanelHeader: FC<Props> = ({ panel, error, isViewing, isEditing, dat
                   />
                 ) : null}
                 <h2 className={styles.titleText}>{title}</h2>
-                <Icon name="angle-down" className="panel-menu-toggle" />
-                <PanelHeaderMenuWrapper panel={panel} dashboard={dashboard} show={panelMenuOpen} onClose={closeMenu} />
+                {isEditable() && <Icon name="angle-down" className="panel-menu-toggle" />}
+                {isEditable() && (
+                  <PanelHeaderMenuWrapper
+                    panel={panel}
+                    dashboard={dashboard}
+                    show={panelMenuOpen}
+                    onClose={closeMenu}
+                  />
+                )}
                 {data.request && data.request.timeInfo && (
                   <span className="panel-time-info">
                     <Icon name="clock-nine" size="sm" /> {data.request.timeInfo}

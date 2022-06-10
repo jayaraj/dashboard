@@ -46,7 +46,6 @@ const (
 	Dev              = "development"
 	Prod             = "production"
 	Test             = "test"
-	ApplicationName  = "Grafana"
 )
 
 // This constant corresponds to the default value for ldap_sync_ttl in .ini files
@@ -67,11 +66,12 @@ var (
 	InstanceName     string
 
 	// build
-	BuildVersion string
-	BuildCommit  string
-	BuildBranch  string
-	BuildStamp   int64
-	IsEnterprise bool
+	BuildVersion    string
+	BuildCommit     string
+	BuildBranch     string
+	BuildStamp      int64
+	IsEnterprise    bool
+	ApplicationName string
 
 	// packaging
 	Packaging = "unknown"
@@ -202,6 +202,7 @@ type Cfg struct {
 	HTTPPort         string
 	AppURL           string
 	AppSubURL        string
+	AppTitle         string
 	ServeFromSubPath bool
 	StaticRootPath   string
 	Protocol         Scheme
@@ -897,6 +898,8 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	cfg.Env = Env
 	cfg.ForceMigration = iniFile.Section("").Key("force_migration").MustBool(false)
 	InstanceName = valueAsString(iniFile.Section(""), "instance_name", "unknown_instance_name")
+	ApplicationName = valueAsString(iniFile.Section(""), "application_name", "dashboard")
+	cfg.AppTitle = ApplicationName
 	plugins := valueAsString(iniFile.Section("paths"), "plugins", "")
 	cfg.PluginsPath = makeAbsolute(plugins, HomePath)
 	cfg.BundledPluginsPath = makeAbsolute("plugins-bundled", HomePath)

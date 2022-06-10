@@ -125,7 +125,7 @@ export function updateCredentials(
   switch (credentials.authType) {
     case 'msi':
       if (!config.azure.managedIdentityEnabled) {
-        throw new Error('Managed Identity authentication is not enabled in Grafana config.');
+        throw new Error('Managed Identity authentication is not enabled in Dashboard config.');
       }
 
       options = {

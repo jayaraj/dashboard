@@ -191,14 +191,14 @@ export const TeamSyncUpgradeContent = ({ action }: { action?: UpgradeContentProp
     <UpgradeContent
       action={action}
       listItems={[
-        'Stop managing user access in two places - assign users to groups in SAML, LDAP or Oauth, and manage access at a Team level in Grafana',
+        'Stop managing user access in two places - assign users to groups in SAML, LDAP or Oauth, and manage access at a Team level in Dashboard',
         'Update users’ permissions immediately when you add or remove them from an LDAP group, with no need for them to sign out and back in',
       ]}
       image={`team-sync-${theme.isLight ? 'light' : 'dark'}.png`}
       featureName={'team sync'}
       featureUrl={'https://grafana.com/docs/grafana/latest/enterprise/team-sync'}
       description={
-        'Team Sync makes it easier for you to manage users’ access in Grafana, by immediately updating each user’s Grafana teams and permissions based on their single sign-on group membership, instead of when users sign in.'
+        'Team Sync makes it easier for you to manage users’ access in Dashboard, by immediately updating each user’s Dashboard teams and permissions based on their single sign-on group membership, instead of when users sign in.'
       }
     />
   );

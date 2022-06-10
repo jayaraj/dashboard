@@ -4,12 +4,12 @@ import { useLocation } from 'react-router-dom';
 
 import { locationUtil, textUtil } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
-import { ButtonGroup, ModalsController, ToolbarButton, PageToolbar, useForceUpdate } from '@grafana/ui';
+import { ButtonGroup, ModalsController, ToolbarButton, CustomPageToolbar, useForceUpdate } from '@grafana/ui';
 import config from 'app/core/config';
 import { toggleKioskMode } from 'app/core/navigation/kiosk';
+import { contextSrv } from 'app/core/services/context_srv';
 import { DashboardCommentsModal } from 'app/features/dashboard/components/DashboardComments/DashboardCommentsModal';
 import { SaveDashboardDrawer } from 'app/features/dashboard/components/SaveDashboard/SaveDashboardDrawer';
-import { ShareModal } from 'app/features/dashboard/components/ShareModal';
 import { playlistSrv } from 'app/features/playlist/PlaylistSrv';
 import { updateTimeZoneForSession } from 'app/features/profile/state/reducers';
 import { KioskMode } from 'app/types';
@@ -96,6 +96,11 @@ export const DashNav = React.memo<Props>((props) => {
     forceUpdate();
   };
 
+  const isEditable = () => {
+    const signedInUser = contextSrv.user;
+    return signedInUser.isGrafanaAdmin;
+  };
+
   const addCustomContent = (actions: DashNavButtonModel[], buttons: ReactNode[]) => {
     actions.map((action, index) => {
       const Component = action.component;
@@ -110,14 +115,14 @@ export const DashNav = React.memo<Props>((props) => {
 
   const renderLeftActionsButton = () => {
     const { dashboard, kioskMode } = props;
-    const { canStar, canShare, isStarred } = dashboard.meta;
+    const { canStar, isStarred } = dashboard.meta;
     const buttons: ReactNode[] = [];
 
     if (kioskMode !== KioskMode.Off || isPlaylistRunning()) {
       return [];
     }
 
-    if (canStar) {
+    if (canStar && isEditable()) {
       let desc = isStarred ? 'Unmark as favorite' : 'Mark as favorite';
       buttons.push(
         <DashNavButton
@@ -128,27 +133,6 @@ export const DashNav = React.memo<Props>((props) => {
           onClick={onStarDashboard}
           key="button-star"
         />
-      );
-    }
-
-    if (canShare) {
-      let desc = 'Share dashboard or panel';
-      buttons.push(
-        <ModalsController key="button-share">
-          {({ showModal, hideModal }) => (
-            <DashNavButton
-              tooltip={desc}
-              icon="share-alt"
-              iconSize="lg"
-              onClick={() => {
-                showModal(ShareModal, {
-                  dashboard,
-                  onDismiss: hideModal,
-                });
-              }}
-            />
-          )}
-        </ModalsController>
       );
     }
 
@@ -275,7 +259,7 @@ export const DashNav = React.memo<Props>((props) => {
   const onGoBack = isFullscreen ? onClose : undefined;
 
   return (
-    <PageToolbar
+    <CustomPageToolbar
       pageIcon={isFullscreen ? undefined : 'apps'}
       title={title}
       parent={folderTitle}
@@ -285,7 +269,7 @@ export const DashNav = React.memo<Props>((props) => {
       leftItems={renderLeftActionsButton()}
     >
       {renderRightActionsButton()}
-    </PageToolbar>
+    </CustomPageToolbar>
   );
 });
 

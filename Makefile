@@ -38,7 +38,7 @@ MERGED_SPEC_TARGET := public/api-merged.json
 NGALERT_SPEC_TARGET = pkg/services/ngalert/api/tooling/api.json
 
 $(SPEC_TARGET): $(API_DEFINITION_FILES) ## Generate API spec
-	docker run --rm -it \
+	docker run --rm -t \
 	-e GOPATH=${HOME}/go:/go \
 	-e SWAGGER_GENERATE_EXTENSION=false \
 	-v ${HOME}/go:/go \
@@ -92,7 +92,7 @@ gen-go: $(WIRE)
 	@echo "generate go files"
 	$(WIRE) gen -tags $(WIRE_TAGS) ./pkg/server ./pkg/cmd/grafana-cli/runner
 
-build-go: $(MERGED_SPEC_TARGET) gen-go ## Build all Go binaries.
+build-go: gen-go ## Build all Go binaries.
 	@echo "build go files"
 	$(GO) run build.go $(GO_BUILD_FLAGS) build
 
@@ -116,7 +116,10 @@ scripts/go/bin/bra: scripts/go/go.mod
 	$(GO) build -o ./bin/bra github.com/unknwon/bra
 
 run: scripts/go/bin/bra ## Build and run web server on filesystem changes.
-	@scripts/go/bin/bra run
+	@APP_NAME="Enerview" APP_MODE="development" APP_PROTOCOL="http" APP_PORT="3000" APP_DOMAIN="localhost" POSTGRES_HOST="localhost" \
+	POSTGRES_PORT=5432 POSTGRES_DBNAME="enerview" POSTGRES_USER="postgres" POSTGRES_PASSWORD="Qwertyu10P" SMTP_HOST="smtp-relay.sendinblue.com:587" \
+	SMTP_USER="jayaraj.esvar@gmail.com" SMTP_PWD="123456" SMTP_FROM="jayaraj.esvar@gmail.com" SMTP_FROMNAME="Dashboard" ADMIN_USERNAME="admin" ADMIN_SECRET="admin" \
+	scripts/go/bin/bra run
 
 run-frontend: deps-js ## Fetch js dependencies and watch frontend for rebuild
 	yarn start

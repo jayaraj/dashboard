@@ -4,7 +4,7 @@
   "tags": null,
   "datasource": [
     {
-      "uid": "-- Grafana --"
+      "uid": "-- Datasource --"
     }
   ],
   "panels": [
@@ -15,7 +15,7 @@
       "pluginVersion": "7.5.0-pre",
       "datasource": [
         {
-          "uid": "-- Grafana --"
+          "uid": "-- Datasource --"
         }
       ]
     }

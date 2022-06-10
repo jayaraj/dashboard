@@ -96,7 +96,7 @@ export class QueryEditor extends PureComponent<Props, State> {
     } as any;
 
     getDataSourceSrv()
-      .get('-- Grafana --')
+      .get('-- Datasource --')
       .then((ds) => {
         const gds = ds as GrafanaDatasource;
         gds.query(query).subscribe({
@@ -291,8 +291,8 @@ export class QueryEditor extends PureComponent<Props, State> {
           </div>
         )}
 
-        <Alert title="Grafana Live - Measurements" severity="info">
-          This supports real-time event streams in Grafana core. This feature is under heavy development. Expect the
+        <Alert title="Dashboard Live - Measurements" severity="info">
+          This supports real-time event streams in Dashboard core. This feature is under heavy development. Expect the
           interfaces and structures to change as this becomes more production ready.
         </Alert>
       </>

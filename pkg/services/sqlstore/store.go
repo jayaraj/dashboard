@@ -138,4 +138,5 @@ type Store interface {
 	HasAdminPermissionInFolders(ctx context.Context, query *models.HasAdminPermissionInFoldersQuery) error
 	GetDashboardPermissionsForUser(ctx context.Context, query *models.GetDashboardPermissionsForUserQuery) error
 	IsAdminOfTeams(ctx context.Context, query *models.IsAdminOfTeamsQuery) error
+	GetDashboardsBySlug(ctx context.Context, query *models.GetDashboardsBySlugQuery) error
 }
