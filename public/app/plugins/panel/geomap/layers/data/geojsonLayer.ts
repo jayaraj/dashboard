@@ -213,7 +213,7 @@ async function initGeojsonFiles() {
   }
   publicGeoJSONFiles = [];
 
-  const ds = (await getDataSourceSrv().get('-- Grafana --')) as GrafanaDatasource;
+  const ds = (await getDataSourceSrv().get('-- Datasource --')) as GrafanaDatasource;
   for (let folder of ['maps', 'gazetteer']) {
     ds.listFiles(folder).subscribe({
       next: (frame) => {

@@ -1,6 +1,6 @@
 {
   "type": "datasource",
-  "name": "-- Grafana --",
+  "name": "-- Datasource --",
   "id": "grafana",
 
   "backend": true,

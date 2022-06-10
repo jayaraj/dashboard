@@ -72,6 +72,7 @@ export class DashboardModel implements TimeModel {
   title: string;
   autoUpdate: any;
   description: any;
+  sort: any;
   tags: any;
   style: any;
   timezone: any;
@@ -111,7 +112,6 @@ export class DashboardModel implements TimeModel {
 
   static nonPersistedProperties: { [str: string]: boolean } = {
     events: true,
-    meta: true,
     panels: true, // needs special handling
     templating: true, // needs special handling
     originalTime: true,
@@ -187,7 +187,7 @@ export class DashboardModel implements TimeModel {
     }
 
     this.annotations.list.unshift({
-      datasource: { uid: '-- Grafana --', type: 'grafana' },
+      datasource: { uid: '-- Datasource --', type: 'grafana' },
       name: 'Annotations & Alerts',
       type: 'dashboard',
       iconColor: DEFAULT_ANNOTATION_COLOR,
@@ -1090,9 +1090,7 @@ export class DashboardModel implements TimeModel {
   }
 
   canAddAnnotations() {
-    // If RBAC is enabled there are additional conditions to check
-    const canAdd = !contextSrv.accessControlEnabled() || this.meta.annotationsPermissions?.dashboard.canAdd;
-    return this.canEditDashboard() && canAdd;
+    return true;
   }
 
   canEditDashboard() {

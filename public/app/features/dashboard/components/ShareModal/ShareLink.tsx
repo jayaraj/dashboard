@@ -146,16 +146,8 @@ export class ShareLink extends PureComponent<Props, State> {
 
         {panel && !config.rendererAvailable && (
           <Alert severity="info" title="Image renderer plugin not installed" bottomSpacing={0}>
-            <>To render a panel image, you must install the </>
-            <a
-              href="https://grafana.com/grafana/plugins/grafana-image-renderer"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="external-link"
-            >
-              Grafana image renderer plugin
-            </a>
-            . Please contact your Grafana administrator to install the plugin.
+            To render a panel image, you must install the Image renderer plugin. Please contact your administrator to
+            install the plugin.
           </Alert>
         )}
       </>
