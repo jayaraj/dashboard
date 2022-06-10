@@ -23,7 +23,7 @@ Verifies common usecases for trimdefault/applydefault functions:
       "list": [
           {
               "builtIn": 1,
-              "datasource": "-- Grafana --",
+              "datasource": "-- Datasource --",
               "name": "Annotations & Alerts",
               "showIn": 0,
               "type": "dashboard"
@@ -38,7 +38,7 @@ Verifies common usecases for trimdefault/applydefault functions:
       "list": [
           {
               "builtIn": 1,
-              "datasource": "-- Grafana --",
+              "datasource": "-- Datasource --",
               "name": "Annotations & Alerts"
           }
       ]

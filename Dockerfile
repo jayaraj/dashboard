@@ -87,6 +87,8 @@ RUN export GF_GID_NAME=$(getent group $GF_GID | cut -d':' -f1) && \
 COPY --from=go-builder /grafana/bin/*/grafana-server /grafana/bin/*/grafana-cli ./bin/
 COPY --from=js-builder /grafana/public ./public
 COPY --from=js-builder /grafana/tools ./tools
+COPY conf/defaults.ini /etc/grafana/default.ini
+COPY conf/provisioning /etc/grafana/provisioning
 
 EXPOSE 3000
 

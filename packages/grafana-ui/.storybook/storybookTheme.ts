@@ -34,9 +34,9 @@ const createStorybookTheme = (theme: GrafanaTheme2) => {
     inputTextColor: theme.components.input.text,
     inputBorderRadius: parseInt(theme.shape.borderRadius(1), 10),
 
-    brandTitle: 'Grafana UI',
+    brandTitle: 'Dashboard UI',
     brandUrl: './',
-    brandImage: `public/img/grafana_text_logo-${theme.colors.mode}.svg`,
+    brandImage: `public/img/custom/grafana_text_logo-${theme.colors.mode}.svg`,
   });
 };
 

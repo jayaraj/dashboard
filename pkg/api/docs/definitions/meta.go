@@ -1,13 +1,13 @@
-// Package api Grafana HTTP API.
+// Package api Dashboard HTTP API.
 //
-// The Grafana backend exposes an HTTP API, the same API is used by the frontend to do
+// The Dashboard backend exposes an HTTP API, the same API is used by the frontend to do
 // everything from saving dashboards, creating users and updating data sources.
 //
 // Schemes: http, https
 // BasePath: /api
 // Version: 0.0.1
 // License: GNU Affero General Public License v3.0 https://www.gnu.org/licenses/agpl-3.0.en.html
-// Contact: Grafana Labs<hello@grafana.com> https://grafana.com
+// Contact: Dashboard
 //
 // Consumes:
 // - application/json

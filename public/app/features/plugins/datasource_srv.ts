@@ -45,7 +45,7 @@ export class DatasourceSrv implements DataSourceService {
 
     for (const dsSettings of Object.values(settingsMapByName)) {
       if (!dsSettings.uid) {
-        dsSettings.uid = dsSettings.name; // -- Grafana --, -- Mixed etc
+        dsSettings.uid = dsSettings.name; // -- Datasource --, -- Mixed etc
       }
 
       this.settingsMapByUid[dsSettings.uid] = dsSettings;
@@ -286,7 +286,7 @@ export class DatasourceSrv implements DataSourceService {
       }
 
       if (!filters.tracing) {
-        const grafanaInstanceSettings = this.getInstanceSettings('-- Grafana --');
+        const grafanaInstanceSettings = this.getInstanceSettings('-- Datasource --');
         if (grafanaInstanceSettings) {
           base.push(grafanaInstanceSettings);
         }

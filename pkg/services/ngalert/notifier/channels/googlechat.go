@@ -108,7 +108,7 @@ func (gcn *GoogleChatNotifier) Notify(ctx context.Context, as ...*types.Alert) (
 			Buttons: []button{
 				{
 					TextButton: textButton{
-						Text: "OPEN IN GRAFANA",
+						Text: "OPEN IN DASHBOARD",
 						OnClick: onClick{
 							OpenLink: openLink{
 								URL: ruleURL,
@@ -119,13 +119,13 @@ func (gcn *GoogleChatNotifier) Notify(ctx context.Context, as ...*types.Alert) (
 			},
 		})
 	} else {
-		gcn.log.Warn("Grafana External URL setting is missing or invalid. Skipping 'open in grafana' button to prevent google from displaying empty alerts.", "ruleURL", ruleURL)
+		gcn.log.Warn("Dashboard External URL setting is missing or invalid. Skipping 'open in dashboard' button to prevent google from displaying empty alerts.", "ruleURL", ruleURL)
 	}
 
 	// Add text paragraph widget for the build version and timestamp.
 	widgets = append(widgets, textParagraphWidget{
 		Text: text{
-			Text: "Grafana v" + setting.BuildVersion + " | " + (timeNow()).Format(time.RFC822),
+			Text: "Dashboard v" + setting.BuildVersion + " | " + (timeNow()).Format(time.RFC822),
 		},
 	})
 

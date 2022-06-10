@@ -203,6 +203,7 @@ type Dashboard struct {
 
 	Title string
 	Data  *simplejson.Json
+	Sort  int
 }
 
 type PublicDashboardConfig struct {
@@ -263,6 +264,8 @@ func (d *Dashboard) GetTags() []string {
 func NewDashboardFromJson(data *simplejson.Json) *Dashboard {
 	dash := &Dashboard{}
 	dash.Data = data
+	meta := dash.Data.Get("meta")
+	dash.Sort = meta.Get("sort").MustInt()
 	dash.Title = dash.Data.Get("title").MustString()
 	dash.UpdateSlug()
 	update := false

@@ -29,6 +29,7 @@ export class GrafanaBootConfig implements GrafanaConfig {
   minRefreshInterval = '';
   appUrl = '';
   appSubUrl = '';
+  appTitle = '';
   windowTitlePrefix = '';
   buildInfo: BuildInfo;
   newPanelTitle = '';
@@ -134,6 +135,7 @@ export class GrafanaBootConfig implements GrafanaConfig {
       unsaved_changes_warning: true,
       appUrl: '',
       appSubUrl: '',
+      appTitle: '',
       buildInfo: {
         version: '1.0',
         commit: '1',

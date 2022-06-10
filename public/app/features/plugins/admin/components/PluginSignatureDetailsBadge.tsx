@@ -25,7 +25,7 @@ export function PluginSignatureDetailsBadge({ signatureType, signatureOrg = '' }
     return null;
   }
 
-  const signatureTypeText = signatureType === PluginSignatureType.grafana ? 'Grafana Labs' : capitalize(signatureType);
+  const signatureTypeText = signatureType === PluginSignatureType.grafana ? 'Dashboard' : capitalize(signatureType);
   const signatureIcon = SIGNATURE_ICONS[signatureType || ''] || SIGNATURE_ICONS.DEFAULT;
 
   return (

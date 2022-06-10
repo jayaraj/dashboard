@@ -88,10 +88,6 @@ func (hs *HTTPServer) PostAnnotation(c *models.ReqContext) response.Response {
 		}
 	}
 
-	if canSave, err := hs.canCreateAnnotation(c, cmd.DashboardId); err != nil || !canSave {
-		return dashboardGuardianResponse(err)
-	}
-
 	repo := annotations.GetRepository()
 
 	if cmd.Text == "" {
@@ -202,13 +198,9 @@ func (hs *HTTPServer) UpdateAnnotation(c *models.ReqContext) response.Response {
 
 	repo := annotations.GetRepository()
 
-	annotation, resp := findAnnotationByID(c.Req.Context(), repo, annotationID, c.SignedInUser)
+	_, resp := findAnnotationByID(c.Req.Context(), repo, annotationID, c.SignedInUser)
 	if resp != nil {
 		return resp
-	}
-
-	if canSave, err := hs.canSaveAnnotation(c, annotation); err != nil || !canSave {
-		return dashboardGuardianResponse(err)
 	}
 
 	item := annotations.Item{
@@ -243,10 +235,6 @@ func (hs *HTTPServer) PatchAnnotation(c *models.ReqContext) response.Response {
 	annotation, resp := findAnnotationByID(c.Req.Context(), repo, annotationID, c.SignedInUser)
 	if resp != nil {
 		return resp
-	}
-
-	if canSave, err := hs.canSaveAnnotation(c, annotation); err != nil || !canSave {
-		return dashboardGuardianResponse(err)
 	}
 
 	existing := annotations.Item{
@@ -379,13 +367,9 @@ func (hs *HTTPServer) DeleteAnnotationByID(c *models.ReqContext) response.Respon
 
 	repo := annotations.GetRepository()
 
-	annotation, resp := findAnnotationByID(c.Req.Context(), repo, annotationID, c.SignedInUser)
+	_, resp := findAnnotationByID(c.Req.Context(), repo, annotationID, c.SignedInUser)
 	if resp != nil {
 		return resp
-	}
-
-	if canSave, err := hs.canSaveAnnotation(c, annotation); err != nil || !canSave {
-		return dashboardGuardianResponse(err)
 	}
 
 	err = repo.Delete(c.Req.Context(), &annotations.DeleteParams{
@@ -397,17 +381,6 @@ func (hs *HTTPServer) DeleteAnnotationByID(c *models.ReqContext) response.Respon
 	}
 
 	return response.Success("Annotation deleted")
-}
-
-func (hs *HTTPServer) canSaveAnnotation(c *models.ReqContext, annotation *annotations.ItemDTO) (bool, error) {
-	if annotation.GetType() == annotations.Dashboard {
-		return canEditDashboard(c, annotation.DashboardId)
-	} else {
-		if hs.AccessControl.IsDisabled() {
-			return c.SignedInUser.HasRole(models.ROLE_EDITOR), nil
-		}
-		return true, nil
-	}
 }
 
 func canEditDashboard(c *models.ReqContext, dashboardID int64) (bool, error) {
@@ -494,25 +467,6 @@ func AnnotationTypeScopeResolver() (string, accesscontrol.ScopeAttributeResolver
 			return []string{accesscontrol.ScopeAnnotationsTypeDashboard}, nil
 		}
 	})
-}
-
-func (hs *HTTPServer) canCreateAnnotation(c *models.ReqContext, dashboardId int64) (bool, error) {
-	if dashboardId != 0 {
-		if !hs.AccessControl.IsDisabled() {
-			evaluator := accesscontrol.EvalPermission(accesscontrol.ActionAnnotationsCreate, accesscontrol.ScopeAnnotationsTypeDashboard)
-			if canSave, err := hs.AccessControl.Evaluate(c.Req.Context(), c.SignedInUser, evaluator); err != nil || !canSave {
-				return canSave, err
-			}
-		}
-		return canEditDashboard(c, dashboardId)
-	} else { // organization annotations
-		if !hs.AccessControl.IsDisabled() {
-			evaluator := accesscontrol.EvalPermission(accesscontrol.ActionAnnotationsCreate, accesscontrol.ScopeAnnotationsTypeOrganization)
-			return hs.AccessControl.Evaluate(c.Req.Context(), c.SignedInUser, evaluator)
-		} else {
-			return c.SignedInUser.HasRole(models.ROLE_EDITOR), nil
-		}
-	}
 }
 
 func (hs *HTTPServer) canMassDeleteAnnotations(c *models.ReqContext, dashboardID int64) (bool, error) {

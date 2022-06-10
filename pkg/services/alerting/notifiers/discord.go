@@ -123,7 +123,7 @@ func (dn *DiscordNotifier) Notify(evalContext *alerting.EvalContext) error {
 	}
 
 	footer := map[string]interface{}{
-		"text":     "Grafana v" + setting.BuildVersion,
+		"text":     "Dashboard v" + setting.BuildVersion,
 		"icon_url": "https://grafana.com/assets/img/fav32.png",
 	}
 
