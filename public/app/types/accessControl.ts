@@ -59,6 +59,13 @@ export enum AccessControlAction {
   ActionTeamsPermissionsRead = 'teams.permissions:read',
   ActionTeamsPermissionsWrite = 'teams.permissions:write',
 
+  ActionResourcesRead = 'resources:read',
+  ActionResourcesWrite = 'resources:write',
+  ActionGroupsRead = 'groups:read',
+  ActionGroupsWrite = 'groups:write',
+  ActionResourceTypesRead = 'resourcetypes:read',
+  ActionResourceTypesWrite = 'resourcetypes:write',
+
   ActionRolesList = 'roles:list',
   ActionBuiltinRolesList = 'roles.builtin:list',
   ActionTeamsRolesList = 'teams.roles:list',

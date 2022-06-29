@@ -77,9 +77,9 @@ export const NavBarUnconnected = React.memo(({ navBarTree }: Props) => {
         <NavBarItemWithoutMenu label="Home" className={styles.grafanaLogo} url={homeUrl}>
           <Branding.MenuLogo />
         </NavBarItemWithoutMenu>
-        <NavBarItem className={styles.search} isActive={activeItem === searchItem} link={searchItem}>
+        {/* <NavBarItem className={styles.search} isActive={activeItem === searchItem} link={searchItem}>
           <Icon name="search" size="xl" />
-        </NavBarItem>
+        </NavBarItem> */}
       </NavBarSection>
 
       <NavBarSection>
@@ -115,7 +115,8 @@ export const NavBarUnconnected = React.memo(({ navBarTree }: Props) => {
       {mobileMenuOpen && (
         <NavBarMenu
           activeItem={activeItem}
-          navItems={[searchItem, ...topItems, ...bottomItems]}
+          // navItems={[searchItem, ...topItems, ...bottomItems]}
+          navItems={[...topItems, ...bottomItems]}
           onClose={() => setMobileMenuOpen(false)}
         />
       )}

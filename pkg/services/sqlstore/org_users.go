@@ -11,6 +11,21 @@ import (
 	"github.com/grafana/grafana/pkg/util"
 )
 
+func (ss *SQLStore) GetOrgUserRole(ctx context.Context, cmd *models.GetOrgUserRoleMsg) error {
+	return ss.WithDbSession(ctx, func(session *DBSession) error {
+		var orgUser models.OrgUser
+		exists, err := session.Where("org_id=? AND user_id=?", cmd.OrgId, cmd.UserId).Get(&orgUser)
+		if err != nil {
+			return err
+		}
+		if !exists {
+			return models.ErrOrgUserNotFound
+		}
+		cmd.Result = orgUser.Role
+		return err
+	})
+}
+
 func (ss *SQLStore) AddOrgUser(ctx context.Context, cmd *models.AddOrgUserCommand) error {
 	return ss.WithTransactionalDbSession(ctx, func(sess *DBSession) error {
 		// check if user exists

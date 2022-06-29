@@ -8,7 +8,6 @@ import { getTitleFromNavModel } from 'app/core/selectors/navModel';
 
 // Components
 import { Branding } from '../Branding/Branding';
-import { Footer } from '../Footer/Footer';
 import PageHeader from '../PageHeader/PageHeader';
 
 import { PageContents } from './PageContents';
