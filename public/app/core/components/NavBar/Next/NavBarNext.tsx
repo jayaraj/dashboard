@@ -126,9 +126,9 @@ export const NavBarNext = React.memo(() => {
 
             <NavBarScrollContainer>
               <ul className={styles.itemList}>
-                <NavBarItem className={styles.search} isActive={activeItem === searchItem} link={searchItem}>
+                {/* <NavBarItem className={styles.search} isActive={activeItem === searchItem} link={searchItem}>
                   <Icon name="search" size="xl" />
-                </NavBarItem>
+                </NavBarItem> */}
 
                 {coreItems.map((link, index) => (
                   <NavBarItem
@@ -177,7 +177,8 @@ export const NavBarNext = React.memo(() => {
             activeItem={activeItem}
             isOpen={menuOpen}
             setMenuAnimationInProgress={setMenuAnimationInProgress}
-            navItems={[homeItem, searchItem, ...coreItems, ...pluginItems, ...configItems]}
+            // navItems={[homeItem, searchItem, ...coreItems, ...pluginItems, ...configItems]}
+            navItems={[homeItem, ...coreItems, ...pluginItems, ...configItems]}
             onClose={() => setMenuOpen(false)}
           />
         </div>

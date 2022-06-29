@@ -24,6 +24,8 @@ type IndexViewData struct {
 	FavIcon                 template.URL
 	AppleTouchIcon          template.URL
 	AppTitle                string
+	ResourceUrl             string
+	ResourceLabel           string
 	Sentry                  *setting.Sentry
 	ContentDeliveryURL      string
 	LoadingLogo             template.URL

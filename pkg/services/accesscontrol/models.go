@@ -350,6 +350,24 @@ const (
 	// Team related scopes
 	ScopeTeamsAll = "teams:*"
 
+	// Resources related actions
+	ActionResourcesRead  = "resources:read"
+	ActionResourcesWrite = "resources:write"
+	// Resources related scopes
+	ScopeResourcesAll = "resources:*"
+
+	// Groups related actions
+	ActionGroupsRead  = "groups:read"
+	ActionGroupsWrite = "groups:write"
+	// Resources related scopes
+	ScopeGroupsAll = "groups:*"
+
+	// ResourceTypes related actions
+	ActionResourceTypesRead  = "resourcetypes:read"
+	ActionResourceTypesWrite = "resourcetypes:write"
+	// ResourceTypes related scopes
+	ScopeResourceTypesAll = "resourcetypes:*"
+
 	// Annotations related actions
 	ActionAnnotationsCreate = "annotations:create"
 	ActionAnnotationsDelete = "annotations:delete"

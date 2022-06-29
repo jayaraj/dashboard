@@ -72,6 +72,10 @@ var (
 	BuildStamp      int64
 	IsEnterprise    bool
 	ApplicationName string
+	ResourceUrl     string
+	ResourceLabel   string
+	ResourceToken   string
+	NatsUrl         string
 
 	// packaging
 	Packaging = "unknown"
@@ -203,6 +207,10 @@ type Cfg struct {
 	AppURL           string
 	AppSubURL        string
 	AppTitle         string
+	ResourceUrl      string
+	ResourceLabel    string
+	ResourceToken    string
+	NatsUrl          string
 	ServeFromSubPath bool
 	StaticRootPath   string
 	Protocol         Scheme
@@ -899,7 +907,15 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	cfg.ForceMigration = iniFile.Section("").Key("force_migration").MustBool(false)
 	InstanceName = valueAsString(iniFile.Section(""), "instance_name", "unknown_instance_name")
 	ApplicationName = valueAsString(iniFile.Section(""), "application_name", "dashboard")
+	ResourceUrl = valueAsString(iniFile.Section(""), "resource_url", "http://localhost:9002/")
+	ResourceLabel = valueAsString(iniFile.Section(""), "resource_label", "Asset")
+	ResourceToken = valueAsString(iniFile.Section(""), "resource_token", "test")
+	NatsUrl = valueAsString(iniFile.Section(""), "nats_url", "nats://localhost:4222")
 	cfg.AppTitle = ApplicationName
+	cfg.ResourceUrl = ResourceUrl
+	cfg.ResourceLabel = ResourceLabel
+	cfg.ResourceToken = ResourceToken
+	cfg.NatsUrl = NatsUrl
 	plugins := valueAsString(iniFile.Section("paths"), "plugins", "")
 	cfg.PluginsPath = makeAbsolute(plugins, HomePath)
 	cfg.BundledPluginsPath = makeAbsolute("plugins-bundled", HomePath)

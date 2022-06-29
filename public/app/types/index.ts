@@ -18,6 +18,9 @@ export * from './appEvent';
 export * from './query';
 export * from './preferences';
 export * from './accessControl';
+export * from './resourceType';
+export * from './resource';
+export * from './group';
 
 import * as CoreEvents from './events';
 export { CoreEvents };

@@ -90,6 +90,7 @@ type Store interface {
 	PauseAlert(ctx context.Context, cmd *models.PauseAlertCommand) error
 	PauseAllAlerts(ctx context.Context, cmd *models.PauseAllAlertCommand) error
 	GetAlertStatesForDashboard(ctx context.Context, query *models.GetAlertStatesForDashboardQuery) error
+	GetOrgUserRole(ctx context.Context, cmd *models.GetOrgUserRoleMsg) error
 	AddOrgUser(ctx context.Context, cmd *models.AddOrgUserCommand) error
 	UpdateOrgUser(ctx context.Context, cmd *models.UpdateOrgUserCommand) error
 	GetOrgUsers(ctx context.Context, query *models.GetOrgUsersQuery) error
