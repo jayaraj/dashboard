@@ -4,12 +4,10 @@ import React, { FC, ReactNode } from 'react';
 import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 
-import { Link } from '..';
 import { styleMixins } from '../../themes';
 import { useStyles2 } from '../../themes/ThemeContext';
 import { getFocusStyles } from '../../themes/mixins';
 import { IconName } from '../../types';
-import { Icon } from '../Icon/Icon';
 import { IconButton } from '../IconButton/IconButton';
 
 export interface Props {

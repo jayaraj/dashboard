@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 
 import { SelectableValue } from '@grafana/data';
 import { config, locationService } from '@grafana/runtime';
-import { Button, FilterInput, LinkButton, Select, VerticalGroup } from '@grafana/ui';
+import { FilterInput, LinkButton, Select, VerticalGroup } from '@grafana/ui';
 import appEvents from 'app/core/app_events';
 import Page from 'app/core/components/Page/Page';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';

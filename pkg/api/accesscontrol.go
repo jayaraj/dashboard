@@ -263,6 +263,93 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		Grants: []string{string(models.ROLE_ADMIN)},
 	}
 
+	resourcesReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:resources:reader",
+			DisplayName: "Resource reader",
+			Description: "Read resources.",
+			Group:       "Resources",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionResourcesRead},
+			},
+		},
+		Grants: []string{string(models.ROLE_VIEWER)},
+	}
+
+	resourcesWriterRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:resources:writer",
+			DisplayName: "Resource writer",
+			Description: "Create, read, write, or delete a resource",
+			Group:       "Resources",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionResourcesRead, Scope: ac.ScopeResourcesAll},
+				{Action: ac.ActionResourcesWrite, Scope: ac.ScopeResourcesAll},
+			},
+		},
+		Grants: []string{string(models.ROLE_EDITOR)},
+	}
+
+	groupsReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:groups:reader",
+			DisplayName: "Group reader",
+			Description: "Read groups.",
+			Group:       "Groups",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionGroupsRead},
+			},
+		},
+		Grants: []string{string(models.ROLE_VIEWER)},
+	}
+
+	groupsWriterRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:groups:writer",
+			DisplayName: "Group writer",
+			Description: "Create, read, write, or delete a group",
+			Group:       "Groups",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionGroupsRead, Scope: ac.ScopeGroupsAll},
+				{Action: ac.ActionGroupsWrite, Scope: ac.ScopeGroupsAll},
+			},
+		},
+		Grants: []string{string(models.ROLE_EDITOR)},
+	}
+
+	resourceTypesReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:resourcetypes:reader",
+			DisplayName: "ResourceType reader",
+			Description: "Read resourcetypes.",
+			Group:       "ResourceTypes",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionResourceTypesRead},
+			},
+		},
+		Grants: []string{string(models.ROLE_VIEWER)},
+	}
+
+	resourceTypesWriterRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:resourcetypes:writer",
+			DisplayName: "ResourceType writer",
+			Description: "Create, read, write, or delete a resource types",
+			Group:       "ResourceTypes",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionResourceTypesRead, Scope: ac.ScopeResourceTypesAll},
+				{Action: ac.ActionResourceTypesWrite, Scope: ac.ScopeResourceTypesAll},
+			},
+		},
+		Grants: []string{ac.RoleGrafanaAdmin},
+	}
+
 	annotationsReaderRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
 			Name:        "fixed:annotations:reader",
@@ -415,6 +502,8 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		annotationsReaderRole, dashboardAnnotationsWriterRole, annotationsWriterRole,
 		dashboardsCreatorRole, dashboardsReaderRole, dashboardsWriterRole,
 		foldersCreatorRole, foldersReaderRole, foldersWriterRole, apikeyReaderRole, apikeyWriterRole,
+		resourcesReaderRole, resourcesWriterRole, groupsReaderRole, groupsWriterRole,
+		resourceTypesReaderRole, resourceTypesWriterRole,
 	)
 }
 
@@ -464,6 +553,36 @@ var teamsEditAccessEvaluator = ac.EvalAll(
 		ac.EvalPermission(ac.ActionTeamsWrite),
 		ac.EvalPermission(ac.ActionTeamsPermissionsWrite),
 	),
+)
+
+var resourcesAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionResourcesRead),
+	ac.EvalPermission(ac.ActionResourcesWrite),
+)
+
+var resourcesEditAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionResourcesRead),
+	ac.EvalPermission(ac.ActionResourcesWrite),
+)
+
+var groupsAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionGroupsRead),
+	ac.EvalPermission(ac.ActionGroupsWrite),
+)
+
+var groupsEditAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionGroupsRead),
+	ac.EvalPermission(ac.ActionGroupsWrite),
+)
+
+var resourceTypesAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionResourceTypesRead),
+	ac.EvalPermission(ac.ActionResourceTypesWrite),
+)
+
+var resourceTypesEditAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionResourceTypesRead),
+	ac.EvalPermission(ac.ActionResourceTypesWrite),
 )
 
 // apiKeyAccessEvaluator is used to protect the "Configuration > API keys" page access

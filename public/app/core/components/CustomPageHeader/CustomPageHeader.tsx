@@ -14,9 +14,11 @@ const SelectNav = ({ children, customCss }: { children: NavModelItem[]; customCs
     return null;
   }
 
-  const defaultSelectedItem = children.find((navItem) => {
+  let defaultSelectedItem = children.find((navItem) => {
     return navItem.active === true;
   });
+  defaultSelectedItem = defaultSelectedItem ? defaultSelectedItem : children[0];
+  defaultSelectedItem.active = true;
 
   return (
     <div className={`gf-form-select-wrapper width-20 ${customCss}`}>

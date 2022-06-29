@@ -264,6 +264,8 @@ require (
 	github.com/hashicorp/memberlist v0.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
+	github.com/nats-io/nkeys v0.3.0 // indirect
+	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 )
 
@@ -302,6 +304,7 @@ require (
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mschoch/smat v0.2.0 // indirect
+	github.com/nats-io/nats.go v1.16.0
 	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/pierrec/lz4/v4 v4.1.8 // indirect
 	github.com/segmentio/asm v1.1.1 // indirect

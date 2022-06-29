@@ -95,6 +95,8 @@ func (hs *HTTPServer) getFrontendSettingsMap(c *models.ReqContext) (map[string]i
 		"appUrl":                              hs.Cfg.AppURL,
 		"appSubUrl":                           hs.Cfg.AppSubURL,
 		"appTitle":                            hs.Cfg.AppTitle,
+		"resourceUrl":                         hs.Cfg.ResourceUrl,
+		"resourceLabel":                       hs.Cfg.ResourceLabel,
 		"allowOrgCreate":                      (setting.AllowUserOrgCreate && c.IsSignedIn) || c.IsGrafanaAdmin,
 		"authProxyEnabled":                    setting.AuthProxyEnabled,
 		"ldapEnabled":                         hs.Cfg.LDAPEnabled,

@@ -30,6 +30,8 @@ export class GrafanaBootConfig implements GrafanaConfig {
   appUrl = '';
   appSubUrl = '';
   appTitle = '';
+  resourceUrl = '';
+  resourceLabel = '';
   windowTitlePrefix = '';
   buildInfo: BuildInfo;
   newPanelTitle = '';
@@ -136,6 +138,8 @@ export class GrafanaBootConfig implements GrafanaConfig {
       appUrl: '',
       appSubUrl: '',
       appTitle: '',
+      resourceUrl: '',
+      resourceLabel: '',
       buildInfo: {
         version: '1.0',
         commit: '1',
