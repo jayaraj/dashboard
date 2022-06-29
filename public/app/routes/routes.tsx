@@ -254,6 +254,44 @@ export function getAppRoutes(): RouteDescriptor[] {
         ),
       component: SafeDynamicImport(() => import(/* webpackChunkName: "TeamPages" */ 'app/features/teams/TeamPages')),
     },
+    {
+      path: '/org/resources',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "ResourceList" */ 'app/features/resources/ResourceList')
+      ),
+    },
+    {
+      path: '/org/resources/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateResource" */ 'app/features/resources/CreateResource')
+      ),
+    },
+    {
+      path: '/org/resources/edit/:id/:page?',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "ResourcePages" */ 'app/features/resources/ResourcePages')
+      ),
+    },
+    {
+      path: '/org/groups',
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "GroupList" */ 'app/features/groups/GroupList')),
+    },
+    {
+      path: '/org/groups/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateGroup" */ 'app/features/groups/CreateGroup')
+      ),
+    },
+    {
+      path: '/org/groups/:id/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateGroup" */ 'app/features/groups/CreateGroup')
+      ),
+    },
+    {
+      path: '/org/groups/edit/:id/:page?',
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "GroupPages" */ 'app/features/groups/GroupPages')),
+    },
     // ADMIN
 
     {
@@ -303,6 +341,24 @@ export function getAppRoutes(): RouteDescriptor[] {
       path: '/admin/stats',
       component: SafeDynamicImport(
         () => import(/* webpackChunkName: "ServerStats" */ 'app/features/admin/ServerStats')
+      ),
+    },
+    {
+      path: '/admin/resourcetypes',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "ResourceTypeList" */ 'app/features/admin/resourcetypes/ResourceTypeList')
+      ),
+    },
+    {
+      path: '/admin/resourcetypes/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateResourceType" */ 'app/features/admin/resourcetypes/CreateResourceType')
+      ),
+    },
+    {
+      path: '/admin/resourcetypes/edit/:id/:page?',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "ResourceTypePages" */ 'app/features/admin/resourcetypes/ResourceTypePages')
       ),
     },
     {

@@ -146,6 +146,7 @@ export const getAvailableIcons = () =>
     'record-audio',
     'repeat',
     'rocket',
+    'rss',
     'save',
     'search',
     'search-minus',

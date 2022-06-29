@@ -138,6 +138,8 @@ export interface GrafanaConfig {
   minRefreshInterval: string;
   appSubUrl: string;
   appTitle: string;
+  resourceUrl: string;
+  resourceLabel: string;
   windowTitlePrefix: string;
   buildInfo: BuildInfo;
   newPanelTitle: string;

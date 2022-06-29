@@ -207,19 +207,21 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 		dashboardsUrl = "/dashboards"
 	}
 
-	navTree = append(navTree, &dtos.NavLink{
-		Text:       "Dashboards",
-		Id:         "dashboards",
-		SubTitle:   "Manage dashboards and folders",
-		Icon:       "apps",
-		Url:        hs.Cfg.AppSubURL + dashboardsUrl,
-		SortWeight: dtos.WeightDashboard,
-		Section:    dtos.NavSectionCore,
-		Children:   dashboardChildLinks,
-	})
+	if c.OrgRole == models.ROLE_ADMIN || c.IsGrafanaAdmin {
+		navTree = append(navTree, &dtos.NavLink{
+			Text:       "Dashboards",
+			Id:         "dashboards",
+			SubTitle:   "Manage dashboards and folders",
+			Icon:       "apps",
+			Url:        hs.Cfg.AppSubURL + dashboardsUrl,
+			SortWeight: dtos.WeightDashboard,
+			Section:    dtos.NavSectionCore,
+			Children:   dashboardChildLinks,
+		})
+	}
 
 	canExplore := func(context *models.ReqContext) bool {
-		return c.OrgRole == models.ROLE_ADMIN || c.OrgRole == models.ROLE_EDITOR || setting.ViewersCanEdit
+		return c.OrgRole == models.ROLE_ADMIN
 	}
 
 	if setting.ExploreEnabled && hasAccess(canExplore, ac.EvalPermission(ac.ActionDatasourcesExplore)) {
@@ -280,6 +282,26 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 			Description: "Manage org groups",
 			Icon:        "users-alt",
 			Url:         hs.Cfg.AppSubURL + "/org/teams",
+		})
+	}
+
+	if hasAccess(ac.ReqOrgAdminOrEditor, resourcesAccessEvaluator) {
+		configNodes = append(configNodes, &dtos.NavLink{
+			Text:        hs.Cfg.ResourceLabel + "s",
+			Id:          "resources",
+			Description: "Manage org resources",
+			Icon:        "rss",
+			Url:         hs.Cfg.AppSubURL + "/org/resources",
+		})
+	}
+
+	if hasAccess(ac.ReqOrgAdminOrEditor, groupsAccessEvaluator) {
+		configNodes = append(configNodes, &dtos.NavLink{
+			Text:        "Groups",
+			Id:          "resourcegroups",
+			Description: "Manage org groups",
+			Icon:        "layer-group",
+			Url:         hs.Cfg.AppSubURL + "/org/groups",
 		})
 	}
 
@@ -654,6 +676,12 @@ func (hs *HTTPServer) buildAdminNavLinks(c *models.ReqContext) []*dtos.NavLink {
 		})
 	}
 
+	if hasAccess(ac.ReqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesRead)) {
+		adminNavLinks = append(adminNavLinks, &dtos.NavLink{
+			Text: hs.Cfg.ResourceLabel + "Types", Id: "resourcetypes", Url: hs.Cfg.AppSubURL + "/admin/resourcetypes", Icon: "rss",
+		})
+	}
+
 	if hs.Cfg.LDAPEnabled && hasAccess(ac.ReqGrafanaAdmin, ac.EvalPermission(ac.ActionLDAPStatusRead)) {
 		adminNavLinks = append(adminNavLinks, &dtos.NavLink{
 			Text: "LDAP", Id: "ldap", Url: hs.Cfg.AppSubURL + "/admin/ldap", Icon: "book",
@@ -754,6 +782,8 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		FavIcon:                 "public/img/custom/fav32.png",
 		AppleTouchIcon:          "public/img/custom/apple-touch-icon.png",
 		AppTitle:                setting.ApplicationName,
+		ResourceUrl:             setting.ResourceUrl,
+		ResourceLabel:           setting.ResourceLabel,
 		NavTree:                 navTree,
 		Sentry:                  &hs.Cfg.Sentry,
 		Nonce:                   c.RequestNonce,

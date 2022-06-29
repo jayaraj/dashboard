@@ -18,9 +18,10 @@ var (
 type RoleType string
 
 const (
-	ROLE_VIEWER RoleType = "Viewer"
-	ROLE_EDITOR RoleType = "Editor"
-	ROLE_ADMIN  RoleType = "Admin"
+	ROLE_VIEWER     RoleType = "Viewer"
+	ROLE_EDITOR     RoleType = "Editor"
+	ROLE_ADMIN      RoleType = "Admin"
+	ROLE_SUPERADMIN RoleType = "SuperAdmin"
 )
 
 func (r RoleType) IsValid() bool {
@@ -94,6 +95,12 @@ type RemoveOrgUserCommand struct {
 	OrgId                    int64
 	ShouldDeleteOrphanedUser bool
 	UserWasDeleted           bool
+}
+
+type GetOrgUserRoleMsg struct {
+	UserId int64
+	OrgId  int64
+	Result RoleType
 }
 
 type AddOrgUserCommand struct {
