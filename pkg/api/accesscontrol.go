@@ -274,7 +274,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionResourcesRead},
 			},
 		},
-		Grants: []string{string(models.ROLE_VIEWER)},
+		Grants: []string{string(models.ROLE_VIEWER), string(models.ROLE_EDITOR)},
 	}
 
 	resourcesWriterRole := ac.RoleRegistration{
@@ -303,7 +303,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionGroupsRead},
 			},
 		},
-		Grants: []string{string(models.ROLE_VIEWER)},
+		Grants: []string{string(models.ROLE_VIEWER), string(models.ROLE_EDITOR)},
 	}
 
 	groupsWriterRole := ac.RoleRegistration{
@@ -332,7 +332,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionResourceTypesRead},
 			},
 		},
-		Grants: []string{string(models.ROLE_VIEWER)},
+		Grants: []string{string(models.ROLE_VIEWER), string(models.ROLE_EDITOR)},
 	}
 
 	resourceTypesWriterRole := ac.RoleRegistration{
@@ -361,7 +361,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionAnnotationsRead, Scope: ac.ScopeAnnotationsAll},
 			},
 		},
-		Grants: []string{string(models.ROLE_VIEWER)},
+		Grants: []string{string(models.ROLE_VIEWER), string(models.ROLE_EDITOR)},
 	}
 
 	dashboardAnnotationsWriterRole := ac.RoleRegistration{
@@ -377,7 +377,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionAnnotationsWrite, Scope: ac.ScopeAnnotationsTypeDashboard},
 			},
 		},
-		Grants: []string{string(models.ROLE_VIEWER)},
+		Grants: []string{string(models.ROLE_VIEWER), string(models.ROLE_EDITOR)},
 	}
 
 	annotationsWriterRole := ac.RoleRegistration{
@@ -393,7 +393,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionAnnotationsWrite, Scope: ac.ScopeAnnotationsAll},
 			},
 		},
-		Grants: []string{string(models.ROLE_EDITOR)},
+		Grants: []string{string(models.ROLE_VIEWER), string(models.ROLE_EDITOR)},
 	}
 
 	dashboardsCreatorRole := ac.RoleRegistration{
@@ -408,7 +408,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: dashboards.ActionDashboardsCreate, Scope: dashboards.ScopeFoldersProvider.GetResourceScopeUID(ac.GeneralFolderUID)},
 			},
 		},
-		Grants: []string{"Editor"},
+		Grants: []string{ac.RoleGrafanaAdmin},
 	}
 
 	dashboardsReaderRole := ac.RoleRegistration{
@@ -440,7 +440,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: dashboards.ActionDashboardsPermissionsWrite, Scope: dashboards.ScopeDashboardsAll},
 			}),
 		},
-		Grants: []string{"Admin"},
+		Grants: []string{ac.RoleGrafanaAdmin},
 	}
 
 	foldersCreatorRole := ac.RoleRegistration{
@@ -454,7 +454,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: dashboards.ActionFoldersCreate},
 			},
 		},
-		Grants: []string{"Editor"},
+		Grants: []string{ac.RoleGrafanaAdmin},
 	}
 
 	foldersReaderRole := ac.RoleRegistration{
@@ -492,7 +492,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 					{Action: dashboards.ActionDashboardsPermissionsWrite, Scope: dashboards.ScopeFoldersAll},
 				}),
 		},
-		Grants: []string{"Admin"},
+		Grants: []string{ac.RoleGrafanaAdmin},
 	}
 
 	return hs.AccessControl.DeclareFixedRoles(

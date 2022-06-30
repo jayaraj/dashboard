@@ -26,38 +26,36 @@ export const ResourceSettings: FC<Props> = ({ resource, updateResource }) => {
 
   return (
     <VerticalGroup>
-      <FieldSet label={label}>
-        <Form
-          defaultValues={{ ...resource }}
-          onSubmit={(formresource: Resource) => {
-            updateResource(formresource.name, formresource.uuid, formresource.longitude, formresource.latitude);
-          }}
-          disabled={!canWrite}
-        >
-          {({ register }) => (
-            <FieldSet label={label}>
-              <Field label="Name" disabled={!canWrite}>
-                <Input {...register('name', { required: true })} id="resource-name" width={60} />
-              </Field>
-              <Field label="UUID" disabled={!canWrite}>
-                <Input {...register('uuid', { required: true })} id="resource-uuid" width={60} />
-              </Field>
-              <Field label="Type" disabled={true}>
-                <Input {...register('type')} disabled={true} type="string" id="resource-type" width={60} />
-              </Field>
-              <Field label="Latitude" disabled={!canWrite}>
-                <Input {...register('latitude')} type="number" id="resource-latitude" width={60} />
-              </Field>
-              <Field label="Longitude" disabled={!canWrite}>
-                <Input {...register('longitude')} type="number" id="resource-longitude" width={60} />
-              </Field>
-              <Button type="submit" disabled={!canWrite}>
-                Update
-              </Button>
-            </FieldSet>
-          )}
-        </Form>
-      </FieldSet>
+      <Form
+        defaultValues={{ ...resource }}
+        onSubmit={(formresource: Resource) => {
+          updateResource(formresource.name, formresource.uuid, formresource.longitude, formresource.latitude);
+        }}
+        disabled={!canWrite}
+      >
+        {({ register }) => (
+          <FieldSet label={label}>
+            <Field label="Name" disabled={!canWrite}>
+              <Input {...register('name', { required: true })} id="resource-name" width={60} />
+            </Field>
+            <Field label="UUID" disabled={!canWrite}>
+              <Input {...register('uuid', { required: true })} id="resource-uuid" width={60} />
+            </Field>
+            <Field label="Type" disabled={true}>
+              <Input {...register('type')} disabled={true} type="string" id="resource-type" width={60} />
+            </Field>
+            <Field label="Latitude" disabled={!canWrite}>
+              <Input {...register('latitude')} type="number" id="resource-latitude" width={60} />
+            </Field>
+            <Field label="Longitude" disabled={!canWrite}>
+              <Input {...register('longitude')} type="number" id="resource-longitude" width={60} />
+            </Field>
+            <Button type="submit" disabled={!canWrite}>
+              Update
+            </Button>
+          </FieldSet>
+        )}
+      </Form>
     </VerticalGroup>
   );
 };
