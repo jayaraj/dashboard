@@ -1,4 +1,5 @@
 import { NavModelItem, NavModel } from '@grafana/data';
+import config from 'app/core/config';
 import { Group } from 'app/types';
 
 export function buildNavModel(group: Group): NavModelItem {
@@ -20,7 +21,7 @@ export function buildNavModel(group: Group): NavModelItem {
         active: false,
         icon: 'rss',
         id: `group-resources-${group.id}`,
-        text: 'Resources',
+        text: config.resourceLabel + 's',
         url: `org/groups/edit/${group.id}/resources`,
       },
       {

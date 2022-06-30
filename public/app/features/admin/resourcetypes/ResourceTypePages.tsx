@@ -5,7 +5,6 @@ import { connect, ConnectedProps } from 'react-redux';
 import Page from 'app/core/components/Page/Page';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
-import { contextSrv } from 'app/core/services/context_srv';
 import { StoreState } from 'app/types';
 
 import ResourceTypeSettings from './ResourceTypeSettings';
@@ -40,7 +39,6 @@ function mapStateToProps(state: StoreState, props: OwnProps) {
     resourceTypeId: resourceTypeId,
     pageName: pageName,
     resourceType,
-    signedInUser: contextSrv.user,
   };
 }
 
@@ -91,12 +89,12 @@ export class ResourceTypePages extends PureComponent<Props, State> {
     return text1.toLocaleLowerCase() === text2.toLocaleLowerCase();
   };
 
-  renderPage(grafanaAdmin: boolean): React.ReactNode {
+  renderPage(): React.ReactNode {
     const currentPage = this.getCurrentPage();
     const { resourceType } = this.props;
 
     switch (currentPage) {
-      case grafanaAdmin && PageTypes.Settings:
+      case PageTypes.Settings:
         return <ResourceTypeSettings resourceType={resourceType!} />;
     }
 
@@ -104,12 +102,12 @@ export class ResourceTypePages extends PureComponent<Props, State> {
   }
 
   render() {
-    const { resourceType, navModel, signedInUser } = this.props;
+    const { resourceType, navModel } = this.props;
 
     return (
       <Page navModel={navModel}>
         <Page.Contents isLoading={this.state.isLoading}>
-          {resourceType && Object.keys(resourceType).length !== 0 && this.renderPage(signedInUser.isGrafanaAdmin)}
+          {resourceType && Object.keys(resourceType).length !== 0 && this.renderPage()}
         </Page.Contents>
       </Page>
     );
