@@ -1090,7 +1090,8 @@ export class DashboardModel implements TimeModel {
   }
 
   canAddAnnotations() {
-    return true;
+    const canAdd = !contextSrv.accessControlEnabled() || this.meta.annotationsPermissions?.dashboard.canAdd;
+    return this.canEditDashboard() && canAdd;
   }
 
   canEditDashboard() {

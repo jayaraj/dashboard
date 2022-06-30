@@ -383,12 +383,11 @@ func (hs *HTTPServer) registerRoutes() {
 
 		// Resources
 		apiRoute.Group("/resources", func(resourcesRoute routing.RouteRegister) {
-			resourceIdScope := ac.Scope("resources", "id", ac.Parameter(":resourceId"))
 			resourcesRoute.Post("/", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite)), routing.Wrap(hs.CreateResource))
-			resourcesRoute.Put("/:resourceId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite, resourceIdScope)), routing.Wrap(hs.UpdateResource))
-			resourcesRoute.Delete("/:resourceId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite, resourceIdScope)), routing.Wrap(hs.DeleteResource))
-			resourcesRoute.Post("/:resourceId/clone", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite, resourceIdScope)), routing.Wrap(hs.CloneResource))
-			resourcesRoute.Get("/:resourceId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourcesRead, resourceIdScope)), routing.Wrap(hs.GetResourceById))
+			resourcesRoute.Put("/:resourceId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite)), routing.Wrap(hs.UpdateResource))
+			resourcesRoute.Delete("/:resourceId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite)), routing.Wrap(hs.DeleteResource))
+			resourcesRoute.Post("/:resourceId/clone", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite)), routing.Wrap(hs.CloneResource))
+			resourcesRoute.Get("/:resourceId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourcesRead)), routing.Wrap(hs.GetResourceById))
 			resourcesRoute.Get("/search", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourcesRead)), routing.Wrap(hs.SearchResources))
 			resourcesRoute.Get("/:resourceId/groups", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourcesRead)), routing.Wrap(hs.GetResourceGroups))
 			resourcesRoute.Post("/:resourceId/groups", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite)), routing.Wrap(hs.AddResourceGroups))
@@ -398,11 +397,10 @@ func (hs *HTTPServer) registerRoutes() {
 
 		// Groups
 		apiRoute.Group("/groups", func(groupsRoute routing.RouteRegister) {
-			groupIdScope := ac.Scope("groups", "id", ac.Parameter(":groupId"))
 			groupsRoute.Post("/", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), routing.Wrap(hs.CreateGroup))
-			groupsRoute.Put("/:groupId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite, groupIdScope)), routing.Wrap(hs.UpdateGroup))
-			groupsRoute.Delete("/:groupId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite, groupIdScope)), routing.Wrap(hs.DeleteGroup))
-			groupsRoute.Get("/:groupId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionGroupsRead, groupIdScope)), routing.Wrap(hs.GetGroupById))
+			groupsRoute.Put("/:groupId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), routing.Wrap(hs.UpdateGroup))
+			groupsRoute.Delete("/:groupId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), routing.Wrap(hs.DeleteGroup))
+			groupsRoute.Get("/:groupId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionGroupsRead)), routing.Wrap(hs.GetGroupById))
 			groupsRoute.Get("/", authorize(reqSignedIn, ac.EvalPermission(ac.ActionGroupsRead)), routing.Wrap(hs.GetGroups))
 			groupsRoute.Delete("/:groupId/resources/:resourceId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), routing.Wrap(hs.DeleteGroupResource))
 			groupsRoute.Get("/:groupId/resources", authorize(reqSignedIn, ac.EvalPermission(ac.ActionGroupsRead)), routing.Wrap(hs.GetGroupResources))
@@ -410,18 +408,16 @@ func (hs *HTTPServer) registerRoutes() {
 		})
 
 		apiRoute.Group("/groups", func(groupsRoute routing.RouteRegister) {
-			groupIdScope := ac.Scope("groups", "id", ac.Parameter(":id"))
-			groupsRoute.Post("/:id/users", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite, groupIdScope)), routing.Wrap(hs.AddGroupUsers))
-			groupsRoute.Delete("/:id/users/:userId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite, groupIdScope)), routing.Wrap(hs.DeleteGroupUsers))
+			groupsRoute.Post("/:id/users", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), routing.Wrap(hs.AddGroupUsers))
+			groupsRoute.Delete("/:id/users/:userId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), routing.Wrap(hs.DeleteGroupUsers))
 		})
 
 		// ResourceTypes
 		apiRoute.Group("/resourcetypes", func(resourcetypesRoute routing.RouteRegister) {
-			resourcetypeIdScope := ac.Scope("resourcetypes", "id", ac.Parameter(":resourcetypeId"))
 			resourcetypesRoute.Post("/", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), routing.Wrap(hs.CreateResourceType))
-			resourcetypesRoute.Put("/:resourcetypeId", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite, resourcetypeIdScope)), routing.Wrap(hs.UpdateResourceType))
-			resourcetypesRoute.Delete("/:resourcetypeId", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite, resourcetypeIdScope)), routing.Wrap(hs.DeleteResourceType))
-			resourcetypesRoute.Get("/:resourcetypeId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourceTypesRead, resourcetypeIdScope)), routing.Wrap(hs.GetResourceTypeById))
+			resourcetypesRoute.Put("/:resourcetypeId", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), routing.Wrap(hs.UpdateResourceType))
+			resourcetypesRoute.Delete("/:resourcetypeId", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), routing.Wrap(hs.DeleteResourceType))
+			resourcetypesRoute.Get("/:resourcetypeId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourceTypesRead)), routing.Wrap(hs.GetResourceTypeById))
 			resourcetypesRoute.Get("/search", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourceTypesRead)), routing.Wrap(hs.SearchResourceTypes))
 		})
 

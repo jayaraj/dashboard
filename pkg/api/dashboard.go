@@ -846,5 +846,13 @@ func (hs *HTTPServer) redirectFromSlug(c *models.ReqContext) {
 			}
 		}
 	}
-	c.Redirect(fmt.Sprintf("%sd/%s/%s?folderId=%d", setting.AppUrl, hit.Uid, hit.Slug, hit.FolderId), 302)
+	url := fmt.Sprintf("%sd/%s/%s?folderId=%d", setting.AppUrl, hit.Uid, hit.Slug, hit.FolderId)
+
+	for k, v := range c.Req.URL.Query() {
+		if len(v) == 0 {
+			continue
+		}
+		url = fmt.Sprintf("%s&%s=%s", url, k, v[0])
+	}
+	c.Redirect(url, 302)
 }
