@@ -25,26 +25,24 @@ export const GroupSettings: FC<Props> = ({ group, updateGroup }) => {
 
   return (
     <VerticalGroup>
-      <FieldSet label={label}>
-        <Form
-          defaultValues={{ name: group.name }}
-          onSubmit={(formgroup: { name: string }) => {
-            updateGroup(formgroup.name);
-          }}
-          disabled={!canWrite}
-        >
-          {({ register }) => (
-            <FieldSet label={label}>
-              <Field label="Name" disabled={!canWrite}>
-                <Input {...register('name', { required: true })} id="group-name" width={60} />
-              </Field>
-              <Button type="submit" disabled={!canWrite}>
-                Update
-              </Button>
-            </FieldSet>
-          )}
-        </Form>
-      </FieldSet>
+      <Form
+        defaultValues={{ name: group.name }}
+        onSubmit={(formgroup: { name: string }) => {
+          updateGroup(formgroup.name);
+        }}
+        disabled={!canWrite}
+      >
+        {({ register }) => (
+          <FieldSet label={label}>
+            <Field label="Name" disabled={!canWrite}>
+              <Input {...register('name', { required: true })} id="group-name" width={60} />
+            </Field>
+            <Button type="submit" disabled={!canWrite}>
+              Update
+            </Button>
+          </FieldSet>
+        )}
+      </Form>
     </VerticalGroup>
   );
 };

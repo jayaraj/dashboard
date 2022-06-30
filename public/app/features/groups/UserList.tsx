@@ -104,7 +104,9 @@ export class UserList extends PureComponent<Props, State> {
     const { isAdding } = this.state;
     const { users, userSearchQuery, usersPage, usersCount } = this.props;
     const admin = this.isAdmin();
-    const canWrite = contextSrv.hasAccess(AccessControlAction.ActionGroupsWrite, admin);
+    const canWrite =
+      contextSrv.hasAccess(AccessControlAction.ActionGroupsWrite, admin) &&
+      contextSrv.hasAccess(AccessControlAction.OrgUsersRead, admin);
     const totalPages = Math.ceil(usersCount / pageLimit);
 
     return (
@@ -117,21 +119,23 @@ export class UserList extends PureComponent<Props, State> {
             Add user
           </Button>
         </div>
-        <SlideDown in={isAdding}>
-          <div className="cta-form">
-            <CloseButton aria-label="Close 'Add user' dialogue" onClick={this.onToggleAdding} />
-            <Label htmlFor="user-picker">Add user</Label>
-            <div className="gf-form-inline">
-              <UserPicker inputId="user-picker" onSelected={this.onUserSelected} className="min-width-30" />
-              <div className="page-action-bar__spacer" />
-              {this.state.newGroupUser && (
-                <Button type="submit" onClick={this.addUser}>
-                  Add
-                </Button>
-              )}
+        {canWrite && (
+          <SlideDown in={isAdding}>
+            <div className="cta-form">
+              <CloseButton aria-label="Close 'Add user' dialogue" onClick={this.onToggleAdding} />
+              <Label htmlFor="user-picker">Add user</Label>
+              <div className="gf-form-inline">
+                <UserPicker inputId="user-picker" onSelected={this.onUserSelected} className="min-width-30" />
+                <div className="page-action-bar__spacer" />
+                {this.state.newGroupUser && (
+                  <Button type="submit" onClick={this.addUser}>
+                    Add
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
-        </SlideDown>
+          </SlideDown>
+        )}
         <div className="admin-list-table">
           <VerticalGroup spacing="md">
             <table className="filter-table filter-table--hover form-inline">

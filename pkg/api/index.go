@@ -676,7 +676,7 @@ func (hs *HTTPServer) buildAdminNavLinks(c *models.ReqContext) []*dtos.NavLink {
 		})
 	}
 
-	if hasAccess(ac.ReqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesRead)) {
+	if ac.ReqGrafanaAdmin(c) {
 		adminNavLinks = append(adminNavLinks, &dtos.NavLink{
 			Text: hs.Cfg.ResourceLabel + "Types", Id: "resourcetypes", Url: hs.Cfg.AppSubURL + "/admin/resourcetypes", Icon: "rss",
 		})

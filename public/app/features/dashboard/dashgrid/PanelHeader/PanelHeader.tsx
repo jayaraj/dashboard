@@ -8,7 +8,6 @@ import { contextSrv } from 'app/core/services/context_srv';
 import { DashboardModel } from 'app/features/dashboard/state/DashboardModel';
 import { PanelModel } from 'app/features/dashboard/state/PanelModel';
 import { getPanelLinksSupplier } from 'app/features/panel/panellinks/linkSuppliers';
-import { OrgRole } from 'app/types';
 
 import PanelHeaderCorner from './PanelHeaderCorner';
 import { PanelHeaderLoadingIndicator } from './PanelHeaderLoadingIndicator';
@@ -37,7 +36,7 @@ export const PanelHeader: FC<Props> = ({ panel, error, isViewing, isEditing, dat
 
   const isEditable = () => {
     const signedInUser = contextSrv.user;
-    return signedInUser.isGrafanaAdmin || signedInUser.orgRole === OrgRole.Admin;
+    return signedInUser.isGrafanaAdmin;
   };
 
   return (
