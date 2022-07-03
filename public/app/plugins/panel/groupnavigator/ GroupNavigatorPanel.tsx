@@ -1,8 +1,9 @@
+import { debounce } from 'lodash';
 import Tree, { TreeNode } from 'rc-tree';
 import React, { useEffect, useState } from 'react';
 
 import { PanelProps } from '@grafana/data';
-import { RefreshEvent, getBackendSrv } from '@grafana/runtime';
+import { RefreshEvent, getBackendSrv, locationService } from '@grafana/runtime';
 import { useTheme, Spinner, CustomScrollbar } from '@grafana/ui';
 import { Group } from 'app/types';
 
@@ -19,6 +20,7 @@ export const GroupNavigatorPanel: React.FC<Props> = ({ height, eventBus }) => {
   const theme = useTheme();
   const styles = getStyles(height, theme);
   const ht = height - 80 + 'px';
+  const updateLocation = debounce((query) => locationService.partial(query), 300);
 
   const loop = (groups: Group[]) =>
     groups.map((group) => {
@@ -44,6 +46,16 @@ export const GroupNavigatorPanel: React.FC<Props> = ({ height, eventBus }) => {
     setTreeState(type);
   };
 
+  const onSelect = (_: any, info: any) => {
+    let query = {};
+    if (info.selected) {
+      query = { ...query, [`var-grp`]: info.node.key };
+    } else {
+      query = { ...query, [`var-grp`]: undefined };
+    }
+    updateLocation(query);
+  };
+
   useEffect(() => {
     initialRequest();
     const subscriber = eventBus.getStream(RefreshEvent).subscribe((event) => {
@@ -65,12 +77,12 @@ export const GroupNavigatorPanel: React.FC<Props> = ({ height, eventBus }) => {
           <ActionRow {...{ treeState, onTreeChange: onTreeChange }} />
           <CustomScrollbar autoHeightMax={ht}>
             {expanded && (
-              <Tree defaultExpandAll expandAction="click" selectable={false} showIcon={false} showLine>
+              <Tree defaultExpandAll expandAction="click" onSelect={onSelect} showIcon={false} showLine>
                 {loop(groups)}
               </Tree>
             )}
             {!expanded && (
-              <Tree expandAction="click" selectable={false} showIcon={false} showLine>
+              <Tree expandAction="click" onSelect={onSelect} showIcon={false} showLine>
                 {loop(groups)}
               </Tree>
             )}
