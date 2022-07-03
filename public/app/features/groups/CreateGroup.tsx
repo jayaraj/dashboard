@@ -9,6 +9,7 @@ import { getNavModel } from 'app/core/selectors/navModel';
 import { StoreState } from 'app/types';
 
 export interface Props {
+  match: any;
   navModel: NavModel;
   parent: number;
 }
