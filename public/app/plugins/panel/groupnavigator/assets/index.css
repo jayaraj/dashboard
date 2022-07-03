@@ -160,9 +160,10 @@
   background: rgba(0, 0, 0, 0.1);
 }
 .rc-tree-node-selected {
-  background-color: #ffe6b0;
-  box-shadow: 0 0 0 1px #ffb951;
+  /* background-color: #ffe6b0;
+  box-shadow: 0 0 0 1px #ffb951; */
   opacity: 0.8;
+  color: #eb7b18;
 }
 .rc-tree-icon__open {
   margin-right: 2px;
