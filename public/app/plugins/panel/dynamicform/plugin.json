@@ -1,0 +1,48 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
+  "dependencies": {
+    "grafanaDependency": ">=8.3.0",
+    "plugins": []
+  },
+  "id": "dynamicform",
+  "info": {
+    "author": {
+      "name": "Volkov Labs",
+      "url": "https://volkovlabs.io"
+    },
+    "description": "Dynamic Form Panel",
+    "keywords": ["form"],
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://volkovlabs.io"
+      }
+    ],
+    "logos": {
+      "large": "img/logo.svg",
+      "small": "img/logo.svg"
+    },
+    "screenshots": [
+      {
+        "name": "Panel",
+        "path": "img/panel.png"
+      },
+      {
+        "name": "Form Elements",
+        "path": "img/elements.png"
+      },
+      {
+        "name": "Request",
+        "path": "img/request.png"
+      },
+      {
+        "name": "Visual",
+        "path": "img/visual.png"
+      }
+    ],
+    "updated": "%TODAY%",
+    "version": "%VERSION%"
+  },
+  "name": "Data Form",
+  "type": "panel"
+}

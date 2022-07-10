@@ -39,6 +39,8 @@ const tempoPlugin = async () =>
   await import(/* webpackChunkName: "tempoPlugin" */ 'app/plugins/datasource/tempo/module');
 const alertmanagerPlugin = async () =>
   await import(/* webpackChunkName: "alertmanagerPlugin" */ 'app/plugins/datasource/alertmanager/module');
+const dataservicePlugin = async () =>
+  await import(/* webpackChunkName: "dataservicePlugin" */ 'app/plugins/datasource/dataservice/module');
 
 import * as alertGroupsPanel from 'app/plugins/panel/alertGroups/module';
 import * as alertListPanel from 'app/plugins/panel/alertlist/module';
@@ -48,6 +50,7 @@ import * as barGaugePanel from 'app/plugins/panel/bargauge/module';
 import * as candlestickPanel from 'app/plugins/panel/candlestick/module';
 import * as dashListPanel from 'app/plugins/panel/dashlist/module';
 import * as debugPanel from 'app/plugins/panel/debug/module';
+import * as dynamicForm from 'app/plugins/panel/dynamicform/module';
 import * as gaugePanel from 'app/plugins/panel/gauge/module';
 import * as gettingStartedPanel from 'app/plugins/panel/gettingstarted/module';
 import * as groupNavigator from 'app/plugins/panel/groupnavigator/module';
@@ -99,6 +102,7 @@ const builtInPlugins: any = {
   'app/plugins/datasource/grafana-azure-monitor-datasource/module': azureMonitorPlugin,
   'app/plugins/datasource/tempo/module': tempoPlugin,
   'app/plugins/datasource/alertmanager/module': alertmanagerPlugin,
+  'app/plugins/datasource/dataservice/module': dataservicePlugin,
 
   'app/plugins/panel/text/module': textPanel,
   'app/plugins/panel/timeseries/module': timeseriesPanel,
@@ -133,6 +137,7 @@ const builtInPlugins: any = {
   'app/plugins/panel/histogram/module': histogramPanel,
   'app/plugins/panel/alertGroups/module': alertGroupsPanel,
   'app/plugins/panel/groupnavigator/module': groupNavigator,
+  'app/plugins/panel/dynamicform/module': dynamicForm,
 };
 
 export default builtInPlugins;
