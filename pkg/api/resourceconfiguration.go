@@ -1,0 +1,89 @@
+package api
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
+	"strconv"
+
+	"github.com/grafana/grafana/pkg/api/dtos"
+	"github.com/grafana/grafana/pkg/api/response"
+	"github.com/grafana/grafana/pkg/models"
+	"github.com/grafana/grafana/pkg/services/resources"
+	"github.com/grafana/grafana/pkg/web"
+)
+
+func (hs *HTTPServer) UpdateResourceConfiguration(c *models.ReqContext) response.Response {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	if id != 0 && !hs.IsResourceAccessible(c) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	config := web.Params(c.Req)[":config"]
+	dto := dtos.UpdateResourceConfigurationMsg{
+		ResourceId: id,
+		Type:       config,
+	}
+	if err := web.Bind(c.Req, &dto); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+	body, err := json.Marshal(dto)
+	if err != nil {
+		return response.Error(500, "failed marshal update", err)
+	}
+	req := &resources.RestRequest{
+		Url:        "api/resourceconfigurations",
+		Request:    body,
+		HttpMethod: http.MethodPut,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to update", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+	}
+	return response.Success("updated")
+}
+
+func (hs *HTTPServer) GetResourceConfiguration(c *models.ReqContext) response.Response {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	if id != 0 && !hs.IsResourceAccessible(c) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	config := web.Params(c.Req)[":config"]
+	req := &resources.RestRequest{
+		Url:        fmt.Sprintf("api/resourceconfigurations?resource_id=%d&type=%s", id, config),
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to get", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+	}
+	dto := dtos.GetResourceConfigurationMsg{}
+	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
+		response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+
+	resp, err := json.Marshal(dto.Result)
+	if err != nil {
+		return response.Error(http.StatusInternalServerError, "response marshall failed", err)
+	}
+	return response.JSON(http.StatusOK, resp)
+}
