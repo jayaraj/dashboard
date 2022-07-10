@@ -421,6 +421,12 @@ func (hs *HTTPServer) registerRoutes() {
 			resourcetypesRoute.Get("/search", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourceTypesRead)), routing.Wrap(hs.SearchResourceTypes))
 		})
 
+		// ResourceConfiguration
+		apiRoute.Group("/resources", func(resourcetypesRoute routing.RouteRegister) {
+			resourcetypesRoute.Put("/:resourceId/configurations/:config", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite)), routing.Wrap(hs.UpdateResourceConfiguration))
+			resourcetypesRoute.Get("/:resourceId/configurations/:config", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourcesRead)), routing.Wrap(hs.GetResourceConfiguration))
+		})
+
 		// Dashboard
 		apiRoute.Group("/dashboards", func(dashboardRoute routing.RouteRegister) {
 			dashboardRoute.Get("/uid/:uid", authorize(reqSignedIn, ac.EvalPermission(dashboards.ActionDashboardsRead)), routing.Wrap(hs.GetDashboard))

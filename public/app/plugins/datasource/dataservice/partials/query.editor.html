@@ -1,0 +1,29 @@
+<query-editor-row query-ctrl="ctrl" style="width: 75px;" has-text-edit-mode="true">
+  <div class="gf-form-inline">
+    <div class="gf-form">
+      <label class="gf-form-label query-keyword">Target</label>
+      <metric-segment
+            segment="ctrl.targetSegment"
+            get-options="ctrl.getTargets('')"
+            on-change="ctrl.targetChanged()"
+      ></metric-segment>
+    </div>
+    <div class="gf-form">
+      <label class="gf-form-label query-keyword">API</label>
+      <metric-segment
+            segment="ctrl.apiSegment"
+            get-options="ctrl.getTargets(ctrl.targetSegment)"
+            on-change="ctrl.apiSelected()"
+      ></metric-segment>
+    </div>
+    <div class="gf-form gf-form--grow">
+      <div class="gf-form-label gf-form-label--grow"></div>
+    </div>
+  </div>
+  <div class="gf-form-inline">
+    <div class="gf-form" ng-repeat="data in ctrl.apiSegment.data">
+      <label class="gf-form-label query-keyword">{{data.key}}</label>
+      <input class="input-small gf-form-input width-5" ng-model="data.value" />
+    </div>
+  </div>
+</query-editor-row>

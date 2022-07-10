@@ -1,0 +1,22 @@
+{
+  "name": "Dataservice",
+  "id": "dataservice",
+  "type": "datasource",
+  "category": "other",
+
+  "metrics": true,
+
+  "info": {
+    "description": "Dataservice Datasource",
+    "author": {
+      "name": "Dashboard",
+      "url": "https://www.nxtthinq.com"
+    },
+    "logos": {
+      "small": "img/dataservice_logo.svg",
+      "large": "img/dataservice_logo.svg"
+    },
+    "version": "1.0.0",
+    "updated": "2020-03-20"
+  }
+}

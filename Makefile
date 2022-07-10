@@ -119,6 +119,7 @@ run: scripts/go/bin/bra ## Build and run web server on filesystem changes.
 	@APP_NAME="Enerview" APP_MODE="development" APP_PROTOCOL="http" APP_PORT="3000" APP_DOMAIN="localhost" POSTGRES_HOST="localhost" \
 	POSTGRES_PORT=5432 POSTGRES_DBNAME="enerview" POSTGRES_USER="postgres" POSTGRES_PASSWORD="Qwertyu10P" SMTP_HOST="smtp-relay.sendinblue.com:587" \
 	SMTP_USER="jayaraj.esvar@gmail.com" SMTP_PWD="123456" SMTP_FROM="jayaraj.esvar@gmail.com" SMTP_FROMNAME="Dashboard" ADMIN_USERNAME="admin" ADMIN_SECRET="admin" \
+	DATASERVICE_URL="localhost:9003" DATASERVICE_TOKEN="test" INFLUXDB_URL="localhost:8086" INFLUXDB_PWD="test" INFLUXDB_USER="influx" \
 	scripts/go/bin/bra run
 
 run-frontend: deps-js ## Fetch js dependencies and watch frontend for rebuild
