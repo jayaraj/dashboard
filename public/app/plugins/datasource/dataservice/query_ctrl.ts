@@ -1,3 +1,6 @@
+// eslint-disable-next-line lodash/import-scope
+import _ from 'lodash';
+
 import { TemplateSrv } from 'app/features/templating/template_srv';
 import { QueryCtrl } from 'app/plugins/sdk';
 
