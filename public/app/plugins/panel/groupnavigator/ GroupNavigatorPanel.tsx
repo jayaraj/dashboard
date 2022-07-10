@@ -3,7 +3,7 @@ import Tree, { TreeNode } from 'rc-tree';
 import React, { useEffect, useState } from 'react';
 
 import { PanelProps } from '@grafana/data';
-import { RefreshEvent, getBackendSrv, locationService } from '@grafana/runtime';
+import { getBackendSrv, locationService } from '@grafana/runtime';
 import { useTheme, Spinner, CustomScrollbar } from '@grafana/ui';
 import { Group } from 'app/types';
 
@@ -58,13 +58,7 @@ export const GroupNavigatorPanel: React.FC<Props> = ({ height, eventBus }) => {
 
   useEffect(() => {
     initialRequest();
-    const subscriber = eventBus.getStream(RefreshEvent).subscribe((event) => {
-      initialRequest();
-    });
-    return () => {
-      subscriber.unsubscribe();
-    };
-  }, [eventBus]);
+  }, []);
 
   if (loading) {
     return <Spinner className={styles.spinner} />;
