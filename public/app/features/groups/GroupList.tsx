@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import { NavModel } from '@grafana/data';
 import { DeleteButton, LinkButton, FilterInput, VerticalGroup } from '@grafana/ui';
 import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
-import Page from 'app/core/components/Page/Page';
+import { Page } from 'app/core/components/Page/Page';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { contextSrv, User } from 'app/core/services/context_srv';
 import { StoreState, Group, AccessControlAction } from 'app/types';
@@ -28,7 +28,7 @@ export interface Props {
   signedInUser: User;
 }
 
-export class GroupList extends PureComponent<Props, any> {
+export class GroupList extends PureComponent<Props> {
   componentDidMount() {
     this.fetchGroups();
   }

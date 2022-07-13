@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { NavModel } from '@grafana/data';
 import { getBackendSrv, locationService } from '@grafana/runtime';
 import { Button, LegacyForms } from '@grafana/ui';
-import Page from 'app/core/components/Page/Page';
+import { Page } from 'app/core/components/Page/Page';
 const { FormField } = LegacyForms;
 import config from 'app/core/config';
 import { getNavModel } from 'app/core/selectors/navModel';
