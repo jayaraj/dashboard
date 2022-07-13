@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import { NavModel } from '@grafana/data';
 import { DeleteButton, LinkButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination } from '@grafana/ui';
 import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
-import Page from 'app/core/components/Page/Page';
+import { Page } from 'app/core/components/Page/Page';
 import config from 'app/core/config';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { contextSrv, User } from 'app/core/services/context_srv';
@@ -31,7 +31,7 @@ export interface Props {
   signedInUser: User;
 }
 
-export class ResourceTypeList extends PureComponent<Props, any> {
+export class ResourceTypeList extends PureComponent<Props> {
   componentDidMount() {
     this.fetchResourceTypes('', 1, pageLimit);
   }
