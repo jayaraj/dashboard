@@ -24,6 +24,7 @@ export interface AzureSettings {
 }
 
 export class GrafanaBootConfig implements GrafanaConfig {
+  isPublicDashboardView: boolean;
   datasources: { [str: string]: DataSourceInstanceSettings } = {};
   panels: { [key: string]: PanelPluginMeta } = {};
   minRefreshInterval = '';
@@ -85,6 +86,7 @@ export class GrafanaBootConfig implements GrafanaConfig {
     thumbnailsExist: boolean;
   } = { systemRequirements: { met: false, requiredImageRendererPluginVersion: '' }, thumbnailsExist: false };
   rendererVersion = '';
+  secretsManagerPluginEnabled = false;
   http2Enabled = false;
   dateFormats?: SystemDateFormatSettings;
   sentry = {
@@ -92,6 +94,14 @@ export class GrafanaBootConfig implements GrafanaConfig {
     dsn: '',
     customEndpoint: '',
     sampleRate: 1,
+  };
+  grafanaJavascriptAgent = {
+    enabled: false,
+    customEndpoint: '',
+    apiKey: '',
+    errorInstrumentalizationEnabled: true,
+    consoleInstrumentalizationEnabled: false,
+    webVitalsInstrumentalizationEnabled: false,
   };
   pluginCatalogURL = 'https://grafana.com/grafana/plugins/';
   pluginAdminEnabled = true;
@@ -121,12 +131,18 @@ export class GrafanaBootConfig implements GrafanaConfig {
   reporting = {
     enabled: true,
   };
+  googleAnalyticsId: undefined;
+  rudderstackWriteKey: undefined;
+  rudderstackDataPlaneUrl: undefined;
+  rudderstackSdkUrl: undefined;
+  rudderstackConfigUrl: undefined;
 
   constructor(options: GrafanaBootConfig) {
     const mode = options.bootData.user.lightTheme ? 'light' : 'dark';
     this.theme2 = createTheme({ colors: { mode } });
     this.theme = this.theme2.v1;
     this.bootData = options.bootData;
+    this.isPublicDashboardView = options.bootData.settings.isPublicDashboardView;
 
     const defaults = {
       datasources: {},
@@ -157,7 +173,27 @@ export class GrafanaBootConfig implements GrafanaConfig {
     if (this.dateFormats) {
       systemDateFormats.update(this.dateFormats);
     }
+
+    overrideFeatureTogglesFromUrl(this);
   }
+}
+
+function overrideFeatureTogglesFromUrl(config: GrafanaBootConfig) {
+  if (window.location.href.indexOf('__feature') === -1) {
+    return;
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  params.forEach((value, key) => {
+    if (key.startsWith('__feature.')) {
+      const featureName = key.substring(10);
+      const toggleState = value === 'true';
+      if (toggleState !== config.featureToggles[key]) {
+        config.featureToggles[featureName] = toggleState;
+        console.log(`Setting feature toggle ${featureName} = ${toggleState}`);
+      }
+    }
+  });
 }
 
 const bootData = (window as any).grafanaBootData || {

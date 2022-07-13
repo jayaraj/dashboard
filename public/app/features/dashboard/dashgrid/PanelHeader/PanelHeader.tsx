@@ -65,14 +65,18 @@ export const PanelHeader: FC<Props> = ({ panel, error, isViewing, isEditing, dat
                   />
                 ) : null}
                 <h2 className={styles.titleText}>{title}</h2>
-                {isEditable() && <Icon name="angle-down" className="panel-menu-toggle" />}
-                {isEditable() && (
-                  <PanelHeaderMenuWrapper
-                    panel={panel}
-                    dashboard={dashboard}
-                    show={panelMenuOpen}
-                    onClose={closeMenu}
-                  />
+                {!dashboard.meta.publicDashboardAccessToken && (
+                  <div data-testid="panel-dropdown">
+                    {isEditable() && <Icon name="angle-down" className="panel-menu-toggle" />}
+                    {isEditable() && (
+                      <PanelHeaderMenuWrapper
+                        panel={panel}
+                        dashboard={dashboard}
+                        show={panelMenuOpen}
+                        onClose={closeMenu}
+                      />
+                    )}
+                  </div>
                 )}
                 {data.request && data.request.timeInfo && (
                   <span className="panel-time-info">
