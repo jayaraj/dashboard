@@ -44,6 +44,7 @@ const (
 	WeightDashboard
 	WeightExplore
 	WeightAlerting
+	WeightDataConnections
 	WeightPlugin
 	WeightConfig
 	WeightAdmin
@@ -63,7 +64,7 @@ type NavLink struct {
 	Description      string     `json:"description,omitempty"`
 	Section          string     `json:"section,omitempty"`
 	SubTitle         string     `json:"subTitle,omitempty"`
-	Icon             string     `json:"icon,omitempty"`
+	Icon             string     `json:"icon,omitempty"` // Available icons can be browsed in Storybook: https://developers.grafana.com/ui/latest/index.html?path=/story/docs-overview-icon--icons-overview
 	Img              string     `json:"img,omitempty"`
 	Url              string     `json:"url,omitempty"`
 	Target           string     `json:"target,omitempty"`
@@ -75,6 +76,7 @@ type NavLink struct {
 	Children         []*NavLink `json:"children,omitempty"`
 	HighlightText    string     `json:"highlightText,omitempty"`
 	HighlightID      string     `json:"highlightId,omitempty"`
+	EmptyMessageId   string     `json:"emptyMessageId,omitempty"`
 }
 
 // NavIDCfg is the id for org configuration navigation node
