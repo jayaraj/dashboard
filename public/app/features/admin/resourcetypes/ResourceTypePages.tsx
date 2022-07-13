@@ -2,7 +2,7 @@ import { includes } from 'lodash';
 import React, { PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
-import Page from 'app/core/components/Page/Page';
+import { Page } from 'app/core/components/Page/Page';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { StoreState } from 'app/types';
@@ -92,7 +92,6 @@ export class ResourceTypePages extends PureComponent<Props, State> {
   renderPage(): React.ReactNode {
     const currentPage = this.getCurrentPage();
     const { resourceType } = this.props;
-
     switch (currentPage) {
       case PageTypes.Settings:
         return <ResourceTypeSettings resourceType={resourceType!} />;

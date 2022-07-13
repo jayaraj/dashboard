@@ -35,7 +35,7 @@ const mapDispatchToProps = {
 const connector = connect(mapStateToProps, mapDispatchToProps);
 export type Props = OwnProps & ConnectedProps<typeof connector>;
 
-export class ResourceList extends PureComponent<Props, any> {
+export class ResourceList extends PureComponent<Props> {
   constructor(props: Props) {
     super(props);
   }

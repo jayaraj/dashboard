@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { NavModel, SelectableValue } from '@grafana/data';
 import { getBackendSrv, locationService } from '@grafana/runtime';
 import { Button, Select, Form, Field, Input, FieldSet, InputControl } from '@grafana/ui';
-import Page from 'app/core/components/Page/Page';
+import { Page } from 'app/core/components/Page/Page';
 import config from 'app/core/config';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { ResourceType, StoreState } from 'app/types';

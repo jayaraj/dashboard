@@ -3,7 +3,7 @@ import React, { FC } from 'react';
 
 import { DataLink, GrafanaTheme2, PanelData } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
-import { Icon, useStyles2 } from '@grafana/ui';
+import { Icon, useStyles2, ClickOutsideWrapper } from '@grafana/ui';
 import { contextSrv } from 'app/core/services/context_srv';
 import { DashboardModel } from 'app/features/dashboard/state/DashboardModel';
 import { PanelModel } from 'app/features/dashboard/state/PanelModel';
@@ -54,36 +54,33 @@ export const PanelHeader: FC<Props> = ({ panel, error, isViewing, isEditing, dat
         <PanelHeaderMenuTrigger data-testid={selectors.components.Panels.Panel.title(title)}>
           {({ closeMenu, panelMenuOpen }) => {
             return (
-              <div className="panel-title">
-                <PanelHeaderNotices frames={data.series} panelId={panel.id} />
-                {alertState ? (
-                  <Icon
-                    name={alertState === 'alerting' ? 'heart-break' : 'heart'}
-                    className="icon-gf panel-alert-icon"
-                    style={{ marginRight: '4px' }}
-                    size="sm"
-                  />
-                ) : null}
-                <h2 className={styles.titleText}>{title}</h2>
-                {!dashboard.meta.publicDashboardAccessToken && (
-                  <div data-testid="panel-dropdown">
-                    {isEditable() && <Icon name="angle-down" className="panel-menu-toggle" />}
-                    {isEditable() && (
-                      <PanelHeaderMenuWrapper
-                        panel={panel}
-                        dashboard={dashboard}
-                        show={panelMenuOpen}
-                        onClose={closeMenu}
-                      />
-                    )}
-                  </div>
-                )}
-                {data.request && data.request.timeInfo && (
-                  <span className="panel-time-info">
-                    <Icon name="clock-nine" size="sm" /> {data.request.timeInfo}
-                  </span>
-                )}
-              </div>
+              <ClickOutsideWrapper onClick={closeMenu} parent={document}>
+                <div className="panel-title">
+                  <PanelHeaderNotices frames={data.series} panelId={panel.id} />
+                  {alertState ? (
+                    <Icon
+                      name={alertState === 'alerting' ? 'heart-break' : 'heart'}
+                      className="icon-gf panel-alert-icon"
+                      style={{ marginRight: '4px' }}
+                      size="sm"
+                    />
+                  ) : null}
+                  <h2 className={styles.titleText}>{title}</h2>
+                  {(isEditable() && !dashboard.meta.publicDashboardAccessToken) && (
+                    <div data-testid="panel-dropdown">
+                      <Icon name="angle-down" className="panel-menu-toggle" />
+                      {panelMenuOpen ? (
+                        <PanelHeaderMenuWrapper panel={panel} dashboard={dashboard} onClose={closeMenu} />
+                      ) : null}
+                    </div>
+                  )}
+                  {data.request && data.request.timeInfo && (
+                    <span className="panel-time-info">
+                      <Icon name="clock-nine" size="sm" /> {data.request.timeInfo}
+                    </span>
+                  )}
+                </div>
+              </ClickOutsideWrapper>
             );
           }}
         </PanelHeaderMenuTrigger>
