@@ -89,6 +89,7 @@ type ResourceGroup struct {
 	UpdatedAt time.Time `json:"updated_at"`
 	GroupId   int64     `json:"group_id"`
 	GroupName string    `json:"group_name"`
+	GroupPath string    `json:"group_path"`
 }
 
 type GetResourceGroupLeafsMsg struct {

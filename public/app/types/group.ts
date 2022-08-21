@@ -1,6 +1,8 @@
 export interface Group {
   id: number;
   name: string;
+  path: string;
+  level: number;
   parent: number;
   child: boolean;
   groups: Group[];

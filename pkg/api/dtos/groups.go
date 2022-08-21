@@ -26,6 +26,7 @@ type Group struct {
 	Id        int64     `json:"id"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Name      string    `json:"name"`
+	Path      string    `json:"path"`
 	OrgId     int64     `json:"org_id"`
 	Parent    *int64    `json:"parent,omitempty"`
 	Child     *bool     `json:"child,omitempty"`
@@ -59,7 +60,6 @@ type UpdateGroupMsg struct {
 
 type GetGroupByIdMsg struct {
 	Id     int64 `json:"-"`
-	User   User  `json:"user" binding:"required"`
 	Result Group `json:"-"`
 }
 

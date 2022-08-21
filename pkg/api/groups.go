@@ -117,22 +117,10 @@ func (hs *HTTPServer) GetGroupById(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
-	dto := dtos.GetGroupByIdMsg{
-		Id: id,
-		User: dtos.User{
-			UserId: c.UserId,
-			OrgId:  c.OrgId,
-			Role:   dtos.ConvertRoleToString(c.OrgRole),
-		},
-	}
-	body, err := json.Marshal(dto)
-	if err != nil {
-		return response.Error(500, "failed marshal get group", err)
-	}
 	req := &resources.RestRequest{
 		Url:        fmt.Sprintf("api/groups/%d", id),
-		Request:    body,
-		HttpMethod: http.MethodPost,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
 	}
 	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
 		return response.Error(500, "failed to get group", err)
@@ -144,6 +132,7 @@ func (hs *HTTPServer) GetGroupById(c *models.ReqContext) response.Response {
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
+	dto := dtos.GetGroupByIdMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
