@@ -1,7 +1,7 @@
 import { css } from '@emotion/css';
 import React, { ChangeEvent } from 'react';
 
-import { DateTime, SelectableValue } from '@grafana/data';
+import { DateTime, SelectableValue, dateMath } from '@grafana/data';
 import {
   CodeEditor,
   DateTimePicker,
@@ -109,7 +109,7 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                 <Input
                   value={element.value}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                    element.value = event.target.value;
+                    element.value = Number(event.target.value);
                     onOptionsChange(options);
                   }}
                   type="number"
@@ -252,7 +252,7 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                 <DateTimePicker
                   date={element.value}
                   onChange={(dateTime: DateTime) => {
-                    element.value = dateTime;
+                    element.value = dateMath.parse(dateTime);
                     onOptionsChange(options);
                   }}
                 />

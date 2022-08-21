@@ -44,7 +44,7 @@ export class GroupPicker extends Component<Props, State> {
         const groups: Array<SelectableValue<Group>> = result.groups.map((group) => {
           return {
             value: group,
-            label: group.name,
+            label: group.path,
           };
         });
         this.setState({ isLoading: false });
