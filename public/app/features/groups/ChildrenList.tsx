@@ -61,6 +61,9 @@ export class ChildrenList extends PureComponent<Props, State> {
         <td className="link-td">
           <a href={groupUrl}>{group.name}</a>
         </td>
+        <td className="link-td">
+          <a href={groupUrl}>{group.path}</a>
+        </td>
         <td className="text-right">
           <DeleteButton size="sm" disabled={!canWrite} onConfirm={() => this.deleteGroup(group)} />
         </td>
@@ -91,6 +94,7 @@ export class ChildrenList extends PureComponent<Props, State> {
               <thead>
                 <tr>
                   <th>Name</th>
+                  <th>Path</th>
                   <th style={{ width: '1%' }} />
                 </tr>
               </thead>

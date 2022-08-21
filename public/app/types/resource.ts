@@ -28,4 +28,5 @@ export interface ResourceGroup {
   id: number;
   group_id: number;
   group_name: string;
+  group_path: string;
 }

@@ -94,6 +94,9 @@ export class GroupList extends PureComponent<Props, State> {
         <td className="link-td">
           <a href={groupUrl}>{group.group_name}</a>
         </td>
+        <td className="link-td">
+          <a href={groupUrl}>{group.group_path}</a>
+        </td>
         <td className="text-right">
           <DeleteButton size="sm" disabled={!canWrite} onConfirm={() => this.deleteGroup(group)} />
         </td>
@@ -143,6 +146,7 @@ export class GroupList extends PureComponent<Props, State> {
               <thead>
                 <tr>
                   <th>Name</th>
+                  <th>Path</th>
                   <th style={{ width: '1%' }} />
                 </tr>
               </thead>

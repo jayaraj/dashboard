@@ -418,6 +418,7 @@ func (hs *HTTPServer) registerRoutes() {
 			groupsRoute.Put("/:groupId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), routing.Wrap(hs.UpdateGroup))
 			groupsRoute.Delete("/:groupId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), routing.Wrap(hs.DeleteGroup))
 			groupsRoute.Get("/:groupId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionGroupsRead)), routing.Wrap(hs.GetGroupById))
+			groupsRoute.Get("/:groupId/parent", authorize(reqSignedIn, ac.EvalPermission(ac.ActionGroupsRead)), routing.Wrap(hs.GetGroupParent))
 			groupsRoute.Get("/", authorize(reqSignedIn, ac.EvalPermission(ac.ActionGroupsRead)), routing.Wrap(hs.GetGroups))
 			groupsRoute.Delete("/:groupId/resources/:resourceId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), routing.Wrap(hs.DeleteGroupResource))
 			groupsRoute.Get("/:groupId/resources", authorize(reqSignedIn, ac.EvalPermission(ac.ActionGroupsRead)), routing.Wrap(hs.GetGroupResources))

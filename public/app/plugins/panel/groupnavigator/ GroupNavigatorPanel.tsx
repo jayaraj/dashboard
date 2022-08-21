@@ -46,14 +46,28 @@ export const GroupNavigatorPanel: React.FC<Props> = ({ height, eventBus }) => {
     setTreeState(type);
   };
 
-  const onSelect = (_: any, info: any) => {
+  const onSelect = async (_: any, info: any) => {
     let query = {};
+    for (let i = 1; i <= 20; i++) {
+      query = { ...query, [`var-grplevel_${i}`]: undefined };
+    }
     if (info.selected) {
       query = { ...query, [`var-grp`]: info.node.key };
+      const response = await getBackendSrv().get(`/api/groups/${info.node.key}/parent`, {});
+      const update = getGroupLevels(response);
+      query = { ...query, ...update };
     } else {
       query = { ...query, [`var-grp`]: undefined };
     }
     updateLocation(query);
+  };
+
+  const getGroupLevels = (group: Group) => {
+    let query = {};
+    if ( group.groups && (group.groups.length > 0)) {
+      query = getGroupLevels(group.groups[0]);
+    }
+    return { ...query, [`var-grplevel_${group.level}`]: group.id };
   };
 
   useEffect(() => {
