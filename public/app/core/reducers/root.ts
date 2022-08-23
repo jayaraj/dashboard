@@ -24,6 +24,7 @@ import teamsReducers from 'app/features/teams/state/reducers';
 import usersReducers from 'app/features/users/state/reducers';
 import templatingReducers from 'app/features/variables/state/keyedVariablesReducer';
 
+import { alertingApi } from '../../features/alerting/unified/api/alertingApi';
 import { CleanUp, cleanUpAction } from '../actions/cleanUp';
 
 const rootReducers = {
@@ -50,6 +51,7 @@ const rootReducers = {
   ...resourcesReducer,
   ...groupsReducer,
   plugins: pluginsReducer,
+  [alertingApi.reducerPath]: alertingApi.reducer,
 };
 
 const addedReducers = {};

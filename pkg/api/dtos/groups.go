@@ -3,15 +3,15 @@ package dtos
 import (
 	"time"
 
-	"github.com/grafana/grafana/pkg/models"
+	"github.com/grafana/grafana/pkg/services/org"
 )
 
-func ConvertRoleToString(role models.RoleType) string {
-	return map[models.RoleType]string{
-		models.ROLE_VIEWER:     "ROLE_VIEWER",
-		models.ROLE_EDITOR:     "ROLE_EDITOR",
-		models.ROLE_ADMIN:      "ROLE_ADMIN",
-		models.ROLE_SUPERADMIN: "ROLE_SUPERADMIN",
+func ConvertRoleToString(role org.RoleType) string {
+	return map[org.RoleType]string{
+		org.RoleViewer:     "ROLE_VIEWER",
+		org.RoleEditor:     "ROLE_EDITOR",
+		org.RoleAdmin:      "ROLE_ADMIN",
+		org.RoleSuperAdmin: "ROLE_SUPERADMIN",
 	}[role]
 }
 
