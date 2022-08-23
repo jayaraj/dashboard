@@ -16,7 +16,7 @@ import (
 
 func (hs *HTTPServer) CreateResource(c *models.ReqContext) response.Response {
 	dto := dtos.CreateResourceMsg{
-		OrgId: c.OrgId,
+		OrgId: c.OrgID,
 	}
 	if err := web.Bind(c.Req, &dto); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
@@ -185,8 +185,8 @@ func (hs *HTTPServer) SearchResources(c *models.ReqContext) response.Response {
 		Page:    int64(page),
 		PerPage: int64(perPage),
 		User: dtos.User{
-			UserId: c.UserId,
-			OrgId:  c.OrgId,
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
 			Role:   dtos.ConvertRoleToString(c.OrgRole),
 		},
 	}
@@ -226,8 +226,8 @@ func (hs *HTTPServer) IsResourceAccessible(c *models.ReqContext) bool {
 	dto := dtos.IsResourceAccessibleMsg{
 		ResourceId: id,
 		User: dtos.User{
-			UserId: c.UserId,
-			OrgId:  c.OrgId,
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
 			Role:   dtos.ConvertRoleToString(c.OrgRole),
 		},
 	}
@@ -296,8 +296,8 @@ func (hs *HTTPServer) AddResourceGroups(c *models.ReqContext) response.Response 
 	dto := dtos.AddGroupResourceMsg{
 		ResourceId: id,
 		User: dtos.User{
-			UserId: c.UserId,
-			OrgId:  c.OrgId,
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
 			Role:   dtos.ConvertRoleToString(c.OrgRole),
 		},
 	}
@@ -336,8 +336,8 @@ func (hs *HTTPServer) GetResourceGroupLeafs(c *models.ReqContext) response.Respo
 		ResourceId: id,
 		Query:      query,
 		User: dtos.User{
-			UserId: c.UserId,
-			OrgId:  c.OrgId,
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
 			Role:   dtos.ConvertRoleToString(c.OrgRole),
 		},
 	}
