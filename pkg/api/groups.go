@@ -11,13 +11,14 @@ import (
 	"github.com/grafana/grafana/pkg/api/response"
 	"github.com/grafana/grafana/pkg/models"
 	"github.com/grafana/grafana/pkg/services/resources"
+	"github.com/grafana/grafana/pkg/services/user"
 	"github.com/grafana/grafana/pkg/web"
 	"golang.org/x/net/context"
 )
 
 func (hs *HTTPServer) CreateGroup(c *models.ReqContext) response.Response {
 	dto := dtos.CreateGroupMsg{
-		OrgId: c.OrgId,
+		OrgId: c.OrgID,
 	}
 	if err := web.Bind(c.Req, &dto); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
@@ -142,8 +143,8 @@ func (hs *HTTPServer) GetGroupById(c *models.ReqContext) response.Response {
 func (hs *HTTPServer) GetGroups(c *models.ReqContext) response.Response {
 	dto := dtos.GetGroupsMsg{
 		User: dtos.User{
-			UserId: c.UserId,
-			OrgId:  c.OrgId,
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
 			Role:   dtos.ConvertRoleToString(c.OrgRole),
 		},
 	}
@@ -180,8 +181,8 @@ func (hs *HTTPServer) GetGroupParent(c *models.ReqContext) response.Response {
 	dto := dtos.GetParentGroupsMsg{
 		GroupId: id,
 		User: dtos.User{
-			UserId: c.UserId,
-			OrgId:  c.OrgId,
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
 			Role:   dtos.ConvertRoleToString(c.OrgRole),
 		},
 	}
@@ -246,8 +247,8 @@ func (hs *HTTPServer) IsGroupAccessible(c *models.ReqContext) bool {
 		return true
 	}
 	user := dtos.User{
-		UserId: c.UserId,
-		OrgId:  c.OrgId,
+		UserId: c.UserID,
+		OrgId:  c.OrgID,
 		Role:   dtos.ConvertRoleToString(c.OrgRole),
 	}
 	return hs.isGroupAccessible(c.Req.Context(), id, user)
@@ -368,8 +369,8 @@ func (hs *HTTPServer) AddGroupUsers(c *models.ReqContext) response.Response {
 	orgUser := dtos.AddGroupUserMsg{
 		GroupId: id,
 		User: dtos.User{
-			UserId: c.UserId,
-			OrgId:  c.OrgId,
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
 			Role:   dtos.ConvertRoleToString(c.OrgRole),
 		},
 	}
@@ -380,8 +381,8 @@ func (hs *HTTPServer) AddGroupUsers(c *models.ReqContext) response.Response {
 	query := models.GetUserProfileQuery{UserId: orgUser.UserId}
 
 	if err := hs.SQLStore.GetUserProfile(c.Req.Context(), &query); err != nil {
-		if errors.Is(err, models.ErrUserNotFound) {
-			return response.Error(404, models.ErrUserNotFound.Error(), nil)
+		if errors.Is(err, user.ErrUserNotFound) {
+			return response.Error(404, user.ErrUserNotFound.Error(), nil)
 		}
 		return response.Error(500, "Failed to get user", err)
 	}

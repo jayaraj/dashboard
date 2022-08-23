@@ -39,7 +39,7 @@ export function buildNavModel(group: Group): NavModelItem {
         url: `org/groups/edit/${group.id}/settings`,
       },
     ],
-  };
+  } as any;
 
   return navModel;
 }
@@ -50,6 +50,8 @@ export function getGroupLoadingNav(pageName: string): NavModel {
     name: 'Loading',
     parent: 0,
     child: false,
+    path: '',
+    level: 0,
     groups: [] as Group[],
   });
 

@@ -24,7 +24,7 @@ type DashboardMeta struct {
 	UpdatedBy                  string                `json:"updatedBy"`
 	CreatedBy                  string                `json:"createdBy"`
 	Version                    int                   `json:"version"`
-	HasAcl                     bool                  `json:"hasAcl"`
+	HasACL                     bool                  `json:"hasAcl" xorm:"has_acl"`
 	IsFolder                   bool                  `json:"isFolder"`
 	FolderId                   int64                 `json:"folderId"`
 	FolderUid                  string                `json:"folderUid"`
@@ -35,6 +35,8 @@ type DashboardMeta struct {
 	AnnotationsPermissions     *AnnotationPermission `json:"annotationsPermissions"`
 	PublicDashboardAccessToken string                `json:"publicDashboardAccessToken"`
 	Sort                       int                   `json:"sort"`
+	PublicDashboardUID         string                `json:"publicDashboardUid"`
+	PublicDashboardEnabled     bool                  `json:"publicDashboardEnabled"`
 }
 type AnnotationPermission struct {
 	Dashboard    AnnotationActions `json:"dashboard"`
