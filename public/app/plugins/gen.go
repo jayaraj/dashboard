@@ -24,6 +24,9 @@ var skipPlugins = map[string]bool{
 	"status-history": true,
 	"table":          true,
 	"timeseries":     true,
+	"dataservice":    true,
+	"groupnavigator": true,
+	"dynamicform":    true,
 	"influxdb":       true, // plugin.json fails validation (defaultMatchFormat)
 	"mixed":          true, // plugin.json fails validation (mixed)
 	"opentsdb":       true, // plugin.json fails validation (defaultMatchFormat)
