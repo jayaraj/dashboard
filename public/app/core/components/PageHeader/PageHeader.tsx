@@ -5,9 +5,11 @@ import { NavModelItem, NavModelBreadcrumb, GrafanaTheme2 } from '@grafana/data';
 import { Tab, TabsBar, Icon, IconName, useStyles2 } from '@grafana/ui';
 import { PanelHeaderMenuItem } from 'app/features/dashboard/dashgrid/PanelHeader/PanelHeaderMenuItem';
 
+import { PageLayoutType } from '../Page/types';
 import { ProBadge } from '../Upgrade/ProBadge';
 
 export interface Props {
+  layout:  PageLayoutType;
   navItem: NavModelItem;
 }
 
@@ -16,9 +18,11 @@ const SelectNav = ({ children, customCss }: { children: NavModelItem[]; customCs
     return null;
   }
 
-  const defaultSelectedItem = children.find((navItem) => {
+  let defaultSelectedItem = children.find((navItem) => {
     return navItem.active === true;
   });
+  defaultSelectedItem = defaultSelectedItem ? defaultSelectedItem : children[0];
+  defaultSelectedItem.active = true;
 
   return (
     <div className={`gf-form-select-wrapper width-20 ${customCss}`}>
@@ -56,7 +60,9 @@ const Navigation = ({ children }: { children: NavModelItem[] }) => {
     <nav>
       <SelectNav customCss="page-header__select-nav">{children}</SelectNav>
       <TabsBar className="page-header__tabs" hideBorder={true}>
-        {children.map((child, index) => {
+        {children
+          .sort((a, b) => ((a.sort ? a.sort : 0) > (b.sort ? b.sort : 0) ? 1 : -1))
+          .map((child, index) => {
           return (
             !child.hideFromTabs && (
               <Tab
@@ -75,7 +81,7 @@ const Navigation = ({ children }: { children: NavModelItem[] }) => {
   );
 };
 
-export const PageHeader: FC<Props> = ({ navItem: model }) => {
+export const PageHeader: FC<Props> = ({ layout, navItem: model }) => {
   const styles = useStyles2(getStyles);
 
   if (!model) {
@@ -86,7 +92,7 @@ export const PageHeader: FC<Props> = ({ navItem: model }) => {
     <div className={styles.headerCanvas}>
       <div className="page-container">
         <div className="page-header">
-          {renderHeaderTitle(model)}
+          {layout !== PageLayoutType.Dashboard &&  renderHeaderTitle(model)}
           {model.children && model.children.length > 0 && <Navigation>{model.children}</Navigation>}
         </div>
       </div>
