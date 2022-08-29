@@ -4,11 +4,10 @@ import React, { FC, ReactNode } from 'react';
 import { GrafanaTheme2 } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 
-import { Link } from '..';
+import { ToolbarButtonRow } from '..';
 import { useStyles2 } from '../../themes/ThemeContext';
 import { getFocusStyles } from '../../themes/mixins';
 import { IconName } from '../../types';
-import { Icon } from '../Icon/Icon';
 import { IconButton } from '../IconButton/IconButton';
 
 export interface Props {
@@ -60,21 +59,9 @@ export const PageToolbar: FC<Props> = React.memo(
       className
     );
 
-    const titleEl = (
-      <>
-        <span className={styles.noLinkTitle}>{title}</span>
-        {section && <span className={styles.pre}> / {section}</span>}
-      </>
-    );
-
     return (
       <nav className={mainStyle} aria-label={ariaLabel}>
         <div className={styles.leftWrapper}>
-          {pageIcon && !onGoBack && (
-            <div className={styles.pageIcon}>
-              <Icon name={pageIcon} size="lg" aria-hidden />
-            </div>
-          )}
           {onGoBack && (
             <div className={styles.pageIcon}>
               <IconButton
@@ -88,40 +75,10 @@ export const PageToolbar: FC<Props> = React.memo(
             </div>
           )}
           <nav aria-label="Search links" className={styles.navElement}>
-            {parent && parentHref && (
-              <>
-                <Link
-                  aria-label={`Search dashboard in the ${parent} folder`}
-                  className={cx(styles.titleText, styles.parentLink, styles.titleLink)}
-                  href={parentHref}
-                >
-                  {parent} <span className={styles.parentIcon}></span>
-                </Link>
-                {titleHref && (
-                  <span className={cx(styles.titleText, styles.titleDivider, styles.parentLink)} aria-hidden>
-                    /
-                  </span>
-                )}
-              </>
-            )}
-
             {(title || leftItems?.length) && (
               <div className={styles.titleWrapper}>
-                {title && (
-                  <h1 className={styles.h1Styles}>
-                    {titleHref ? (
-                      <Link
-                        aria-label="Search dashboard by name"
-                        className={cx(styles.titleText, styles.titleLink)}
-                        href={titleHref}
-                      >
-                        {titleEl}
-                      </Link>
-                    ) : (
-                      <div className={styles.titleText}>{titleEl}</div>
-                    )}
-                  </h1>
-                )}
+                {parent && parent !== 'General' && <h1 className={styles.titleText}>{parent}/</h1>}
+                {title && <h1 className={styles.titleText}>{title}</h1>}
 
                 {leftItems?.map((child, index) => (
                   <div className={styles.leftActionItem} key={index}>
@@ -132,15 +89,7 @@ export const PageToolbar: FC<Props> = React.memo(
             )}
           </nav>
         </div>
-        {React.Children.toArray(children)
-          .filter(Boolean)
-          .map((child, index) => {
-            return (
-              <div className={styles.actionWrapper} key={index}>
-                {child}
-              </div>
-            );
-          })}
+        <ToolbarButtonRow alignment="right">{React.Children.toArray(children).filter(Boolean)}</ToolbarButtonRow>
       </nav>
     );
   }
@@ -161,14 +110,13 @@ const getStyles = (theme: GrafanaTheme2) => {
       align-items: center;
       background: ${theme.colors.background.canvas};
       display: flex;
-      flex-wrap: wrap;
-      justify-content: flex-end;
+      gap: ${theme.spacing(2)};
+      justify-content: space-between;
       padding: ${theme.spacing(1.5, 2)};
     `,
     leftWrapper: css`
       display: flex;
       flex-wrap: nowrap;
-      flex-grow: 1;
     `,
     pageIcon: css`
       display: none;
@@ -190,7 +138,6 @@ const getStyles = (theme: GrafanaTheme2) => {
     `,
     navElement: css`
       display: flex;
-      flex-grow: 1;
       align-items: center;
       max-width: calc(100vw - 78px);
     `,
@@ -223,9 +170,6 @@ const getStyles = (theme: GrafanaTheme2) => {
       ${theme.breakpoints.up('md')} {
         display: unset;
       }
-    `,
-    actionWrapper: css`
-      padding: ${spacing(0.5, 0, 0.5, 1)};
     `,
     leftActionItem: css`
       display: none;

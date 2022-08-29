@@ -38,7 +38,7 @@ export const OldPage: PageType = ({
       {layout === PageLayoutType.Default && (
         <CustomScrollbar autoHeightMin={'100%'} scrollTop={scrollTop} scrollRefCallback={scrollRef}>
           <div className="page-scrollbar-content">
-            {pageHeaderNav && <PageHeader navItem={pageHeaderNav} />}
+            {pageHeaderNav && <PageHeader navItem={pageHeaderNav}  layout={PageLayoutType.Default} />}
             {children}
           </div>
         </CustomScrollbar>
@@ -48,7 +48,10 @@ export const OldPage: PageType = ({
           {toolbar}
           <div className={styles.scrollWrapper}>
             <CustomScrollbar autoHeightMin={'100%'} scrollTop={scrollTop} scrollRefCallback={scrollRef}>
-              <div className={cx(styles.content, !toolbar && styles.contentWithoutToolbar)}>{children}</div>
+              <div className={cx(styles.content, !toolbar && styles.contentWithoutToolbar)}>
+                {pageHeaderNav && <PageHeader navItem={pageHeaderNav}  layout={PageLayoutType.Dashboard} />}
+                {children}
+              </div>
             </CustomScrollbar>
           </div>
         </>

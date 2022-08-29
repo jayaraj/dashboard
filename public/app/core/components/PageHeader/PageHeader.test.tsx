@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 
 import { PageHeader } from './PageHeader';
+import { PageLayoutType } from '../Page/types';
 
 describe('PageHeader', () => {
   describe('when the nav tree has a node with a title', () => {
@@ -14,7 +15,7 @@ describe('PageHeader', () => {
         text: 'node',
       };
 
-      render(<PageHeader navItem={nav as any} />);
+      render(<PageHeader navItem={nav as any} layout={PageLayoutType.Default} />);
 
       expect(screen.getByRole('heading', { name: 'node' })).toBeInTheDocument();
     });
@@ -31,7 +32,7 @@ describe('PageHeader', () => {
         breadcrumbs: [{ title: 'Parent', url: 'parentUrl' }],
       };
 
-      render(<PageHeader navItem={nav as any} />);
+      render(<PageHeader navItem={nav as any} layout={PageLayoutType.Default} />);
 
       expect(screen.getByRole('heading', { name: 'Parent / child' })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: 'Parent' })).toBeInTheDocument();
