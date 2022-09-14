@@ -93,13 +93,14 @@ export const FormPanel: React.FC<Props> = ({
     });
 
     const resource = replaceVariables('${resource}');
+    const group = replaceVariables('${grp}');
     const payload = JSON.parse(replaceVariables(JSON.stringify(body)));
 
     /**
      * Fetch
      */
     const response = await getBackendSrv()
-      .put(`/api/resources/${resource}/configurations/${options.configuration}`, { configuration: payload })
+      .put(`/api/resources/${resource}/configurations/${options.configuration}`, { group_id: Number(group), configuration: payload })
       .catch((error: Error) => {
         console.error(error);
         setError(error.toString());
