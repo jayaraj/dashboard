@@ -19,7 +19,7 @@ export function usePageTitle(navModel?: NavModel, pageNav?: NavModelItem) {
     }
 
     if (navModel) {
-      if (navModel.node !== navModel.main) {
+      if (navModel.node !== undefined && navModel.node !== navModel.main) {
         parts.push(navModel.node.text);
       }
       parts.push(navModel.main.text);
