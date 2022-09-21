@@ -24,6 +24,7 @@ func (hs *HTTPServer) UpdateResourceConfiguration(c *models.ReqContext) response
 	}
 	config := web.Params(c.Req)[":config"]
 	dto := dtos.UpdateResourceConfigurationMsg{
+		OrgId:      c.OrgID,
 		ResourceId: id,
 		Type:       config,
 	}
@@ -57,12 +58,15 @@ func (hs *HTTPServer) GetResourceConfiguration(c *models.ReqContext) response.Re
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
+
+	groupId := c.QueryInt("group_id")
+
 	if id != 0 && !hs.IsResourceAccessible(c) {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	config := web.Params(c.Req)[":config"]
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resourceconfigurations?resource_id=%d&type=%s", id, config),
+		Url:        fmt.Sprintf("api/resourceconfigurations?org_id=%d&group_id=%d&resource_id=%d&type=%s", c.OrgID, groupId, id, config),
 		Request:    nil,
 		HttpMethod: http.MethodGet,
 	}
@@ -76,14 +80,6 @@ func (hs *HTTPServer) GetResourceConfiguration(c *models.ReqContext) response.Re
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
-	dto := dtos.GetResourceConfigurationMsg{}
-	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
-	}
 
-	resp, err := json.Marshal(dto.Result)
-	if err != nil {
-		return response.Error(http.StatusInternalServerError, "response marshall failed", err)
-	}
-	return response.JSON(http.StatusOK, resp)
+	return response.JSON(http.StatusOK, req.Response)
 }
