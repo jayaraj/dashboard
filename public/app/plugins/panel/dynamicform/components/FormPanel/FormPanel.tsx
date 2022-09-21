@@ -127,12 +127,13 @@ export const FormPanel: React.FC<Props> = ({
    */
   const initialRequest = async () => {
     const resource = replaceVariables('${resource}');
+    const group = replaceVariables('${grp}');
 
     /**
      * Fetch
      */
     const response = await getBackendSrv().get(
-      `/api/resources/${resource}/configurations/${options.configuration}`,
+      `/api/resources/${resource}/configurations/${options.configuration}?group_id=${group}`,
       {}
     );
 
