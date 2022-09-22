@@ -16,6 +16,7 @@ export function uiSegmentSrv(this: any, $sce: any, templateSrv: any) {
     fake?: boolean;
     custom?: boolean;
     selectMode?: any;
+    data?: any;
 
     constructor(options: any) {
       if (options === '*' || options.value === '*') {
@@ -42,6 +43,7 @@ export function uiSegmentSrv(this: any, $sce: any, templateSrv: any) {
       this.value = options.value;
       this.selectMode = options.selectMode;
       this.expandable = options.expandable;
+      this.data = options.data;
       this.html = options.html || $sce.trustAsHtml(templateSrv.highlightVariablesAsHtml(this.value));
     }
   }
