@@ -50,6 +50,7 @@ export function metricSegment($compile: any, $sce: any, templateSrv: TemplateSrv
             segment.value = selected.value;
             segment.html = selected.html || $sce.trustAsHtml(templateSrv.highlightVariablesAsHtml(selected.value));
             segment.fake = false;
+            segment.data = selected.data;
             segment.expandable = selected.expandable;
 
             if (selected.type) {
