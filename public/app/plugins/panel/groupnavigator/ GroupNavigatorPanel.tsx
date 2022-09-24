@@ -3,7 +3,7 @@ import Tree, { TreeNode } from 'rc-tree';
 import React, { useEffect, useState } from 'react';
 
 import { PanelProps } from '@grafana/data';
-import { getBackendSrv, locationService } from '@grafana/runtime';
+import { getBackendSrv, locationService, RefreshEvent } from '@grafana/runtime';
 import { useTheme, Spinner, CustomScrollbar } from '@grafana/ui';
 import { Group } from 'app/types';
 
@@ -60,6 +60,7 @@ export const GroupNavigatorPanel: React.FC<Props> = ({ height, eventBus }) => {
       query = { ...query, [`var-grp`]: undefined };
     }
     updateLocation(query);
+    eventBus.publish(new RefreshEvent());
   };
 
   const getGroupLevels = (group: Group) => {
