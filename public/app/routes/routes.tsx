@@ -43,7 +43,7 @@ export function getAppRoutes(): RouteDescriptor[] {
     {
       path: '/goto/slug/:slug',
       pageClass: 'page-dashboard',
-      routeName: DashboardRoutes.Path,
+      routeName: DashboardRoutes.Custom,
       component: SafeDynamicImport(
         () => import(/* webpackChunkName: "DashboardPage" */ '../features/dashboard/containers/DashboardPage')
       ),
