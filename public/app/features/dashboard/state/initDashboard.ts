@@ -64,6 +64,11 @@ async function fetchDashboard(
         dashDTO.meta.canStar = false;
         return dashDTO;
       }
+      case DashboardRoutes.Custom: {
+        const newUrl = locationUtil.stripBaseFromUrl(locationService.getLocation().pathname);
+        locationService.replace(newUrl + locationService.getLocation().search);
+        return null;
+      }
       case DashboardRoutes.Public: {
         return await dashboardLoaderSrv.loadDashboard('public', args.urlSlug, args.accessToken);
       }
