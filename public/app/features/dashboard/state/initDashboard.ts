@@ -65,8 +65,21 @@ async function fetchDashboard(
         return dashDTO;
       }
       case DashboardRoutes.Custom: {
-        const newUrl = locationUtil.stripBaseFromUrl(locationService.getLocation().pathname);
-        locationService.replace(newUrl + locationService.getLocation().search);
+        const dashUrl = await backendSrv.get(`/api/dashboards/slug/${args.urlSlug}`).catch(() => {
+          return {
+            meta: {
+              canStar: false,
+              isSnapshot: false,
+              canDelete: false,
+              canSave: false,
+              canEdit: false,
+              dashboardNotFound: true,
+            },
+            dashboard: { title: 'dashboard not found' },
+          };
+        });
+        const dashboardUrl = locationUtil.stripBaseFromUrl(dashUrl.url);
+        locationService.replace(dashboardUrl);
         return null;
       }
       case DashboardRoutes.Public: {

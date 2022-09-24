@@ -81,6 +81,45 @@ func (hs *HTTPServer) TrimDashboard(c *models.ReqContext) response.Response {
 	return response.JSON(http.StatusOK, dto)
 }
 
+func (hs *HTTPServer) GetDashboardUrlFromSlug(c *models.ReqContext) response.Response {
+	slug := web.Params(c.Req)[":slug"]
+
+	query := models.GetDashboardsBySlugQuery{OrgId: c.OrgID, Slug: slug}
+	err := hs.SQLStore.GetDashboardsBySlug(c.Req.Context(), &query)
+	if err != nil {
+		hs.log.Error("Failed to get slug from database", "err", err)
+		return response.JSON(404, util.DynMap{"status": "not-found", "message": err.Error()})
+	}
+	if len(query.Result) == 0 {
+		hs.log.Error("Failed to get folder from database", "err", err)
+		return response.JSON(412, util.DynMap{"status": "unique-slugs-does-not-exists"})
+	}
+
+	var hit *models.Dashboard
+	for i := range query.Result {
+		if i == 0 {
+			hit = query.Result[i]
+		} else {
+			if hit.Sort > query.Result[i].Sort {
+				hit = query.Result[i]
+			}
+		}
+	}
+	url := fmt.Sprintf("%sd/%s/%s?folderId=%d", setting.AppUrl, hit.Uid, hit.Slug, hit.FolderId)
+
+	for k, v := range c.Req.URL.Query() {
+		if len(v) == 0 {
+			continue
+		}
+		url = fmt.Sprintf("%s&%s=%s", url, k, v[0])
+	}
+	return response.JSON(http.StatusOK, struct {
+		Url string `json:"url"`
+	}{
+		Url: url,
+	})
+}
+
 // swagger:route GET /dashboards/uid/{uid} dashboards getDashboardByUID
 //
 // Get dashboard by uid.
@@ -954,41 +993,6 @@ func (hs *HTTPServer) GetDashboardUIDs(c *models.ReqContext) {
 		uids = append(uids, q.Result.Uid)
 	}
 	c.JSON(http.StatusOK, uids)
-}
-
-func (hs *HTTPServer) redirectFromSlug(c *models.ReqContext) {
-	slug := web.Params(c.Req)[":slug"]
-
-	query := models.GetDashboardsBySlugQuery{OrgId: c.OrgID, Slug: slug}
-	err := hs.SQLStore.GetDashboardsBySlug(c.Req.Context(), &query)
-	if err != nil {
-		hs.log.Error("Failed to get slug from database", "err", err)
-		return
-	}
-	if len(query.Result) == 0 {
-		hs.log.Error("Failed to get folder from database", "err", err)
-		return
-	}
-
-	var hit *models.Dashboard
-	for i := range query.Result {
-		if i == 0 {
-			hit = query.Result[i]
-		} else {
-			if hit.Sort > query.Result[i].Sort {
-				hit = query.Result[i]
-			}
-		}
-	}
-	url := fmt.Sprintf("%sd/%s/%s?folderId=%d", setting.AppUrl, hit.Uid, hit.Slug, hit.FolderId)
-
-	for k, v := range c.Req.URL.Query() {
-		if len(v) == 0 {
-			continue
-		}
-		url = fmt.Sprintf("%s&%s=%s", url, k, v[0])
-	}
-	c.Redirect(url, 302)
 }
 
 // swagger:parameters renderReportPDF
