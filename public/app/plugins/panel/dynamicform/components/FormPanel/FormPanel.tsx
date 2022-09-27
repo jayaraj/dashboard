@@ -1,10 +1,12 @@
 import { css, cx } from '@emotion/css';
+import { debounce } from 'lodash';
 import React, { useEffect, useState } from 'react';
 
 import { PanelProps, dateMath } from '@grafana/data';
 import { getTemplateSrv, locationService, RefreshEvent, getBackendSrv } from '@grafana/runtime';
 import { Alert, Button, ButtonGroup, ConfirmModal, FieldSet, useTheme2 } from '@grafana/ui';
 import { contextSrv } from 'app/core/services/context_srv';
+import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { AccessControlAction } from 'app/types';
 
 import { ButtonVariant, LayoutVariant } from '../../constants';
@@ -36,6 +38,8 @@ export const FormPanel: React.FC<Props> = ({
   const [updateConfirmation, setUpdateConfirmation] = useState(false);
   const [updated, setUpdated] = useState(false);
   const canWrite = contextSrv.hasAccess(AccessControlAction.ActionResourcesWrite, contextSrv.hasRole('Editor'));
+  const dashboard = getDashboardSrv().getCurrent();
+  const refresh = debounce(() => dashboard?.startRefresh(), 500);
 
   /**
    * Theme and Styles
@@ -119,6 +123,8 @@ export const FormPanel: React.FC<Props> = ({
     if (options.customcode) {
       executeCustomCode(options.update.code, response);
     }
+    setUpdated(false);
+    refresh();
     setLoading(false);
   };
 
@@ -164,6 +170,7 @@ export const FormPanel: React.FC<Props> = ({
       executeCustomCode(options.initial.code, response);
     }
     setLoading(false);
+    setUpdated(true);
   };
 
   /**
@@ -187,19 +194,6 @@ export const FormPanel: React.FC<Props> = ({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  /**
-   * Check updated values
-   */
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    setUpdated(false);
-    options.elements?.map((element) => {
-      if (element.value !== initial[element.id]) {
-        setUpdated(true);
-      }
-    });
-  });
 
   /**
    * Check Form Elements

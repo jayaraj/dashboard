@@ -3,16 +3,17 @@ import Tree, { TreeNode } from 'rc-tree';
 import React, { useEffect, useState } from 'react';
 
 import { PanelProps } from '@grafana/data';
-import { getBackendSrv, locationService, RefreshEvent } from '@grafana/runtime';
+import { getBackendSrv, locationService } from '@grafana/runtime';
 import { useTheme, Spinner, CustomScrollbar } from '@grafana/ui';
 import { Group } from 'app/types';
 
 import { ActionRow } from './ActionRow';
 import { getStyles, GroupNavigatorOptions, TreeState } from './types';
 import './assets/index.css';
+import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 
 interface Props extends PanelProps<GroupNavigatorOptions> {}
-export const GroupNavigatorPanel: React.FC<Props> = ({ height, eventBus }) => {
+export const GroupNavigatorPanel: React.FC<Props> = ({ height }) => {
   const [loading, setLoading] = useState(true);
   const [treeState, setTreeState] = useState(TreeState.Collapsed);
   const [expanded, setExpanded] = useState(false);
@@ -20,7 +21,9 @@ export const GroupNavigatorPanel: React.FC<Props> = ({ height, eventBus }) => {
   const theme = useTheme();
   const styles = getStyles(height, theme);
   const ht = height - 80 + 'px';
-  const updateLocation = debounce((query) => locationService.partial(query), 300);
+  const dashboard = getDashboardSrv().getCurrent();
+  const refresh = debounce(() => dashboard?.startRefresh(), 1000);
+  const updateLocation = debounce((query) => locationService.partial(query), 100);
 
   const loop = (groups: Group[]) =>
     groups.map((group) => {
@@ -60,7 +63,7 @@ export const GroupNavigatorPanel: React.FC<Props> = ({ height, eventBus }) => {
       query = { ...query, [`var-grp`]: undefined };
     }
     updateLocation(query);
-    eventBus.publish(new RefreshEvent());
+    refresh();
   };
 
   const getGroupLevels = (group: Group) => {

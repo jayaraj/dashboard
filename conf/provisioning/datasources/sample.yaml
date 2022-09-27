@@ -17,8 +17,11 @@ datasources:
   type: influxdb
   access: proxy
   url: ${INFLUXDB_URL}
-  password: ${INFLUXDB_PWD}
-  user: ${INFLUXDB_USER}
-  database: "dashboard"
-  version: 2
+  secureJsonData:
+    httpHeaderValue1: ${INFLUXDB_PWD}
+  jsonData:
+      version: Flux
+      organization: nxtthinq
+      defaultBucket: dashboard
+      tlsSkipVerify: true
   editable: false
