@@ -9,7 +9,7 @@ import { deleteResource, loadResources } from './state/actions';
 import { setResourcePage, setResourceSearchQuery } from './state/reducers';
 import { getResourcesCount, getResourcesPage, getResourceSearchQuery, getGroupId } from './state/selectors';
 
-const pageLimit = 1;
+const pageLimit = 10;
 
 function mapStateToProps(state: StoreState) {
   return {
