@@ -26,9 +26,9 @@ export const GroupSettings: FC<Props> = ({ group, updateGroup }) => {
   return (
     <VerticalGroup>
       <Form
-        defaultValues={{ name: group.name }}
-        onSubmit={(formgroup: { name: string }) => {
-          updateGroup(formgroup.name);
+        defaultValues={{ name: group.name, type: group.type }}
+        onSubmit={(formgroup: { name: string, type: string }) => {
+          updateGroup(formgroup.name, formgroup.type);
         }}
         disabled={!canWrite}
       >
@@ -36,6 +36,9 @@ export const GroupSettings: FC<Props> = ({ group, updateGroup }) => {
           <FieldSet label={label}>
             <Field label="Name" disabled={!canWrite}>
               <Input {...register('name', { required: true })} id="group-name" width={60} />
+            </Field>
+            <Field label="Type" disabled={!canWrite}>
+              <Input {...register('type', { required: true })} id="group-type" width={60} />
             </Field>
             <Button type="submit" disabled={!canWrite}>
               Update
