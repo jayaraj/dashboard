@@ -16,11 +16,12 @@ export interface Props {
 
 interface GroupDTO {
   name: string;
+  type: string;
 }
 
 export class CreateGroup extends PureComponent<Props> {
   create = async (formModel: GroupDTO) => {
-    const result = await getBackendSrv().post('/api/groups', { name: formModel.name, parent: this.props.parent });
+    const result = await getBackendSrv().post('/api/groups', { name: formModel.name, type: formModel.type, parent: this.props.parent });
     if (result.id) {
       if (this.props.parent) {
         locationService.push(`/org/groups/edit/${this.props.parent}/children`);
@@ -40,6 +41,9 @@ export class CreateGroup extends PureComponent<Props> {
               <FieldSet label="New Group">
                 <Field label="Name" required invalid={!!errors.name} error="Name is required">
                   <Input {...register('name', { required: true })} id="group-name" width={60} />
+                </Field>
+                <Field label="Type" required invalid={!!errors.type} error="Type is required">
+                  <Input {...register('type', { required: true })} id="group-type" width={60} />
                 </Field>
                 <div className="gf-form-button-row">
                   <Button type="submit" variant="primary">
