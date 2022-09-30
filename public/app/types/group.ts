@@ -2,6 +2,7 @@ export interface Group {
   id: number;
   name: string;
   path: string;
+  type: string;
   level: number;
   parent: number;
   child: boolean;

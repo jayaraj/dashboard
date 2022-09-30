@@ -33,11 +33,12 @@ export function loadGroup(id: number): ThunkResult<void> {
   };
 }
 
-export function updateGroup(name: string): ThunkResult<void> {
+export function updateGroup(name: string, type: string): ThunkResult<void> {
   return async (dispatch, getStore) => {
     const group = getStore().group.group;
     await getBackendSrv().put(`/api/groups/${group.id}`, {
       name,
+      type,
     });
     dispatch(loadGroup(group.id));
   };

@@ -51,6 +51,7 @@ export function getGroupLoadingNav(pageName: string): NavModel {
     parent: 0,
     child: false,
     path: '',
+    type: '',
     level: 0,
     groups: [] as Group[],
   });
