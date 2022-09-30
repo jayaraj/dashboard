@@ -62,6 +62,9 @@ export class ChildrenList extends PureComponent<Props, State> {
           <a href={groupUrl}>{group.name}</a>
         </td>
         <td className="link-td">
+          <a href={groupUrl}>{group.type}</a>
+        </td>
+        <td className="link-td">
           <a href={groupUrl}>{group.path}</a>
         </td>
         <td className="text-right">
@@ -94,6 +97,7 @@ export class ChildrenList extends PureComponent<Props, State> {
               <thead>
                 <tr>
                   <th>Name</th>
+                  <th>Type</th>
                   <th>Path</th>
                   <th style={{ width: '1%' }} />
                 </tr>

@@ -26,6 +26,7 @@ type Group struct {
 	Id        int64     `json:"id"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Name      string    `json:"name"`
+	Type      string    `json:"type"`
 	Path      string    `json:"path"`
 	OrgId     int64     `json:"org_id"`
 	Parent    *int64    `json:"parent,omitempty"`
@@ -48,6 +49,7 @@ type AddGroupResourceMsg struct {
 
 type CreateGroupMsg struct {
 	Name   string `json:"name" binding:"required"`
+	Type   string `json:"type"`
 	OrgId  int64  `json:"org_id"`
 	Parent *int64 `json:"parent,omitempty"`
 	Result Group  `json:"-"`
@@ -56,6 +58,7 @@ type CreateGroupMsg struct {
 type UpdateGroupMsg struct {
 	Id   int64  `json:"-"`
 	Name string `json:"name" binding:"required"`
+	Type string `json:"type"`
 }
 
 type GetGroupByIdMsg struct {
