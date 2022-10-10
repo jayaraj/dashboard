@@ -55,8 +55,8 @@ export class DataserviceDatasource extends DataSourceApi<DataserviceQuery, Datas
       : this.convertRole(this.context.user.orgRole);
     query.intervalms = options.intervalMs;
     query.range = {
-      from: dateMath.parse(options.rangeRaw.from, false, options.timezone),
-      to: dateMath.parse(options.rangeRaw.to, true, options.timezone),
+      from: dateMath.parse(options.rangeRaw.from, false, options.timezone)!.format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+      to: dateMath.parse(options.rangeRaw.to, false, options.timezone)!.format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
       raw: {
         from: options.range.from.valueOf(),
         to: options.range.to.valueOf(),
