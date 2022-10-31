@@ -1,11 +1,18 @@
-import { NavModelItem, NavModel } from '@grafana/data';
+import { NavModelItem, NavModel, UrlQueryMap } from '@grafana/data';
 import { DashboardNav } from 'app/types';
 
-export function buildNavModel(id: string, folderId: number, results: DashboardNav[]): NavModelItem {
+export function buildNavModel(id: string, queryMap: UrlQueryMap, results: DashboardNav[]): NavModelItem {
+  const folderId: number = queryMap.folderId ? Number(queryMap.folderId) : Number(0);
   let children: NavModelItem[] = [];
+  let variables = ``;
+  for (var key of Object.keys(queryMap)) {
+    if (key.lastIndexOf('var-', 0) === 0) {
+      variables = variables + `&${key}=${queryMap[key]}`
+    }
+  }
   children = results.map((result) => {
     const slug = result.title ? result.title.toLowerCase() : '';
-    const query = `?folderId=${folderId}`;
+    const query = `?folderId=${folderId}` + variables;
     const item: NavModelItem = {
       id: slug,
       text: result.title ? result.title : 'Loading',
@@ -23,8 +30,8 @@ export function buildNavModel(id: string, folderId: number, results: DashboardNa
   return navModel;
 }
 
-export function getDashboardNav(id: string, folderId: number, results: DashboardNav[]): NavModel {
-  let main = buildNavModel(id, folderId, results);
+export function getDashboardNav(id: string, queryMap: UrlQueryMap, results: DashboardNav[]): NavModel {
+  let main = buildNavModel(id, queryMap, results);
   let node: NavModelItem;
 
   for (const child of main.children!) {

@@ -62,8 +62,8 @@ export interface CustomProps
   extends GrafanaRouteComponentProps<DashboardPageRouteParams, DashboardPageRouteSearchParams> {}
 
 export const mapStateToProps = (state: StoreState, props: CustomProps) => {
-  const folderId = props.queryParams.folderId ? parseInt(props.queryParams.folderId, 10) : 0;
-  const loadingNav = getDashboardNav(`${props.match.params.slug}`, folderId, state.dashboardNavs.dashboardNavs);
+  const queryMap = props.queryParams;
+  const loadingNav = getDashboardNav(`${props.match.params.slug}`, props.queryParams, state.dashboardNavs.dashboardNavs);
   const navModel = getNavModel(state.navIndex, `${props.match.params.slug}`, loadingNav);
  
   return {
@@ -71,7 +71,7 @@ export const mapStateToProps = (state: StoreState, props: CustomProps) => {
     initError: state.dashboard.initError,
     dashboard: state.dashboard.getModel(),
     navIndex: state.navIndex,
-    folderId,
+    queryMap,
     navModel: navModel,
   };
 };
@@ -136,9 +136,9 @@ export class UnthemedDashboardPage extends PureComponent<Props, State> {
   }
 
   initDashboard() {
-    const { dashboard, isPublic, match, queryParams, loadDashboards, folderId } = this.props;
+    const { dashboard, isPublic, match, queryParams, loadDashboards, queryMap } = this.props;
 
-    loadDashboards(folderId);
+    loadDashboards(queryMap);
 
     if (dashboard) {
       this.closeDashboard();

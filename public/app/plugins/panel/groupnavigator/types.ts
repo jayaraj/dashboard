@@ -3,9 +3,13 @@ import { css } from '@emotion/css';
 import { GrafanaTheme } from '@grafana/data';
 import { stylesFactory } from '@grafana/ui';
 
-export interface GroupNavigatorOptions {}
+export interface GroupNavigatorOptions {
+  label: string;
+}
 
-export const defaults: GroupNavigatorOptions = {};
+export const defaults: GroupNavigatorOptions = {
+  label: '',
+};
 
 export enum TreeState {
   Expanded = 'expanded',
