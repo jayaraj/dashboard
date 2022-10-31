@@ -21,7 +21,7 @@ datasources:
     token: ${INFLUXDB_PWD}
   jsonData:
       version: Flux
-      organization: nxtthinq
+      organization: ${INFLUXDB_ORG}
       defaultBucket: dashboard
       tlsSkipVerify: true
   editable: false

@@ -13,7 +13,7 @@ import './assets/index.css';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 
 interface Props extends PanelProps<GroupNavigatorOptions> {}
-export const GroupNavigatorPanel: React.FC<Props> = ({ height }) => {
+export const GroupNavigatorPanel: React.FC<Props> = ({ height, options }) => {
   const [loading, setLoading] = useState(true);
   const [treeState, setTreeState] = useState(TreeState.Collapsed);
   const [expanded, setExpanded] = useState(false);
@@ -40,7 +40,10 @@ export const GroupNavigatorPanel: React.FC<Props> = ({ height }) => {
   const initialRequest = async () => {
     setLoading(true);
     const response = await getBackendSrv().get('/api/groups', {});
-    setGroupsState(response.groups);
+    const groups = response.groups.filter(function(group: Group){
+      return (options.label === '' || group.type === options.label)
+      })
+    setGroupsState(groups);
     setLoading(false);
   };
 
