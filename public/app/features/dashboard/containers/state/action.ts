@@ -1,3 +1,4 @@
+import { UrlQueryMap } from '@grafana/data';
 import { updateNavIndex } from 'app/core/actions';
 import { SearchSrv } from 'app/core/services/search_srv';
 import { DashboardNav, ThunkResult } from 'app/types';
@@ -6,7 +7,8 @@ import { buildNavModel } from './navModel';
 import { dashboardNavsLoaded } from './reducers';
 
 const searchSrv = new SearchSrv();
-export function loadDashboards(folderId: number): ThunkResult<void> {
+export function loadDashboards(queryMap: UrlQueryMap,): ThunkResult<void> {
+  const folderId: number = queryMap.folderId ? Number(queryMap.folderId) : Number(0);
   let folderIds: number[] = [folderId];
   return async (dispatch) => {
     const skipRecent = true;
@@ -29,6 +31,6 @@ export function loadDashboards(folderId: number): ThunkResult<void> {
       return dashNavs;
     });
     dispatch(dashboardNavsLoaded(response));
-    dispatch(updateNavIndex(buildNavModel('', folderId, response)));
+    dispatch(updateNavIndex(buildNavModel('', queryMap, response)));
   };
 }
