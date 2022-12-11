@@ -1314,7 +1314,7 @@ For more information about Grafana Reserved Labels, refer to [Labels in Grafana 
 
 Comma-separated list of reserved labels added by the Grafana Alerting engine that should be disabled.
 
-For example: `disabled_labels=grafana_folder`
+For example: `disabled_labels=dashboard_folder`
 
 <hr>
 

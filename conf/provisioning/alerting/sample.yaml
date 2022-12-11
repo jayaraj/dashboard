@@ -111,7 +111,7 @@ apiVersion: 1
 #     #        a very low alert volume or your upstream notification system performs
 #     #        its own grouping.
 #     group_by:
-#     - grafana_folder
+#     - dashboard_folder
 #     - alertname
 #     # <list> a list of matchers that an alert has to fulfill to match the node
 #     matchers:

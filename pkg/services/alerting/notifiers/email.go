@@ -97,6 +97,7 @@ func (en *EmailNotifier) Notify(evalContext *alerting.EvalContext) error {
 				"EmbeddedImage": "",
 				"AlertPageUrl":  setting.AppUrl + "alerting",
 				"EvalMatches":   evalContext.EvalMatches,
+				"AppName":       setting.ApplicationName,
 			},
 			To:            en.Addresses,
 			SingleEmail:   en.SingleEmail,

@@ -426,7 +426,7 @@ func (hs *HTTPServer) addProfile(navTree []*dtos.NavLink, c *models.ReqContext) 
 
 func (hs *HTTPServer) addHelpLinks(navTree []*dtos.NavLink, c *models.ReqContext) []*dtos.NavLink {
 	if setting.HelpEnabled {
-		helpVersion := fmt.Sprintf(`%s v%s (%s)`, setting.ApplicationName, setting.BuildVersion, setting.BuildCommit)
+		helpVersion := fmt.Sprintf(`%s v%s`, setting.ApplicationName, setting.BuildVersion)
 		if hs.Cfg.AnonymousHideVersion && !c.IsSignedIn {
 			helpVersion = setting.ApplicationName
 		}

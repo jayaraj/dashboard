@@ -38,4 +38,4 @@ Annotations:
 Go to the Alerts page:
 {{.AlertPageUrl}}
 
-Sent by Dashboard v{{.BuildVersion}} (c) 2022 Dashboard
+Sent by {{.AppName}} (c) 2022 Dashboard
