@@ -9,4 +9,4 @@ below your username.
 Log in now:
 {{.AppUrl}}
 
-Sent by Dashboard v{{.BuildVersion}}
+Sent by {{.AppName}}

@@ -8,4 +8,4 @@ directly:
 
 {{.LinkUrl}}
 
-Sent by Dashboard v{{.BuildVersion}} (c) 2022
+Sent by {{.AppName}}
