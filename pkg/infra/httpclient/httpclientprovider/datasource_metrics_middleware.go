@@ -25,7 +25,7 @@ var (
 		prometheus.HistogramOpts{
 			Namespace: "grafana",
 			Name:      "datasource_request_duration_seconds",
-			Help:      "histogram of durations of outgoing data source requests sent from Grafana",
+			Help:      "histogram of durations of outgoing data source requests sent from Dashboard",
 			Buckets:   []float64{.005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10, 25, 50, 100},
 		}, []string{"datasource", "code", "method"},
 	)
@@ -34,7 +34,7 @@ var (
 		prometheus.HistogramOpts{
 			Namespace: "grafana",
 			Name:      "datasource_response_size_bytes",
-			Help:      "histogram of data source response sizes returned to Grafana",
+			Help:      "histogram of data source response sizes returned to Dashboard",
 			Buckets:   []float64{128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576},
 		}, []string{"datasource"},
 	)
@@ -43,7 +43,7 @@ var (
 		prometheus.GaugeOpts{
 			Namespace: "grafana",
 			Name:      "datasource_request_in_flight",
-			Help:      "A gauge of outgoing data source requests currently being sent by Grafana",
+			Help:      "A gauge of outgoing data source requests currently being sent by Dashboard",
 		},
 		[]string{"datasource"},
 	)

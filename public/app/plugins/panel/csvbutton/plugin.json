@@ -1,0 +1,17 @@
+{
+  "type": "panel",
+  "name": "CSV Download Button",
+  "id": "csvbutton",
+
+  "info": {
+    "description": "CSV button to download Table data",
+    "author": {
+      "name": "CSV Button",
+      "url": "https://www.nxtthinq.com"
+    },
+    "logos": {
+      "small": "img/icn-csvbutton-panel.svg",
+      "large": "img/icn-csvbutton-panel.svg"
+    }
+  }
+}

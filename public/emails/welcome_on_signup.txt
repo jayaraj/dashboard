@@ -8,4 +8,4 @@ Thank you for joining our community.
 
 The Dashboard team
 
-Sent by Dashboard v{{.BuildVersion}} (c) 2022
+Sent by {{.AppName}} (c) 2022 Dashboard

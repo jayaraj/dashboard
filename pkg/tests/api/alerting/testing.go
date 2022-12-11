@@ -25,7 +25,7 @@ const defaultAlertmanagerConfigJSON = `
 	"alertmanager_config": {
 		"route": {
 			"receiver": "dashboard-default-email",
-			"group_by": ["grafana_folder", "alertname"]
+			"group_by": ["dashboard_folder", "alertname"]
 		},
 		"templates": null,
 		"receivers": [{

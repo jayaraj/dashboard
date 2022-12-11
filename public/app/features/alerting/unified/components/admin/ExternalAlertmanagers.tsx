@@ -145,7 +145,7 @@ export const ExternalAlertmanagers = () => {
       <Alert title="External Alertmanager changes" severity="info">
         The way you configure external Alertmanagers has changed.
         <br />
-        You can now use configured Alertmanager data sources as receivers of your Grafana-managed alerts.
+        You can now use configured Alertmanager data sources as receivers of your Dashboard-managed alerts.
         <br />
         For more information, refer to our documentation.
       </Alert>
@@ -159,7 +159,7 @@ export const ExternalAlertmanagers = () => {
         <div className={styles.amChoice}>
           <Field
             label="Send alerts to"
-            description="Configures how the Grafana alert rule evaluation engine Alertmanager handles your alerts. Internal (Grafana built-in Alertmanager), External (All Alertmanagers configured above), or both."
+            description="Configures how the alert rule evaluation engine Alertmanager handles your alerts. Internal (built-in Alertmanager), External (All Alertmanagers configured above), or both."
           >
             <RadioButtonGroup
               options={alertmanagerChoices}
@@ -172,13 +172,13 @@ export const ExternalAlertmanagers = () => {
 
       <h5>Alertmanagers by URL</h5>
       <Alert severity="warning" title="Deprecation Notice">
-        The URL-based configuration of Alertmanagers is deprecated and will be removed in Grafana 9.2.0.
+        The URL-based configuration of Alertmanagers is deprecated.
         <br />
         Use Alertmanager data sources to configure your external Alertmanagers.
       </Alert>
 
       <div className={styles.muted}>
-        You can have your Grafana managed alerts be delivered to one or many external Alertmanager(s) in addition to the
+        You can have your Dashboard managed alerts be delivered to one or many external Alertmanager(s) in addition to the
         internal Alertmanager by specifying their URLs below.
       </div>
       <div className={styles.actions}>

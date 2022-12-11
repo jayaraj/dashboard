@@ -25,4 +25,4 @@ View your Alert rule:
 Go to the Alerts page:
 {{.AlertPageUrl}}
 
-Sent by Dashboard v{{.BuildVersion}}
+Sent by {{.AppName}}

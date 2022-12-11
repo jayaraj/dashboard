@@ -8,4 +8,4 @@ in the sign up form or use the link below.
 
 {{.SignUpUrl}}
 
-Sent by Dashboard v{{.BuildVersion}} (c) 2022 Dashboard
+Sent by {{.AppName}} (c) 2022 Dashboard

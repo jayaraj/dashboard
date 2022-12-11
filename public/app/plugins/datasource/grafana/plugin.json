@@ -11,8 +11,8 @@
       "url": "https://grafana.com"
     },
     "logos": {
-      "small": "TODO",
-      "large": "TODO"
+      "small": "img/graphite_logo.svg",
+      "large": "img/graphite_logo.svg"
     }
   },
   "backend": true,
