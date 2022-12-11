@@ -25,6 +25,7 @@ type Message struct {
 }
 
 func setDefaultTemplateData(cfg *setting.Cfg, data map[string]interface{}, u *user.User) {
+	data["AppName"] = setting.ApplicationName
 	data["AppUrl"] = setting.AppUrl
 	data["BuildVersion"] = setting.BuildVersion
 	data["BuildStamp"] = setting.BuildStamp

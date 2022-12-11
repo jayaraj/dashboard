@@ -26,6 +26,8 @@ var skipPlugins = map[string]bool{
 	"timeseries":     true,
 	"dataservice":    true,
 	"groupnavigator": true,
+	"variabletable":  true,
+	"csvbutton":      true,
 	"dynamicform":    true,
 	"influxdb":       true, // plugin.json fails validation (defaultMatchFormat)
 	"mixed":          true, // plugin.json fails validation (mixed)

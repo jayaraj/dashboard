@@ -1,0 +1,17 @@
+{
+  "type": "panel",
+  "name": "Variable Table",
+  "id": "variabletable",
+
+  "info": {
+    "description": "Variable Table for dashboard variables",
+    "author": {
+      "name": "Variable Table",
+      "url": "https://www.nxtthinq.com"
+    },
+    "logos": {
+      "small": "img/icn-variabletable-panel.svg",
+      "large": "img/icn-variabletable-panel.svg"
+    }
+  }
+}

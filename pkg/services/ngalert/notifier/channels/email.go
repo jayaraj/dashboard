@@ -14,6 +14,7 @@ import (
 	"github.com/grafana/grafana/pkg/models"
 	ngmodels "github.com/grafana/grafana/pkg/services/ngalert/models"
 	"github.com/grafana/grafana/pkg/services/notifications"
+	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/util"
 )
 
@@ -139,6 +140,7 @@ func (en *EmailNotifier) Notify(ctx context.Context, alerts ...*types.Alert) (bo
 				"ExternalURL":       data.ExternalURL,
 				"RuleUrl":           ruleURL,
 				"AlertPageUrl":      alertPageURL,
+				"AppName":           setting.ApplicationName,
 			},
 			EmbeddedFiles: embeddedFiles,
 			To:            en.Addresses,
