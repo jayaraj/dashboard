@@ -1,8 +1,10 @@
 import { css } from '@emotion/css';
+
 import { GrafanaTheme } from '@grafana/data';
+import * as ui from '@grafana/schema';
 import { stylesFactory } from '@grafana/ui';
 
-export interface CsvButtonOptions {
+export interface CsvButtonOptions extends ui.SingleStatBaseOptions {
   heading: string;
   filename: string;
   useExcelHeader: boolean;
