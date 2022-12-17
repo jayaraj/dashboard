@@ -2,14 +2,15 @@ import { saveAs } from 'file-saver';
 import React from 'react';
 
 import { PanelProps, dateTimeFormat, toCSV, DataFrame, CSVConfig } from '@grafana/data';
-
+import { getTemplateSrv } from '@grafana/runtime';
 import { Button, useTheme } from '@grafana/ui';
-import { CsvButtonOptions, getStyles } from './types';
+import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 
+import { CsvButtonOptions, getStyles } from './types';
 
 interface Props extends PanelProps<CsvButtonOptions> {}
 
-export const CsvButtonPanel: React.FC<Props> = ({ options, data, width, height, eventBus, ...rest }) => {
+export const CsvButtonPanel: React.FC<Props> = ({ id, options, data, width, height, eventBus, ...rest }) => {
   const theme = useTheme();
   const styles = getStyles(height, theme);
 
@@ -18,7 +19,9 @@ export const CsvButtonPanel: React.FC<Props> = ({ options, data, width, height, 
     const blob = new Blob([String.fromCharCode(0xfeff), dataFrameCsv], {
       type: 'text/csv;charset=utf-8',
     });
-    const fileName = `${options['filename']}-${dateTimeFormat(new Date())}.csv`;
+    const panel = getDashboardSrv().getCurrent()?.getPanelById(id)!;
+    const fileStr = getTemplateSrv().replace(options['filename'], panel.scopedVars);
+    const fileName = `${fileStr}-${dateTimeFormat(new Date())}.csv`;
     saveAs(blob, fileName);
   };
 
