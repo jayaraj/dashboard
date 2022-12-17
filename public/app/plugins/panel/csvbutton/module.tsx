@@ -1,9 +1,9 @@
 import { PanelPlugin } from '@grafana/data';
+
 import { CsvButtonPanel } from './CsvButtonPanel';
 import { CsvButtonOptions } from './types';
 
-export const plugin = new PanelPlugin<CsvButtonOptions>(CsvButtonPanel).setPanelOptions((builder) => {
-
+export const plugin = new PanelPlugin<CsvButtonOptions>(CsvButtonPanel).useFieldConfig().setPanelOptions((builder) => {
   return builder
     .addTextInput({
       path: 'heading',
