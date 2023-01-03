@@ -1,7 +1,13 @@
 import { PanelPlugin, SelectableValue } from '@grafana/data';
 import { getAvailableIcons } from '@grafana/ui';
 
-import { CustomCodeEditor, FormElementsEditor, FormPanel, LayoutSectionsEditor } from './components';
+import {
+  CustomCodeEditor,
+  FormElementsEditor,
+  FormPanel,
+  HeaderParametersEditor,
+  LayoutSectionsEditor,
+} from './components';
 import {
   ButtonOrientation,
   ButtonOrientationOptions,
@@ -10,11 +16,17 @@ import {
   ButtonVariant,
   ButtonVariantHiddenOption,
   ButtonVariantOptions,
-  CodeEditorDefault,
+  CodeInitialDefault,
   CodeLanguage,
+  CodeUpdateDefault,
+  ContentType,
+  ContentTypeOptions,
   InitialHighlightColorDefault,
   LayoutVariant,
   LayoutVariantOptions,
+  RequestMethod,
+  RequestMethodInitialOptions,
+  RequestMethodUpdateOptions,
   ResetBackgroundColorDefault,
   ResetForegroundColorDefault,
   ResetIconDefault,
@@ -30,128 +42,6 @@ import { PanelOptions } from './types';
  * Panel Plugin
  */
 export const plugin = new PanelPlugin<PanelOptions>(FormPanel).setPanelOptions((builder) => {
-  /**
-   * Elements
-   */
-  builder.addCustomEditor({
-    id: 'elements',
-    path: 'elements',
-    name: 'Form Elements',
-    category: ['Form Elements'],
-    description: 'Form Elements',
-    editor: FormElementsEditor,
-  });
-
-  /**
-   * Initial Values
-   */
-  builder
-    .addTextInput({
-      path: 'configuration',
-      name: 'Configuration',
-      category: ['Configuration'],
-      description: 'configuration type for the resource',
-      settings: {
-        placeholder: 'controller',
-      },
-    })
-    .addRadio({
-      path: 'customcode',
-      name: 'Execute Custom Code',
-      description: 'execute custom code',
-      category: ['Configuration'],
-      settings: {
-        options: [
-          {
-            value: false,
-            label: 'No',
-          },
-          {
-            value: true,
-            label: 'Yes',
-          },
-        ],
-      },
-      defaultValue: false,
-    })
-    .addCustomEditor({
-      id: 'initial.code',
-      path: 'initial.code',
-      name: 'Custom Code',
-      description: 'Custom code to execute after initial request',
-      editor: CustomCodeEditor,
-      category: ['Initial Request'],
-      settings: {
-        language: CodeLanguage.JAVASCRIPT,
-      },
-      defaultValue: CodeEditorDefault,
-    })
-    .addRadio({
-      path: 'initial.highlight',
-      name: 'Highlight changed values',
-      description: 'Some elements are not supporting highlighting.',
-      category: ['Initial Request'],
-      settings: {
-        options: [
-          {
-            value: false,
-            label: 'No',
-          },
-          {
-            value: true,
-            label: 'Highlight',
-          },
-        ],
-      },
-      defaultValue: false,
-    })
-    .addColorPicker({
-      path: 'initial.highlightColor',
-      name: 'Highlight Color',
-      category: ['Initial Request'],
-      defaultValue: InitialHighlightColorDefault,
-      settings: {
-        disableNamedColors: true,
-      },
-      showIf: (config: any) => config.initial.highlight,
-    });
-
-  /**
-   * Update Values
-   */
-  builder
-    .addCustomEditor({
-      id: 'update.code',
-      path: 'update.code',
-      name: 'Custom Code',
-      description: 'Custom code to execute after update request',
-      editor: CustomCodeEditor,
-      category: ['Update Request'],
-      settings: {
-        language: CodeLanguage.JAVASCRIPT,
-      },
-      defaultValue: CodeEditorDefault,
-    })
-    .addRadio({
-      path: 'update.confirm',
-      name: 'Require Confirmation',
-      description: 'Will ask to confirm updated values.',
-      category: ['Update Request'],
-      settings: {
-        options: [
-          {
-            value: false,
-            label: 'No',
-          },
-          {
-            value: true,
-            label: 'Require',
-          },
-        ],
-      },
-      defaultValue: false,
-    });
-
   /**
    * Layout
    */
@@ -172,6 +62,238 @@ export const plugin = new PanelPlugin<PanelOptions>(FormPanel).setPanelOptions((
       category: ['Layout'],
       editor: LayoutSectionsEditor,
       showIf: (config: any) => config.layout.variant === LayoutVariant.SPLIT,
+    });
+
+  /**
+   * Elements
+   */
+  builder.addCustomEditor({
+    id: 'elements',
+    path: 'elements',
+    name: 'Form Elements',
+    category: ['Form Elements'],
+    description: 'Form Elements',
+    editor: FormElementsEditor,
+    showIf: (config: any) => config.layout.variant !== LayoutVariant.NONE,
+  });
+
+  /**
+   * Configuration
+   */
+  builder
+    .addRadio({
+      path: 'configuration.external',
+      name: 'External API or Resource Configuration',
+      description: 'option to get or update external apis or resource configurations',
+      category: ['Configuration'],
+      settings: {
+        options: [
+          {
+            value: false,
+            label: 'Internal',
+          },
+          {
+            value: true,
+            label: 'External',
+          },
+        ],
+      },
+      defaultValue: false,
+    })
+    .addTextInput({
+      path: 'configuration.type',
+      name: 'Configuration',
+      category: ['Configuration'],
+      description: 'configuration type for the resource',
+      settings: {
+        placeholder: 'controller',
+      },
+      showIf: (config: any) => config.configuration.external === false,
+    });
+
+  /**
+   * Initial Request
+   */
+  builder
+    .addRadio({
+      path: 'initial.method',
+      name: 'Initial Request',
+      category: ['Initial Request'],
+      settings: {
+        options: RequestMethodInitialOptions,
+      },
+      defaultValue: RequestMethod.NONE,
+      showIf: (config) => config.configuration.external === true,
+    })
+    .addTextInput({
+      path: 'initial.url',
+      name: 'URL',
+      category: ['Initial Request'],
+      description: 'The URL to call. Leave empty to skip Initial Request.',
+      settings: {
+        placeholder: 'http://',
+      },
+      showIf: (config) => config.initial.method !== RequestMethod.NONE && config.configuration.external === true,
+    })
+    .addCustomEditor({
+      id: 'initial.header',
+      path: 'initial.header',
+      name: 'Header Parameters',
+      category: ['Initial Request'],
+      editor: HeaderParametersEditor,
+      showIf: (config) => config.initial.method !== RequestMethod.NONE && config.configuration.external === true,
+    })
+    .addSelect({
+      path: 'initial.contentType',
+      name: 'Content-Type',
+      category: ['Initial Request'],
+      description: 'Content-Type of the payload',
+      defaultValue: ContentType.JSON,
+      settings: {
+        allowCustomValue: true,
+        options: ContentTypeOptions,
+      },
+      showIf: (config) => config.initial.method === RequestMethod.POST && config.configuration.external === true,
+    })
+    .addCustomEditor({
+      id: 'initial.code',
+      path: 'initial.code',
+      name: 'Custom Code',
+      description: 'Custom code to execute after initial request.',
+      editor: CustomCodeEditor,
+      category: ['Initial Request'],
+      settings: {
+        language: CodeLanguage.JAVASCRIPT,
+        suggestions: true,
+      },
+      defaultValue: CodeInitialDefault,
+    })
+    .addRadio({
+      path: 'initial.highlight',
+      name: 'Highlight changed values',
+      description: 'Some elements are not supporting highlighting.',
+      category: ['Initial Request'],
+      settings: {
+        options: [
+          {
+            value: false,
+            label: 'No',
+          },
+          {
+            value: true,
+            label: 'Highlight',
+          },
+        ],
+      },
+      defaultValue: false,
+      showIf: (config: any) => config.layout.variant !== LayoutVariant.NONE,
+    })
+    .addColorPicker({
+      path: 'initial.highlightColor',
+      name: 'Highlight Color',
+      category: ['Initial Request'],
+      defaultValue: InitialHighlightColorDefault,
+      settings: {
+        disableNamedColors: true,
+      },
+      showIf: (config: any) => config.initial.highlight,
+    });
+
+  /**
+   * Update Request
+   */
+  builder
+    .addRadio({
+      path: 'update.method',
+      name: 'Update Request',
+      category: ['Update Request'],
+      settings: {
+        options: RequestMethodUpdateOptions,
+      },
+      defaultValue: RequestMethod.NONE,
+      showIf: (config) => config.configuration.external === true,
+    })
+    .addTextInput({
+      path: 'update.url',
+      name: 'URL',
+      category: ['Update Request'],
+      description: 'The URL to call',
+      settings: {
+        placeholder: 'http://',
+      },
+      showIf: (config) => config.update.method !== RequestMethod.NONE  && config.configuration.external === true,
+    })
+    .addCustomEditor({
+      id: 'update.header',
+      path: 'update.header',
+      name: 'Header Parameters',
+      category: ['Update Request'],
+      editor: HeaderParametersEditor,
+      showIf: (config) => config.update.method !== RequestMethod.NONE  && config.configuration.external === true,
+    })
+    .addSelect({
+      path: 'update.contentType',
+      name: 'Content-Type',
+      category: ['Update Request'],
+      description: 'Content-Type of the payload',
+      defaultValue: ContentType.JSON,
+      settings: {
+        allowCustomValue: true,
+        options: ContentTypeOptions,
+      },
+      showIf: (config) => !!config.update.url && config.update.method !== RequestMethod.NONE  && config.configuration.external === true,
+    })
+    .addRadio({
+      path: 'update.updatedOnly',
+      name: 'Payload',
+      description: 'Allows to include all or only updated values in payload.',
+      category: ['Update Request'],
+      settings: {
+        options: [
+          {
+            value: false,
+            label: 'All Elements',
+          },
+          {
+            value: true,
+            label: 'Updated Only',
+          },
+        ],
+      },
+      defaultValue: false,
+      showIf: (config: any) => config.layout.variant !== LayoutVariant.NONE,
+    })
+    .addCustomEditor({
+      id: 'update.code',
+      path: 'update.code',
+      name: 'Custom Code',
+      description: 'Custom code to execute after update request.',
+      editor: CustomCodeEditor,
+      category: ['Update Request'],
+      settings: {
+        language: CodeLanguage.JAVASCRIPT,
+      },
+      defaultValue: CodeUpdateDefault,
+    })
+    .addRadio({
+      path: 'update.confirm',
+      name: 'Confirmation',
+      description: 'Ask to confirm updated values.',
+      category: ['Update Request'],
+      settings: {
+        options: [
+          {
+            value: false,
+            label: 'No',
+          },
+          {
+            value: true,
+            label: 'Require',
+          },
+        ],
+      },
+      defaultValue: false,
+      showIf: (config: any) => config.layout.variant !== LayoutVariant.NONE,
     });
 
   /**
