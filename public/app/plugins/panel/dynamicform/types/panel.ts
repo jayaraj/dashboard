@@ -3,24 +3,16 @@ import { FormElement } from './form-element';
 import { LayoutOptions } from './layout';
 import { RequestOptions } from './request';
 
+export interface ConfigurationOptions {
+  type: string;
+  external: boolean;
+}
+
 /**
  * Panel Options
  */
 export interface PanelOptions {
-  /**
-   * configuration
-   *
-   * @type {string}
-   */
-  configuration: string;
-
-  /**
-   * Execute for custom code
-   *
-   * @type {boolean}
-   */
-  customcode: boolean;
-
+  configuration: ConfigurationOptions;
   /**
    * Initial Values
    *
