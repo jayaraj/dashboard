@@ -1,5 +1,4 @@
 import { LayoutVariant } from '../constants';
-
 import { LayoutSection } from './layout-section';
 
 /**

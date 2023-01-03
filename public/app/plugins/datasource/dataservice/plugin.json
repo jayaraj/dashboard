@@ -5,7 +5,20 @@
   "category": "other",
 
   "metrics": true,
-
+  "routes": [
+    {
+      "method": "GET",
+      "path": "configure",
+      "reqRole": "Editor",
+      "url": "{{ .JsonData.url }}/api/configure"
+    },
+    {
+      "method": "POST",
+      "path": "configure",
+      "reqRole": "Editor",
+      "url": "{{ .JsonData.url }}/api/configure"
+    }
+  ],
   "info": {
     "description": "Dataservice Datasource",
     "author": {

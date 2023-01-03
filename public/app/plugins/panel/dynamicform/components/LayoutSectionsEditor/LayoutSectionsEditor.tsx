@@ -1,8 +1,6 @@
 import React, { ChangeEvent } from 'react';
-
 import { StandardEditorProps } from '@grafana/data';
 import { Button, InlineField, InlineFieldRow, Input } from '@grafana/ui';
-
 import { LayoutSection } from '../../types';
 
 /**
@@ -25,7 +23,7 @@ export const LayoutSectionsEditor: React.FC<Props> = ({ value: sections, onChang
     <div>
       {sections.map((section, id) => (
         <InlineFieldRow key={id}>
-          <InlineField label="Name" grow labelWidth={8}>
+          <InlineField label="Name" grow labelWidth={8} invalid={section.name === ''}>
             <Input
               placeholder="name"
               onChange={(event: ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +39,7 @@ export const LayoutSectionsEditor: React.FC<Props> = ({ value: sections, onChang
               sections = sections?.filter((s) => s.name !== section.name);
               onChange(sections);
             }}
-            icon="minus"
+            icon="trash-alt"
           ></Button>
         </InlineFieldRow>
       ))}
@@ -49,12 +47,7 @@ export const LayoutSectionsEditor: React.FC<Props> = ({ value: sections, onChang
       <Button
         variant="secondary"
         onClick={(e) => {
-          if (sections) {
-            sections.push({ name: '' });
-          } else {
-            sections = [{ name: '' }];
-          }
-
+          sections.push({ name: '' });
           onChange(sections);
         }}
         icon="plus"

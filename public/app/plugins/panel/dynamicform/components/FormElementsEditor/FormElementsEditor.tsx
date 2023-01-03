@@ -1,5 +1,4 @@
 import React, { ChangeEvent, useState } from 'react';
-
 import { SelectableValue, StandardEditorProps } from '@grafana/data';
 import {
   Button,
@@ -11,7 +10,6 @@ import {
   Input,
   Select,
 } from '@grafana/ui';
-
 import {
   CodeEditorHeight,
   CodeLanguage,
@@ -19,6 +17,7 @@ import {
   FormElementDefault,
   FormElementType,
   FormElementTypeOptions,
+  SelectElementOptions,
   SliderDefault,
 } from '../../constants';
 import { FormElement, LayoutSection } from '../../types';
@@ -365,20 +364,49 @@ export const FormElementsEditor: React.FC<Props> = ({ value: elements, onChange,
             </InlineFieldRow>
           )}
 
-          {(element.type === FormElementType.RADIO || element.type === FormElementType.SELECT) && (
+          {[FormElementType.RADIO, FormElementType.SELECT, FormElementType.DISABLED].includes(element.type) && (
             <div>
               {element.options?.map((option) => (
                 <InlineFieldRow key={option.id}>
-                  <InlineField label="Value" labelWidth={8}>
-                    <Input
-                      placeholder="value"
-                      onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                        option.value = event.target.value;
+                  <InlineField label="Type" labelWidth={8}>
+                    <Select
+                      options={SelectElementOptions}
+                      onChange={(event: SelectableValue) => {
+                        option.type = event?.value;
                         onChange(elements);
                       }}
-                      value={option.value}
+                      width={12}
+                      value={SelectElementOptions.find((type) => type.value === option.type)}
+                      defaultValue={FormElementType.STRING}
                     />
                   </InlineField>
+                  {(!option.type || option.type === FormElementType.STRING) && (
+                    <InlineField label="Value" labelWidth={8}>
+                      <Input
+                        placeholder="string"
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                          option.value = event.target.value;
+                          onChange(elements);
+                        }}
+                        value={option.value}
+                        width={12}
+                      />
+                    </InlineField>
+                  )}
+                  {option.type === FormElementType.NUMBER && (
+                    <InlineField label="Value" labelWidth={8}>
+                      <Input
+                        type="number"
+                        placeholder="number"
+                        onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                          option.value = Number(event.target.value);
+                          onChange(elements);
+                        }}
+                        value={option.value}
+                        width={12}
+                      />
+                    </InlineField>
+                  )}
                   <InlineField label="Label" labelWidth={8} grow>
                     <Input
                       placeholder="label"
@@ -432,9 +460,9 @@ export const FormElementsEditor: React.FC<Props> = ({ value: elements, onChange,
           />
         </InlineField>
 
-        <InlineField label="Title" grow labelWidth={8} invalid={newElement.title === ''}>
+        <InlineField label="Label" grow labelWidth={8} invalid={newElement.title === ''}>
           <Input
-            placeholder="Title"
+            placeholder="Label"
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
               setNewElement({ ...newElement, title: event.target.value });
             }}
