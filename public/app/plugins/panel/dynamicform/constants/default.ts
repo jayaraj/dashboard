@@ -1,5 +1,4 @@
 import { FormElement } from '../types';
-
 import { FormElementType } from './form-element';
 
 /**

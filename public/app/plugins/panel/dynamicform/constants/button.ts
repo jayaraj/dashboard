@@ -1,5 +1,4 @@
 import { SelectableValue } from '@grafana/data';
-
 import { CapitalizeFirstLetter } from '../utils';
 
 /**

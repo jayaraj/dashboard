@@ -1,7 +1,7 @@
-import { css } from '@emotion/css';
+import Slider from 'rc-slider';
 import React, { ChangeEvent } from 'react';
-
-import { DateTime, SelectableValue, dateMath } from '@grafana/data';
+import { css, cx } from '@emotion/css';
+import { dateTime, DateTime, SelectableValue } from '@grafana/data';
 import {
   CodeEditor,
   DateTimePicker,
@@ -11,11 +11,9 @@ import {
   Input,
   RadioButtonGroup,
   Select,
-  Slider,
   TextArea,
   useTheme2,
 } from '@grafana/ui';
-
 import {
   BooleanElementOptions,
   CodeEditorHeight,
@@ -23,6 +21,7 @@ import {
   FormElementType,
   InitialHighlightColorDefault,
 } from '../../constants';
+import { getStyles } from '../../styles';
 import { FormElement, LayoutSection, PanelOptions } from '../../types';
 
 /**
@@ -62,6 +61,7 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
    * Theme and Styles
    */
   const theme = useTheme2();
+  const styles = getStyles(theme);
 
   /**
    * Highlight Color
@@ -85,7 +85,7 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
 
   return (
     <div>
-      {options.elements.map((element) => {
+      {options.elements?.map((element) => {
         /**
          * Skip Hidden Elements
          */
@@ -109,7 +109,22 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                 <Input
                   value={element.value}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                    element.value = Number(event.target.value);
+                    element.value = event.target.value;
+
+                    /**
+                     * Validate Maximum
+                     */
+                    if (element.max !== undefined && element.max !== null) {
+                      element.value = Math.min(element.max, Number(element.value));
+                    }
+
+                    /**
+                     * Validate Minimum
+                     */
+                    if (element.min !== undefined && element.min !== null) {
+                      element.value = Math.max(element.min, Number(element.value));
+                    }
+
                     onOptionsChange(options);
                   }}
                   type="number"
@@ -172,7 +187,15 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                 disabled
                 transparent={!!!element.title}
               >
-                <Input value={element.value} type="text" width={element.width} />
+                <Input
+                  value={
+                    !element.options?.length
+                      ? element.value
+                      : element.options.find((option) => option.value === element.value)?.label
+                  }
+                  type="text"
+                  width={element.width}
+                />
               </InlineField>
             )}
 
@@ -208,7 +231,7 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                 <CodeEditor
                   language={element.language || CodeLanguage.JAVASCRIPT}
                   showLineNumbers={true}
-                  showMiniMap={true}
+                  showMiniMap={(element.value && element.value.length) > 100}
                   value={element.value}
                   height={element.height || `${CodeEditorHeight}px`}
                   width={element.width}
@@ -216,6 +239,7 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                     element.value = code;
                     onOptionsChange(options);
                   }}
+                  monacoOptions={{ formatOnPaste: true, formatOnType: true }}
                 />
               </InlineField>
             )}
@@ -250,9 +274,9 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                 transparent={!!!element.title}
               >
                 <DateTimePicker
-                  date={element.value}
+                  date={dateTime(element.value)}
                   onChange={(dateTime: DateTime) => {
-                    element.value = dateMath.parse(dateTime);
+                    element.value = dateTime;
                     onOptionsChange(options);
                   }}
                 />
@@ -260,24 +284,43 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
             )}
 
             {element.type === FormElementType.SLIDER && element.value != null && (
-              <InlineField
-                label={element.title}
-                grow={!!!element.width}
-                labelWidth={element.labelWidth}
-                tooltip={element.tooltip}
-                transparent={!!!element.title}
-              >
-                <Slider
-                  value={element.value || 0}
-                  onChange={(value: number) => {
-                    element.value = value;
-                    onOptionsChange(options);
-                  }}
-                  min={element.min || 0}
-                  max={element.max || 0}
-                  step={element.step || 0}
-                />
-              </InlineField>
+              <>
+                <InlineField
+                  label={element.title}
+                  grow={!!!element.width}
+                  labelWidth={element.labelWidth}
+                  tooltip={element.tooltip}
+                  transparent={!!!element.title}
+                  className={cx(styles.slider)}
+                >
+                  <Slider
+                    value={element.value || 0}
+                    onChange={(value: number | number[]) => {
+                      element.value = value;
+                      onOptionsChange(options);
+                    }}
+                    min={element.min || 0}
+                    max={element.max || 0}
+                    step={element.step || 0}
+                  />
+                </InlineField>
+                <InlineField className={cx(styles.sliderInput)}>
+                  <Input
+                    type="number"
+                    width={8}
+                    min={element.min || 0}
+                    max={element.max || 0}
+                    value={element.value || 0}
+                    onChange={(e) => {
+                      element.value = Math.max(
+                        element.min || 0,
+                        Math.min(element.max || 0, Number(e.currentTarget.value))
+                      );
+                      onOptionsChange(options);
+                    }}
+                  ></Input>
+                </InlineField>
+              </>
             )}
 
             {element.type === FormElementType.RADIO && (

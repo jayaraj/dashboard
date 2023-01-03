@@ -5,14 +5,14 @@
   "builtIn": true,
 
   "info": {
-    "description": "TODO",
+    "description": "Dashboard Queries",
     "author": {
       "name": "Grafana Labs",
       "url": "https://grafana.com"
     },
     "logos": {
-      "small": "TODO",
-      "large": "TODO"
+      "small": "img/dashboard_logo.svg",
+      "large": "img/dashboard_logo.svg"
     }
   },
 
