@@ -24,6 +24,8 @@ jobs:
       -
         name: Build and push
         uses: docker/build-push-action@v3
+        env:
+          IMAGE_TAG: ${{ github.sha }}
         with:
           push: true
-          tags: jayarajesvar/dashboard
+          tags: jayarajesvar/dashboard:$IMAGE_TAG
