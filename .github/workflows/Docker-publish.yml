@@ -28,4 +28,4 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         with:
           push: true
-          tags: jayarajesvar/dashboard:$IMAGE_TAG
+          tags: jayarajesvar/dashboard:$GITHUB_REF
