@@ -5,13 +5,13 @@ export function buildNavModel(id: string, queryMap: UrlQueryMap, results: Dashbo
   const folderId: number = queryMap.folderId ? Number(queryMap.folderId) : Number(0);
   let children: NavModelItem[] = [];
   let variables = ``;
-  for (var key of Object.keys(queryMap)) {
+  for (const key of Object.keys(queryMap)) {
     if (key.lastIndexOf('var-', 0) === 0) {
-      variables = variables + `&${key}=${queryMap[key]}`
+      variables = variables + `&${key}=${queryMap[key]}`;
     }
   }
   children = results.map((result) => {
-    const slug = result.title ? result.title.toLowerCase() : '';
+    const slug = result.title ? result.title.toLowerCase().replace(' ', '-') : '';
     const query = `?folderId=${folderId}` + variables;
     const item: NavModelItem = {
       id: slug,
