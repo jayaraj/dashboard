@@ -9,7 +9,7 @@ import { getNavModel } from 'app/core/selectors/navModel';
 import { contextSrv, User } from 'app/core/services/context_srv';
 import { StoreState, ResourceType, AccessControlAction } from 'app/types';
 
-import { connectWithCleanUp } from '../../../core/components/connectWithCleanUp';
+import { connectWithCleanUp } from '../../core/components/connectWithCleanUp';
 
 import { deleteResourceType, loadResourceTypes } from './state/actions';
 import { setSearchQuery, setResourceTypeSearchPage } from './state/reducers';
@@ -55,7 +55,7 @@ export class ResourceTypeList extends PureComponent<Props> {
 
   renderResourceType(resourceType: ResourceType) {
     const { signedInUser } = this.props;
-    const resourceTypeUrl = `admin/resourcetypes/edit/${resourceType.id}`;
+    const resourceTypeUrl = `org/resourcetypes/edit/${resourceType.id}`;
     const admin = signedInUser.isGrafanaAdmin || contextSrv.hasRole('Admin');
     const canRead = contextSrv.hasAccess(AccessControlAction.ActionResourceTypesRead, admin);
     const canWrite = contextSrv.hasAccess(AccessControlAction.ActionResourceTypesWrite, admin);
@@ -80,7 +80,7 @@ export class ResourceTypeList extends PureComponent<Props> {
   renderEmptyList() {
     const admin = this.props.signedInUser.isGrafanaAdmin || contextSrv.hasRole('Admin');
     const canWrite = contextSrv.hasAccess(AccessControlAction.ActionResourceTypesWrite, admin);
-    const newHref = canWrite ? 'admin/resourcetypes/new' : '#';
+    const newHref = canWrite ? '/org/resourcetypes/new' : '#';
     const buttonTitle = ' New ' + config.resourceLabel.toLowerCase() + 'type';
     const title = 'No ' + config.resourceLabel.toLowerCase() + 'types are created yet.';
     return <EmptyListCTA title={title} buttonIcon="rss" buttonLink={newHref} buttonTitle={buttonTitle} />;
@@ -90,7 +90,7 @@ export class ResourceTypeList extends PureComponent<Props> {
     const { resourceTypes, searchQuery, signedInUser, searchPage, resourceTypesCount } = this.props;
     const canWrite = contextSrv.hasAccess(AccessControlAction.ActionResourceTypesWrite, signedInUser.isGrafanaAdmin);
     const disabledClass = canWrite ? '' : ' disabled';
-    const newResourceTypeHref = canWrite ? 'admin/resourcetypes/new' : '#';
+    const newResourceTypeHref = canWrite ? '/org/resourcetypes/new' : '#';
     const totalPages = Math.ceil(resourceTypesCount / pageLimit);
 
     return (

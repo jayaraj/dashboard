@@ -67,6 +67,9 @@ var (
 	IsEnterprise    bool
 	ApplicationName string
 	ResourceUrl     string
+	BillingUrl      string
+	EnableResource  bool
+	EnableBilling   bool
 	ResourceLabel   string
 	ResourceToken   string
 	NatsUrl         string
@@ -203,6 +206,9 @@ type Cfg struct {
 	AppSubURL        string
 	AppTitle         string
 	ResourceUrl      string
+	BillingUrl       string
+	EnableResource   bool
+	EnableBilling    bool
 	ResourceLabel    string
 	ResourceToken    string
 	NatsUrl          string
@@ -910,11 +916,17 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	InstanceName = valueAsString(iniFile.Section(""), "instance_name", "unknown_instance_name")
 	ApplicationName = valueAsString(iniFile.Section(""), "application_name", "dashboard")
 	ResourceUrl = valueAsString(iniFile.Section(""), "resource_url", "http://localhost:9002/")
+	BillingUrl = valueAsString(iniFile.Section(""), "billing_url", "http://localhost:9007/")
+	EnableResource = iniFile.Section("").Key("enable_resource").MustBool(false)
+	EnableBilling = iniFile.Section("").Key("enable_billing").MustBool(false)
 	ResourceLabel = valueAsString(iniFile.Section(""), "resource_label", "Asset")
 	ResourceToken = valueAsString(iniFile.Section(""), "resource_token", "test")
 	NatsUrl = valueAsString(iniFile.Section(""), "nats_url", "nats://localhost:4222")
 	cfg.AppTitle = ApplicationName
 	cfg.ResourceUrl = ResourceUrl
+	cfg.BillingUrl = BillingUrl
+	cfg.EnableBilling = EnableBilling
+	cfg.EnableResource = EnableResource
 	cfg.ResourceLabel = ResourceLabel
 	cfg.ResourceToken = ResourceToken
 	cfg.NatsUrl = NatsUrl

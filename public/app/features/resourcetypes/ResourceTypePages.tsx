@@ -8,9 +8,10 @@ import { getNavModel } from 'app/core/selectors/navModel';
 import { StoreState } from 'app/types';
 
 import ResourceTypeSettings from './ResourceTypeSettings';
+import SlabSettings  from './SlabSettings';
 import { loadResourceType } from './state/actions';
 import { getResourceTypeLoadingNav } from './state/navModel';
-import { getResourceType } from './state/selectors';
+import { getResourceType, getSlab } from './state/selectors';
 
 interface ResourceTypePageRouteParams {
   id: string;
@@ -25,6 +26,7 @@ interface State {
 
 enum PageTypes {
   Settings = 'settings',
+  Slab = 'slab',
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps) {
@@ -33,12 +35,14 @@ function mapStateToProps(state: StoreState, props: OwnProps) {
   const resourceTypeLoadingNav = getResourceTypeLoadingNav(pageName as string);
   const navModel = getNavModel(state.navIndex, `resourcetype-${pageName}-${resourceTypeId}`, resourceTypeLoadingNav);
   const resourceType = getResourceType(state.resourceType, resourceTypeId);
+  const slab = getSlab(state.slab, resourceType?.type)
 
   return {
     navModel,
     resourceTypeId: resourceTypeId,
     pageName: pageName,
     resourceType,
+    slab,
   };
 }
 
@@ -65,14 +69,16 @@ export class ResourceTypePages extends PureComponent<Props, State> {
 
   async fetchResourceType() {
     const { loadResourceType, resourceTypeId } = this.props;
-    this.setState({ isLoading: true });
-    const resourceType = await loadResourceType(resourceTypeId);
+    this.setState({ 
+      isLoading: true,
+    });
+    const response = await loadResourceType(resourceTypeId);
     this.setState({ isLoading: false });
-    return resourceType;
+    return response;
   }
 
   getCurrentPage() {
-    const pages = ['settings'];
+    const pages = ['settings', 'slab'];
     const currentPage = this.props.pageName;
     return includes(pages, currentPage) ? currentPage : pages[0];
   }
@@ -91,10 +97,12 @@ export class ResourceTypePages extends PureComponent<Props, State> {
 
   renderPage(): React.ReactNode {
     const currentPage = this.getCurrentPage();
-    const { resourceType } = this.props;
+    const { resourceType, slab } = this.props;
     switch (currentPage) {
       case PageTypes.Settings:
         return <ResourceTypeSettings resourceType={resourceType!} />;
+      case PageTypes.Slab:
+          return <SlabSettings slab={slab!} />;
     }
 
     return null;

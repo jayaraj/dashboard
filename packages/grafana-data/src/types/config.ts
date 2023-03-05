@@ -157,6 +157,9 @@ export interface GrafanaConfig {
   appSubUrl: string;
   appTitle: string;
   resourceUrl: string;
+  billingUrl: string;
+  enableBilling: boolean;
+  enableResource: boolean;
   resourceLabel: string;
   windowTitlePrefix: string;
   buildInfo: BuildInfo;

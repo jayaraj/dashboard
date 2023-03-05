@@ -50,6 +50,10 @@ func ProvideService(cfg *setting.Cfg) (resp *ResourcesService, err error) {
 	}, nil
 }
 
+func (service *ResourcesService) GetConfig() *setting.Cfg {
+	return service.Cfg
+}
+
 func (service *ResourcesService) RestRequest(ctx context.Context, request *RestRequest) (err error) {
 	netClient := &http.Client{
 		Timeout: time.Second * 10,
@@ -69,7 +73,6 @@ func (service *ResourcesService) RestRequest(ctx context.Context, request *RestR
 		id, _ := uuid.NewRandom()
 		traceId = id.String()
 	}
-	url := fmt.Sprintf("%s%s", service.Cfg.ResourceUrl, request.Url)
 	if request.HttpMethod == "" {
 		request.HttpMethod = http.MethodPost
 	}
@@ -78,7 +81,7 @@ func (service *ResourcesService) RestRequest(ctx context.Context, request *RestR
 		request.Request = []byte{}
 	}
 
-	req, err := http.NewRequest(request.HttpMethod, url, bytes.NewReader(request.Request))
+	req, err := http.NewRequest(request.HttpMethod, request.Url, bytes.NewReader(request.Request))
 	if err != nil {
 		return err
 	}
