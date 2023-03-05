@@ -1,17 +1,16 @@
 import React, { PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
-import { DeleteButton, FilterInput, LinkButton, VerticalGroup } from '@grafana/ui';
+import { DeleteButton, FilterInput, LinkButton, VerticalGroup, Icon } from '@grafana/ui';
 import { contextSrv } from 'app/core/services/context_srv';
 import { StoreState, AccessControlAction, Group } from 'app/types';
 
 import { deleteChild } from './state/actions';
 import { setChildrenSearchQuery } from './state/reducers';
-import { getChildrenSearchQuery, getGroupId } from './state/selectors';
+import { getChildrenSearchQuery } from './state/selectors';
 
 function mapStateToProps(state: StoreState) {
   return {
-    groupId: getGroupId(state.group),
     searchChildrenQuery: getChildrenSearchQuery(state.group),
     signedInUser: contextSrv.user,
   };
@@ -19,6 +18,7 @@ function mapStateToProps(state: StoreState) {
 
 export interface OwnProps {
   groups: Group[];
+  group: Group;
 }
 
 const mapDispatchToProps = {
@@ -75,10 +75,11 @@ export class ChildrenList extends PureComponent<Props, State> {
   }
 
   renderChildrenList() {
-    const { groupId, groups, searchChildrenQuery } = this.props;
+    const { group, groups, searchChildrenQuery } = this.props;
     const admin = this.isAdmin();
     const canWrite = contextSrv.hasAccess(AccessControlAction.ActionGroupsWrite, admin);
-    const newGroupHref = canWrite ? `org/groups/${groupId}/new` : '#';
+    const newGroupHref = canWrite ? `org/groups/${group.id}/new` : '#';
+    const parentUrl = (group.parent === -1)? `org/groups`:`org/groups/edit/${group.parent}/children`;
 
     return (
       <div>
@@ -86,7 +87,9 @@ export class ChildrenList extends PureComponent<Props, State> {
           <div className="gf-form gf-form--grow">
             <FilterInput placeholder="Search" value={searchChildrenQuery} onChange={this.onSearchQueryChange} />
           </div>
-
+          <LinkButton href={parentUrl}>
+            <Icon name="arrow-up" />Parent
+          </LinkButton>
           <LinkButton disabled={!canWrite} href={newGroupHref}>
             New Group
           </LinkButton>

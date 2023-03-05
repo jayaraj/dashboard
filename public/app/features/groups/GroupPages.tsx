@@ -15,6 +15,8 @@ import UserList from './UserList';
 import { loadResources, loadGroup, loadUsers } from './state/actions';
 import { getGroupLoadingNav } from './state/navModel';
 import { getResources, getGroup, getUsers, getChildren } from './state/selectors';
+import InvoiceList from './InvoiceList';
+import TransactionList from './TransactionList';
 
 const pageLimit = 1;
 
@@ -33,18 +35,20 @@ enum PageTypes {
   Children = 'children',
   Resources = 'resources',
   Users = 'users',
+  Invoices = 'invoices',
+  Transactions = 'transactions',
   Settings = 'settings',
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps) {
   const groupId = parseInt(props.match.params.id, 10);
   const group = getGroup(state.group, groupId);
-  const pageName = props.match.params.page || 'children';
-  const groupLoadingNav = getGroupLoadingNav(pageName as string);
-  const navModel = getNavModel(state.navIndex, `group-${pageName}-${groupId}`, groupLoadingNav);
   const resources = getResources(state.group);
   const users = getUsers(state.group);
   const children = getChildren(state.group, groupId);
+  const pageName = (props.match.params.page)? props.match.params.page: (!group?.child)? 'resources': 'children';
+  const groupLoadingNav = getGroupLoadingNav(pageName as string);
+  const navModel = getNavModel(state.navIndex, `group-${pageName}-${groupId}`, groupLoadingNav);
 
   return {
     navModel,
@@ -97,7 +101,7 @@ export class GroupPages extends PureComponent<Props, State> {
   }
 
   getCurrentPage() {
-    const pages = ['children', 'resources', 'users', 'settings'];
+    const pages = ['children', 'resources', 'users', 'invoices', 'transactions', 'settings'];
     const currentPage = this.props.pageName;
     return includes(pages, currentPage) ? currentPage : pages[0];
   }
@@ -120,11 +124,15 @@ export class GroupPages extends PureComponent<Props, State> {
 
     switch (currentPage) {
       case PageTypes.Children:
-        return <ChildrenList groups={children} />;
+        return <ChildrenList groups={children} group={group!}/>;
       case PageTypes.Resources:
-        return <ResourceList resources={resources} />;
+        return <ResourceList resources={resources} group={group!}/>;
       case PageTypes.Users:
         return <UserList users={users} />;
+      case PageTypes.Invoices:
+          return <InvoiceList group={group!} />;
+      case PageTypes.Transactions:
+        return <TransactionList group={group!} />;
       case PageTypes.Settings:
         return <GroupSettings group={group!} />;
     }

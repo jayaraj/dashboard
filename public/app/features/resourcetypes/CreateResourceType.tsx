@@ -29,7 +29,7 @@ export class CreateResourceType extends PureComponent<Props, State> {
       type,
     });
     if (result.id) {
-      locationService.push(`/admin/resourcetypes/edit/${result.id}`);
+      locationService.push(`/org/resourcetypes/edit/${result.id}`);
     }
   };
 
