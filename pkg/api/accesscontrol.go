@@ -370,6 +370,93 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		Grants: []string{ac.RoleGrafanaAdmin},
 	}
 
+	slabReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:slab:reader",
+			DisplayName: "Slab reader",
+			Description: "Read slab.",
+			Group:       "Slab",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionSlabRead},
+			},
+		},
+		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
+	}
+
+	slabWriterRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:slab:writer",
+			DisplayName: "Slab writer",
+			Description: "Create, read, write, or delete a slab",
+			Group:       "Slab",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionSlabRead, Scope: ac.ScopeSlabAll},
+				{Action: ac.ActionSlabWrite, Scope: ac.ScopeSlabAll},
+			},
+		},
+		Grants: []string{ac.RoleGrafanaAdmin},
+	}
+
+	invoicesReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:invoices:reader",
+			DisplayName: "Invoices reader",
+			Description: "Read invoices.",
+			Group:       "Invoices",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionSlabRead},
+			},
+		},
+		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
+	}
+
+	invoicesWriterRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:invoices:writer",
+			DisplayName: "Invoices writer",
+			Description: "Create, read, write, or delete a invoices",
+			Group:       "Invoices",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionInvoicesRead, Scope: ac.ScopeInvoicesAll},
+				{Action: ac.ActionInvoicesWrite, Scope: ac.ScopeInvoicesAll},
+			},
+		},
+		Grants: []string{ac.RoleGrafanaAdmin},
+	}
+
+	fixedChargesReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:fixedcharges:reader",
+			DisplayName: "Org Charges reader",
+			Description: "Read Org Charges",
+			Group:       "FixedCharges",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionFixedChargesRead},
+			},
+		},
+		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
+	}
+
+	fixedChargesWriterRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:fixedcharges:writer",
+			DisplayName: "Org Charges writer",
+			Description: "Create, read, write, or delete a org charge",
+			Group:       "FixedCharges",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionFixedChargesRead, Scope: ac.ScopeFixedChargesAll},
+				{Action: ac.ActionFixedChargesWrite, Scope: ac.ScopeFixedChargesAll},
+			},
+		},
+		Grants: []string{ac.RoleGrafanaAdmin},
+	}
+
 	annotationsReaderRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
 			Name:        "fixed:annotations:reader",
@@ -514,7 +601,8 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		dashboardsCreatorRole, dashboardsReaderRole, dashboardsWriterRole,
 		foldersCreatorRole, foldersReaderRole, foldersWriterRole, apikeyReaderRole, apikeyWriterRole,
 		resourcesReaderRole, resourcesWriterRole, groupsReaderRole, groupsWriterRole,
-		resourceTypesReaderRole, resourceTypesWriterRole,
+		resourceTypesReaderRole, resourceTypesWriterRole, slabReaderRole, slabWriterRole,
+		fixedChargesReaderRole, fixedChargesWriterRole, invoicesReaderRole, invoicesWriterRole,
 	)
 }
 
@@ -594,6 +682,36 @@ var resourceTypesAccessEvaluator = ac.EvalAny(
 var resourceTypesEditAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionResourceTypesRead),
 	ac.EvalPermission(ac.ActionResourceTypesWrite),
+)
+
+var slabAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionSlabRead),
+	ac.EvalPermission(ac.ActionSlabWrite),
+)
+
+var slabEditAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionSlabRead),
+	ac.EvalPermission(ac.ActionSlabWrite),
+)
+
+var fixedChargesAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionFixedChargesRead),
+	ac.EvalPermission(ac.ActionFixedChargesWrite),
+)
+
+var fixedChargesEditAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionFixedChargesRead),
+	ac.EvalPermission(ac.ActionFixedChargesWrite),
+)
+
+var invoicesAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionInvoicesRead),
+	ac.EvalPermission(ac.ActionInvoicesWrite),
+)
+
+var invoicesEditAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionInvoicesRead),
+	ac.EvalPermission(ac.ActionInvoicesWrite),
 )
 
 // apiKeyAccessEvaluator is used to protect the "Configuration > API keys" page access

@@ -1,7 +1,6 @@
 import { AnyAction, combineReducers } from 'redux';
 
 import sharedReducers from 'app/core/reducers';
-import resourceTypesReducer from 'app/features/admin/resourcetypes/state/reducers';
 import ldapReducers from 'app/features/admin/state/reducers';
 import alertingReducers from 'app/features/alerting/state/reducers';
 import apiKeysReducers from 'app/features/api-keys/state/reducers';
@@ -19,6 +18,8 @@ import panelsReducers from 'app/features/panel/state/reducers';
 import { reducer as pluginsReducer } from 'app/features/plugins/admin/state/reducer';
 import userReducers from 'app/features/profile/state/reducers';
 import resourcesReducer from 'app/features/resources/state/reducers';
+import resourceTypesReducer from 'app/features/resourcetypes/state/reducers';
+import fixedChargesReducer from 'app/features/fixedcharges/state/reducers';
 import serviceAccountsReducer from 'app/features/serviceaccounts/state/reducers';
 import teamsReducers from 'app/features/teams/state/reducers';
 import usersReducers from 'app/features/users/state/reducers';
@@ -49,6 +50,7 @@ const rootReducers = {
   ...dashboardNavsReducer,
   ...resourceTypesReducer,
   ...resourcesReducer,
+  ...fixedChargesReducer,
   ...groupsReducer,
   plugins: pluginsReducer,
   [alertingApi.reducerPath]: alertingApi.reducer,

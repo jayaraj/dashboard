@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { GroupResource, Group, GroupsState, GroupState, GroupUser } from 'app/types';
+import { GroupResource, Group, GroupsState, GroupState, GroupUser, InvoicesState, Invoice, InvoiceState, Transaction, TransactionsState, QueryRange } from 'app/types';
 
 export const initialGroupsState: GroupsState = { groups: [], page: 1, count: 0, searchQuery: '', hasFetched: false };
 
@@ -24,7 +24,6 @@ const groupsSlice = createSlice({
 });
 
 export const { groupsLoaded, setSearchQuery, setGroupPage, setGroupCount } = groupsSlice.actions;
-
 export const groupsReducer = groupsSlice.reducer;
 
 export const initialGroupState: GroupState = {
@@ -93,7 +92,87 @@ export const {
 
 export const groupReducer = groupSlice.reducer;
 
+export const initialInvoicesState: InvoicesState = {
+  invoices: [] as Invoice[],
+  range: {from: '', to: ''} as QueryRange,
+  page: 1,
+  count: 0,
+  hasFetched: false,
+};
+
+const invoicesSlice = createSlice({
+  name: 'invoices',
+  initialState: initialInvoicesState,
+  reducers: {
+    invoicesLoaded: (state, action: PayloadAction<Invoice[]>): InvoicesState => {
+      return { ...state, hasFetched: true, invoices: action.payload };
+    },
+    setInvoicesRange: (state, action: PayloadAction<QueryRange>): InvoicesState => {
+      return { ...state, range: action.payload };
+    },
+    setInvoicesPage: (state, action: PayloadAction<number>): InvoicesState => {
+      return { ...state, page: action.payload };
+    },
+    setInvoicesCount: (state, action: PayloadAction<number>): InvoicesState => {
+      return { ...state, count: action.payload };
+    },
+  },
+});
+
+export const { invoicesLoaded, setInvoicesRange, setInvoicesPage, setInvoicesCount } = invoicesSlice.actions;
+export const invoicesReducer = invoicesSlice.reducer;
+
+export const initialInvoiceState: InvoiceState = {
+  invoice: {} as Invoice,
+};
+
+const invoiceSlice = createSlice({
+  name: 'invoice',
+  initialState: initialInvoiceState,
+  reducers: {
+    invoiceLoaded: (state, action: PayloadAction<Invoice>): InvoiceState => {
+      return { ...state, invoice: action.payload };
+    },
+  },
+});
+
+export const { invoiceLoaded } = invoiceSlice.actions;
+export const invoiceReducer = invoiceSlice.reducer;
+
+export const initialTransactionsState: TransactionsState = {
+  transactions: [] as Transaction[],
+  range: {from: '', to: ''} as QueryRange,
+  page: 1,
+  count: 0,
+  hasFetched: false,
+};
+
+const transactionsSlice = createSlice({
+  name: 'transactions',
+  initialState: initialTransactionsState,
+  reducers: {
+    transactionsLoaded: (state, action: PayloadAction<Transaction[]>): TransactionsState => {
+      return { ...state, hasFetched: true, transactions: action.payload };
+    },
+    setTransactionsRange: (state, action: PayloadAction<QueryRange>): TransactionsState => {
+      return { ...state, range: action.payload };
+    },
+    setTransactionsPage: (state, action: PayloadAction<number>): TransactionsState => {
+      return { ...state, page: action.payload };
+    },
+    setTransactionsCount: (state, action: PayloadAction<number>): TransactionsState => {
+      return { ...state, count: action.payload };
+    },
+  },
+});
+
+export const { transactionsLoaded, setTransactionsRange, setTransactionsPage, setTransactionsCount } = transactionsSlice.actions;
+export const transactionsReducer = transactionsSlice.reducer;
+
 export default {
   groups: groupsReducer,
   group: groupReducer,
+  invoices: invoicesReducer,
+  invoice: invoiceReducer,
+  transactions: transactionsReducer,
 };

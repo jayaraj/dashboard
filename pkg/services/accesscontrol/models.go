@@ -363,6 +363,24 @@ const (
 	// ResourceTypes related scopes
 	ScopeResourceTypesAll = "resourcetypes:*"
 
+	// Slab related actions
+	ActionSlabRead  = "slab:read"
+	ActionSlabWrite = "slab:write"
+	// Slab related scopes
+	ScopeSlabAll = "slab:*"
+
+	// Invoices related actions
+	ActionInvoicesRead  = "invoices:read"
+	ActionInvoicesWrite = "invoices:write"
+	// Invoices related scopes
+	ScopeInvoicesAll = "invoices:*"
+
+	// FixedCharges related actions
+	ActionFixedChargesRead  = "fixedcharges:read"
+	ActionFixedChargesWrite = "fixedcharges:write"
+	// FixedCharges related scopes
+	ScopeFixedChargesAll = "fixedcharges:*"
+
 	// Annotations related actions
 	ActionAnnotationsCreate = "annotations:create"
 	ActionAnnotationsDelete = "annotations:delete"

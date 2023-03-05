@@ -25,8 +25,9 @@ func (hs *HTTPServer) CreateResource(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(500, "failed marshal create", err)
 	}
+	url := fmt.Sprintf("%sapi/resources", hs.ResourceService.GetConfig().ResourceUrl)
 	req := &resources.RestRequest{
-		Url:        "api/resources",
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
@@ -64,8 +65,9 @@ func (hs *HTTPServer) UpdateResource(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(500, "failed marshal update", err)
 	}
+	url := fmt.Sprintf("%sapi/resources/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resources/%d", id),
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPut,
 	}
@@ -90,9 +92,9 @@ func (hs *HTTPServer) DeleteResource(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
-
+	url := fmt.Sprintf("%sapi/resources/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resources/%d", id),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodDelete,
 	}
@@ -117,8 +119,9 @@ func (hs *HTTPServer) CloneResource(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
+	url := fmt.Sprintf("%sapi/resources/%d/clone", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resources/%d/clone", id),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodPost,
 	}
@@ -148,8 +151,9 @@ func (hs *HTTPServer) GetResourceById(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
+	url := fmt.Sprintf("%sapi/resources/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resources/%d", id),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodGet,
 	}
@@ -194,8 +198,9 @@ func (hs *HTTPServer) SearchResources(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(500, "failed marshal search", err)
 	}
+	url := fmt.Sprintf("%sapi/resources/search", hs.ResourceService.GetConfig().ResourceUrl)
 	req := &resources.RestRequest{
-		Url:        "api/resources/search",
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
@@ -235,8 +240,9 @@ func (hs *HTTPServer) IsResourceAccessible(c *models.ReqContext) bool {
 	if err != nil {
 		return false
 	}
+	url := fmt.Sprintf("%sapi/resources/%d/access", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resources/%d/access", id),
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
@@ -266,8 +272,9 @@ func (hs *HTTPServer) GetResourceGroups(c *models.ReqContext) response.Response 
 	if page <= 0 {
 		page = 1
 	}
+	url := fmt.Sprintf("%sapi/resources/%d/groups?query=%s&page=%d&perPage=%d", hs.ResourceService.GetConfig().ResourceUrl, id, query, page, perPage)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resources/%d/groups?query=%s&page=%d&perPage=%d", id, query, page, perPage),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodGet,
 	}
@@ -308,8 +315,9 @@ func (hs *HTTPServer) AddResourceGroups(c *models.ReqContext) response.Response 
 	if err != nil {
 		return response.Error(500, "failed marshal add", err)
 	}
+	url := fmt.Sprintf("%sapi/groups/%d/resource", hs.ResourceService.GetConfig().ResourceUrl, dto.GroupId)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/groups/%d/resource", dto.GroupId),
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
@@ -345,8 +353,9 @@ func (hs *HTTPServer) GetResourceGroupLeafs(c *models.ReqContext) response.Respo
 	if err != nil {
 		return response.Error(500, "failed marshal group leafs", err)
 	}
+	url := fmt.Sprintf("%sapi/resources/%d/groups/leafs", hs.ResourceService.GetConfig().ResourceUrl, dto.ResourceId)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resources/%d/groups/leafs", dto.ResourceId),
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
@@ -374,8 +383,9 @@ func (hs *HTTPServer) DeleteResourceGroup(c *models.ReqContext) response.Respons
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
+	url := fmt.Sprintf("%sapi/resources/groups/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resources/groups/%d", id),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodDelete,
 	}
