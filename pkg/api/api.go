@@ -100,9 +100,13 @@ func (hs *HTTPServer) registerRoutes() {
 	r.Get("/org/groups", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsRead)), hs.Index)
 	r.Get("/org/groups/edit/*", authorize(reqEditorRole, groupsEditAccessEvaluator), hs.Index)
 	r.Get("/org/groups/new", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), hs.Index)
-	r.Get("/admin/resourcetypes", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesRead)), hs.Index)
-	r.Get("/admin/resourcetypes/edit/*", authorize(reqGrafanaAdmin, resourceTypesEditAccessEvaluator), hs.Index)
-	r.Get("/admin/resourcetypes/new", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), hs.Index)
+	r.Get("/org/groups/:groupId/invoices/*", authorize(reqEditorRole, ac.EvalPermission(ac.ActionInvoicesRead)), hs.Index)
+	r.Get("/org/resourcetypes", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesRead)), hs.Index)
+	r.Get("/org/resourcetypes/edit/*", authorize(reqGrafanaAdmin, resourceTypesEditAccessEvaluator), hs.Index)
+	r.Get("/org/resourcetypes/new", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), hs.Index)
+	r.Get("/org/fixedcharges", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionFixedChargesRead)), hs.Index)
+	r.Get("/org/fixedcharges/edit/*", authorize(reqGrafanaAdmin, fixedChargesEditAccessEvaluator), hs.Index)
+	r.Get("/org/fixedcharges/new", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionFixedChargesWrite)), hs.Index)
 	r.Get("/org/serviceaccounts", authorize(reqOrgAdmin, ac.EvalPermission(serviceaccounts.ActionRead)), hs.Index)
 	r.Get("/org/serviceaccounts/:serviceAccountId", authorize(reqOrgAdmin, ac.EvalPermission(serviceaccounts.ActionRead)), hs.Index)
 	r.Get("/org/apikeys/", authorize(reqOrgAdmin, ac.EvalPermission(ac.ActionAPIKeyRead)), hs.Index)
@@ -454,6 +458,16 @@ func (hs *HTTPServer) registerRoutes() {
 			groupsRoute.Delete("/:id/users/:userId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), routing.Wrap(hs.DeleteGroupUsers))
 		})
 
+		// Invoices
+		apiRoute.Group("/groups", func(groupsRoute routing.RouteRegister) {
+			groupsRoute.Post("/:groupId/invoices", authorize(reqSignedIn, ac.EvalPermission(ac.ActionInvoicesWrite)), routing.Wrap(hs.CreateInvoice))
+			groupsRoute.Post("/:groupId/transactions", authorize(reqSignedIn, ac.EvalPermission(ac.ActionInvoicesWrite)), routing.Wrap(hs.CreateTransaction))
+			groupsRoute.Get("/:groupId/invoices", authorize(reqSignedIn, ac.EvalPermission(ac.ActionInvoicesRead)), routing.Wrap(hs.GetInvoices))
+			groupsRoute.Get("/:groupId/transactions", authorize(reqSignedIn, ac.EvalPermission(ac.ActionInvoicesRead)), routing.Wrap(hs.GetGroupTransactions))
+			groupsRoute.Get("/:groupId/invoices/:invoiceId/transactions", authorize(reqSignedIn, ac.EvalPermission(ac.ActionInvoicesRead)), routing.Wrap(hs.GetInvoiceTransactions))
+			groupsRoute.Get("/:groupId/invoices/:invoiceId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionInvoicesRead)), routing.Wrap(hs.GetInvoice))
+		})
+
 		// ResourceTypes
 		apiRoute.Group("/resourcetypes", func(resourcetypesRoute routing.RouteRegister) {
 			resourcetypesRoute.Post("/", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), routing.Wrap(hs.CreateResourceType))
@@ -461,6 +475,20 @@ func (hs *HTTPServer) registerRoutes() {
 			resourcetypesRoute.Delete("/:resourcetypeId", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), routing.Wrap(hs.DeleteResourceType))
 			resourcetypesRoute.Get("/:resourcetypeId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourceTypesRead)), routing.Wrap(hs.GetResourceTypeById))
 			resourcetypesRoute.Get("/search", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourceTypesRead)), routing.Wrap(hs.SearchResourceTypes))
+
+			resourcetypesRoute.Post("/slab", authorize(reqEditorRole, ac.EvalPermission(ac.ActionSlabWrite)), routing.Wrap(hs.CreateSlab))
+			resourcetypesRoute.Put("/slab/:slabId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionSlabWrite)), routing.Wrap(hs.UpdateSlab))
+			resourcetypesRoute.Delete("/slab/:slabId", authorize(reqEditorRole, ac.EvalPermission(ac.ActionSlabWrite)), routing.Wrap(hs.DeleteSlab))
+			resourcetypesRoute.Get("/slab/:slabType", authorize(reqSignedIn, ac.EvalPermission(ac.ActionSlabRead)), routing.Wrap(hs.GetSlabByType))
+		})
+
+		// FixedCharges
+		apiRoute.Group("/fixedcharges", func(fixedchargesRoute routing.RouteRegister) {
+			fixedchargesRoute.Post("/", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionFixedChargesWrite)), routing.Wrap(hs.CreateFixedCharge))
+			fixedchargesRoute.Put("/:fixedchargeId", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionFixedChargesWrite)), routing.Wrap(hs.UpdateFixedCharge))
+			fixedchargesRoute.Delete("/:fixedchargeId", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionFixedChargesWrite)), routing.Wrap(hs.DeleteFixedCharge))
+			fixedchargesRoute.Get("/:fixedchargeId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionFixedChargesRead)), routing.Wrap(hs.GetFixedChargeById))
+			fixedchargesRoute.Get("/", authorize(reqSignedIn, ac.EvalPermission(ac.ActionFixedChargesRead)), routing.Wrap(hs.GetFixedCharges))
 		})
 
 		// ResourceConfiguration

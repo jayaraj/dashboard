@@ -8,14 +8,21 @@ export function buildNavModel(resourceType: ResourceType): NavModelItem {
     subTitle: 'Manage ' + config.resourceLabel.toLowerCase() + 'type settings',
     url: '',
     text: resourceType.type,
-    breadcrumbs: [{ title: config.resourceLabel + ' Types', url: 'admin/resourcetypes' }],
+    breadcrumbs: [{ title: config.resourceLabel + ' Types', url: '/org/resourcetypes' }],
     children: [
       {
         active: false,
         icon: 'sliders-v-alt',
         id: `resourcetype-settings-${resourceType.id}`,
         text: 'Settings',
-        url: `admin/resourcetypes/edit/${resourceType.id}/settings`,
+        url: `/org/resourcetypes/edit/${resourceType.id}/settings`,
+      },
+      {
+        active: false,
+        icon: 'tax',
+        id: `resourcetype-slab-${resourceType.id}`,
+        text: 'Slabs',
+        url: `/org/resourcetypes/edit/${resourceType.id}/slab`,
       },
     ],
   };

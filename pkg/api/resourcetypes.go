@@ -23,8 +23,9 @@ func (hs *HTTPServer) CreateResourceType(c *models.ReqContext) response.Response
 	if err != nil {
 		return response.Error(500, "failed marshal create", err)
 	}
+	url := fmt.Sprintf("%sapi/resourcetypes", hs.ResourceService.GetConfig().ResourceUrl)
 	req := &resources.RestRequest{
-		Url:        "api/resourcetypes",
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
@@ -59,8 +60,9 @@ func (hs *HTTPServer) UpdateResourceType(c *models.ReqContext) response.Response
 	if err != nil {
 		return response.Error(500, "failed marshal update", err)
 	}
+	url := fmt.Sprintf("%sapi/resourcetypes/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resourcetypes/%d", id),
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPut,
 	}
@@ -82,8 +84,9 @@ func (hs *HTTPServer) DeleteResourceType(c *models.ReqContext) response.Response
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
+	url := fmt.Sprintf("%sapi/resourcetypes/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resourcetypes/%d", id),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodDelete,
 	}
@@ -105,8 +108,9 @@ func (hs *HTTPServer) GetResourceTypeById(c *models.ReqContext) response.Respons
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
+	url := fmt.Sprintf("%sapi/resourcetypes/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resourcetypes/%d", id),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodGet,
 	}
@@ -143,9 +147,9 @@ func (hs *HTTPServer) SearchResourceTypes(c *models.ReqContext) response.Respons
 		Page:    int64(page),
 		PerPage: int64(perPage),
 	}
-
+	url := fmt.Sprintf("%sapi/resourcetypes?query=%s&page=%d&perPage=%d", hs.ResourceService.GetConfig().ResourceUrl, query, page, perPage)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resourcetypes?query=%s&page=%d&perPage=%d", query, page, perPage),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodGet,
 	}

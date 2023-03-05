@@ -27,8 +27,9 @@ func (hs *HTTPServer) CreateGroup(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(500, "failed marshal create group", err)
 	}
+	url := fmt.Sprintf("%s%s", hs.ResourceService.GetConfig().ResourceUrl, "api/groups")
 	req := &resources.RestRequest{
-		Url:        "api/groups",
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
@@ -66,8 +67,9 @@ func (hs *HTTPServer) UpdateGroup(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(500, "failed marshal update group", err)
 	}
+	url := fmt.Sprintf("%sapi/groups/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/groups/%d", id),
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPut,
 	}
@@ -92,8 +94,9 @@ func (hs *HTTPServer) DeleteGroup(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
+	url := fmt.Sprintf("%sapi/groups/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/groups/%d", id),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodDelete,
 	}
@@ -118,8 +121,9 @@ func (hs *HTTPServer) GetGroupById(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
+	url := fmt.Sprintf("%sapi/groups/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/groups/%d", id),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodGet,
 	}
@@ -152,8 +156,9 @@ func (hs *HTTPServer) GetGroups(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(500, "failed marshal get group", err)
 	}
+	url := fmt.Sprintf("%sapi/groups/search", hs.ResourceService.GetConfig().ResourceUrl)
 	req := &resources.RestRequest{
-		Url:        "api/groups/search",
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
@@ -190,8 +195,9 @@ func (hs *HTTPServer) GetGroupParent(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(500, "failed marshal get group", err)
 	}
+	url := fmt.Sprintf("%sapi/groups/%d/parent", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/groups/%d/parent", id),
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
@@ -220,8 +226,9 @@ func (hs *HTTPServer) isGroupAccessible(ctx context.Context, groupId int64, user
 	if err != nil {
 		return false
 	}
+	url := fmt.Sprintf("%sapi/groups/%d/access", hs.ResourceService.GetConfig().ResourceUrl, groupId)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/groups/%d/access", groupId),
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
@@ -262,8 +269,9 @@ func (hs *HTTPServer) DeleteGroupResource(c *models.ReqContext) response.Respons
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
+	url := fmt.Sprintf("%sapi/resources/groups/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resources/groups/%d", id),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodDelete,
 	}
@@ -297,8 +305,9 @@ func (hs *HTTPServer) GetGroupResources(c *models.ReqContext) response.Response 
 	if page <= 0 {
 		page = 1
 	}
+	url := fmt.Sprintf("%sapi/groups/%d/resources?query=%s&page=%d&perPage=%d", hs.ResourceService.GetConfig().ResourceUrl, id, query, page, perPage)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/groups/%d/resources?query=%s&page=%d&perPage=%d", id, query, page, perPage),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodGet,
 	}
@@ -336,8 +345,9 @@ func (hs *HTTPServer) GetGroupUsers(c *models.ReqContext) response.Response {
 	if page <= 0 {
 		page = 1
 	}
+	url := fmt.Sprintf("%sapi/groups/%d/users?query=%s&page=%d&perPage=%d", hs.ResourceService.GetConfig().ResourceUrl, id, query, page, perPage)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/groups/%d/users?query=%s&page=%d&perPage=%d", id, query, page, perPage),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodGet,
 	}
@@ -403,8 +413,9 @@ func (hs *HTTPServer) AddGroupUsers(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(500, "failed marshal create group", err)
 	}
+	url := fmt.Sprintf("%sapi/groups/%d/users", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/groups/%d/users", id),
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
@@ -434,9 +445,9 @@ func (hs *HTTPServer) DeleteGroupUsers(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "userId is invalid", err)
 	}
-
+	url := fmt.Sprintf("%sapi/groups/%d/users/%d", hs.ResourceService.GetConfig().ResourceUrl, id, userId)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/groups/%d/users/%d", id, userId),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodDelete,
 	}

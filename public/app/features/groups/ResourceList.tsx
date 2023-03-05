@@ -1,19 +1,18 @@
 import React, { PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
-import { DeleteButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination } from '@grafana/ui';
+import { DeleteButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, LinkButton, Icon } from '@grafana/ui';
 import { contextSrv } from 'app/core/services/context_srv';
-import { StoreState, AccessControlAction, GroupResource } from 'app/types';
+import { StoreState, AccessControlAction, GroupResource, Group } from 'app/types';
 
 import { deleteResource, loadResources } from './state/actions';
 import { setResourcePage, setResourceSearchQuery } from './state/reducers';
-import { getResourcesCount, getResourcesPage, getResourceSearchQuery, getGroupId } from './state/selectors';
+import { getResourcesCount, getResourcesPage, getResourceSearchQuery } from './state/selectors';
 
 const pageLimit = 10;
 
 function mapStateToProps(state: StoreState) {
   return {
-    groupId: getGroupId(state.group),
     resourceSearchQuery: getResourceSearchQuery(state.group),
     resourcesCount: getResourcesCount(state.group),
     resourcesPage: getResourcesPage(state.group),
@@ -23,6 +22,7 @@ function mapStateToProps(state: StoreState) {
 
 export interface OwnProps {
   resources: GroupResource[];
+  group: Group;
 }
 
 const mapDispatchToProps = {
@@ -75,8 +75,9 @@ export class ResourceList extends PureComponent<Props> {
   }
 
   renderResourceList() {
-    const { resources, resourceSearchQuery, resourcesPage, resourcesCount } = this.props;
+    const { resources, resourceSearchQuery, resourcesPage, resourcesCount, group } = this.props;
     const totalPages = Math.ceil(resourcesCount / pageLimit);
+    const parentUrl = (group.parent === -1)? `org/groups`:`org/groups/edit/${group.parent}/children`;
 
     return (
       <div>
@@ -84,6 +85,9 @@ export class ResourceList extends PureComponent<Props> {
           <div className="gf-form gf-form--grow">
             <FilterInput placeholder="Search" value={resourceSearchQuery} onChange={this.onSearchQueryChange} />
           </div>
+          <LinkButton href={parentUrl}>
+            <Icon name="arrow-up" />Parent
+          </LinkButton>
         </div>
         <div className="admin-list-table">
           <VerticalGroup spacing="md">

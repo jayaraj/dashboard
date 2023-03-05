@@ -25,6 +25,9 @@ type IndexViewData struct {
 	AppleTouchIcon          template.URL
 	AppTitle                string
 	ResourceUrl             string
+	BillingUrl              string
+	EnableResource          bool
+	EnableBilling           bool
 	ResourceLabel           string
 	Sentry                  *setting.Sentry
 	ContentDeliveryURL      string
@@ -43,6 +46,7 @@ const (
 	WeightCreate
 	WeightDashboard
 	WeightExplore
+	WeightResource
 	WeightAlerting
 	WeightDataConnections
 	WeightPlugin

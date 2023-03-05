@@ -220,6 +220,58 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 		})
 	}
 
+	if ac.ReqOrgAdminOrEditor(c) {
+		deviceMgntNodes := []*dtos.NavLink{}
+		if hasAccess(ac.ReqOrgAdminOrEditor, resourcesAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text:        hs.Cfg.ResourceLabel + "s",
+				Id:          "resources",
+				Description: "Manage " + hs.Cfg.ResourceLabel + "s",
+				Icon:        "resource",
+				Url:         hs.Cfg.AppSubURL + "/org/resources",
+			})
+		}
+		if hasAccess(ac.ReqOrgAdminOrEditor, groupsAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text:        "Groups",
+				Id:          "resourcegroups",
+				Description: "Manage org groups",
+				Icon:        "layer-group",
+				Url:         hs.Cfg.AppSubURL + "/org/groups",
+			})
+		}
+		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text: hs.Cfg.ResourceLabel + "Types",
+				Id:   "resourcetypes",
+				Url:  hs.Cfg.AppSubURL + "/org/resourcetypes",
+				Icon: "resource-type",
+			})
+		}
+		if hasAccess(ac.ReqOrgAdminOrEditor, fixedChargesAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text:        "Org Charges",
+				Id:          "fixedcharges",
+				Description: "Manage org charges",
+				Icon:        "fixed-charge",
+				Url:         hs.Cfg.AppSubURL + "/org/fixedcharges",
+			})
+		}
+		if hs.Cfg.EnableResource && len(deviceMgntNodes) > 0 {
+			deviceMgntNode := &dtos.NavLink{
+				Id:         "resource",
+				Text:       hs.Cfg.ResourceLabel + " Management",
+				SubTitle:   "Organization: " + c.OrgName,
+				Icon:       "resource-management",
+				Url:        deviceMgntNodes[0].Url,
+				Section:    dtos.NavSectionCore,
+				SortWeight: dtos.WeightResource,
+				Children:   deviceMgntNodes,
+			}
+			navTree = append(navTree, deviceMgntNode)
+		}
+	}
+
 	navTree = hs.addProfile(navTree, c)
 
 	_, uaIsDisabledForOrg := hs.Cfg.UnifiedAlerting.DisabledOrgs[c.OrgID]
@@ -284,26 +336,6 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 			Description: "Manage org groups",
 			Icon:        "users-alt",
 			Url:         hs.Cfg.AppSubURL + "/org/teams",
-		})
-	}
-
-	if hasAccess(ac.ReqOrgAdminOrEditor, resourcesAccessEvaluator) {
-		configNodes = append(configNodes, &dtos.NavLink{
-			Text:        hs.Cfg.ResourceLabel + "s",
-			Id:          "resources",
-			Description: "Manage org resources",
-			Icon:        "rss",
-			Url:         hs.Cfg.AppSubURL + "/org/resources",
-		})
-	}
-
-	if hasAccess(ac.ReqOrgAdminOrEditor, groupsAccessEvaluator) {
-		configNodes = append(configNodes, &dtos.NavLink{
-			Text:        "Groups",
-			Id:          "resourcegroups",
-			Description: "Manage org groups",
-			Icon:        "layer-group",
-			Url:         hs.Cfg.AppSubURL + "/org/groups",
 		})
 	}
 
@@ -710,12 +742,6 @@ func (hs *HTTPServer) buildAdminNavLinks(c *models.ReqContext) []*dtos.NavLink {
 		})
 	}
 
-	if ac.ReqGrafanaAdmin(c) {
-		adminNavLinks = append(adminNavLinks, &dtos.NavLink{
-			Text: hs.Cfg.ResourceLabel + "Types", Id: "resourcetypes", Url: hs.Cfg.AppSubURL + "/admin/resourcetypes", Icon: "rss",
-		})
-	}
-
 	if hasAccess(ac.ReqGrafanaAdmin, ac.EvalPermission(ac.ActionSettingsRead)) && hs.Features.IsEnabled(featuremgmt.FlagStorage) {
 		adminNavLinks = append(adminNavLinks, &dtos.NavLink{
 			Text:        "Storage",
@@ -835,6 +861,9 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		AppleTouchIcon:          "public/img/custom/apple-touch-icon.png",
 		AppTitle:                setting.ApplicationName,
 		ResourceUrl:             setting.ResourceUrl,
+		BillingUrl:              setting.BillingUrl,
+		EnableResource:          setting.EnableResource,
+		EnableBilling:           setting.EnableBilling,
 		ResourceLabel:           setting.ResourceLabel,
 		NavTree:                 navTree,
 		Sentry:                  &hs.Cfg.Sentry,

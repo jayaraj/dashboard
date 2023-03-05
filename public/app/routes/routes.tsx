@@ -305,6 +305,12 @@ export function getAppRoutes(): RouteDescriptor[] {
       ),
     },
     {
+      path: '/org/groups/:groupId/invoices/:invoiceId',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "InvoicePage" */ 'app/features/groups/InvoicePage')
+      ),
+    },
+    {
       path: '/org/groups/edit/:id/:page?',
       component: SafeDynamicImport(() => import(/* webpackChunkName: "GroupPages" */ 'app/features/groups/GroupPages')),
     },
@@ -367,21 +373,39 @@ export function getAppRoutes(): RouteDescriptor[] {
       ),
     },
     {
-      path: '/admin/resourcetypes',
+      path: '/org/resourcetypes',
       component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "ResourceTypeList" */ 'app/features/admin/resourcetypes/ResourceTypeList')
+        () => import(/* webpackChunkName: "ResourceTypeList" */ 'app/features/resourcetypes/ResourceTypeList')
       ),
     },
     {
-      path: '/admin/resourcetypes/new',
+      path: '/org/resourcetypes/new',
       component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateResourceType" */ 'app/features/admin/resourcetypes/CreateResourceType')
+        () => import(/* webpackChunkName: "CreateResourceType" */ 'app/features/resourcetypes/CreateResourceType')
       ),
     },
     {
-      path: '/admin/resourcetypes/edit/:id/:page?',
+      path: '/org/resourcetypes/edit/:id/:page?',
       component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "ResourceTypePages" */ 'app/features/admin/resourcetypes/ResourceTypePages')
+        () => import(/* webpackChunkName: "ResourceTypePages" */ 'app/features/resourcetypes/ResourceTypePages')
+      ),
+    },
+    {
+      path: '/org/fixedcharges',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "FixedChargeList" */ 'app/features/fixedcharges/FixedChargeList')
+      ),
+    },
+    {
+      path: '/org/fixedcharges/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateFixedCharge" */ 'app/features/fixedcharges/CreateFixedCharge')
+      ),
+    },
+    {
+      path: '/org/fixedcharges/edit/:id/:page?',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "FixedChargePages" */ 'app/features/fixedcharges/FixedChargePages')
       ),
     },
     {

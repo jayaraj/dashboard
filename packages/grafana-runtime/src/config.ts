@@ -32,6 +32,9 @@ export class GrafanaBootConfig implements GrafanaConfig {
   appSubUrl = '';
   appTitle = '';
   resourceUrl = '';
+  billingUrl = '';
+  enableBilling = false;
+  enableResource = false;
   resourceLabel = '';
   windowTitlePrefix = '';
   buildInfo: BuildInfo;
@@ -159,6 +162,9 @@ export class GrafanaBootConfig implements GrafanaConfig {
       appSubUrl: '',
       appTitle: '',
       resourceUrl: '',
+      billingUrl: '',
+      enableBilling: false,
+      enableResource: false,
       resourceLabel: '',
       buildInfo: {
         version: '1.0',

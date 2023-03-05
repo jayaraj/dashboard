@@ -382,6 +382,7 @@ export class UnthemedDashboardPage extends PureComponent<Props, State> {
             </section>
           )}
 
+          <div style={{ marginTop: '10px' }} ></div>
           <DashboardGrid dashboard={dashboard} viewPanel={viewPanel} editPanel={editPanel} />
 
           {inspectPanel && <PanelInspector dashboard={dashboard} panel={inspectPanel} />}

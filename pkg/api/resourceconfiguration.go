@@ -35,8 +35,9 @@ func (hs *HTTPServer) UpdateResourceConfiguration(c *models.ReqContext) response
 	if err != nil {
 		return response.Error(500, "failed marshal update", err)
 	}
+	url := fmt.Sprintf("%sapi/resourceconfigurations", hs.ResourceService.GetConfig().ResourceUrl)
 	req := &resources.RestRequest{
-		Url:        "api/resourceconfigurations",
+		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPut,
 	}
@@ -65,8 +66,9 @@ func (hs *HTTPServer) GetResourceConfiguration(c *models.ReqContext) response.Re
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	config := web.Params(c.Req)[":config"]
+	url := fmt.Sprintf("%sapi/resourceconfigurations?org_id=%d&group_id=%d&resource_id=%d&type=%s", hs.ResourceService.GetConfig().ResourceUrl, c.OrgID, groupId, id, config)
 	req := &resources.RestRequest{
-		Url:        fmt.Sprintf("api/resourceconfigurations?org_id=%d&group_id=%d&resource_id=%d&type=%s", c.OrgID, groupId, id, config),
+		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodGet,
 	}
