@@ -41,6 +41,13 @@ type IsGroupAccessibleMsg struct {
 	Result  bool  `json:"-"`
 }
 
+type UpdateUserMsg struct {
+	Login string `json:"login"`
+	Email string `json:"email"`
+	Name  string `json:"name"`
+	Role  string `json:"role"`
+}
+
 type AddGroupResourceMsg struct {
 	User       User  `json:"user,omitempty"`
 	GroupId    int64 `json:"group_id,omitempty"`

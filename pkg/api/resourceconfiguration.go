@@ -47,7 +47,7 @@ func (hs *HTTPServer) UpdateResourceConfiguration(c *models.ReqContext) response
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
@@ -78,7 +78,7 @@ func (hs *HTTPServer) GetResourceConfiguration(c *models.ReqContext) response.Re
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
