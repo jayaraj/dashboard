@@ -45,13 +45,13 @@ func (hs *HTTPServer) GetInvoices(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	dto := dtos.GetInvoicesMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -87,13 +87,13 @@ func (hs *HTTPServer) GetGroupTransactions(c *models.ReqContext) response.Respon
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	dto := dtos.GetGroupTransactionsMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -127,13 +127,13 @@ func (hs *HTTPServer) GetInvoiceTransactions(c *models.ReqContext) response.Resp
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	dto := dtos.GetInvoiceTransactionsMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -159,13 +159,13 @@ func (hs *HTTPServer) GetInvoice(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	dto := dtos.GetInvoiceByIdMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -199,12 +199,12 @@ func (hs *HTTPServer) CreateInvoice(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.Success("created")
 }
@@ -241,12 +241,12 @@ func (hs *HTTPServer) CreateTransaction(c *models.ReqContext) response.Response 
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.Success("created")
 }

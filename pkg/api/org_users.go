@@ -344,6 +344,10 @@ func (hs *HTTPServer) updateOrgUserHelper(c *models.ReqContext, cmd models.Updat
 		return response.Error(500, "Failed update org user", err)
 	}
 
+	if err := hs.UpdateGroupUsers(c.Req.Context(), cmd.UserId); err != nil {
+		return response.Error(http.StatusInternalServerError, "Failed to update group user", err)
+	}
+
 	return response.Success("Organization user updated")
 }
 
