@@ -37,12 +37,12 @@ func (hs *HTTPServer) CreateResource(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -77,7 +77,7 @@ func (hs *HTTPServer) UpdateResource(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
@@ -104,7 +104,7 @@ func (hs *HTTPServer) DeleteResource(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
@@ -132,13 +132,13 @@ func (hs *HTTPServer) CloneResource(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	dto := dtos.CloneResourceMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -169,7 +169,7 @@ func (hs *HTTPServer) GetResourceById(c *models.ReqContext) response.Response {
 	}
 	dto := dtos.GetResourceByIdMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -210,12 +210,12 @@ func (hs *HTTPServer) SearchResources(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -284,13 +284,13 @@ func (hs *HTTPServer) GetResourceGroups(c *models.ReqContext) response.Response 
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	dto := dtos.GetResourceGroupsMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -327,7 +327,7 @@ func (hs *HTTPServer) AddResourceGroups(c *models.ReqContext) response.Response 
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
@@ -365,12 +365,12 @@ func (hs *HTTPServer) GetResourceGroupLeafs(c *models.ReqContext) response.Respo
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -395,7 +395,7 @@ func (hs *HTTPServer) DeleteResourceGroup(c *models.ReqContext) response.Respons
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}

@@ -39,12 +39,12 @@ func (hs *HTTPServer) CreateGroup(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -79,7 +79,7 @@ func (hs *HTTPServer) UpdateGroup(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
@@ -106,7 +106,7 @@ func (hs *HTTPServer) DeleteGroup(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
@@ -133,13 +133,13 @@ func (hs *HTTPServer) GetGroupById(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	dto := dtos.GetGroupByIdMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -168,12 +168,12 @@ func (hs *HTTPServer) GetGroups(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -207,12 +207,12 @@ func (hs *HTTPServer) GetGroupParent(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -281,7 +281,7 @@ func (hs *HTTPServer) DeleteGroupResource(c *models.ReqContext) response.Respons
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
@@ -317,13 +317,13 @@ func (hs *HTTPServer) GetGroupResources(c *models.ReqContext) response.Response 
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	dto := dtos.GetGroupResourcesMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -357,13 +357,13 @@ func (hs *HTTPServer) GetGroupUsers(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	dto := dtos.GetGroupUsersMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -425,7 +425,7 @@ func (hs *HTTPServer) AddGroupUsers(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
@@ -457,10 +457,49 @@ func (hs *HTTPServer) DeleteGroupUsers(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 
 	return response.Success("deleted")
+}
+
+func (hs *HTTPServer) UpdateGroupUsers(ctx context.Context, userId int64) error {
+	query := models.GetUserProfileQuery{UserId: userId}
+	if err := hs.SQLStore.GetUserProfile(ctx, &query); err != nil {
+		return err
+	}
+	roleMsg := models.GetOrgUserRoleMsg{UserId: userId, OrgId: query.Result.OrgId}
+	if err := hs.SQLStore.GetOrgUserRole(ctx, &roleMsg); err != nil {
+		return err
+	}
+
+	updateUser := dtos.UpdateUserMsg{
+		Login: query.Result.Login,
+		Email: query.Result.Email,
+		Name:  query.Result.Name,
+		Role:  dtos.ConvertRoleToString(roleMsg.Result),
+	}
+	body, err := json.Marshal(&updateUser)
+	if err != nil {
+		return err
+	}
+	url := fmt.Sprintf("%sapi/groups/users/%d", hs.ResourceService.GetConfig().ResourceUrl, userId)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    body,
+		HttpMethod: http.MethodPut,
+	}
+	if err := hs.ResourceService.RestRequest(ctx, req); err != nil {
+		return err
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return err
+		}
+		return errors.New(errResponse.Message)
+	}
+	return nil
 }
