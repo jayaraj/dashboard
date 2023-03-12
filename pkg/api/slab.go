@@ -38,12 +38,12 @@ func (hs *HTTPServer) CreateSlab(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
@@ -75,7 +75,7 @@ func (hs *HTTPServer) UpdateSlab(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
@@ -99,7 +99,7 @@ func (hs *HTTPServer) DeleteSlab(c *models.ReqContext) response.Response {
 	if req.StatusCode != http.StatusOK {
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
@@ -132,12 +132,12 @@ func (hs *HTTPServer) GetSlabByType(c *models.ReqContext) response.Response {
 		}
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
 		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
 	}
 	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
-		response.Error(req.StatusCode, "failed unmarshal error ", err)
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, cmd.Result)
 }
