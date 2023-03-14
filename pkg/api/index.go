@@ -220,9 +220,9 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 		})
 	}
 
-	if ac.ReqOrgAdminOrEditor(c) {
+	if c.IsSignedIn {
 		deviceMgntNodes := []*dtos.NavLink{}
-		if hasAccess(ac.ReqOrgAdminOrEditor, resourcesAccessEvaluator) {
+		if hasAccess(ac.ReqSignedIn, resourcesAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
 				Text:        hs.Cfg.ResourceLabel + "s",
 				Id:          "resources",
@@ -231,7 +231,7 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 				Url:         hs.Cfg.AppSubURL + "/org/resources",
 			})
 		}
-		if hasAccess(ac.ReqOrgAdminOrEditor, groupsAccessEvaluator) {
+		if hasAccess(ac.ReqSignedIn, groupsAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
 				Text:        "Groups",
 				Id:          "resourcegroups",
