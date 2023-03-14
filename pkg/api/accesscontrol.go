@@ -396,7 +396,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionSlabWrite, Scope: ac.ScopeSlabAll},
 			},
 		},
-		Grants: []string{ac.RoleGrafanaAdmin},
+		Grants: []string{string(org.RoleAdmin)},
 	}
 
 	invoicesReaderRole := ac.RoleRegistration{
@@ -407,7 +407,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 			Group:       "Invoices",
 			Version:     1,
 			Permissions: []ac.Permission{
-				{Action: ac.ActionSlabRead},
+				{Action: ac.ActionInvoicesRead},
 			},
 		},
 		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
@@ -425,7 +425,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionInvoicesWrite, Scope: ac.ScopeInvoicesAll},
 			},
 		},
-		Grants: []string{ac.RoleGrafanaAdmin},
+		Grants: []string{string(org.RoleAdmin)},
 	}
 
 	fixedChargesReaderRole := ac.RoleRegistration{
