@@ -1,6 +1,6 @@
 import { FixedCharge, FixedChargesState, FixedChargeState} from 'app/types';
 
-export const getFixedChargeCount = (state: FixedChargesState) => state.fixedCharges.length;
+export const getFixedChargeCount = (state: FixedChargesState) => state.fixedCharges ? state.fixedCharges.length : 0; 
 export const getFixedCharge = (state: FixedChargeState, currentFixedChargeId: any): FixedCharge | null => {
   if (state.fixedCharge.id === parseInt(currentFixedChargeId, 10)) {
     return state.fixedCharge;
