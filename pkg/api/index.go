@@ -222,13 +222,21 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 
 	if c.IsSignedIn {
 		deviceMgntNodes := []*dtos.NavLink{}
-		if hasAccess(ac.ReqSignedIn, resourcesAccessEvaluator) {
+		if hasAccess(ac.ReqOrgAdminOrEditor, fixedChargesAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text:        hs.Cfg.ResourceLabel + "s",
-				Id:          "resources",
-				Description: "Manage " + hs.Cfg.ResourceLabel + "s",
-				Icon:        "resource",
-				Url:         hs.Cfg.AppSubURL + "/org/resources",
+				Text:        "Org Charges",
+				Id:          "fixedcharges",
+				Description: "Manage org charges",
+				Icon:        "fixed-charge",
+				Url:         hs.Cfg.AppSubURL + "/org/fixedcharges",
+			})
+		}
+		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text: hs.Cfg.ResourceLabel + "Types",
+				Id:   "resourcetypes",
+				Url:  hs.Cfg.AppSubURL + "/org/resourcetypes",
+				Icon: "resource-type",
 			})
 		}
 		if hasAccess(ac.ReqSignedIn, groupsAccessEvaluator) {
@@ -240,21 +248,13 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 				Url:         hs.Cfg.AppSubURL + "/org/groups",
 			})
 		}
-		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
+		if hasAccess(ac.ReqSignedIn, resourcesAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text: hs.Cfg.ResourceLabel + "Types",
-				Id:   "resourcetypes",
-				Url:  hs.Cfg.AppSubURL + "/org/resourcetypes",
-				Icon: "resource-type",
-			})
-		}
-		if hasAccess(ac.ReqOrgAdminOrEditor, fixedChargesAccessEvaluator) {
-			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text:        "Org Charges",
-				Id:          "fixedcharges",
-				Description: "Manage org charges",
-				Icon:        "fixed-charge",
-				Url:         hs.Cfg.AppSubURL + "/org/fixedcharges",
+				Text:        hs.Cfg.ResourceLabel + "s",
+				Id:          "resources",
+				Description: "Manage " + hs.Cfg.ResourceLabel + "s",
+				Icon:        "resource",
+				Url:         hs.Cfg.AppSubURL + "/org/resources",
 			})
 		}
 		if hs.Cfg.EnableResource && len(deviceMgntNodes) > 0 {
