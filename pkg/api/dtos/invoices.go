@@ -100,7 +100,7 @@ type Transaction struct {
 	Tax         float64                `json:"tax"`
 	Amount      float64                `json:"amount"`
 	Balance     float64                `json:"balance"`
-	Previous    int64                  `json:"previous"`
+	Previous    string                 `json:"previous"`
 	Description *string                `json:"description,omitempty"`
 	Login       *string                `json:"login,omitempty"`
 	Context     map[string]interface{} `json:"context"`
