@@ -10,15 +10,13 @@ import { StoreState } from 'app/types';
 
 import ChildrenList from './ChildrenList';
 import GroupSettings from './GroupSettings';
+import InvoiceList from './InvoiceList';
 import ResourceList from './ResourceList';
+import TransactionList from './TransactionList';
 import UserList from './UserList';
 import { loadResources, loadGroup, loadUsers } from './state/actions';
 import { getGroupLoadingNav } from './state/navModel';
 import { getResources, getGroup, getUsers, getChildren } from './state/selectors';
-import InvoiceList from './InvoiceList';
-import TransactionList from './TransactionList';
-
-const pageLimit = 1;
 
 interface GroupPageRouteParams {
   id: string;
@@ -81,11 +79,17 @@ export class GroupPages extends PureComponent<Props, State> {
   }
 
   async componentDidMount() {
-    await this.fetchGroup();
+    const { group, groupId } = this.props;
+    const { isLoading } = this.state;
+    if (!isLoading && (group === null || (group && group!.id !== groupId))) {
+      await this.fetchGroup();
+    }
   }
+
   async componentDidUpdate() {
     const { group, groupId } = this.props;
-    if (group === null || (group && group!.id !== groupId)) {
+    const { isLoading } = this.state;
+    if (!isLoading && (group === null || (group && group!.id !== groupId))) {
       await this.fetchGroup();
     }
   }
@@ -94,8 +98,6 @@ export class GroupPages extends PureComponent<Props, State> {
     const { loadGroup, groupId } = this.props;
     this.setState({ isLoading: true });
     const group = await loadGroup(groupId);
-    await this.props.loadResources('', 1, pageLimit);
-    await this.props.loadUsers('', 1, pageLimit);
     this.setState({ isLoading: false });
     return group;
   }
