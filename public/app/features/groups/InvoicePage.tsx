@@ -1,9 +1,12 @@
 import { css } from '@emotion/css';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import numberToWords from "number-to-words";
 import React, { PureComponent } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { NavModel, GrafanaTheme2 } from '@grafana/data';
-import { Themeable2, withTheme2, useStyles2, LinkButton, Icon } from '@grafana/ui';
+import { Themeable2, withTheme2, useStyles2, LinkButton, Icon, Button } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
@@ -13,8 +16,6 @@ import { Invoice, StoreState, Transaction } from 'app/types';
 import { loadInvoice, loadInvoiceTransactions } from './state/actions';
 import { getGroupLoadingNav } from './state/navModel';
 import { getInvoice, getTransactions } from './state/selectors';
-
-
 
 const pageLimit = 30;
 
@@ -87,6 +88,18 @@ export class InvoicePage extends PureComponent<Props, State> {
     this.setState({ isLoading: false });
     return invoice;
   }
+  
+  generatePDF = () => {
+    const { invoiceId } = this.props;
+    const current = new Date();
+    const element = document.getElementById('invoicepage');
+    html2canvas(element!, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF();
+      pdf.addImage(imgData, 'PNG', 0, 0, pdf.internal.pageSize.getWidth(), 0);
+      pdf.save(`invoice-${current.getDate()}${current.getMonth()+1}${current.getFullYear()}-${invoiceId}.pdf`);
+    });
+  }
 
   render() {
     const { navModel, invoice, transactions, signedInUser, groupId } = this.props;
@@ -98,6 +111,9 @@ export class InvoicePage extends PureComponent<Props, State> {
           <div className="page-action-bar">
             <div className="gf-form gf-form--grow">
             </div>
+            <Button onClick={this.generatePDF}>
+              Download
+            </Button>
             <LinkButton href={invoicesUrl}>
               <Icon name="arrow-up" />Invoices
             </LinkButton>
@@ -121,11 +137,21 @@ interface InvoiceTableProps {
 }
 
 const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgname, name, email, invoice, transactions }) => {
+  const capitalizeWords = (str: string) => {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
   const styles = useStyles2(getStyles);
   const date = new Date( invoice?.updated_at );
+  const from = new Date( invoice?.from );
+  const to = new Date( invoice?.to );
   const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  const words = capitalizeWords(numberToWords.toWords(invoice?invoice.amount:0));
   return (
-    <div className={styles.container}>
+    <div id="invoicepage" className={styles.container}>
       <table className={styles.outertable}>
         <tbody>
           <tr>
@@ -167,6 +193,45 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgname, name, email, invoi
                   </tr>
                 </tbody>
               </table>
+              <table className={styles.invoiceinfotable}>
+                <tbody>
+                  <tr>
+                    <td className={styles.information}>
+                      Billing Period:<br />
+                    </td>
+                    <td className={styles.details}>
+                      {from.toLocaleDateString('en-GB')} - {to.toLocaleDateString('en-GB')}<br />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className={styles.information}>
+                      Consumption Details:<br />
+                    </td>
+                  </tr>
+                  {
+                    invoice?.informations.map((info, index) => {return (
+                      <tr key={index}>
+                        <td className={styles.detailsleft}>
+                          {info.name}<br />
+                          {info.uuid}<br />
+                        </td>
+                        <td className={styles.details}>
+                          {info.type}<br />
+                        </td>
+                        <td className={styles.details}>
+                          <table className={styles.invoice}>
+                            <tbody>
+                              <tr><td>Constant:</td><td>{info.constant}</td></tr>
+                              <tr><td>Previous Reading:</td><td>{info.previous_reading}</td></tr>
+                              <tr><td>Current Reading:</td><td>{info.current_reading}</td></tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    )})
+                  }
+                </tbody>
+              </table>
             </td>
           </tr>
 
@@ -180,14 +245,14 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgname, name, email, invoi
             transactions?.map((transaction, index) => {return (
               <>
                 {(index < transactions?.length-1) && (
-                  <tr className={styles.item}>
+                  <tr className={styles.item} key={index}>
                     <td>
                       <div className={styles.description}>{transaction.description}</div>
                       <div className={styles.context}>
                         {
                           Object.keys(transaction.context).map((key) => {
                             return (
-                              <span key="{key}">
+                              <span key={key}>
                                 {key}={transaction.context[key]} 
                               </span>
                             );
@@ -200,14 +265,14 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgname, name, email, invoi
                   </tr>
                 )} 
                 {(index === transactions?.length-1) && (
-                  <tr className={styles.lastitem}>
+                  <tr className={styles.lastitem} key={index}>
                     <td>
-                      <div>{transaction.description}</div>
+                      <div className={styles.description}>{transaction.description}</div>
                       <div className={styles.context}>
                         {
-                          Object.keys(transaction.context).map((key) => {
+                          Object.keys(transaction.context).map((key, index) => {
                             return (
-                              <span key="{key}">
+                              <span key={index}>
                                 {key}={transaction.context[key]} 
                               </span>
                             );
@@ -251,6 +316,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgname, name, email, invoi
               <table>
                 <tbody>
                   <tr><td>Total</td><td>{invoice?.amount}</td></tr>
+                  <tr><td></td><td className={styles.words}>{words}</td></tr>
                 </tbody>
               </table>
             </td>
@@ -301,14 +367,19 @@ const getStyles = (theme: GrafanaTheme2) => {
       }
   `,
     description: css`
-      font-weight: 500;
       font-size: 14px;
       line-height: 1.5;
     `,
     context: css`
       font-size: 12px;
       font-style: italic;
+      margin-right: 5px;
+      font-weight: 400;
     `,
+    words: css`
+    font-size: 12px;
+    font-weight: 400;
+  `,
     title: css`
       font-size: 45px;
       line-height: 45px;
@@ -345,6 +416,25 @@ const getStyles = (theme: GrafanaTheme2) => {
         text-align: right;
         vertical-align: top;
       }
+    `,
+    invoiceinfotable: css`
+      width: 100%;
+      line-height: inherit;
+      text-align: left;
+      border-collapse: collapse;
+      td {
+        vertical-align: middle;
+      }
+    `,
+    details: css `
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: center;
+    `,
+    detailsleft: css `
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: left;
     `,
     information: css`
       padding-bottom: 40px;

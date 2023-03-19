@@ -88,7 +88,7 @@ export class ChildrenList extends PureComponent<Props, State> {
             <FilterInput placeholder="Search" value={searchChildrenQuery} onChange={this.onSearchQueryChange} />
           </div>
           <LinkButton href={parentUrl}>
-            <Icon name="arrow-up" />Parent
+            <Icon name="arrow-left" />Back
           </LinkButton>
           <LinkButton disabled={!canWrite} href={newGroupHref}>
             New Group

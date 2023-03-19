@@ -4,6 +4,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { DeleteButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, LinkButton, Icon } from '@grafana/ui';
 import { contextSrv } from 'app/core/services/context_srv';
 import { StoreState, AccessControlAction, GroupResource, Group } from 'app/types';
+import config from 'app/core/config';
 
 import { deleteResource, loadResources } from './state/actions';
 import { setResourcePage, setResourceSearchQuery } from './state/reducers';
@@ -75,9 +76,12 @@ export class ResourceList extends PureComponent<Props> {
   }
 
   renderResourceList() {
-    const { resources, resourceSearchQuery, resourcesPage, resourcesCount, group } = this.props;
+    const { resources, resourceSearchQuery, resourcesPage, resourcesCount, group, signedInUser } = this.props;
     const totalPages = Math.ceil(resourcesCount / pageLimit);
+    const admin = signedInUser.isGrafanaAdmin || contextSrv.hasRole('Admin') || contextSrv.hasRole('Editor');
     const parentUrl = (group.parent === -1)? `org/groups`:`org/groups/edit/${group.parent}/children`;
+    const canWrite = contextSrv.hasAccess(AccessControlAction.ActionResourcesWrite, admin);
+    const newResourceHref = canWrite ? `org/groups/${group.id}/resources/new` : '#';
 
     return (
       <div>
@@ -85,8 +89,11 @@ export class ResourceList extends PureComponent<Props> {
           <div className="gf-form gf-form--grow">
             <FilterInput placeholder="Search" value={resourceSearchQuery} onChange={this.onSearchQueryChange} />
           </div>
+          <LinkButton disabled={!canWrite} href={newResourceHref}>
+            New {config.resourceLabel}
+          </LinkButton>
           <LinkButton href={parentUrl}>
-            <Icon name="arrow-up" />Parent
+            <Icon name="arrow-left" />Back
           </LinkButton>
         </div>
         <div className="admin-list-table">

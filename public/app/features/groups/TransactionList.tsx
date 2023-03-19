@@ -176,7 +176,7 @@ export class TransactionList extends PureComponent<Props, State> {
             }}
           />
           <LinkButton href={parentUrl}>
-            <Icon name="arrow-up" />Parent
+            <Icon name="arrow-left" />Back
           </LinkButton>
         </div>
       </>
@@ -237,7 +237,7 @@ export class TransactionList extends PureComponent<Props, State> {
             }}
           />
           <LinkButton href={parentUrl}>
-            <Icon name="arrow-up" />Parent
+            <Icon name="arrow-left" />Back
           </LinkButton>
         </div>
 
