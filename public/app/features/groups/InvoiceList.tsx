@@ -106,9 +106,6 @@ export class InvoiceList extends PureComponent<Props, State> {
           {canRead ? <a href={invoiceUrl}>{invoice.total_payments}</a> : <>{invoice.total_payments}</>}
         </td>
         <td className="link-td text-center">
-          {canRead ? <a href={invoiceUrl}>{invoice.description}</a> : <>{invoice.description}</>}
-        </td>
-        <td className="link-td text-center">
           {canRead ? <a href={invoiceUrl}>{invoice.login}</a> : <>{invoice.login}</>}
         </td>
       </tr>
@@ -173,7 +170,7 @@ export class InvoiceList extends PureComponent<Props, State> {
             onDismiss={() => this.setIsCreateInvoiceModalOpen(false)}
           />
           <LinkButton href={parentUrl}>
-            <Icon name="arrow-up" />Parent
+            <Icon name="arrow-left" />Back
           </LinkButton>
         </div>
       </>
@@ -239,7 +236,7 @@ export class InvoiceList extends PureComponent<Props, State> {
             onDismiss={() => this.setIsCreateInvoiceModalOpen(false)}
           />
           <LinkButton href={parentUrl}>
-            <Icon name="arrow-up" />Parent
+            <Icon name="arrow-left" />Back
           </LinkButton>
         </div>
 
@@ -253,7 +250,6 @@ export class InvoiceList extends PureComponent<Props, State> {
                   <th style={{ textAlign: 'center' }}>Previous Balance</th>
                   <th style={{ textAlign: 'center' }}>Credits</th>
                   <th style={{ textAlign: 'center' }}>Payments</th>
-                  <th style={{ textAlign: 'center' }}>Description</th>
                   <th style={{ textAlign: 'center' }}>Created By</th>
                 </tr>
               </thead>

@@ -305,6 +305,12 @@ export function getAppRoutes(): RouteDescriptor[] {
       ),
     },
     {
+      path: '/org/groups/:id/resources/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateGroupResource" */ 'app/features/groups/CreateResource')
+      ),
+    },
+    {
       path: '/org/groups/:groupId/invoices/:invoiceId',
       component: SafeDynamicImport(
         () => import(/* webpackChunkName: "InvoicePage" */ 'app/features/groups/InvoicePage')

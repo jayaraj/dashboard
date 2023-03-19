@@ -100,6 +100,17 @@ type GroupResource struct {
 	ResourceType string    `json:"resource_type"`
 }
 
+type CreateGroupResourceMsg struct {
+	GroupId   int64    `json:"group_id"`
+	OrgId     int64    `json:"org_id"`
+	UUID      string   `json:"uuid" binding:"Required"`
+	Name      string   `json:"name" binding:"Required"`
+	Type      string   `json:"type" binding:"Required"`
+	Latitude  *float64 `json:"latitude,omitempty"`
+	Longitude *float64 `json:"longitude,omitempty"`
+	Result    Resource `json:"-"`
+}
+
 type GetGroupResourcesMsg struct {
 	GroupId int64          `json:"group_id"`
 	Query   string         `json:"query"`

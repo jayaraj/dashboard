@@ -5,16 +5,31 @@ import (
 )
 
 type Invoice struct {
-	Id            int64     `json:"id"`
-	UpdatedAt     time.Time `json:"updated_at"`
-	OrgId         int64     `json:"org_id"`
-	GroupId       int64     `json:"group_id"`
-	OldBalance    float64   `json:"old_balance"`
-	Amount        float64   `json:"amount"`
-	TotalCredits  float64   `json:"total_credits"`
-	TotalPayments float64   `json:"total_payments"`
-	Description   *string   `json:"description,omitempty"`
-	Login         *string   `json:"login,omitempty"`
+	Id            int64                `json:"id"`
+	UpdatedAt     time.Time            `json:"updated_at"`
+	OrgId         int64                `json:"org_id"`
+	GroupId       int64                `json:"group_id"`
+	OldBalance    float64              `json:"old_balance"`
+	Amount        float64              `json:"amount"`
+	TotalCredits  float64              `json:"total_credits"`
+	TotalPayments float64              `json:"total_payments"`
+	Description   *string              `json:"description,omitempty"`
+	Login         *string              `json:"login,omitempty"`
+	From          time.Time            `json:"from"`
+	To            time.Time            `json:"to"`
+	Informations  []InvoiceInformation `json:"informations"`
+}
+
+type InvoiceInformation struct {
+	Id              int64     `json:"id"`
+	UpdatedAt       time.Time `json:"updated_at"`
+	InvoiceId       int64     `json:"invoice_id"`
+	UUID            string    `json:"uuid"`
+	Name            string    `json:"name"`
+	Type            string    `json:"type"`
+	Constant        float64   `json:"constant"`
+	PreviousReading float64   `json:"previous_reading"`
+	CurrentReading  float64   `json:"current_reading"`
 }
 
 type GetInvoicesMsg struct {
