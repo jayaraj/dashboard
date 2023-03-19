@@ -8,7 +8,7 @@ export function buildNavModel(group: Group): NavModelItem {
       active: false,
       icon: 'layer-group',
       id: `group-children-${group.id}`,
-      text: 'Children',
+      text: 'Groups',
       url: `org/groups/edit/${group.id}/children`,
     },
     {
@@ -27,7 +27,7 @@ export function buildNavModel(group: Group): NavModelItem {
     },
   ];
 
-  if (!group.child) {
+  if (group.type === 'billable') {
     pages.push({
       active: false,
       icon: 'invoice',

@@ -7,6 +7,21 @@ export interface Invoice {
   total_payments: number;
   description: string;
   login: string;
+  from: string;
+  to: string;
+  informations: InvoiceInformation[];
+}
+
+export interface InvoiceInformation {
+  id: number;
+  updated_at: string;
+  invoice_id: number;
+  uuid: string;
+  name: string;
+  type: string;
+  constant: number;
+  previous_reading: number;
+  current_reading: number;
 }
 
 export interface QueryRange {

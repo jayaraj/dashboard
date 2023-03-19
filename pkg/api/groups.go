@@ -141,6 +141,18 @@ func (hs *HTTPServer) GetGroupById(c *models.ReqContext) response.Response {
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
+
+	//check parent group accessiblity
+	if *dto.Result.Parent != -1 {
+		user := dtos.User{
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
+			Role:   dtos.ConvertRoleToString(c.OrgRole),
+		}
+		if !hs.isGroupAccessible(c.Req.Context(), *dto.Result.Parent, user) {
+			*dto.Result.Parent = -1
+		}
+	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
 
@@ -502,4 +514,45 @@ func (hs *HTTPServer) UpdateGroupUsers(ctx context.Context, userId int64) error 
 		return errors.New(errResponse.Message)
 	}
 	return nil
+}
+
+func (hs *HTTPServer) CreateGroupResource(c *models.ReqContext) response.Response {
+	if !hs.IsGroupAccessible(c) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+
+	dto := dtos.CreateGroupResourceMsg{
+		OrgId: c.OrgID,
+	}
+	if err := web.Bind(c.Req, &dto); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+	body, err := json.Marshal(dto)
+	if err != nil {
+		return response.Error(500, "failed marshal create", err)
+	}
+	url := fmt.Sprintf("%sapi/groups/%d/resources", hs.ResourceService.GetConfig().ResourceUrl, id)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    body,
+		HttpMethod: http.MethodPost,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to create", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+	}
+	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+	return response.JSON(http.StatusOK, dto.Result)
 }

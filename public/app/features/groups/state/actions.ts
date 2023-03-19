@@ -37,6 +37,8 @@ export function loadGroup(id: number): ThunkResult<void> {
     const response = await getBackendSrv().get(`/api/groups/${id}`);
     dispatch(groupLoaded(response));
     dispatch(updateNavIndex(buildNavModel(response)));
+    dispatch(loadUsers('', 1, 10));
+    dispatch(loadResources('', 1, 10));
   };
 }
 
