@@ -10,6 +10,8 @@ export const getUserSearchQuery = (state: GroupState) => state.userSearchQuery;
 export const getUsersCount = (state: GroupState) => state.usersCount;
 export const getUsersPage = (state: GroupState) => state.usersPage;
 export const getGroupId = (state: GroupState) => state.group.id;
+export const getGroupConfiguration = (state: GroupState) => state.data;
+export const getGroupType = (state: GroupState) => state.type;
 export const getChildrenSearchQuery = (state: GroupState) => state.searchChildrenQuery;
 export const getInvoicesCount = (state: InvoicesState) => state.count;
 export const getInvoicesPage = (state: InvoicesState) => state.page;

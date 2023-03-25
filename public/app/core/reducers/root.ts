@@ -9,17 +9,19 @@ import dashboardNavsReducer from 'app/features/dashboard/containers/state/reduce
 import dashboardReducers from 'app/features/dashboard/state/reducers';
 import dataSourcesReducers from 'app/features/datasources/state/reducers';
 import exploreReducers from 'app/features/explore/state/main';
+import fixedChargesReducer from 'app/features/fixedcharges/state/reducers';
 import foldersReducers from 'app/features/folders/state/reducers';
 import groupsReducer from 'app/features/groups/state/reducers';
+import groupTypesReducer from 'app/features/grouptypes/state/reducers';
 import invitesReducers from 'app/features/invites/state/reducers';
 import importDashboardReducers from 'app/features/manage-dashboards/state/reducers';
 import organizationReducers from 'app/features/org/state/reducers';
+import orgTypesReducer from 'app/features/orgtypes/state/reducers';
 import panelsReducers from 'app/features/panel/state/reducers';
 import { reducer as pluginsReducer } from 'app/features/plugins/admin/state/reducer';
 import userReducers from 'app/features/profile/state/reducers';
 import resourcesReducer from 'app/features/resources/state/reducers';
 import resourceTypesReducer from 'app/features/resourcetypes/state/reducers';
-import fixedChargesReducer from 'app/features/fixedcharges/state/reducers';
 import serviceAccountsReducer from 'app/features/serviceaccounts/state/reducers';
 import teamsReducers from 'app/features/teams/state/reducers';
 import usersReducers from 'app/features/users/state/reducers';
@@ -49,6 +51,8 @@ const rootReducers = {
   ...templatingReducers,
   ...dashboardNavsReducer,
   ...resourceTypesReducer,
+  ...groupTypesReducer,
+  ...orgTypesReducer,
   ...resourcesReducer,
   ...fixedChargesReducer,
   ...groupsReducer,

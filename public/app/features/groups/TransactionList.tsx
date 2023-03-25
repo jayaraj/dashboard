@@ -91,13 +91,13 @@ export class TransactionList extends PureComponent<Props, State> {
           }}>{transaction.description}</div>
           <div>
             {
-              Object.keys(transaction.context).map((key) => {
+              Object.keys(transaction.context).map((key, index) => {
                 return (
                   <span key="{key}" style={{ 
                     fontSize: '12px',
                     fontStyle: 'italic'
                   }}>
-                    {key}={transaction.context[key] }
+                    {key}={transaction.context[key]}{(index !== Object.keys(transaction.context).length-1)&&(', ')}
                   </span>
                 );
               })

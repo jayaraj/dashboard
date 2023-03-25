@@ -7,6 +7,8 @@ export const getGroupSearchQuery = (state: ResourceState) => state.groupSearchQu
 export const getGroupsCount = (state: ResourceState) => state.groupsCount;
 export const getGroupsPage = (state: ResourceState) => state.groupsPage;
 export const getResourceId = (state: ResourceState) => state.resource.id;
+export const getResourceConfiguration = (state: ResourceState) => state.data;
+export const getResourceType = (state: ResourceState) => state.type;
 
 export const getResource = (state: ResourceState, currentResourceId: any): Resource | null => {
   if (state.resource.id === parseInt(currentResourceId, 10)) {

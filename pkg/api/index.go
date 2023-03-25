@@ -222,23 +222,6 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 
 	if c.IsSignedIn {
 		deviceMgntNodes := []*dtos.NavLink{}
-		if hasAccess(ac.ReqOrgAdminOrEditor, fixedChargesAccessEvaluator) {
-			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text:        "Org Charges",
-				Id:          "fixedcharges",
-				Description: "Manage org charges",
-				Icon:        "fixed-charge",
-				Url:         hs.Cfg.AppSubURL + "/org/fixedcharges",
-			})
-		}
-		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
-			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text: hs.Cfg.ResourceLabel + "Types",
-				Id:   "resourcetypes",
-				Url:  hs.Cfg.AppSubURL + "/org/resourcetypes",
-				Icon: "resource-type",
-			})
-		}
 		if hasAccess(ac.ReqSignedIn, groupsAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
 				Text:        "Groups",
@@ -257,6 +240,40 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 				Url:         hs.Cfg.AppSubURL + "/org/resources",
 			})
 		}
+		if hasAccess(ac.ReqOrgAdminOrEditor, fixedChargesAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text:        "Org Charges",
+				Id:          "fixedcharges",
+				Description: "Manage org charges",
+				Icon:        "fixed-charge",
+				Url:         hs.Cfg.AppSubURL + "/org/fixedcharges",
+			})
+		}
+		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text: "Org Configurations",
+				Id:   "orgtypes",
+				Url:  hs.Cfg.AppSubURL + "/org/orgtypes",
+				Icon: "org-type",
+			})
+		}
+		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text: hs.Cfg.ResourceLabel + " Types",
+				Id:   "resourcetypes",
+				Url:  hs.Cfg.AppSubURL + "/org/resourcetypes",
+				Icon: "resource-type",
+			})
+		}
+		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text: "Group Types",
+				Id:   "grouptypes",
+				Url:  hs.Cfg.AppSubURL + "/org/grouptypes",
+				Icon: "group-type",
+			})
+		}
+
 		if hs.Cfg.EnableResource && len(deviceMgntNodes) > 0 {
 			deviceMgntNode := &dtos.NavLink{
 				Id:         "resource",
