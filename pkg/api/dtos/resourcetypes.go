@@ -7,9 +7,10 @@ type ErrorResponse struct {
 }
 
 type ResourceType struct {
-	Id        int64     `json:"id"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Type      string    `json:"type"`
+	Id            int64                  `json:"id"`
+	UpdatedAt     time.Time              `json:"updated_at"`
+	Type          string                 `json:"type"`
+	Configuration map[string]interface{} `json:"configuration"`
 }
 
 type ResourceTypes struct {
@@ -31,9 +32,15 @@ type GetResourceTypeByIdMsg struct {
 	Result ResourceType `json:"-"`
 }
 
+type GetResourceTypeByTypeMsg struct {
+	Type   string       `json:"-" binding:"required"`
+	Result ResourceType `json:"-"`
+}
+
 type UpdateResourceTypeMsg struct {
-	Id   int64  `json:"-"`
-	Type string `json:"type" binding:"required"`
+	Id            int64                  `json:"-"`
+	Type          string                 `json:"type" binding:"required"`
+	Configuration map[string]interface{} `json:"configuration" binding:"required"`
 }
 
 type DeleteResourceTypeMsg struct {
@@ -41,6 +48,7 @@ type DeleteResourceTypeMsg struct {
 }
 
 type CreateResourceTypeMsg struct {
-	Type   string       `json:"type" binding:"required"`
-	Result ResourceType `json:"-"`
+	Type          string                 `json:"type" binding:"required"`
+	Configuration map[string]interface{} `json:"configuration" binding:"required"`
+	Result        ResourceType           `json:"-"`
 }

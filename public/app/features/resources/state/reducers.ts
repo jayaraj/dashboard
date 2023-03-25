@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { ResourceGroup, Resource, ResourcesState, ResourceState } from 'app/types';
+import { ResourceGroup, Resource, ResourcesState, ResourceState, ResourceType } from 'app/types';
 
 export const initialResourcesState: ResourcesState = {
   resources: [],
@@ -40,6 +40,8 @@ export const initialResourceState: ResourceState = {
   groupsCount: 0,
   groupsPage: 1,
   hasFetched: true,
+  data: {},
+  type: {} as ResourceType,
 };
 
 const resourceSlice = createSlice({
@@ -61,10 +63,17 @@ const resourceSlice = createSlice({
     setGroupCount: (state, action: PayloadAction<number>): ResourceState => {
       return { ...state, groupsCount: action.payload };
     },
+    resourceConfigurationLoaded: (state, action: PayloadAction<any>): ResourceState => {
+      return { ...state, data: action.payload };
+    },
+    resourceTypeConfigurationLoaded: (state, action: PayloadAction<ResourceType>): ResourceState => {
+      return { ...state, type: action.payload };
+    },
   },
 });
 
-export const { resourceLoaded, groupsLoaded, setGroupPage, setGroupCount, setGroupSearchQuery } = resourceSlice.actions;
+export const { resourceLoaded, groupsLoaded, setGroupPage, setGroupCount, setGroupSearchQuery, resourceConfigurationLoaded,
+  resourceTypeConfigurationLoaded, } = resourceSlice.actions;
 
 export const resourceReducer = resourceSlice.reducer;
 

@@ -250,10 +250,10 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgname, name, email, invoi
                       <div className={styles.description}>{transaction.description}</div>
                       <div className={styles.context}>
                         {
-                          Object.keys(transaction.context).map((key) => {
+                          Object.keys(transaction.context).map((key, index) => {
                             return (
                               <span key={key}>
-                                {key}={transaction.context[key]} 
+                                {key}={transaction.context[key]}{(index !== Object.keys(transaction.context).length-1)&&(', ')} 
                               </span>
                             );
                           })
@@ -273,7 +273,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgname, name, email, invoi
                           Object.keys(transaction.context).map((key, index) => {
                             return (
                               <span key={index}>
-                                {key}={transaction.context[key]} 
+                                {key}={transaction.context[key]}{(index !== Object.keys(transaction.context).length-1)&&(', ')}
                               </span>
                             );
                           })

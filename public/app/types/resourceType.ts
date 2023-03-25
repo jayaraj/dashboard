@@ -1,6 +1,9 @@
+import { ResourceConfiguration } from "./groupType";
+
 export interface ResourceType {
   id: number;
   type: string;
+  configuration: ResourceConfiguration;
 }
 
 export interface ResourceTypesState {

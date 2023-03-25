@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { GroupResource, Group, GroupsState, GroupState, GroupUser, InvoicesState, Invoice, InvoiceState, Transaction, TransactionsState, QueryRange } from 'app/types';
+import { GroupResource, Group, GroupsState, GroupState, GroupUser, InvoicesState, Invoice, InvoiceState, Transaction, TransactionsState, QueryRange, GroupType } from 'app/types';
 
 export const initialGroupsState: GroupsState = { groups: [], page: 1, count: 0, searchQuery: '', hasFetched: false };
 
@@ -38,6 +38,8 @@ export const initialGroupState: GroupState = {
   usersCount: 0,
   usersPage: 1,
   hasFetched: true,
+  data: {},
+  type: {} as GroupType,
 };
 
 const groupSlice = createSlice({
@@ -74,6 +76,12 @@ const groupSlice = createSlice({
     setUserCount: (state, action: PayloadAction<number>): GroupState => {
       return { ...state, usersCount: action.payload };
     },
+    groupConfigurationLoaded: (state, action: PayloadAction<any>): GroupState => {
+      return { ...state, data: action.payload };
+    },
+    groupTypeConfigurationLoaded: (state, action: PayloadAction<GroupType>): GroupState => {
+      return { ...state, type: action.payload };
+    },
   },
 });
 
@@ -88,6 +96,8 @@ export const {
   setUserSearchQuery,
   setUserPage,
   setUserCount,
+  groupConfigurationLoaded,
+  groupTypeConfigurationLoaded,
 } = groupSlice.actions;
 
 export const groupReducer = groupSlice.reducer;

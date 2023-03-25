@@ -11,6 +11,8 @@ import {
   setResourceCount,
   setGroupPage,
   setGroupCount,
+  resourceTypeConfigurationLoaded,
+  resourceConfigurationLoaded,
 } from './reducers';
 
 export function loadResources(query: string, page: number, perPage: number): ThunkResult<void> {
@@ -27,6 +29,8 @@ export function loadResource(id: number): ThunkResult<void> {
     const response = await getBackendSrv().get(`/api/resources/${id}`);
     dispatch(resourceLoaded(response));
     dispatch(updateNavIndex(buildNavModel(response)));
+    dispatch(loadResourceConfiguration());
+    dispatch(loadResourceTypeConfiguration());
   };
 }
 
@@ -84,5 +88,31 @@ export function deleteGroup(id: number, perPage: number): ThunkResult<void> {
     const resource = getStore().resource.resource;
     await getBackendSrv().delete(`/api/resources/${resource.id}/groups/${id}`);
     dispatch(loadGroups('', 1, perPage));
+  };
+}
+
+export function loadResourceConfiguration(): ThunkResult<void> {
+  return async (dispatch, getStore) => {
+    const resource = getStore().resource.resource;
+    const response = await getBackendSrv().get(`/api/resources/${resource.id}/configurations/${resource.type}`);
+    dispatch(resourceConfigurationLoaded(response));
+  };
+}
+
+export function updateResourceConfiguration(data: any): ThunkResult<void> {
+  return async (dispatch, getStore) => {
+    const resource = getStore().resource.resource;
+    await getBackendSrv().put(`/api/resources/${resource.id}/configurations/${resource.type}`, {
+      configuration: data,
+    });
+    dispatch(loadResourceConfiguration());
+  };
+}
+
+export function loadResourceTypeConfiguration(): ThunkResult<void> {
+  return async (dispatch, getStore) => {
+    const resource = getStore().resource.resource;
+    const response = await getBackendSrv().get(`/api/resourcetypes/type/${resource.type}`);
+    dispatch(resourceTypeConfigurationLoaded(response));
   };
 }

@@ -12,7 +12,7 @@ import GroupList from './GroupList';
 import ResourceSettings from './ResourceSettings';
 import { loadGroups, loadResource } from './state/actions';
 import { getResourceLoadingNav } from './state/navModel';
-import { getGroups, getResource } from './state/selectors';
+import { getGroups, getResource, getResourceConfiguration, getResourceType } from './state/selectors';
 
 interface ResourcePageRouteParams {
   id: string;
@@ -37,6 +37,8 @@ function mapStateToProps(state: StoreState, props: OwnProps) {
   const resourceLoadingNav = getResourceLoadingNav(pageName as string);
   const navModel = getNavModel(state.navIndex, `resource-${pageName}-${resourceId}`, resourceLoadingNav);
   const groups = getGroups(state.resource);
+  const data = getResourceConfiguration(state.resource);
+  const resourceType = getResourceType(state.resource);
 
   return {
     navModel,
@@ -44,6 +46,8 @@ function mapStateToProps(state: StoreState, props: OwnProps) {
     pageName: pageName,
     resource,
     groups,
+    data,
+    resourceType,
   };
 }
 
@@ -98,13 +102,13 @@ export class ResourcePages extends PureComponent<Props, State> {
 
   renderPage(): React.ReactNode {
     const currentPage = this.getCurrentPage();
-    const { groups, resource } = this.props;
+    const { groups, resource, data, resourceType  } = this.props;
 
     switch (currentPage) {
       case PageTypes.Groups:
         return <GroupList groups={groups} />;
       case PageTypes.Settings:
-        return <ResourceSettings resource={resource!} />;
+        return <ResourceSettings resource={resource!} data={data!} resourceType={resourceType!}/>;
     }
     return null;
   }

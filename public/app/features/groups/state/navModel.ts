@@ -3,29 +3,15 @@ import config from 'app/core/config';
 import { Group } from 'app/types';
 
 export function buildNavModel(group: Group): NavModelItem {
-  let pages = [
-    {
-      active: false,
-      icon: 'layer-group',
-      id: `group-children-${group.id}`,
-      text: 'Groups',
-      url: `org/groups/edit/${group.id}/children`,
-    },
-    {
-      active: false,
-      icon: 'resource',
-      id: `group-resources-${group.id}`,
-      text: config.resourceLabel + 's',
-      url: `org/groups/edit/${group.id}/resources`,
-    },
-    {
-      active: false,
-      icon: 'users-alt',
-      id: `group-users-${group.id}`,
-      text: 'Users',
-      url: `org/groups/edit/${group.id}/users`,
-    },
-  ];
+  let pages = [];
+
+  pages.push({
+    active: false,
+    icon: 'sliders-v-alt',
+    id: `group-settings-${group.id}`,
+    text: 'Settings',
+    url: `org/groups/edit/${group.id}/settings`,
+  });
 
   if (group.type === 'billable') {
     pages.push({
@@ -43,13 +29,26 @@ export function buildNavModel(group: Group): NavModelItem {
       url: `org/groups/edit/${group.id}/transactions`,
     });
   }
-  
   pages.push({
     active: false,
-    icon: 'sliders-v-alt',
-    id: `group-settings-${group.id}`,
-    text: 'Settings',
-    url: `org/groups/edit/${group.id}/settings`,
+    icon: 'layer-group',
+    id: `group-children-${group.id}`,
+    text: 'Groups',
+    url: `org/groups/edit/${group.id}/children`,
+  },
+  {
+    active: false,
+    icon: 'resource',
+    id: `group-resources-${group.id}`,
+    text: config.resourceLabel + 's',
+    url: `org/groups/edit/${group.id}/resources`,
+  },
+  {
+    active: false,
+    icon: 'users-alt',
+    id: `group-users-${group.id}`,
+    text: 'Users',
+    url: `org/groups/edit/${group.id}/users`,
   });
 
   const navModel = {

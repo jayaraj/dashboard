@@ -1,3 +1,5 @@
+import { ResourceType } from "./resourceType";
+
 export interface Resource {
   id: number;
   type: string;
@@ -22,6 +24,8 @@ export interface ResourceState {
   groupsCount: number;
   groupsPage: number;
   hasFetched: boolean;
+  data: any;
+  type: ResourceType;
 }
 
 export interface ResourceGroup {
