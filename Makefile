@@ -92,11 +92,11 @@ build-js: ## Build frontend assets.
 build: build-go build-js ## Build backend and frontend.
 
 run: $(BRA) ## Build and run web server on filesystem changes.
-	@APP_NAME="Enerview" APP_MODE="development" APP_PROTOCOL="http" APP_PORT="3000" ROOT_URL="http://localhost:3000/" POSTGRES_HOST="52.66.255.6" \
+	@APP_NAME="nxtthing" APP_MODE="development" APP_PROTOCOL="http" APP_PORT="3000" ROOT_URL="http://localhost:3000/" POSTGRES_HOST="139.59.79.185" \
 	POSTGRES_PORT=5432 POSTGRES_DBNAME="dashboard" POSTGRES_USER="postgres" POSTGRES_PASSWORD="Qwertyu10P" SMTP_HOST="smtp-relay.sendinblue.com:587" \
 	SMTP_USER="jayaraj.esvar@gmail.com" SMTP_PWD="123456" SMTP_FROM="jayaraj.esvar@gmail.com" SMTP_FROMNAME="Dashboard" ADMIN_USERNAME="admin" ADMIN_SECRET="admin" \
-	DATASERVICE_URL="localhost:9003" DATASERVICE_TOKEN="test" INFLUXDB_URL="localhost:8086" INFLUXDB_PWD="test" INFLUXDB_USER="influx" \
-	RESOURCE_URL=http://localhost:9002/ RESOURCE_LABEL=Well RESOURCE_TOKEN=test NATS_URL=nats://localhost:4222 REDIS_HOST=localhost REDIS_PORT=6379 REDIS_PASSWORD=Qwertyu10P \
+	DATASERVICE_URL="http://localhost:9003" DATASERVICE_TOKEN="test" INFLUXDB_URL="localhost:8086" INFLUXDB_PWD="test" INFLUXDB_USER="influx" \
+	RESOURCE_URL=http://localhost:9002/ RESOURCE_LABEL=Well RESOURCE_TOKEN=test NATS_URL=nats://localhost:4222 REDIS_HOST=localhost REDIS_PORT=6379 REDIS_PASSWORD=Qwertyu10P ENABLE_RESOURCE=true ENABLE_BILLING=true \
 	$(BRA) run
 
 run-frontend: deps-js ## Fetch js dependencies and watch frontend for rebuild

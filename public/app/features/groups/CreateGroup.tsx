@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
-import { NavModel } from '@grafana/data';
+import { NavModel, SelectableValue } from '@grafana/data';
 import { getBackendSrv, locationService } from '@grafana/runtime';
-import { Button, Form, Field, Input, FieldSet } from '@grafana/ui';
+import { Button, Form, Field, Input, FieldSet, InputControl, Select } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { getNavModel } from 'app/core/selectors/navModel';
-import { StoreState } from 'app/types';
+import { GroupType, StoreState } from 'app/types';
 
 export interface Props {
   match: any;
@@ -14,12 +14,37 @@ export interface Props {
   parent: number;
 }
 
+interface State {
+  types: Array<SelectableValue<string>>;
+}
+
 interface GroupDTO {
   name: string;
-  type: string;
+  type: SelectableValue<string>;
 }
 
 export class CreateGroup extends PureComponent<Props> {
+  state: State = {
+    types: [],
+  };
+
+  componentDidMount() {
+    this.fetchGroupTypes();
+  }
+
+  fetchGroupTypes = async () => {
+    const response = await getBackendSrv().get('/api/grouptypes/search', { query: '', page: 1, perPage: 10000 });
+    this.setState({
+      types: response.group_types.map(
+        (type: GroupType): SelectableValue<string> => ({
+          value: type.type,
+          label: type.type,
+          name: type.type,
+        })
+      ),
+    });
+  };
+
   create = async (formModel: GroupDTO) => {
     const result = await getBackendSrv().post('/api/groups', { name: formModel.name, type: formModel.type, parent: this.props.parent });
     if (result.id) {
@@ -33,17 +58,26 @@ export class CreateGroup extends PureComponent<Props> {
 
   render() {
     const { navModel } = this.props;
+    const { types } = this.state;
+
     return (
       <Page navModel={navModel}>
         <Page.Contents>
           <Form onSubmit={this.create}>
-            {({ register, errors }) => (
+            {({ register, control, errors }) => (
               <FieldSet label="New Group">
                 <Field label="Name" required invalid={!!errors.name} error="Name is required">
                   <Input {...register('name', { required: true })} id="group-name" width={60} />
                 </Field>
                 <Field label="Type" required invalid={!!errors.type} error="Type is required">
-                  <Input {...register('type', { required: true })} id="group-type" width={60} />
+                  <InputControl
+                    name="type"
+                    control={control}
+                    rules={{
+                      required: true,
+                    }}
+                    render={({ field }) => <Select {...field} options={types} width={60} />}
+                  />
                 </Field>
                 <div className="gf-form-button-row">
                   <Button type="submit" variant="primary">

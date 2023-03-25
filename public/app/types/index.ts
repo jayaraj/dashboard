@@ -19,6 +19,8 @@ export * from './query';
 export * from './preferences';
 export * from './accessControl';
 export * from './resourceType';
+export * from './groupType';
+export * from './orgType';
 export * from './slab';
 export * from './fixedCharge';
 export * from './resource';

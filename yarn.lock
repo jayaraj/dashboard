@@ -11241,6 +11241,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/html2canvas@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@types/html2canvas@npm:1.0.0"
+  dependencies:
+    html2canvas: "*"
+  checksum: 555e96d4b59b2a675ebd2fe05467c81e1f004cc60708f944fa9feb79ee41d3cdeeae3ece1deb7c2e58118f116cc9446e653bc789fac05172ef53c85d7d35a3e0
+  languageName: node
+  linkType: hard
+
 "@types/http-proxy@npm:^1.17.5":
   version: 1.17.7
   resolution: "@types/http-proxy@npm:1.17.7"
@@ -11577,6 +11586,13 @@ __metadata:
   version: 4.1.4
   resolution: "@types/npmlog@npm:4.1.4"
   checksum: 740f7431ccfc0e127aa8d162fe05c6ce8aa71290be020d179b2824806d19bd2c706c7e0c9a3c9963cefcdf2ceacb1dec6988c394c3694451387759dafe0aa927
+  languageName: node
+  linkType: hard
+
+"@types/number-to-words@npm:^1":
+  version: 1.2.1
+  resolution: "@types/number-to-words@npm:1.2.1"
+  checksum: 0179360924f1854ad42c1d61956af22f225105be3ed4ca261c2660c12f483c558df62d834b053491cd3153083f085f6545f1cf487b8227d21284c2bdb7169856
   languageName: node
   linkType: hard
 
@@ -21742,6 +21758,7 @@ __metadata:
     "@types/grafana__slate-react": "npm:@types/slate-react@0.22.5"
     "@types/history": 4.7.11
     "@types/hoist-non-react-statics": 3.3.1
+    "@types/html2canvas": ^1.0.0
     "@types/jest": 28.1.6
     "@types/jquery": 3.5.14
     "@types/js-yaml": ^4.0.5
@@ -21751,6 +21768,7 @@ __metadata:
     "@types/logfmt": ^1.2.1
     "@types/mousetrap": 1.6.9
     "@types/node": 16.11.45
+    "@types/number-to-words": ^1
     "@types/ol-ext": "npm:@siedlerchr/types-ol-ext@2.1.2"
     "@types/papaparse": 5.3.2
     "@types/pluralize": ^0.0.29
@@ -21846,6 +21864,7 @@ __metadata:
     hoist-non-react-statics: 3.3.2
     html-loader: 4.1.0
     html-webpack-plugin: 5.5.0
+    html2canvas: ^1.4.1
     http-server: 14.1.1
     husky: 8.0.1
     immer: 9.0.15
@@ -21860,6 +21879,7 @@ __metadata:
     jquery: 3.6.0
     js-yaml: ^4.1.0
     json-source-map: 0.6.1
+    jspdf: ^2.5.1
     jsurl: ^0.1.5
     kbar: 0.1.0-beta.36
     lerna: 5.2.0
@@ -21879,6 +21899,7 @@ __metadata:
     mutationobserver-shim: 0.3.7
     ngtemplate-loader: 2.1.0
     node-notifier: 10.0.1
+    number-to-words: ^1.2.4
     ol: 6.15.1
     ol-ext: 3.2.28
     papaparse: 5.3.2
@@ -22552,7 +22573,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"html2canvas@npm:^1.0.0-rc.5":
+"html2canvas@npm:*, html2canvas@npm:^1.0.0-rc.5, html2canvas@npm:^1.4.1":
   version: 1.4.1
   resolution: "html2canvas@npm:1.4.1"
   dependencies:
@@ -28219,6 +28240,13 @@ __metadata:
   version: 1.0.1
   resolution: "number-is-nan@npm:1.0.1"
   checksum: 13656bc9aa771b96cef209ffca31c31a03b507ca6862ba7c3f638a283560620d723d52e626d57892c7fff475f4c36ac07f0600f14544692ff595abff214b9ffb
+  languageName: node
+  linkType: hard
+
+"number-to-words@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "number-to-words@npm:1.2.4"
+  checksum: 468f4d745b18f961c7a6f933d3beb3f3b8b434f3daa2b3d891a43f5f43c6eeddea9f08bbc25d46a8221adaf2b31d5acc801ef6ece270190267ae79c6ac27857d
   languageName: node
   linkType: hard
 

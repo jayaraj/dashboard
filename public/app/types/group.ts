@@ -1,3 +1,5 @@
+import { GroupType } from "./groupType";
+
 export interface Group {
   id: number;
   name: string;
@@ -44,4 +46,6 @@ export interface GroupState {
   resourcesCount: number;
   resourcesPage: number;
   hasFetched: boolean;
+  data: any;
+  type: GroupType;
 }

@@ -131,6 +131,31 @@ func (hs *HTTPServer) GetResourceTypeById(c *models.ReqContext) response.Respons
 	return response.JSON(http.StatusOK, cmd.Result)
 }
 
+func (hs *HTTPServer) GetResourceTypeByType(c *models.ReqContext) response.Response {
+	typeStr := web.Params(c.Req)[":type"]
+	url := fmt.Sprintf("%sapi/resourcetypes/type/%s", hs.ResourceService.GetConfig().ResourceUrl, typeStr)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to get", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+	}
+	cmd := dtos.GetResourceTypeByTypeMsg{}
+	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+	return response.JSON(http.StatusOK, cmd.Result)
+}
+
 func (hs *HTTPServer) SearchResourceTypes(c *models.ReqContext) response.Response {
 	query := c.Query("query")
 	perPage := c.QueryInt("perPage")

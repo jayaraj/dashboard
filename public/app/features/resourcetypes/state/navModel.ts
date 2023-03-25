@@ -34,6 +34,10 @@ export function getResourceTypeLoadingNav(pageName: string): NavModel {
   const main = buildNavModel({
     id: 1,
     type: 'Loading',
+    configuration: {
+      elements:[],
+      sections:[],
+    },
   });
 
   let node: NavModelItem;
