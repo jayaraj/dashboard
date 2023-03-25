@@ -1,6 +1,6 @@
 import { getBackendSrv } from '@grafana/runtime';
 import { updateNavIndex } from 'app/core/actions';
-import { Rate, ThunkResult } from 'app/types';
+import { Rate, ResourceConfiguration, ThunkResult } from 'app/types';
 
 import { buildNavModel } from './navModel';
 import { resourceTypeLoaded, resourceTypesLoaded, setResourceTypeSearchPage, setResourceTypeCount, slabLoaded } from './reducers';
@@ -27,12 +27,13 @@ export function loadResourceType(id: number): ThunkResult<void> {
   };
 }
 
-export function updateResourceType(type: string): ThunkResult<void> {
+export function updateResourceType(type: string, configuration: ResourceConfiguration): ThunkResult<void> {
   return async (dispatch, getStore) => {
     const resourceType = getStore().resourceType.resourceType;
     await getBackendSrv().put(`/api/resourcetypes/${resourceType.id}`, {
       id: resourceType.id,
       type,
+      configuration,
     });
     dispatch(loadResourceType(resourceType.id));
   };

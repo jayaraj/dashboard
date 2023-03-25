@@ -21,6 +21,8 @@ import {
   setTransactionsPage,
   setTransactionsCount,
   invoiceLoaded,
+  groupConfigurationLoaded,
+  groupTypeConfigurationLoaded,
 } from './reducers';
 
 export function loadGroups(): ThunkResult<void> {
@@ -39,6 +41,8 @@ export function loadGroup(id: number): ThunkResult<void> {
     dispatch(updateNavIndex(buildNavModel(response)));
     dispatch(loadUsers('', 1, 10));
     dispatch(loadResources('', 1, 10));
+    dispatch(loadGroupConfiguration());
+    dispatch(loadGroupTypeConfiguration());
   };
 }
 
@@ -186,5 +190,31 @@ export function loadInvoiceTransactions(groupId: number, invoiceId: number, page
     dispatch(transactionsLoaded(response.transactions));
     dispatch(setTransactionsPage(response.page));
     dispatch(setTransactionsCount(response.count));
+  };
+}
+
+export function loadGroupConfiguration(): ThunkResult<void> {
+  return async (dispatch, getStore) => {
+    const group = getStore().group.group;
+    const response = await getBackendSrv().get(`/api/groups/${group.id}/configurations/${group.type}`);
+    dispatch(groupConfigurationLoaded(response));
+  };
+}
+
+export function updateGroupConfiguration(data: any): ThunkResult<void> {
+  return async (dispatch, getStore) => {
+    const group = getStore().group.group;
+    await getBackendSrv().put(`/api/groups/${group.id}/configurations/${group.type}`, {
+      configuration: data,
+    });
+    dispatch(loadGroupConfiguration());
+  };
+}
+
+export function loadGroupTypeConfiguration(): ThunkResult<void> {
+  return async (dispatch, getStore) => {
+    const group = getStore().group.group;
+    const response = await getBackendSrv().get(`/api/grouptypes/type/${group.type}`);
+    dispatch(groupTypeConfigurationLoaded(response));
   };
 }

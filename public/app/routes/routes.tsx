@@ -397,6 +397,42 @@ export function getAppRoutes(): RouteDescriptor[] {
       ),
     },
     {
+      path: '/org/grouptypes',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "GroupTypeList" */ 'app/features/grouptypes/GroupTypeList')
+      ),
+    },
+    {
+      path: '/org/grouptypes/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateGroupType" */ 'app/features/grouptypes/CreateGroupType')
+      ),
+    },
+    {
+      path: '/org/grouptypes/edit/:id/:page?',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "GroupTypePages" */ 'app/features/grouptypes/GroupTypePages')
+      ),
+    },
+    {
+      path: '/org/orgtypes',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "OrgTypeList" */ 'app/features/orgtypes/OrgTypeList')
+      ),
+    },
+    {
+      path: '/org/orgtypes/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateOrgType" */ 'app/features/orgtypes/CreateOrgType')
+      ),
+    },
+    {
+      path: '/org/orgtypes/edit/:id/:page?',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "OrgTypePages" */ 'app/features/orgtypes/OrgTypePages')
+      ),
+    },
+    {
       path: '/org/fixedcharges',
       component: SafeDynamicImport(
         () => import(/* webpackChunkName: "FixedChargeList" */ 'app/features/fixedcharges/FixedChargeList')

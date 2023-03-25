@@ -16,7 +16,7 @@ import TransactionList from './TransactionList';
 import UserList from './UserList';
 import { loadResources, loadGroup, loadUsers } from './state/actions';
 import { getGroupLoadingNav } from './state/navModel';
-import { getResources, getGroup, getUsers, getChildren } from './state/selectors';
+import { getResources, getGroup, getUsers, getChildren, getGroupConfiguration, getGroupType } from './state/selectors';
 
 interface GroupPageRouteParams {
   id: string;
@@ -47,6 +47,8 @@ function mapStateToProps(state: StoreState, props: OwnProps) {
   const pageName = (props.match.params.page)? props.match.params.page: (!group?.child)? 'resources': 'children';
   const groupLoadingNav = getGroupLoadingNav(pageName as string);
   const navModel = getNavModel(state.navIndex, `group-${pageName}-${groupId}`, groupLoadingNav);
+  const data = getGroupConfiguration(state.group);
+  const groupType = getGroupType(state.group);
 
   return {
     navModel,
@@ -56,6 +58,8 @@ function mapStateToProps(state: StoreState, props: OwnProps) {
     resources,
     users,
     children,
+    data,
+    groupType,
   };
 }
 
@@ -122,7 +126,7 @@ export class GroupPages extends PureComponent<Props, State> {
 
   renderPage(): React.ReactNode {
     const currentPage = this.getCurrentPage();
-    const { resources, group, users, children } = this.props;
+    const { resources, group, users, children, data, groupType } = this.props;
 
     switch (currentPage) {
       case PageTypes.Children:
@@ -136,7 +140,7 @@ export class GroupPages extends PureComponent<Props, State> {
       case PageTypes.Transactions:
         return <TransactionList group={group!} />;
       case PageTypes.Settings:
-        return <GroupSettings group={group!} />;
+        return <GroupSettings group={group!}  data={data!} groupType={groupType!}/>;
     }
     return null;
   }

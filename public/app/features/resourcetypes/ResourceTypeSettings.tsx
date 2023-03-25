@@ -1,10 +1,12 @@
-import React, { FC } from 'react';
+import React, { FC, useEffect, useState  } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
-import { Input, Field, Form, Button, FieldSet, VerticalGroup } from '@grafana/ui';
+import { Input, Field, Form, Button, FieldSet, VerticalGroup, Label } from '@grafana/ui';
+import { FormElementsEditor, LayoutSectionsEditor } from 'app/core/components/CustomForm/components';
+import { FormElement, LayoutSection } from 'app/core/components/CustomForm/types';
 import config from 'app/core/config';
 import { contextSrv } from 'app/core/core';
-import { ResourceType, AccessControlAction } from 'app/types';
+import { ResourceType, AccessControlAction, ResourceConfiguration } from 'app/types';
 
 import { updateResourceType } from './state/actions';
 
@@ -23,13 +25,40 @@ export type Props = ConnectedProps<typeof connector> & OwnProps;
 export const ResourceTypeSettings: FC<Props> = ({ resourceType, updateResourceType }) => {
   const canWrite = contextSrv.hasAccess(AccessControlAction.ActionResourceTypesWrite, contextSrv.user.isGrafanaAdmin);
   const label = config.resourceLabel + 'Type Settings';
+  let [configuration, setConfiguration] = useState<ResourceConfiguration>({
+    elements: [],
+    sections: [],
+  });
+
+  useEffect(() => {
+    const elements = resourceType.configuration? JSON.parse(JSON.stringify(resourceType.configuration.elements)): [];
+    const sections = resourceType.configuration? JSON.parse(JSON.stringify(resourceType.configuration.sections)): [];
+    setConfiguration({
+      elements: [...elements],
+      sections: [...sections],
+    });
+  }, [resourceType]);
+
+  const onSectionsChange = (sections?: LayoutSection[]) => {
+    setConfiguration({
+      ...configuration,
+      sections: sections?sections:configuration.sections,
+    });
+  };
+
+  const onElementsChange = (elements?: FormElement[]) => {
+    setConfiguration({
+      ...configuration,
+      elements: elements?elements:configuration.elements,
+    });
+  };
 
   return (
     <VerticalGroup>
       <Form
         defaultValues={{ ...resourceType }}
         onSubmit={(formresourceType: ResourceType) => {
-          updateResourceType(formresourceType.type);
+          updateResourceType(formresourceType.type, configuration);
         }}
         disabled={!canWrite}
       >
@@ -42,7 +71,18 @@ export const ResourceTypeSettings: FC<Props> = ({ resourceType, updateResourceTy
             >
               <Input {...register('type', { required: true })} id="name-input" width={60} />
             </Field>
-
+            <Field
+              label="Configuration"
+              description="Edit Configuration Details"
+              disabled={!canWrite}
+            >
+              <VerticalGroup>
+                <Label>Layouts</Label>
+                <LayoutSectionsEditor onChange={onSectionsChange} sections={configuration.sections} ></LayoutSectionsEditor>
+                <Label>Elements</Label>
+                <FormElementsEditor elements={configuration.elements} onChange={onElementsChange} sections={configuration.sections} ></FormElementsEditor>
+              </VerticalGroup>
+            </Field>
             <Button type="submit" disabled={!canWrite}>
               Update
             </Button>
