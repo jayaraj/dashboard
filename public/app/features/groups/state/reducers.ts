@@ -108,6 +108,7 @@ export const initialInvoicesState: InvoicesState = {
   page: 1,
   count: 0,
   hasFetched: false,
+  query: '',
 };
 
 const invoicesSlice = createSlice({
@@ -126,10 +127,13 @@ const invoicesSlice = createSlice({
     setInvoicesCount: (state, action: PayloadAction<number>): InvoicesState => {
       return { ...state, count: action.payload };
     },
+    setInvoiceQuery: (state, action: PayloadAction<string>): InvoicesState => {
+      return { ...state, query: action.payload };
+    },
   },
 });
 
-export const { invoicesLoaded, setInvoicesRange, setInvoicesPage, setInvoicesCount } = invoicesSlice.actions;
+export const { invoicesLoaded, setInvoicesRange, setInvoicesPage, setInvoicesCount, setInvoiceQuery } = invoicesSlice.actions;
 export const invoicesReducer = invoicesSlice.reducer;
 
 export const initialInvoiceState: InvoiceState = {
