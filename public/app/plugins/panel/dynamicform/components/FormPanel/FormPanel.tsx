@@ -9,7 +9,7 @@ import { contextSrv } from 'app/core/services/context_srv';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { AccessControlAction } from 'app/types';
 
-import { ButtonVariant, LayoutVariant, RequestMethod, FormElementType } from '../../constants';
+import { ButtonVariant, LayoutVariant, RequestMethod, FormElementType, LevelVariant } from '../../constants';
 import { getStyles } from '../../styles';
 import { FormElement, PanelOptions } from '../../types';
 import { FormElements } from '../FormElements';
@@ -198,15 +198,22 @@ export const FormPanel: React.FC<Props> = ({
       executeCustomCode(options.update.code, initial, response);
     } else {
       
-      const resource = replaceVariables('${resource}');
-      const group = replaceVariables('${grp}');
+      let url = `/api/orgs/configurations/${options.configuration.type}`
+      if (options.configuration.level === LevelVariant.GROUP) {
+        const group = replaceVariables('${grp}');
+        url = `/api/groups/${group}/configurations/${options.configuration.type}`
+      }
+      if (options.configuration.level === LevelVariant.RESOURCE) {
+        const resource = replaceVariables('${resource}');
+        url = `/api/resources/${resource}/configurations/${options.configuration.type}`
+      }
       const payload = JSON.parse(replaceVariables(JSON.stringify(body)));
   
       /**
        * Fetch
        */
       const response = await getBackendSrv()
-        .put(`/api/resources/${resource}/configurations/${options.configuration.type}`, { group_id: Number(group), configuration: payload })
+        .put(`${url}`, { configuration: payload })
         .catch((error: Error) => {
           console.error(error);
           setError(error.toString());
@@ -315,13 +322,20 @@ export const FormPanel: React.FC<Props> = ({
       executeCustomCode(options.initial.code, json, response);
 
     } else {
-      const resource = replaceVariables('${resource}');
-      const group = replaceVariables('${grp}');
+      let url = `/api/orgs/configurations/${options.configuration.type}`
+      if (options.configuration.level === LevelVariant.GROUP) {
+        const group = replaceVariables('${grp}');
+        url = `/api/groups/${group}/configurations/${options.configuration.type}`
+      }
+      if (options.configuration.level === LevelVariant.RESOURCE) {
+        const resource = replaceVariables('${resource}');
+        url = `/api/resources/${resource}/configurations/${options.configuration.type}`
+      }
       /**
        * Fetch
        */
       const response = await getBackendSrv().get(
-        `/api/resources/${resource}/configurations/${options.configuration.type}?group_id=${group}`,
+        `${url}`,
         {}
       );
       /**

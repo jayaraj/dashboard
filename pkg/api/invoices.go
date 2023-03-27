@@ -297,8 +297,6 @@ func (hs *HTTPServer) SearchInvoices(c *models.ReqContext) response.Response {
 	if page <= 0 {
 		page = 1
 	}
-	from := c.Query("from")
-	to := c.Query("to")
 	query := c.Query("query")
 
 	dto := dtos.SearchInvoicesMsg{
@@ -308,8 +306,6 @@ func (hs *HTTPServer) SearchInvoices(c *models.ReqContext) response.Response {
 			Role:   dtos.ConvertRoleToString(c.OrgRole),
 		},
 		Query:   query,
-		From:    from,
-		To:      to,
 		Page:    int64(page),
 		PerPage: int64(perPage),
 	}

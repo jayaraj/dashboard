@@ -1,3 +1,4 @@
+import { LevelVariant } from '../constants';
 import { ButtonGroupOptions, ButtonOptions } from './button';
 import { FormElement } from './form-element';
 import { LayoutOptions } from './layout';
@@ -6,6 +7,7 @@ import { RequestOptions } from './request';
 export interface ConfigurationOptions {
   type: string;
   external: boolean;
+  level: LevelVariant;
 }
 
 /**
