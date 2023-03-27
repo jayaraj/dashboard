@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 
-import { dateTime, DateTime, dateMath, NavModel } from '@grafana/data';
-import { VerticalGroup, HorizontalGroup, Pagination, DateTimePicker, InlineField, Button, FilterInput } from '@grafana/ui';
+import { NavModel } from '@grafana/data';
+import { VerticalGroup, HorizontalGroup, Pagination, Button, FilterInput } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { contextSrv, User } from 'app/core/services/context_srv';
@@ -38,30 +38,20 @@ export class Invoices extends PureComponent<Props> {
 
   componentDidMount() {
     this.props.setInvoicesRange(this.props.defaultRange);
-    this.fetchInvoices(1, this.props.defaultRange, '');
+    this.fetchInvoices(1, '');
   }
 
-  async fetchInvoices(page: number, range: QueryRange, query: string) {
-    await this.props.loadInvoices(query, page, pageLimit, range);
+  async fetchInvoices(page: number, query: string) {
+    await this.props.loadInvoices(query, page, pageLimit);
   }
 
   onSearchQueryChange = (value: string) => {
     this.props.setInvoiceQuery(value);
   };
 
-  onFromChange = (from: string) => {
-    const { invoicesRange, setInvoicesRange } = this.props;
-    setInvoicesRange({from: from, to: invoicesRange.to});
-  };
-
-  onToChange = (to: string) => {
-    const { invoicesRange } = this.props;
-    this.props.setInvoicesRange({from: invoicesRange.from, to: to});
-  };
-
   onNavigate = async (page: number) => {
-    const { invoicesRange, invoicesQuery } = this.props;
-    this.props.loadInvoices(invoicesQuery, page, pageLimit, invoicesRange);
+    const { invoicesQuery } = this.props;
+    this.props.loadInvoices(invoicesQuery, page, pageLimit );
   };
 
   renderInvoice(invoice: Invoice) {
@@ -101,52 +91,26 @@ export class Invoices extends PureComponent<Props> {
   }
 
   renderEmptyList() {
-    const { invoicesRange, invoicesQuery } = this.props;
+    const { invoicesQuery } = this.props;
 
     return(
       <>
         <div className="page-action-bar">
           <div className="gf-form gf-form--grow">
             <FilterInput placeholder="Search" value={invoicesQuery} onChange={this.onSearchQueryChange} />
-            <InlineField
-              label='From'
-              labelWidth={8}
-              tooltip='Invoices range from date'
-            >
-              <DateTimePicker
-                date={dateTime(dateMath.parse(invoicesRange.from))}
-                onChange={(dateTime: DateTime) => {
-                      dateTime.add(10, 'hours');
-                      this.onFromChange(dateTime.toISOString().split("T")[0]);
-                    }}
-              />
-            </InlineField>
-            <InlineField
-              label='To'
-              labelWidth={8}
-              tooltip='Invoices range till date'
-            >
-              <DateTimePicker
-                date={dateTime(dateMath.parse(invoicesRange.to))}
-                onChange={(dateTime: DateTime) => {
-                      dateTime.add(10, 'hours');
-                      this.onToChange(dateTime.toISOString().split("T")[0]);
-                    }}
-              />
-            </InlineField>
-            <Button onClick={() => {
-              this.fetchInvoices(1, invoicesRange, invoicesQuery);
-            }}>
-              Refresh
-            </Button>
           </div>
+          <Button onClick={() => {
+              this.fetchInvoices(1, invoicesQuery);
+            }}>
+            Refresh
+          </Button>
         </div>
       </>
     );
   }
 
   renderInvoiceList() {
-    const { invoices, invoicesPage, invoicesCount, invoicesRange, invoicesQuery } = this.props;
+    const { invoices, invoicesPage, invoicesCount, invoicesQuery } = this.props;
     const totalPages = Math.ceil(invoicesCount / pageLimit);
 
     return (
@@ -154,35 +118,9 @@ export class Invoices extends PureComponent<Props> {
         <div className="page-action-bar">
           <div className="gf-form gf-form--grow">
             <FilterInput placeholder="Search" value={invoicesQuery} onChange={this.onSearchQueryChange} />
-            <InlineField
-              label='From'
-              labelWidth={8}
-              tooltip='Invoices range from date'
-            >
-              <DateTimePicker
-                date={dateTime(dateMath.parse(invoicesRange.from))}
-                onChange={(dateTime: DateTime) => {
-                      dateTime.add(10, 'hours');
-                      this.onFromChange(dateTime.toISOString().split("T")[0]);
-                    }}
-              />
-            </InlineField>
-            <InlineField
-              label='To'
-              labelWidth={8}
-              tooltip='Invoices range till date'
-            >
-              <DateTimePicker
-                date={dateTime(dateMath.parse(invoicesRange.to))}
-                onChange={(dateTime: DateTime) => {
-                      dateTime.add(10, 'hours');
-                      this.onToChange(dateTime.toISOString().split("T")[0]);
-                    }}
-              />
-            </InlineField>
             <Button onClick={() => {
-              this.fetchInvoices(1, invoicesRange, invoicesQuery);
-            }}>
+              this.fetchInvoices(1, invoicesQuery);
+            }} style={{ marginLeft: 20 }}>
               Refresh
             </Button>
           </div>
@@ -207,7 +145,7 @@ export class Invoices extends PureComponent<Props> {
             </table>
             <HorizontalGroup justify="flex-end">
               <Pagination
-                onNavigate={setInvoicesPage}
+                onNavigate={this.onNavigate}
                 currentPage={invoicesPage}
                 numberOfPages={totalPages}
                 hideWhenSinglePage={true}

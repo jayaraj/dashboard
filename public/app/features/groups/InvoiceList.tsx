@@ -257,7 +257,7 @@ export class InvoiceList extends PureComponent<Props, State> {
             </table>
             <HorizontalGroup justify="flex-end">
               <Pagination
-                onNavigate={setInvoicesPage}
+                onNavigate={this.onNavigate}
                 currentPage={invoicesPage}
                 numberOfPages={totalPages}
                 hideWhenSinglePage={true}
