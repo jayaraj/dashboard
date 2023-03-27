@@ -240,6 +240,15 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 				Url:         hs.Cfg.AppSubURL + "/org/resources",
 			})
 		}
+		if hs.Cfg.EnableBilling && hasAccess(ac.ReqSignedIn, invoicesAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text:        "Invoices",
+				Id:          "invoices",
+				Description: "Invoices",
+				Icon:        "invoice",
+				Url:         hs.Cfg.AppSubURL + "/org/invoices",
+			})
+		}
 		if hasAccess(ac.ReqOrgAdminOrEditor, fixedChargesAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
 				Text:        "Org Charges",
