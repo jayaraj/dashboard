@@ -126,8 +126,6 @@ type Transaction struct {
 type SearchInvoicesMsg struct {
 	User    User   `json:"user"`
 	Query   string `json:"query"`
-	From    string `json:"from"`
-	To      string `json:"to"`
 	Page    int64  `json:"page"`
 	PerPage int64  `json:"perPage"`
 
