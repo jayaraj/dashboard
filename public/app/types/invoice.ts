@@ -1,5 +1,6 @@
 export interface Invoice {
   id: number;
+  group_id: number;
   updated_at: string;
   old_balance: number;
 	amount: number;
@@ -9,6 +10,8 @@ export interface Invoice {
   login: string;
   from: string;
   to: string;
+  name: string;
+  path: string;
   informations: InvoiceInformation[];
 }
 
@@ -35,6 +38,7 @@ export interface InvoicesState {
   page: number;
   count: number;
   hasFetched: boolean;
+  query: string;
 }
 
 export interface InvoiceState {

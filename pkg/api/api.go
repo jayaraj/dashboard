@@ -473,6 +473,12 @@ func (hs *HTTPServer) registerRoutes() {
 			groupsRoute.Get("/:groupId/invoices/:invoiceId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionInvoicesRead)), routing.Wrap(hs.GetInvoice))
 		})
 
+		// Invoices
+		apiRoute.Group("/invoices", func(invoicesRoute routing.RouteRegister) {
+			invoicesRoute.Get("/search", authorize(reqSignedIn, ac.EvalPermission(ac.ActionInvoicesRead)), routing.Wrap(hs.SearchInvoices))
+			invoicesRoute.Get("/:invoiceId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionInvoicesRead)), routing.Wrap(hs.FetchInvoice))
+		})
+
 		// ResourceTypes
 		apiRoute.Group("/resourcetypes", func(resourcetypesRoute routing.RouteRegister) {
 			resourcetypesRoute.Post("/", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), routing.Wrap(hs.CreateResourceType))

@@ -17,6 +17,8 @@ type Invoice struct {
 	Login         *string              `json:"login,omitempty"`
 	From          time.Time            `json:"from"`
 	To            time.Time            `json:"to"`
+	Name          *string              `json:"name,omitempty"`
+	Path          *string              `json:"path,omitempty"`
 	Informations  []InvoiceInformation `json:"informations"`
 }
 
@@ -119,4 +121,16 @@ type Transaction struct {
 	Description *string                `json:"description,omitempty"`
 	Login       *string                `json:"login,omitempty"`
 	Context     map[string]interface{} `json:"context"`
+}
+
+type SearchInvoicesMsg struct {
+	User    User   `json:"user"`
+	Query   string `json:"query"`
+	From    string `json:"from"`
+	To      string `json:"to"`
+	Page    int64  `json:"page"`
+	PerPage int64  `json:"perPage"`
+
+	// swagger:ignore
+	Result Invoices `json:"result"`
 }

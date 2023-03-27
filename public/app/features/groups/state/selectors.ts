@@ -16,6 +16,7 @@ export const getChildrenSearchQuery = (state: GroupState) => state.searchChildre
 export const getInvoicesCount = (state: InvoicesState) => state.count;
 export const getInvoicesPage = (state: InvoicesState) => state.page;
 export const getInvoicesRange = (state: InvoicesState) => state.range;
+export const getInvoiceQuery = (state: InvoicesState) => state.query;
 export const getTransactionsCount = (state: TransactionsState) => state.page;
 export const getTransactionsPage = (state: TransactionsState) => state.count;
 export const getTransactionsRange = (state: TransactionsState) => state.range;
