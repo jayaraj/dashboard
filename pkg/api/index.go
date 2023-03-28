@@ -222,31 +222,20 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 
 	if c.IsSignedIn {
 		deviceMgntNodes := []*dtos.NavLink{}
-		if hasAccess(ac.ReqSignedIn, groupsAccessEvaluator) {
+		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text:        "Groups",
-				Id:          "resourcegroups",
-				Description: "Manage org groups",
-				Icon:        "layer-group",
-				Url:         hs.Cfg.AppSubURL + "/org/groups",
+				Text: "Group Types",
+				Id:   "grouptypes",
+				Url:  hs.Cfg.AppSubURL + "/org/grouptypes",
+				Icon: "group-type",
 			})
 		}
-		if hasAccess(ac.ReqSignedIn, resourcesAccessEvaluator) {
+		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text:        hs.Cfg.ResourceLabel + "s",
-				Id:          "resources",
-				Description: "Manage " + hs.Cfg.ResourceLabel + "s",
-				Icon:        "resource",
-				Url:         hs.Cfg.AppSubURL + "/org/resources",
-			})
-		}
-		if hs.Cfg.EnableBilling && hasAccess(ac.ReqSignedIn, invoicesAccessEvaluator) {
-			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text:        "Invoices",
-				Id:          "invoices",
-				Description: "Invoices",
-				Icon:        "invoice",
-				Url:         hs.Cfg.AppSubURL + "/org/invoices",
+				Text: hs.Cfg.ResourceLabel + " Types",
+				Id:   "resourcetypes",
+				Url:  hs.Cfg.AppSubURL + "/org/resourcetypes",
+				Icon: "resource-type",
 			})
 		}
 		if hasAccess(ac.ReqOrgAdminOrEditor, fixedChargesAccessEvaluator) {
@@ -266,20 +255,31 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 				Icon: "org-type",
 			})
 		}
-		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
+		if hs.Cfg.EnableBilling && hasAccess(ac.ReqSignedIn, invoicesAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text: hs.Cfg.ResourceLabel + " Types",
-				Id:   "resourcetypes",
-				Url:  hs.Cfg.AppSubURL + "/org/resourcetypes",
-				Icon: "resource-type",
+				Text:        "Invoices",
+				Id:          "invoices",
+				Description: "Invoices",
+				Icon:        "invoice",
+				Url:         hs.Cfg.AppSubURL + "/org/invoices",
 			})
 		}
-		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
+		if hasAccess(ac.ReqSignedIn, resourcesAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text: "Group Types",
-				Id:   "grouptypes",
-				Url:  hs.Cfg.AppSubURL + "/org/grouptypes",
-				Icon: "group-type",
+				Text:        hs.Cfg.ResourceLabel + "s",
+				Id:          "resources",
+				Description: "Manage " + hs.Cfg.ResourceLabel + "s",
+				Icon:        "resource",
+				Url:         hs.Cfg.AppSubURL + "/org/resources",
+			})
+		}
+		if hasAccess(ac.ReqSignedIn, groupsAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text:        "Groups",
+				Id:          "resourcegroups",
+				Description: "Manage org groups",
+				Icon:        "layer-group",
+				Url:         hs.Cfg.AppSubURL + "/org/groups",
 			})
 		}
 
