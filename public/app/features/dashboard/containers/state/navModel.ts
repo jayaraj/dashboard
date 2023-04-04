@@ -11,7 +11,9 @@ export function buildNavModel(id: string, queryMap: UrlQueryMap, results: Dashbo
     }
   }
   children = results.map((result) => {
-    const slug = result.title ? result.title.toLowerCase().replace(' ', '-') : '';
+    let title = result.title ? result.title.toLowerCase().split(" "): [' '];
+    title = title.filter(word => word.length > 0);
+    const slug = title.join('-');
     const query = `?folderId=${folderId}` + variables;
     const item: NavModelItem = {
       id: slug,
