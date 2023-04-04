@@ -13,8 +13,8 @@ import { getNavModel } from 'app/core/selectors/navModel';
 import { contextSrv } from 'app/core/services/context_srv';
 import { Invoice, StoreState, Transaction } from 'app/types';
 
-import { loadInvoiceTransactions } from '../groups/state/actions';
-import { getInvoice, getTransactions } from '../groups/state/selectors';
+import { loadInvoiceGroupConfiguration, loadInvoiceTransactions, loadOrgConfigurations } from '../groups/state/actions';
+import { getGroupConfiguration, getInvoice, getInvoiceOrgConfiguration, getTransactions } from '../groups/state/selectors';
 
 import { loadInvoice } from './state/actions';
 
@@ -38,6 +38,8 @@ function mapStateToProps(state: StoreState, props: OwnProps) {
   const invoice = getInvoice(state.invoice, invoiceId);
   const transactions = getTransactions(state.transactions);
   const navModel = getNavModel(state.navIndex, 'invoices');
+  const groupConfig = getGroupConfiguration(state.group);
+  const orgConfig = getInvoiceOrgConfiguration(state.invoice);
 
   return {
     navModel: navModel,
@@ -45,12 +47,16 @@ function mapStateToProps(state: StoreState, props: OwnProps) {
     invoice: invoice,
     transactions: transactions,
     signedInUser:  contextSrv.user,
+    groupConfig: groupConfig,
+    orgConfig: orgConfig,
   };
 }
 
 const mapDispatchToProps = {
   loadInvoice,
   loadInvoiceTransactions,
+  loadInvoiceGroupConfiguration,
+  loadOrgConfigurations,
 };
 
 const connector = connect(mapStateToProps, mapDispatchToProps);
@@ -74,11 +80,13 @@ export class InvoicePage extends PureComponent<Props, State> {
   }
 
   async fetchInvoice() {
-    const { loadInvoice, loadInvoiceTransactions, invoiceId } = this.props;
+    const { loadInvoice, loadInvoiceTransactions, invoiceId, loadInvoiceGroupConfiguration, loadOrgConfigurations } = this.props;
     this.setState({ isLoading: true });
     const response = await loadInvoice( invoiceId);
     const { invoice } = this.props;
     await loadInvoiceTransactions(invoice!.group_id, invoiceId, 1, pageLimit);
+    await loadInvoiceGroupConfiguration(invoice!.group_id);
+    await loadOrgConfigurations('details');
     this.setState({ isLoading: false });
     return response;
   }
@@ -96,7 +104,7 @@ export class InvoicePage extends PureComponent<Props, State> {
   }
 
   render() {
-    const { navModel, invoice, transactions, signedInUser } = this.props;
+    const { navModel, invoice, transactions, orgConfig, groupConfig } = this.props;
     const invoicesUrl = `org/invoices`;
 
     return (
@@ -112,7 +120,7 @@ export class InvoicePage extends PureComponent<Props, State> {
               <Icon name="arrow-left" />Back
             </LinkButton>
           </div>
-          <InvoiceTable orgname={signedInUser.orgName} name={signedInUser.name} email={signedInUser.email}  invoice={invoice!} transactions={transactions}></InvoiceTable>
+          <InvoiceTable orgconfig={orgConfig} groupconfig={groupConfig} invoice={invoice!} transactions={transactions}></InvoiceTable>
         </Page.Contents>
       </Page>
     );
@@ -123,14 +131,13 @@ export class InvoicePage extends PureComponent<Props, State> {
 export default connector(withTheme2(InvoicePage));
 
 interface InvoiceTableProps {
-  orgname: string;
-  name: string;
-  email: string;
+  orgconfig: any;
+  groupconfig: any;
   invoice: Invoice;
   transactions: Transaction[];
 }
 
-const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgname, name, email, invoice, transactions }) => {
+const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgconfig, groupconfig, invoice, transactions }) => {
   const capitalizeWords = (str: string) => {
     return str
       .toLowerCase()
@@ -177,12 +184,17 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgname, name, email, invoi
                 <tbody>
                   <tr>
                     <td className={styles.information}>
-                      {orgname}.<br />
+                      {orgconfig.name}<br />
+                      <span style={{ fontSize: '14px' }}>{orgconfig.address1}</span><br />
+                      <span style={{ fontSize: '14px' }}>{orgconfig.address2}</span><br />
+                      <span style={{ fontSize: '14px' }}>{orgconfig.city}-{orgconfig.pincode}</span>
                     </td>
 
                     <td className={styles.information}>
-                      {name}<br />
-                      {email}
+                      {groupconfig.name}<br />
+                      <span style={{ fontSize: '14px' }}>{groupconfig.address1}</span><br />
+                      <span style={{ fontSize: '14px' }}>{groupconfig.address2}</span><br />
+                      <span style={{ fontSize: '14px' }}>{groupconfig.city}-{groupconfig.pincode}</span>
                     </td>
                   </tr>
                 </tbody>
@@ -287,7 +299,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgname, name, email, invoi
             <td className="value">
             <table>
               <tbody>
-                <tr><td>Credits</td><td>{invoice?.total_credits}</td></tr>
+                <tr><td>Credits</td><td><span>-</span>{invoice?.total_credits}</td></tr>
               </tbody>
             </table>
             </td>
@@ -298,7 +310,18 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ orgname, name, email, invoi
             <td className="value">
               <table>
                 <tbody>
-                  <tr><td>Payments</td><td>{invoice?.total_payments}</td></tr>
+                  <tr><td>Payments</td><td><span>-</span>{invoice?.total_payments}</td></tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+          <tr className={styles.creditspayments}>
+            <td></td>
+            <td></td>
+            <td className="value">
+              <table>
+                <tbody>
+                  <tr><td>Previous Balance</td><td>{invoice?.old_balance}</td></tr>
                 </tbody>
               </table>
             </td>

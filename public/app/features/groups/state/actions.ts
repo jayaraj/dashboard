@@ -23,6 +23,7 @@ import {
   invoiceLoaded,
   groupConfigurationLoaded,
   groupTypeConfigurationLoaded,
+  orgDetailsLoaded,
 } from './reducers';
 
 export function loadGroups(): ThunkResult<void> {
@@ -216,5 +217,20 @@ export function loadGroupTypeConfiguration(): ThunkResult<void> {
     const group = getStore().group.group;
     const response = await getBackendSrv().get(`/api/grouptypes/type/${group.type}`);
     dispatch(groupTypeConfigurationLoaded(response));
+  };
+}
+
+export function loadInvoiceGroupConfiguration(id: number): ThunkResult<void> {
+  return async (dispatch) => {
+    const response = await getBackendSrv().get(`/api/groups/${id}`);
+    dispatch(groupLoaded(response));
+    dispatch(loadGroupConfiguration());
+  };
+}
+
+export function loadOrgConfigurations(type: string): ThunkResult<void> {
+  return async (dispatch) => {
+    const response = await getBackendSrv().get(`/api/orgs/configurations/${type}`);
+    dispatch(orgDetailsLoaded(response));
   };
 }

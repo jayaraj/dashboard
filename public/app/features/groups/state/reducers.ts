@@ -138,6 +138,7 @@ export const invoicesReducer = invoicesSlice.reducer;
 
 export const initialInvoiceState: InvoiceState = {
   invoice: {} as Invoice,
+  orgDetails: {},
 };
 
 const invoiceSlice = createSlice({
@@ -147,10 +148,13 @@ const invoiceSlice = createSlice({
     invoiceLoaded: (state, action: PayloadAction<Invoice>): InvoiceState => {
       return { ...state, invoice: action.payload };
     },
+    orgDetailsLoaded: (state, action: PayloadAction<any>): InvoiceState => {
+      return { ...state, orgDetails: action.payload };
+    },
   },
 });
 
-export const { invoiceLoaded } = invoiceSlice.actions;
+export const { invoiceLoaded, orgDetailsLoaded } = invoiceSlice.actions;
 export const invoiceReducer = invoiceSlice.reducer;
 
 export const initialTransactionsState: TransactionsState = {

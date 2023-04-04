@@ -85,7 +85,7 @@ export const ResourceSettings: FC<Props> = ({ resource, data, resourceType, upda
       <Form
         defaultValues={{ ...resource }}
         onSubmit={(formresource: Resource) => {
-          updateResource(formresource.name, formresource.uuid, formresource.longitude, formresource.latitude);
+          updateResource(formresource.name, formresource.uuid, Number(formresource.longitude), Number(formresource.latitude));
           updateResourceConfiguration(newData)
         }}
         disabled={!canWrite}
