@@ -43,4 +43,5 @@ export interface InvoicesState {
 
 export interface InvoiceState {
   invoice: Invoice;
+  orgDetails: any;
 }

@@ -20,6 +20,7 @@ export const getInvoiceQuery = (state: InvoicesState) => state.query;
 export const getTransactionsCount = (state: TransactionsState) => state.page;
 export const getTransactionsPage = (state: TransactionsState) => state.count;
 export const getTransactionsRange = (state: TransactionsState) => state.range;
+export const getInvoiceOrgConfiguration = (state: InvoiceState) => state.orgDetails;
 
 export const getGroup = (state: GroupState, currentGroupId: any): Group | null => {
   if (state.group.id === parseInt(currentGroupId, 10)) {
@@ -34,7 +35,6 @@ export const getInvoice = (state: InvoiceState, currentInvoiceId: any): Invoice 
   }
   return null;
 };
-
 
 export const getGroups = (state: GroupsState) => {
   const regex = RegExp(state.searchQuery, 'i');
