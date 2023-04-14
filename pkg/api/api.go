@@ -105,6 +105,9 @@ func (hs *HTTPServer) registerRoutes() {
 	r.Get("/org/resourcetypes", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesRead)), hs.Index)
 	r.Get("/org/resourcetypes/edit/*", authorize(reqGrafanaAdmin, resourceTypesAccessEvaluator), hs.Index)
 	r.Get("/org/resourcetypes/new", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), hs.Index)
+	r.Get("/org/inventories", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionInventoriesRead)), hs.Index)
+	r.Get("/org/inventories/edit/*", authorize(reqGrafanaAdmin, inventoriesAccessEvaluator), hs.Index)
+	r.Get("/org/inventories/new", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionInventoriesWrite)), hs.Index)
 	r.Get("/org/grouptypes", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesRead)), hs.Index)
 	r.Get("/org/grouptypes/edit/*", authorize(reqGrafanaAdmin, resourceTypesAccessEvaluator), hs.Index)
 	r.Get("/org/grouptypes/new", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), hs.Index)
@@ -494,6 +497,16 @@ func (hs *HTTPServer) registerRoutes() {
 			resourcetypesRoute.Get("/slab/:slabType", authorize(reqSignedIn, ac.EvalPermission(ac.ActionSlabRead)), routing.Wrap(hs.GetSlabByType))
 		})
 
+		// Inventory
+		apiRoute.Group("/inventories", func(inventoriesRoute routing.RouteRegister) {
+			inventoriesRoute.Post("/", reqGrafanaAdmin, routing.Wrap(hs.CreateInventory))
+			inventoriesRoute.Put("/:inventoryId", reqGrafanaAdmin, routing.Wrap(hs.UpdateInventory))
+			inventoriesRoute.Delete("/:inventoryId", reqGrafanaAdmin, routing.Wrap(hs.DeleteInventory))
+			inventoriesRoute.Get("/uuid/:uuid", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionInventoriesRead)), routing.Wrap(hs.GetInventoryByUUID))
+			inventoriesRoute.Get("/:inventoryId", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionInventoriesRead)), routing.Wrap(hs.GetInventoryById))
+			inventoriesRoute.Get("/search", reqGrafanaAdmin, routing.Wrap(hs.SearchInventories))
+		})
+
 		// GroupTypes
 		apiRoute.Group("/grouptypes", func(groupstypesRoute routing.RouteRegister) {
 			groupstypesRoute.Post("/", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), routing.Wrap(hs.CreateGroupType))
@@ -534,10 +547,16 @@ func (hs *HTTPServer) registerRoutes() {
 			configurationRoute.Get("/configurations/:config", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourcesRead)), routing.Wrap(hs.GetOrgConfiguration))
 		})
 
-		// OrgConfiguration
+		// GroupConfiguration
 		apiRoute.Group("/groups", func(configurationRoute routing.RouteRegister) {
-			configurationRoute.Put("/:groupId/configurations/:config", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite)), routing.Wrap(hs.UpdateGroupConfiguration))
-			configurationRoute.Get("/:groupId/configurations/:config", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourcesRead)), routing.Wrap(hs.GetGroupConfiguration))
+			configurationRoute.Put("/:groupId/configurations/:config", authorize(reqEditorRole, ac.EvalPermission(ac.ActionGroupsWrite)), routing.Wrap(hs.UpdateGroupConfiguration))
+			configurationRoute.Get("/:groupId/configurations/:config", authorize(reqSignedIn, ac.EvalPermission(ac.ActionGroupsRead)), routing.Wrap(hs.GetGroupConfiguration))
+		})
+
+		// InventoryConfiguration
+		apiRoute.Group("/inventories", func(configurationRoute routing.RouteRegister) {
+			configurationRoute.Put("/:inventoryId/configurations/:config", authorize(reqEditorRole, ac.EvalPermission(ac.ActionInventoriesWrite)), routing.Wrap(hs.UpdateInventoryConfiguration))
+			configurationRoute.Get("/:inventoryId/configurations/:config", authorize(reqSignedIn, ac.EvalPermission(ac.ActionInventoriesRead)), routing.Wrap(hs.GetInventoryConfiguration))
 		})
 
 		// Dashboard

@@ -17,3 +17,9 @@ type UpdateResourceConfigurationMsg struct {
 	Type          string                 `json:"type"`
 	Configuration map[string]interface{} `json:"configuration"`
 }
+
+type UpdateInventoryConfigurationMsg struct {
+	InventoryId   int64                  `json:"inventory_id"`
+	Type          string                 `json:"type"`
+	Configuration map[string]interface{} `json:"configuration"`
+}

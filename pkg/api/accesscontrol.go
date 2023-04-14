@@ -370,6 +370,35 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		Grants: []string{ac.RoleGrafanaAdmin},
 	}
 
+	inventoriesReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:inventories:reader",
+			DisplayName: "Inventory reader",
+			Description: "Read inventories.",
+			Group:       "Inventories",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionResourceTypesRead},
+			},
+		},
+		Grants: []string{string(ac.RoleGrafanaAdmin)},
+	}
+
+	inventoriesWriterRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:inventories:writer",
+			DisplayName: "Inventory writer",
+			Description: "Create, read, write, or delete a inventory",
+			Group:       "Inventories",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionInventoriesRead, Scope: ac.ScopeInventoriesAll},
+				{Action: ac.ActionInventoriesWrite, Scope: ac.ScopeInventoriesAll},
+			},
+		},
+		Grants: []string{ac.RoleGrafanaAdmin},
+	}
+
 	slabReaderRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
 			Name:        "fixed:slab:reader",
@@ -603,6 +632,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		resourcesReaderRole, resourcesWriterRole, groupsReaderRole, groupsWriterRole,
 		resourceTypesReaderRole, resourceTypesWriterRole, slabReaderRole, slabWriterRole,
 		fixedChargesReaderRole, fixedChargesWriterRole, invoicesReaderRole, invoicesWriterRole,
+		inventoriesReaderRole, inventoriesWriterRole,
 	)
 }
 
@@ -682,6 +712,16 @@ var resourceTypesAccessEvaluator = ac.EvalAny(
 var resourceTypesEditAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionResourceTypesRead),
 	ac.EvalPermission(ac.ActionResourceTypesWrite),
+)
+
+var inventoriesAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionInventoriesRead),
+	ac.EvalPermission(ac.ActionInventoriesWrite),
+)
+
+var inventoriesEditAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionInventoriesRead),
+	ac.EvalPermission(ac.ActionInventoriesWrite),
 )
 
 var slabAccessEvaluator = ac.EvalAny(

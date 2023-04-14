@@ -21,13 +21,14 @@ type User struct {
 }
 
 type CreateResourceMsg struct {
-	OrgId     int64    `json:"org_id"`
-	UUID      string   `json:"uuid" binding:"Required"`
-	Name      string   `json:"name" binding:"Required"`
-	Type      string   `json:"type" binding:"Required"`
-	Latitude  *float64 `json:"latitude,omitempty"`
-	Longitude *float64 `json:"longitude,omitempty"`
-	Result    Resource `json:"-"`
+	OrgId         int64                  `json:"org_id"`
+	UUID          string                 `json:"uuid" binding:"Required"`
+	Name          string                 `json:"name" binding:"Required"`
+	Type          string                 `json:"type" binding:"Required"`
+	Latitude      *float64               `json:"latitude,omitempty"`
+	Longitude     *float64               `json:"longitude,omitempty"`
+	Configuration map[string]interface{} `json:"configuration" binding:"Required"`
+	Result        Resource               `json:"-"`
 }
 
 type UpdateResourceMsg struct {

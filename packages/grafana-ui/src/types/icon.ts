@@ -7,6 +7,7 @@ export type IconSize = ComponentSize | 'xl' | 'xxl' | 'xxxl';
 
 export const getAvailableIcons = () =>
   [
+    'inventory',
     'org-type',
     'group-type',
     'invoice-transaction',
