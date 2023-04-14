@@ -222,6 +222,14 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 
 	if c.IsSignedIn {
 		deviceMgntNodes := []*dtos.NavLink{}
+		if hasAccess(ac.ReqGrafanaAdmin, inventoriesAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text: "Inventories",
+				Id:   "inventories",
+				Url:  hs.Cfg.AppSubURL + "/org/inventories",
+				Icon: "inventory",
+			})
+		}
 		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
 				Text: "Group Types",
