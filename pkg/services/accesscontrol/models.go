@@ -357,6 +357,12 @@ const (
 	// Resources related scopes
 	ScopeGroupsAll = "groups:*"
 
+	// Inventories related actions
+	ActionInventoriesRead  = "inventories:read"
+	ActionInventoriesWrite = "inventories:write"
+	// Inventories related scopes
+	ScopeInventoriesAll = "inventories:*"
+
 	// ResourceTypes related actions
 	ActionResourceTypesRead  = "resourcetypes:read"
 	ActionResourceTypesWrite = "resourcetypes:write"

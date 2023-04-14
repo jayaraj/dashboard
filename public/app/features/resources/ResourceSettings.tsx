@@ -42,17 +42,19 @@ export const ResourceSettings: FC<Props> = ({ resource, data, resourceType, upda
   useEffect(() => {
     const elements = resourceType.configuration? JSON.parse(JSON.stringify(resourceType.configuration.elements)): [];
     const sections = resourceType.configuration? JSON.parse(JSON.stringify(resourceType.configuration.sections)): [];
-    elements?.forEach((element: FormElement) => {
-      if (element.type === FormElementType.DATETIME) {
-        element.value = dateMath.parse(data[element.id]);
-      }
-      if (element.type === FormElementType.SLIDER) {
-        element.value = data[element.id]? data[element.id]: element.min;
-      } else {
-        element.value = data[element.id];
-      }
-    });
-
+    if (data) {
+      elements?.forEach((element: FormElement) => {
+        if (element.type === FormElementType.DATETIME) {
+          element.value = dateMath.parse(data[element.id]);
+        }
+        if (element.type === FormElementType.SLIDER) {
+          element.value = data[element.id]? data[element.id]: element.min;
+        } else {
+          element.value = data[element.id];
+        }
+      });
+    }
+    
     setNewData(data);
     setConfiguration({
       elements: [...elements],

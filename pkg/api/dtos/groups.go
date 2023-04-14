@@ -55,11 +55,12 @@ type AddGroupResourceMsg struct {
 }
 
 type CreateGroupMsg struct {
-	Name   string `json:"name" binding:"required"`
-	Type   string `json:"type"`
-	OrgId  int64  `json:"org_id"`
-	Parent *int64 `json:"parent,omitempty"`
-	Result Group  `json:"-"`
+	Name          string                 `json:"name" binding:"required"`
+	Type          string                 `json:"type"`
+	OrgId         int64                  `json:"org_id"`
+	Parent        *int64                 `json:"parent,omitempty"`
+	Configuration map[string]interface{} `json:"configuration" binding:"Required"`
+	Result        Group                  `json:"-"`
 }
 
 type UpdateGroupMsg struct {
@@ -101,14 +102,15 @@ type GroupResource struct {
 }
 
 type CreateGroupResourceMsg struct {
-	GroupId   int64    `json:"group_id"`
-	OrgId     int64    `json:"org_id"`
-	UUID      string   `json:"uuid" binding:"Required"`
-	Name      string   `json:"name" binding:"Required"`
-	Type      string   `json:"type" binding:"Required"`
-	Latitude  *float64 `json:"latitude,omitempty"`
-	Longitude *float64 `json:"longitude,omitempty"`
-	Result    Resource `json:"-"`
+	GroupId       int64                  `json:"group_id"`
+	OrgId         int64                  `json:"org_id"`
+	UUID          string                 `json:"uuid" binding:"Required"`
+	Name          string                 `json:"name" binding:"Required"`
+	Type          string                 `json:"type" binding:"Required"`
+	Configuration map[string]interface{} `json:"configuration" binding:"Required"`
+	Latitude      *float64               `json:"latitude,omitempty"`
+	Longitude     *float64               `json:"longitude,omitempty"`
+	Result        Resource               `json:"-"`
 }
 
 type GetGroupResourcesMsg struct {

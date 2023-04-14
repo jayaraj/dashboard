@@ -41,17 +41,18 @@ export const GroupSettings: FC<Props> = ({ group, data, groupType, updateGroup, 
   useEffect(() => {
     const elements = groupType.configuration? JSON.parse(JSON.stringify(groupType.configuration.elements)): [];
     const sections = groupType.configuration? JSON.parse(JSON.stringify(groupType.configuration.sections)): [];
-    elements?.forEach((element: FormElement) => {
-      if (element.type === FormElementType.DATETIME) {
-        element.value = dateMath.parse(data[element.id]);
-      }
-      if (element.type === FormElementType.SLIDER) {
-        element.value = data[element.id]? data[element.id]: element.min;
-      } else {
-        element.value = data[element.id];
-      }
-    });
-
+    if (data) {
+      elements?.forEach((element: FormElement) => {
+        if (element.type === FormElementType.DATETIME) {
+          element.value = dateMath.parse(data[element.id]);
+        }
+        if (element.type === FormElementType.SLIDER) {
+          element.value = data[element.id]? data[element.id]: element.min;
+        } else {
+          element.value = data[element.id];
+        }
+      });
+    }
     setNewData(data);
     setConfiguration({
       elements: [...elements],

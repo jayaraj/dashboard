@@ -39,17 +39,19 @@ export const OrgTypeConfiguration: FC<Props> = ({ orgType, data, updateOrgConfig
   useEffect(() => {
     const elements = orgType.configuration? JSON.parse(JSON.stringify(orgType.configuration.elements)): [];
     const sections = orgType.configuration? JSON.parse(JSON.stringify(orgType.configuration.sections)): [];
-    elements?.forEach((element: FormElement) => {
-      if (element.type === FormElementType.DATETIME) {
-        element.value = dateMath.parse(data[element.id]);
-      }
-      if (element.type === FormElementType.SLIDER) {
-        element.value = data[element.id]? data[element.id]: element.min;
-      } else {
-        element.value = data[element.id];
-      }
-    });
-
+    if (data) {
+      elements?.forEach((element: FormElement) => {
+        if (element.type === FormElementType.DATETIME) {
+          element.value = dateMath.parse(data[element.id]);
+        }
+        if (element.type === FormElementType.SLIDER) {
+          element.value = data[element.id]? data[element.id]: element.min;
+        } else {
+          element.value = data[element.id];
+        }
+      });
+    }
+    
     setNewData(data);
     setConfiguration({
       elements: [...elements],

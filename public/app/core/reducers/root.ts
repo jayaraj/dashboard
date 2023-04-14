@@ -13,6 +13,7 @@ import fixedChargesReducer from 'app/features/fixedcharges/state/reducers';
 import foldersReducers from 'app/features/folders/state/reducers';
 import groupsReducer from 'app/features/groups/state/reducers';
 import groupTypesReducer from 'app/features/grouptypes/state/reducers';
+import inventoriesReducer from 'app/features/inventories/state/reducers';
 import invitesReducers from 'app/features/invites/state/reducers';
 import importDashboardReducers from 'app/features/manage-dashboards/state/reducers';
 import organizationReducers from 'app/features/org/state/reducers';
@@ -51,6 +52,7 @@ const rootReducers = {
   ...templatingReducers,
   ...dashboardNavsReducer,
   ...resourceTypesReducer,
+  ...inventoriesReducer,
   ...groupTypesReducer,
   ...orgTypesReducer,
   ...resourcesReducer,

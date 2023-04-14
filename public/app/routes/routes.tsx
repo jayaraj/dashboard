@@ -423,6 +423,24 @@ export function getAppRoutes(): RouteDescriptor[] {
       ),
     },
     {
+      path: '/org/inventories',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "InventoryList" */ 'app/features/inventories/InventoryList')
+      ),
+    },
+    {
+      path: '/org/inventories/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateInventory" */ 'app/features/inventories/CreateInventory')
+      ),
+    },
+    {
+      path: '/org/inventories/edit/:id/:page?',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "InventoryPages" */ 'app/features/inventories/InventoryPages')
+      ),
+    },
+    {
       path: '/org/orgtypes',
       component: SafeDynamicImport(
         () => import(/* webpackChunkName: "OrgTypeList" */ 'app/features/orgtypes/OrgTypeList')

@@ -3,19 +3,13 @@ import { connect } from 'react-redux';
 
 import { NavModel, SelectableValue } from '@grafana/data';
 import { getBackendSrv, locationService } from '@grafana/runtime';
-import { Button, Select, Form, Field, Input, FieldSet, InputControl, Themeable2, withTheme2} from '@grafana/ui';
+import { Button, Select, Form, Field, Input, FieldSet, InputControl } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
-import config from 'app/core/config';
-import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { ResourceType, StoreState } from 'app/types';
 
-interface GroupPageRouteParams {
-  id: string;
-}
 
-export interface Props extends GrafanaRouteComponentProps<GroupPageRouteParams> , Themeable2 {
-  groupId: number;
+export interface Props {
   navModel: NavModel;
 }
 
@@ -23,15 +17,12 @@ interface State {
   types: Array<SelectableValue<string>>;
 }
 
-interface ResourceDTO {
+interface InventoryDTO {
   type: SelectableValue<string>;
   uuid: string;
-  name: string;
-  latitude: number;
-  longitude: number;
 }
 
-export class CreateResource extends PureComponent<Props, State> {
+export class CreateInventory extends PureComponent<Props, State> {
   state: State = {
     types: [],
   };
@@ -53,33 +44,26 @@ export class CreateResource extends PureComponent<Props, State> {
     });
   };
 
-  create = async (formModel: ResourceDTO) => {
-    const { groupId } = this.props;
-    const result = await getBackendSrv().post(`/api/groups/${groupId}/resources`, {
-      latitude: Number(formModel.latitude),
-      longitude: Number(formModel.longitude),
-      name: formModel.name,
+  create = async (formModel: InventoryDTO) => {
+    const result = await getBackendSrv().post('/api/inventories', {
       type: formModel.type.value,
       uuid: formModel.uuid,
     });
     if (result.id) {
-      locationService.push(`/org/resources/edit/${result.id}`);
+      locationService.push(`/org/inventories/edit/${result.id}`);
     }
   };
 
   render() {
     const { navModel } = this.props;
     const { types } = this.state;
-    const label = 'New ' + config.resourceLabel;
+    const label = 'New Inventory';
     return (
       <Page navModel={navModel}>
         <Page.Contents>
-          <Form onSubmit={this.create}>
+        <Form onSubmit={this.create}>
             {({ register, control, errors }) => (
               <FieldSet label={label}>
-                <Field label="Name" required invalid={!!errors.name} error="Name is required">
-                  <Input {...register('name', { required: true })} id="resource-name" width={60} />
-                </Field>
                 <Field label="UUID" required invalid={!!errors.uuid} error="UUID is required">
                   <Input {...register('uuid', { required: true })} id="resource-uuid" width={60} />
                 </Field>
@@ -92,12 +76,6 @@ export class CreateResource extends PureComponent<Props, State> {
                     }}
                     render={({ field }) => <Select {...field} options={types} width={60} />}
                   />
-                </Field>
-                <Field label="Latitude" invalid={!!errors.latitude} error="latitude is invalid">
-                  <Input {...register('latitude')} type="number" id="resource-latitude" width={60} />
-                </Field>
-                <Field label="Longitude" invalid={!!errors.longitude} error="longitude is invalid">
-                  <Input {...register('longitude')} type="number" id="resource-longitude" width={60} />
                 </Field>
                 <div className="gf-form-button-row">
                   <Button type="submit" variant="primary">
@@ -113,12 +91,10 @@ export class CreateResource extends PureComponent<Props, State> {
   }
 }
 
-function mapStateToProps(state: StoreState, props: Props) {
-  const groupId = parseInt(props.match.params.id, 10);
+function mapStateToProps(state: StoreState) {
   return {
-    groupId: groupId,
-    navModel: getNavModel(state.navIndex, 'resourcegroups'),
+    navModel: getNavModel(state.navIndex, 'inventories'),
   };
 }
 
-export default connect(mapStateToProps)(withTheme2(CreateResource));
+export default connect(mapStateToProps)(CreateInventory);
