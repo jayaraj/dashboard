@@ -489,6 +489,7 @@ func (hs *HTTPServer) registerRoutes() {
 			resourcetypesRoute.Delete("/:resourcetypeId", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), routing.Wrap(hs.DeleteResourceType))
 			resourcetypesRoute.Get("/:resourcetypeId", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourceTypesRead)), routing.Wrap(hs.GetResourceTypeById))
 			resourcetypesRoute.Get("/search", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourceTypesRead)), routing.Wrap(hs.SearchResourceTypes))
+			resourcetypesRoute.Get("/othersearch", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourceTypesRead)), routing.Wrap(hs.SearchOtherResourceTypes))
 			resourcetypesRoute.Get("/type/:type", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourceTypesRead)), routing.Wrap(hs.GetResourceTypeByType))
 
 			resourcetypesRoute.Post("/slab", authorize(reqEditorRole, ac.EvalPermission(ac.ActionSlabWrite)), routing.Wrap(hs.CreateSlab))
