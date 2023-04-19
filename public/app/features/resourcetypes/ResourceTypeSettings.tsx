@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState  } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
-import { Input, Field, Form, Button, FieldSet, VerticalGroup, Label } from '@grafana/ui';
+import { Input, Field, Form, Button, FieldSet, VerticalGroup, Label, Checkbox } from '@grafana/ui';
 import { FormElementsEditor, LayoutSectionsEditor } from 'app/core/components/CustomForm/components';
 import { FormElement, LayoutSection } from 'app/core/components/CustomForm/types';
 import config from 'app/core/config';
@@ -58,7 +58,7 @@ export const ResourceTypeSettings: FC<Props> = ({ resourceType, updateResourceTy
       <Form
         defaultValues={{ ...resourceType }}
         onSubmit={(formresourceType: ResourceType) => {
-          updateResourceType(formresourceType.type, configuration);
+          updateResourceType(formresourceType.type, formresourceType.other_configurations, configuration);
         }}
         disabled={!canWrite}
       >
@@ -70,6 +70,9 @@ export const ResourceTypeSettings: FC<Props> = ({ resourceType, updateResourceTy
               disabled={!canWrite}
             >
               <Input {...register('type', { required: true })} id="name-input" width={60} />
+            </Field>
+            <Field label="OtherConfigurations" disabled={!canWrite}>
+              <Checkbox  {...register('other_configurations')} />
             </Field>
             <Field
               label="Configuration"

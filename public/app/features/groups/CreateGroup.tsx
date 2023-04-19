@@ -46,7 +46,7 @@ export class CreateGroup extends PureComponent<Props> {
   };
 
   create = async (formModel: GroupDTO) => {
-    const result = await getBackendSrv().post('/api/groups', { name: formModel.name, type: formModel.type, parent: this.props.parent });
+    const result = await getBackendSrv().post('/api/groups', { name: formModel.name, type: formModel.type.value, parent: this.props.parent, configuration: {} });
     if (result.id) {
       if (this.props.parent) {
         locationService.push(`/org/groups/edit/${this.props.parent}/children`);
