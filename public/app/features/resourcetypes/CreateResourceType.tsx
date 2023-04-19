@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { NavModel } from '@grafana/data';
 import { getBackendSrv, locationService } from '@grafana/runtime';
-import { Button, LegacyForms, Label, VerticalGroup } from '@grafana/ui';
+import { Button, LegacyForms, Label, VerticalGroup, Checkbox } from '@grafana/ui';
 import { FormElementsEditor, LayoutSectionsEditor } from 'app/core/components/CustomForm/components';
 import { FormElement, LayoutSection } from 'app/core/components/CustomForm/types';
 import { Page } from 'app/core/components/Page/Page';
@@ -18,12 +18,14 @@ export interface Props {
 
 interface State {
   type: string;
+  other_configurations: boolean; 
   configuration: ResourceConfiguration;
 }
 
 export class CreateResourceType extends PureComponent<Props, State> {
   state: State = {
     type: '',
+    other_configurations: false, 
     configuration: {
       elements: [],
       sections: [],
@@ -31,9 +33,10 @@ export class CreateResourceType extends PureComponent<Props, State> {
   };
 
   create = async () => {
-    const { type, configuration } = this.state;
+    const { type, configuration, other_configurations } = this.state;
     const result = await getBackendSrv().post('/api/resourcetypes', {
       type,
+      other_configurations,
       configuration,
     });
     if (result.id) {
@@ -44,6 +47,12 @@ export class CreateResourceType extends PureComponent<Props, State> {
   onTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({
       type: event.target.value,
+    });
+  };
+
+  onOtherConfigChange = (checked: boolean) => {
+    this.setState({
+      other_configurations: checked,
     });
   };
 
@@ -69,7 +78,7 @@ export class CreateResourceType extends PureComponent<Props, State> {
 
   render() {
     const { navModel } = this.props;
-    const { type, configuration } = this.state;
+    const { type, configuration, other_configurations } = this.state;
     return (
       <Page navModel={navModel}>
         <Page.Contents>
@@ -85,6 +94,15 @@ export class CreateResourceType extends PureComponent<Props, State> {
                   onChange={this.onTypeChange}
                   inputWidth={20}
                   labelWidth={10}
+                />
+                <FormField
+                  className="gf-form"
+                  labelWidth={10}
+                  inputWidth={20}
+                  label="OtherConfigurations"
+                  inputEl={
+                    <Checkbox defaultChecked={other_configurations} onChange={(e)=> {this.onOtherConfigChange(e.currentTarget.checked)}} />
+                  }
                 />
                 <FormField
                   className="gf-form"

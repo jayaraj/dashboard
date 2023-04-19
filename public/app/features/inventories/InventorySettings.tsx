@@ -69,7 +69,7 @@ export const InventorySettings: FC<Props> = ({ inventory, updateInventory }) => 
   }, []);
 
   const fetchResourceTypes = async () => {
-    const response = await getBackendSrv().get('/api/resourcetypes/search', { query: '', page: 1, perPage: 10000 });
+    const response = await getBackendSrv().get('/api/resourcetypes/othersearch', { query: '', page: 1, perPage: 10000 });
     const resourceTypes = response.resource_types.map(
       (type: ResourceType): SelectableValue<string> => ({
         value: type.type,
