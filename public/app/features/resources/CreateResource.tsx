@@ -53,6 +53,7 @@ export class CreateResource extends PureComponent<Props, State> {
       name: formModel.name,
       type: formModel.type.value,
       uuid: formModel.uuid,
+      configuration: {},
     });
     if (result.id) {
       locationService.push(`/org/resources/edit/${result.id}`);
