@@ -3,6 +3,7 @@ import { ResourceConfiguration } from "./groupType";
 export interface ResourceType {
   id: number;
   type: string;
+  other_configurations: boolean; 
   configuration: ResourceConfiguration;
 }
 

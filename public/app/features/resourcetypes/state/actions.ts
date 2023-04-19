@@ -7,7 +7,7 @@ import { resourceTypeLoaded, resourceTypesLoaded, setResourceTypeSearchPage, set
 
 export function loadResourceTypes(query: string, page: number, perPage: number): ThunkResult<void> {
   return async (dispatch) => {
-    const response = await getBackendSrv().get('/api/resourcetypes/search', {
+    const response = await getBackendSrv().get('/api/resourcetypes/othersearch', {
       query: query,
       page: page,
       perPage: perPage,
@@ -27,12 +27,13 @@ export function loadResourceType(id: number): ThunkResult<void> {
   };
 }
 
-export function updateResourceType(type: string, configuration: ResourceConfiguration): ThunkResult<void> {
+export function updateResourceType(type: string, other_configurations: boolean, configuration: ResourceConfiguration): ThunkResult<void> {
   return async (dispatch, getStore) => {
     const resourceType = getStore().resourceType.resourceType;
     await getBackendSrv().put(`/api/resourcetypes/${resourceType.id}`, {
       id: resourceType.id,
       type,
+      other_configurations,
       configuration,
     });
     dispatch(loadResourceType(resourceType.id));
