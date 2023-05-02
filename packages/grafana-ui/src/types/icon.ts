@@ -10,6 +10,7 @@ export const getAvailableIcons = () =>
     'inventory',
     'org-type',
     'group-type',
+    'upload-files',
     'invoice-transaction',
     'invoice',
     'fixed-charge',

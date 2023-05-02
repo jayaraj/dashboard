@@ -297,6 +297,14 @@ export function getAppRoutes(): RouteDescriptor[] {
       component: SafeDynamicImport(() => import(/* webpackChunkName: "InvoicePage" */ 'app/features/invoices/InvoicePage')),
     },
     {
+      path: '/org/bulks',
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "Bulks" */ 'app/features/bulks/BulkList')),
+    },
+    {
+      path: '/org/bulks/:bulkId/errors',
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "BulkErrors" */ 'app/features/bulks/BulkErrors')),
+    },
+    {
       path: '/org/groups',
       component: SafeDynamicImport(() => import(/* webpackChunkName: "GroupList" */ 'app/features/groups/GroupList')),
     },

@@ -263,6 +263,15 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 				Icon: "org-type",
 			})
 		}
+		if hasAccess(ac.ReqGrafanaAdmin, bulksAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text:        "Batch Process",
+				Id:          "bulks",
+				Description: "Perform repetitive jobs from csv files",
+				Icon:        "upload-files",
+				Url:         hs.Cfg.AppSubURL + "/org/bulks",
+			})
+		}
 		if hs.Cfg.EnableBilling && hasAccess(ac.ReqSignedIn, invoicesAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
 				Text:        "Invoices",

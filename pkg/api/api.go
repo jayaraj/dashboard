@@ -108,6 +108,8 @@ func (hs *HTTPServer) registerRoutes() {
 	r.Get("/org/inventories", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionInventoriesRead)), hs.Index)
 	r.Get("/org/inventories/edit/*", authorize(reqGrafanaAdmin, inventoriesAccessEvaluator), hs.Index)
 	r.Get("/org/inventories/new", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionInventoriesWrite)), hs.Index)
+	r.Get("/org/bulks", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionBulksRead)), hs.Index)
+	r.Get("/org/bulks/:bulkId/errors", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionBulksRead)), hs.Index)
 	r.Get("/org/grouptypes", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesRead)), hs.Index)
 	r.Get("/org/grouptypes/edit/*", authorize(reqGrafanaAdmin, resourceTypesAccessEvaluator), hs.Index)
 	r.Get("/org/grouptypes/new", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), hs.Index)
@@ -508,6 +510,15 @@ func (hs *HTTPServer) registerRoutes() {
 			inventoriesRoute.Get("/search", reqGrafanaAdmin, routing.Wrap(hs.SearchInventories))
 		})
 
+		//Bulk
+		apiRoute.Group("/bulks", func(inventoriesRoute routing.RouteRegister) {
+			inventoriesRoute.Post("/", reqGrafanaAdmin, routing.Wrap(hs.UploadBulk))
+			inventoriesRoute.Delete("/:bulkId", reqGrafanaAdmin, routing.Wrap(hs.DeleteBulk))
+			inventoriesRoute.Get("/:bulkId", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionBulksRead)), routing.Wrap(hs.GetBulkById))
+			inventoriesRoute.Get("/search", reqGrafanaAdmin, routing.Wrap(hs.SearchBulk))
+			inventoriesRoute.Get("/:bulkId/errors", reqGrafanaAdmin, routing.Wrap(hs.GetBulkErrorsByBulkId))
+		})
+
 		// GroupTypes
 		apiRoute.Group("/grouptypes", func(groupstypesRoute routing.RouteRegister) {
 			groupstypesRoute.Post("/", authorize(reqGrafanaAdmin, ac.EvalPermission(ac.ActionResourceTypesWrite)), routing.Wrap(hs.CreateGroupType))
@@ -540,6 +551,11 @@ func (hs *HTTPServer) registerRoutes() {
 		apiRoute.Group("/resources", func(configurationRoute routing.RouteRegister) {
 			configurationRoute.Put("/:resourceId/configurations/:config", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite)), routing.Wrap(hs.UpdateResourceConfiguration))
 			configurationRoute.Get("/:resourceId/configurations/:config", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourcesRead)), routing.Wrap(hs.GetResourceConfiguration))
+		})
+
+		//Storage
+		apiRoute.Group("/storage", func(storageRoute routing.RouteRegister) {
+			storageRoute.Post("/image", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite)), routing.Wrap(hs.UploadImage))
 		})
 
 		// OrgConfiguration
