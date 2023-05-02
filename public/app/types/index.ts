@@ -28,6 +28,7 @@ export * from './group';
 export * from './invoice';
 export * from './transaction';
 export * from './inventory';
+export * from './bulk';
 
 import * as CoreEvents from './events';
 export { CoreEvents };

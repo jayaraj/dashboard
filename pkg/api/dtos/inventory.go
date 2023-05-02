@@ -50,8 +50,8 @@ type UpdateInventoryMsg struct {
 
 type SearchInventoriesMsg struct {
 	Query   string `json:"query"`
-	Page    int64  `json:"page" validate:"required"`
-	PerPage int64  `json:"perPage" validate:"required"`
+	Page    int64  `json:"page"`
+	PerPage int64  `json:"perPage"`
 	// swagger:ignore
 	Result Inventories `json:"result"`
 }
