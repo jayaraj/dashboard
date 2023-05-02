@@ -11,6 +11,7 @@ import config from 'app/core/config';
 import { contextSrv } from 'app/core/services/context_srv';
 import { Resource, AccessControlAction, ResourceType, ResourceConfiguration } from 'app/types';
 
+import Upload from './Upload';
 import { updateResource, updateResourceConfiguration } from './state/actions';
 
 const mapDispatchToProps = {
@@ -38,6 +39,7 @@ export const ResourceSettings: FC<Props> = ({ resource, data, resourceType, upda
     sections: [],
   });
   let [newData, setNewData] = useState<any>({});
+  const [opened, setOpened] = useState<boolean>(false);
 
   useEffect(() => {
     const elements = resourceType.configuration? JSON.parse(JSON.stringify(resourceType.configuration.elements)): [];
@@ -79,11 +81,39 @@ export const ResourceSettings: FC<Props> = ({ resource, data, resourceType, upda
       {(configuration!.elements.length > 0) && (
       <Legend>Configurations</Legend>
       )}
+      <Button onClick={() => setOpened(true)} disabled={!canWrite}>
+        Upload Image
+      </Button>
+      <Upload
+        isOpen={opened}
+        onCancel={(open: boolean ) => {
+          setOpened(open);
+        }}
+        resource={resource}
+        onUpload={(location: string ) => {
+          const update = {
+            ...newData,
+            "image": location,
+          };
+          setNewData(update);
+          const elements = configuration.elements?.map((element: FormElement) => {
+            if (element.id === 'image') {
+              element.value = location
+            }
+            return element;
+          });
+          setConfiguration({
+            ...configuration,
+            elements: elements,
+          });
+        }}
+      />
       <div
         className={styles.container}
       >
         <FormPanel configuration={configuration} disabled={!canWrite} onChange={onChange}></FormPanel>
       </div>
+      
       <Form
         defaultValues={{ ...resource }}
         onSubmit={(formresource: Resource) => {
