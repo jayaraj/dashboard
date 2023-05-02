@@ -363,6 +363,12 @@ const (
 	// Inventories related scopes
 	ScopeInventoriesAll = "inventories:*"
 
+	// Bulks related actions
+	ActionBulksRead  = "bulks:read"
+	ActionBulksWrite = "bulks:write"
+	// Bulks related scopes
+	ScopeBulksAll = "bulks:*"
+
 	// ResourceTypes related actions
 	ActionResourceTypesRead  = "resourcetypes:read"
 	ActionResourceTypesWrite = "resourcetypes:write"

@@ -38,7 +38,7 @@ export function updateInventory(uuid: string, type: string, configuration: any):
     const inventory = getStore().inventory.inventory;
     await getBackendSrv().put(`/api/inventories/${inventory.id}`, {
       id: inventory.id,
-      uuid,
+      uuid: uuid,
     });
     await getBackendSrv().put(`/api/inventories/${inventory.id}/configurations/${type}`, {
       configuration,

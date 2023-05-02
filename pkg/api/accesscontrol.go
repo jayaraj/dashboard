@@ -378,7 +378,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 			Group:       "Inventories",
 			Version:     1,
 			Permissions: []ac.Permission{
-				{Action: ac.ActionResourceTypesRead},
+				{Action: ac.ActionInventoriesRead},
 			},
 		},
 		Grants: []string{string(ac.RoleGrafanaAdmin)},
@@ -394,6 +394,35 @@ func (hs *HTTPServer) declareFixedRoles() error {
 			Permissions: []ac.Permission{
 				{Action: ac.ActionInventoriesRead, Scope: ac.ScopeInventoriesAll},
 				{Action: ac.ActionInventoriesWrite, Scope: ac.ScopeInventoriesAll},
+			},
+		},
+		Grants: []string{ac.RoleGrafanaAdmin},
+	}
+
+	bulksReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:bulks:reader",
+			DisplayName: "Bulk reader",
+			Description: "Read bulks.",
+			Group:       "Bulks",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionBulksRead},
+			},
+		},
+		Grants: []string{string(ac.RoleGrafanaAdmin)},
+	}
+
+	bulksWriterRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:bulks:writer",
+			DisplayName: "Bulk writer",
+			Description: "Create, read, write, or delete a bulk",
+			Group:       "Bulks",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionBulksRead, Scope: ac.ScopeBulksAll},
+				{Action: ac.ActionBulksWrite, Scope: ac.ScopeBulksAll},
 			},
 		},
 		Grants: []string{ac.RoleGrafanaAdmin},
@@ -632,7 +661,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		resourcesReaderRole, resourcesWriterRole, groupsReaderRole, groupsWriterRole,
 		resourceTypesReaderRole, resourceTypesWriterRole, slabReaderRole, slabWriterRole,
 		fixedChargesReaderRole, fixedChargesWriterRole, invoicesReaderRole, invoicesWriterRole,
-		inventoriesReaderRole, inventoriesWriterRole,
+		inventoriesReaderRole, inventoriesWriterRole, bulksReaderRole, bulksWriterRole,
 	)
 }
 
@@ -722,6 +751,16 @@ var inventoriesAccessEvaluator = ac.EvalAny(
 var inventoriesEditAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionInventoriesRead),
 	ac.EvalPermission(ac.ActionInventoriesWrite),
+)
+
+var bulksAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionBulksRead),
+	ac.EvalPermission(ac.ActionBulksWrite),
+)
+
+var bulksEditAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionBulksRead),
+	ac.EvalPermission(ac.ActionBulksWrite),
 )
 
 var slabAccessEvaluator = ac.EvalAny(

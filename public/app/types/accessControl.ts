@@ -70,6 +70,8 @@ export enum AccessControlAction {
   ActionResourceTypesWrite = 'resourcetypes:write',
   ActionInventoriesRead = 'inventories:read',
   ActionInventoriesWrite = 'inventories:write',
+  ActionBulksRead = 'bulks:read',
+  ActionBulksWrite = 'bulks:write',
   ActionSlabRead = 'slab:read',
   ActionSlabWrite = 'slab:write',
   ActionInvoicesRead = 'invoices:read',

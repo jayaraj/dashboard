@@ -4,6 +4,7 @@ import sharedReducers from 'app/core/reducers';
 import ldapReducers from 'app/features/admin/state/reducers';
 import alertingReducers from 'app/features/alerting/state/reducers';
 import apiKeysReducers from 'app/features/api-keys/state/reducers';
+import bulksReducer from 'app/features/bulks/state/reducers';
 import panelEditorReducers from 'app/features/dashboard/components/PanelEditor/state/reducers';
 import dashboardNavsReducer from 'app/features/dashboard/containers/state/reducers';
 import dashboardReducers from 'app/features/dashboard/state/reducers';
@@ -53,6 +54,7 @@ const rootReducers = {
   ...dashboardNavsReducer,
   ...resourceTypesReducer,
   ...inventoriesReducer,
+  ...bulksReducer,
   ...groupTypesReducer,
   ...orgTypesReducer,
   ...resourcesReducer,
