@@ -18,7 +18,7 @@ import (
 
 // swagger:route POST /org/users org addOrgUserToCurrentOrg
 //
-// Add a new user to the current organization
+// # Add a new user to the current organization
 //
 // Adds a global user to the current organization.
 //
@@ -41,7 +41,7 @@ func (hs *HTTPServer) AddOrgUserToCurrentOrg(c *models.ReqContext) response.Resp
 
 // swagger:route POST /orgs/{org_id}/users orgs addOrgUser
 //
-// Add a new user to the current organization
+// # Add a new user to the current organization
 //
 // Adds a global user to the current organization.
 //
@@ -275,7 +275,7 @@ func (hs *HTTPServer) SearchOrgUsersWithPaging(c *models.ReqContext) response.Re
 
 // swagger:route PATCH /org/users/{user_id} org updateOrgUserForCurrentOrg
 //
-// Updates the given user
+// # Updates the given user
 //
 // If you are running Grafana Enterprise and have Fine-grained access control enabled
 // you need to have a permission with action: `org.users.role:update` with scope `users:*`.
@@ -344,16 +344,17 @@ func (hs *HTTPServer) updateOrgUserHelper(c *models.ReqContext, cmd models.Updat
 		return response.Error(500, "Failed update org user", err)
 	}
 
-	if err := hs.UpdateGroupUsers(c.Req.Context(), cmd.UserId); err != nil {
-		return response.Error(http.StatusInternalServerError, "Failed to update group user", err)
+	if hs.ResourceService.GetConfig().EnableResource {
+		if err := hs.UpdateGroupUsers(c.Req.Context(), cmd.UserId); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to update group user", err)
+		}
 	}
-
 	return response.Success("Organization user updated")
 }
 
 // swagger:route DELETE /org/users/{user_id} org removeOrgUserForCurrentOrg
 //
-// Delete user in current organization
+// # Delete user in current organization
 //
 // If you are running Grafana Enterprise and have Fine-grained access control enabled
 // you need to have a permission with action: `org.users:remove` with scope `users:*`.
@@ -379,7 +380,7 @@ func (hs *HTTPServer) RemoveOrgUserForCurrentOrg(c *models.ReqContext) response.
 
 // swagger:route DELETE /orgs/{org_id}/users/{user_id} orgs removeOrgUser
 //
-// Delete user in current organization
+// # Delete user in current organization
 //
 // If you are running Grafana Enterprise and have Fine-grained access control enabled
 // you need to have a permission with action: `org.users:remove` with scope `users:*`.
