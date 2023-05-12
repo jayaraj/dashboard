@@ -195,8 +195,10 @@ func (hs *HTTPServer) handleUpdateUser(ctx context.Context, cmd user.UpdateUserC
 		return response.Error(http.StatusInternalServerError, "Failed to update user", err)
 	}
 
-	if err := hs.UpdateGroupUsers(ctx, cmd.UserID); err != nil {
-		return response.Error(http.StatusInternalServerError, "Failed to update group user", err)
+	if hs.ResourceService.GetConfig().EnableResource {
+		if err := hs.UpdateGroupUsers(ctx, cmd.UserID); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to update group user", err)
+		}
 	}
 
 	return response.Success("User updated")
