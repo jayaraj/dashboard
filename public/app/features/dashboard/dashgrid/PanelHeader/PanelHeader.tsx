@@ -4,7 +4,6 @@ import React, { FC } from 'react';
 import { DataLink, GrafanaTheme2, PanelData } from '@grafana/data';
 import { selectors } from '@grafana/e2e-selectors';
 import { Icon, useStyles2, ClickOutsideWrapper } from '@grafana/ui';
-import { contextSrv } from 'app/core/services/context_srv';
 import { DashboardModel } from 'app/features/dashboard/state/DashboardModel';
 import { PanelModel } from 'app/features/dashboard/state/PanelModel';
 import { getPanelLinksSupplier } from 'app/features/panel/panellinks/linkSuppliers';
@@ -34,11 +33,6 @@ export const PanelHeader: FC<Props> = ({ panel, error, isViewing, isEditing, dat
   const className = cx('panel-header', !(isViewing || isEditing) ? 'grid-drag-handle' : '');
   const styles = useStyles2(panelStyles);
 
-  const isEditable = () => {
-    const signedInUser = contextSrv.user;
-    return signedInUser.isGrafanaAdmin;
-  };
-
   return (
     <>
       <PanelHeaderLoadingIndicator state={data.state} onClick={onCancelQuery} />
@@ -66,7 +60,7 @@ export const PanelHeader: FC<Props> = ({ panel, error, isViewing, isEditing, dat
                     />
                   ) : null}
                   <h2 className={styles.titleText}>{title}</h2>
-                  {(isEditable() && !dashboard.meta.publicDashboardAccessToken) && (
+                  {!dashboard.meta.publicDashboardAccessToken && (
                     <div data-testid="panel-dropdown">
                       <Icon name="angle-down" className="panel-menu-toggle" />
                       {panelMenuOpen ? (
