@@ -2,14 +2,14 @@ import { css, cx } from '@emotion/css';
 import React from 'react';
 
 import { FieldSet, useTheme2 } from '@grafana/ui';
-import { ResourceConfiguration } from 'app/types';
+import { Configuration } from 'app/types';
 
 import { getStyles } from '../../styles';
 import { FormElement } from '../../types';
 import { FormElements } from '../FormElements';
 
 interface Props {
-  configuration: ResourceConfiguration;
+  configuration: Configuration;
   onChange: (value?: FormElement[]) => void;
   disabled: boolean;
 }

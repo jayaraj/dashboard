@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -15,10 +14,7 @@ import (
 )
 
 func (hs *HTTPServer) GetInvoices(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
-		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
+	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
@@ -33,7 +29,7 @@ func (hs *HTTPServer) GetInvoices(c *models.ReqContext) response.Response {
 	from := c.Query("from")
 	to := c.Query("to")
 
-	url := fmt.Sprintf("%sapi/orgs/%d/groups/%d/invoices?page=%d&perPage=%d&from=%s&to=%s", hs.ResourceService.GetConfig().BillingUrl, c.OrgID, id, page, perPage, from, to)
+	url := fmt.Sprintf("%sapi/connections/%d/invoices?page=%d&perPage=%d&from=%s&to=%s", hs.ResourceService.GetConfig().BillingUrl, id, page, perPage, from, to)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,
@@ -47,7 +43,7 @@ func (hs *HTTPServer) GetInvoices(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	dto := dtos.GetInvoicesMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
@@ -56,11 +52,12 @@ func (hs *HTTPServer) GetInvoices(c *models.ReqContext) response.Response {
 	return response.JSON(http.StatusOK, dto.Result)
 }
 
-func (hs *HTTPServer) GetGroupTransactions(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
+func (hs *HTTPServer) GetConnectionTransactions(c *models.ReqContext) response.Response {
+	access, _ := hs.IsConnectionAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
+	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
@@ -75,7 +72,7 @@ func (hs *HTTPServer) GetGroupTransactions(c *models.ReqContext) response.Respon
 	from := c.Query("from")
 	to := c.Query("to")
 
-	url := fmt.Sprintf("%sapi/orgs/%d/groups/%d/transactions?page=%d&perPage=%d&from=%s&to=%s", hs.ResourceService.GetConfig().BillingUrl, c.OrgID, id, page, perPage, from, to)
+	url := fmt.Sprintf("%sapi/connections/%d/transactions?page=%d&perPage=%d&from=%s&to=%s", hs.ResourceService.GetConfig().BillingUrl, id, page, perPage, from, to)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,
@@ -89,9 +86,9 @@ func (hs *HTTPServer) GetGroupTransactions(c *models.ReqContext) response.Respon
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
-	dto := dtos.GetGroupTransactionsMsg{}
+	dto := dtos.GetConnectionTransactionsMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
@@ -99,9 +96,6 @@ func (hs *HTTPServer) GetGroupTransactions(c *models.ReqContext) response.Respon
 }
 
 func (hs *HTTPServer) GetInvoiceTransactions(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
-		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
 	id, err := strconv.ParseInt(web.Params(c.Req)[":invoiceId"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "invoice id is invalid", err)
@@ -129,7 +123,7 @@ func (hs *HTTPServer) GetInvoiceTransactions(c *models.ReqContext) response.Resp
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	dto := dtos.GetInvoiceTransactionsMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
@@ -139,14 +133,10 @@ func (hs *HTTPServer) GetInvoiceTransactions(c *models.ReqContext) response.Resp
 }
 
 func (hs *HTTPServer) GetInvoice(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
-		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
 	id, err := strconv.ParseInt(web.Params(c.Req)[":invoiceId"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "invoice id is invalid", err)
 	}
-
 	url := fmt.Sprintf("%sapi/invoices/%d", hs.ResourceService.GetConfig().BillingUrl, id)
 	req := &resources.RestRequest{
 		Url:        url,
@@ -161,64 +151,41 @@ func (hs *HTTPServer) GetInvoice(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	dto := dtos.GetInvoiceByIdMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
-	return response.JSON(http.StatusOK, dto.Result)
-}
 
-func (hs *HTTPServer) FetchInvoice(c *models.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":invoiceId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "invoice id is invalid", err)
-	}
-
-	url := fmt.Sprintf("%sapi/invoices/%d", hs.ResourceService.GetConfig().BillingUrl, id)
-	req := &resources.RestRequest{
-		Url:        url,
-		Request:    nil,
-		HttpMethod: http.MethodGet,
-	}
-	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
-		return response.Error(500, "failed to get", err)
-	}
-	if req.StatusCode != http.StatusOK {
-		var errResponse dtos.ErrorResponse
-		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			return response.Error(req.StatusCode, "failed unmarshal error ", err)
-		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
-	}
-	dto := dtos.GetInvoiceByIdMsg{}
-	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		return response.Error(req.StatusCode, "failed unmarshal error ", err)
-	}
 	user := dtos.User{
 		UserId: c.UserID,
 		OrgId:  c.OrgID,
-		Role:   dtos.ConvertRoleToString(c.OrgRole),
+		Role:   dtos.ConvertRoleToString(hs.UserRole(c)),
 	}
-	if !hs.isGroupAccessible(c.Req.Context(), dto.Result.GroupId, user) {
+	access, _ := hs.isConnectionAccessible(c, dto.Result.ConnectionId, user)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
 
 func (hs *HTTPServer) CreateInvoice(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
+	access, connection := hs.IsConnectionAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
+	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
 	dto := dtos.CreateInvoiceMsg{
-		OrgId:   c.OrgID,
-		GroupId: id,
-		Login:   &c.Login,
+		OrgId:         c.OrgID,
+		GroupId:       id,
+		GroupPathId:   connection.GroupPathId,
+		ConnectionExt: connection.ConnectionExt,
+		ConnectionId:  connection.Id,
+		Login:         &c.Login,
 	}
 	body, err := json.Marshal(dto)
 	if err != nil {
@@ -238,7 +205,7 @@ func (hs *HTTPServer) CreateInvoice(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
@@ -247,17 +214,18 @@ func (hs *HTTPServer) CreateInvoice(c *models.ReqContext) response.Response {
 }
 
 func (hs *HTTPServer) CreateTransaction(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
+	access, _ := hs.IsConnectionAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
+	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
 	dto := dtos.CreateTransactionMsg{
-		OrgId:   c.OrgID,
-		GroupId: id,
-		Login:   &c.Login,
+		OrgId:        c.OrgID,
+		ConnectionId: id,
+		Login:        &c.Login,
 	}
 	if err := web.Bind(c.Req, &dto); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
@@ -280,7 +248,7 @@ func (hs *HTTPServer) CreateTransaction(c *models.ReqContext) response.Response 
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
@@ -303,7 +271,7 @@ func (hs *HTTPServer) SearchInvoices(c *models.ReqContext) response.Response {
 		User: dtos.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   dtos.ConvertRoleToString(c.OrgRole),
+			Role:   dtos.ConvertRoleToString(hs.UserRole(c)),
 		},
 		Query:   query,
 		Page:    int64(page),
@@ -327,7 +295,7 @@ func (hs *HTTPServer) SearchInvoices(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)

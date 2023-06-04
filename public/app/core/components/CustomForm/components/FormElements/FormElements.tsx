@@ -15,7 +15,7 @@ import {
   TextArea,
   useTheme2,
 } from '@grafana/ui';
-import { ResourceConfiguration } from 'app/types';
+import { Configuration } from 'app/types';
 
 import {
   BooleanElementOptions,
@@ -27,7 +27,7 @@ import { getStyles } from '../../styles';
 import { FormElement, LayoutSection } from '../../types';
 
 interface Props {
-  configuration: ResourceConfiguration;
+  configuration: Configuration;
   onChange: (value?: FormElement[]) => void;
   section: LayoutSection | null;
   disabled: boolean;
