@@ -15,6 +15,15 @@ func ConvertRoleToString(role org.RoleType) string {
 	}[role]
 }
 
+func ConvertStringToRole(role string) org.RoleType {
+	return map[string]org.RoleType{
+		"ROLE_VIEWER":     org.RoleViewer,
+		"ROLE_EDITOR":     org.RoleEditor,
+		"ROLE_ADMIN":      org.RoleAdmin,
+		"ROLE_SUPERADMIN": org.RoleSuperAdmin,
+	}[role]
+}
+
 type Groups struct {
 	Count   int64   `json:"count"`
 	Groups  []Group `json:"groups"`
@@ -75,8 +84,11 @@ type GetGroupByIdMsg struct {
 }
 
 type GetGroupsMsg struct {
-	User   User   `json:"user" binding:"required"`
-	Result Groups `json:"-"`
+	User    User   `json:"user"`
+	Parent  int64  `json:"parent"`
+	Page    int64  `json:"page"`
+	PerPage int64  `json:"perPage"`
+	Result  Groups `json:"-"`
 }
 
 type GetParentGroupsMsg struct {
@@ -107,6 +119,7 @@ type CreateGroupResourceMsg struct {
 	UUID          string                 `json:"uuid" binding:"Required"`
 	Name          string                 `json:"name" binding:"Required"`
 	Type          string                 `json:"type" binding:"Required"`
+	ImageUrl      string                 `json:"image_url"`
 	Configuration map[string]interface{} `json:"configuration" binding:"Required"`
 	Latitude      *float64               `json:"latitude,omitempty"`
 	Longitude     *float64               `json:"longitude,omitempty"`
@@ -147,11 +160,12 @@ type GroupUser struct {
 }
 
 type AddGroupUserMsg struct {
-	GroupId int64  `json:"-"`
-	User    User   `json:"user"`
-	UserId  int64  `json:"user_id"`
-	Login   string `json:"login"`
-	Email   string `json:"email"`
-	Name    string `json:"name"`
-	Role    string `json:"role"`
+	GroupId   int64  `json:"group_id"`
+	GroupPath string `json:"group_path"`
+	User      User   `json:"user"`
+	UserId    int64  `json:"user_id"`
+	Login     string `json:"login"`
+	Email     string `json:"email"`
+	Name      string `json:"name"`
+	Role      string `json:"role"`
 }

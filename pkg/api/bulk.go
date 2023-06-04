@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"mime"
 	"net/http"
@@ -45,7 +44,7 @@ func (hs *HTTPServer) UploadBulk(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	return response.Success("uploaded")
 }
@@ -69,7 +68,7 @@ func (hs *HTTPServer) DeleteBulk(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	return response.Success("deleted")
 }
@@ -93,7 +92,7 @@ func (hs *HTTPServer) GetBulkById(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	cmd := dtos.GetBulkByIdMsg{}
 	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
@@ -132,7 +131,7 @@ func (hs *HTTPServer) SearchBulk(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
@@ -173,7 +172,7 @@ func (hs *HTTPServer) GetBulkErrorsByBulkId(c *models.ReqContext) response.Respo
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)

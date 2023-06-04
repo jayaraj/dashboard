@@ -41,14 +41,6 @@ export function getAppRoutes(): RouteDescriptor[] {
       ),
     },
     {
-      path: '/goto/slug/:slug',
-      pageClass: 'page-dashboard',
-      routeName: DashboardRoutes.Custom,
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "DashboardPage" */ '../features/dashboard/containers/DashboardPage')
-      ),
-    },
-    {
       path: '/dashboard/:type/:slug',
       pageClass: 'page-dashboard',
       routeName: DashboardRoutes.Normal,
@@ -270,74 +262,163 @@ export function getAppRoutes(): RouteDescriptor[] {
         ),
       component: SafeDynamicImport(() => import(/* webpackChunkName: "TeamPages" */ 'app/features/teams/TeamPages')),
     },
+    //********************************Device Management****************************
+    {
+      path: '/goto/slug/:slug',
+      pageClass: 'page-dashboard',
+      routeName: DashboardRoutes.Custom,
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "DashboardPage" */ '../features/dashboard/containers/DashboardPage')
+      ),
+    },
+    {
+      path: '/org/bulks',
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "Bulks" */ 'app/features/devicemanagement/bulks/BulkList')),
+    },
+    {
+      path: '/org/bulks/:id/errors',
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "BulkErrors" */ 'app/features/devicemanagement/bulks/BulkErrors')),
+    },
     {
       path: '/org/resources',
       component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "ResourceList" */ 'app/features/resources/ResourceList')
+        () => import(/* webpackChunkName: "ResourceList" */ 'app/features/devicemanagement/resources/ResourceList')
       ),
     },
     {
       path: '/org/resources/new',
       component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateResource" */ 'app/features/resources/CreateResource')
+        () => import(/* webpackChunkName: "CreateResource" */ 'app/features/devicemanagement/resources/CreateResource')
       ),
     },
     {
       path: '/org/resources/edit/:id/:page?',
       component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "ResourcePages" */ 'app/features/resources/ResourcePages')
+        () => import(/* webpackChunkName: "ResourcePages" */ 'app/features/devicemanagement/resources/ResourcePages')
       ),
     },
     {
-      path: '/org/invoices',
-      component: SafeDynamicImport(() => import(/* webpackChunkName: "Invoices" */ 'app/features/invoices/Invoices')),
-    },
-    {
-      path: '/org/invoices/:invoiceId',
-      component: SafeDynamicImport(() => import(/* webpackChunkName: "InvoicePage" */ 'app/features/invoices/InvoicePage')),
-    },
-    {
-      path: '/org/bulks',
-      component: SafeDynamicImport(() => import(/* webpackChunkName: "Bulks" */ 'app/features/bulks/BulkList')),
-    },
-    {
-      path: '/org/bulks/:bulkId/errors',
-      component: SafeDynamicImport(() => import(/* webpackChunkName: "BulkErrors" */ 'app/features/bulks/BulkErrors')),
-    },
-    {
       path: '/org/groups',
-      component: SafeDynamicImport(() => import(/* webpackChunkName: "GroupList" */ 'app/features/groups/GroupList')),
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "GroupList" */ 'app/features/devicemanagement/groups/GroupList')),
     },
     {
       path: '/org/groups/new',
       component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateGroup" */ 'app/features/groups/CreateGroup')
+        () => import(/* webpackChunkName: "CreateGroup" */ 'app/features/devicemanagement/groups/CreateGroup')
       ),
     },
     {
       path: '/org/groups/:id/new',
       component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateGroup" */ 'app/features/groups/CreateGroup')
+        () => import(/* webpackChunkName: "CreateGroup" */ 'app/features/devicemanagement/groups/CreateGroup')
       ),
     },
     {
       path: '/org/groups/:id/resources/new',
       component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateGroupResource" */ 'app/features/groups/CreateResource')
+        () => import(/* webpackChunkName: "CreateGroupResource" */ 'app/features/devicemanagement/groups/CreateResource')
       ),
     },
     {
-      path: '/org/groups/:groupId/invoices/:invoiceId',
+      path: '/org/groups/:id/connections/new',
       component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "InvoicePage" */ 'app/features/groups/InvoicePage')
+        () => import(/* webpackChunkName: "CreateConnection " */ 'app/features/billing/connections/CreateConnection')
       ),
     },
     {
       path: '/org/groups/edit/:id/:page?',
-      component: SafeDynamicImport(() => import(/* webpackChunkName: "GroupPages" */ 'app/features/groups/GroupPages')),
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "GroupPages" */ 'app/features/devicemanagement/groups/GroupPages')),
     },
+    {
+      path: '/org/configurationtypes',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "ConfigurationTypeList" */ 'app/features/devicemanagement/configurationtypes/ConfigurationTypeList')
+      ),
+    },
+    {
+      path: '/org/configurationtypes/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateConfigurationType" */ 'app/features/devicemanagement/configurationtypes/CreateConfigurationType')
+      ),
+    },
+    {
+      path: '/org/configurationtypes/edit/:id/:page?',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "ConfigurationTypePages" */ 'app/features/devicemanagement/configurationtypes/ConfigurationTypePages')
+      ),
+    },
+    {
+      path: '/org/inventories',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "InventoryList" */ 'app/features/devicemanagement/inventories/InventoryList')
+      ),
+    },
+    {
+      path: '/org/inventories/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateInventory" */ 'app/features/devicemanagement/inventories/CreateInventory')
+      ),
+    },
+    {
+      path: '/org/inventories/edit/:id/:page?',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "InventoryPages" */ 'app/features/devicemanagement/inventories/InventoryPages')
+      ),
+    },
+    //********************************Device Management****************************
+    //********************************Billing**************************************
+    {
+      path: '/org/connections',
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "Connections" */ 'app/features/billing/connections/ConnectionList')),
+    },
+    {
+      path: '/org/connections/edit/:id/:page?',
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "ConnectionPage" */ 'app/features/billing/connections/ConnectionPages')),
+    },
+    {
+      path: '/org/connections/:id/invoices/:invoiceId',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "InvoicePage" */ 'app/features/billing/connections/InvoicePage')
+      ),
+    },
+    {
+      path: '/org/fixedcharges',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "FixedChargeList" */ 'app/features/billing/fixedcharges/FixedChargeList')
+      ),
+    },
+    {
+      path: '/org/fixedcharges/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateFixedCharge" */ 'app/features/billing/fixedcharges/CreateFixedCharge')
+      ),
+    },
+    {
+      path: '/org/fixedcharges/edit/:id/:page?',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "FixedChargePages" */ 'app/features/billing/fixedcharges/FixedChargePages')
+      ),
+    },
+    {
+      path: '/org/profiles',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "ProfileList" */ 'app/features/billing/profiles/ProfileList')
+      ),
+    },
+    {
+      path: '/org/profiles/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateProfile" */ 'app/features/billing/profiles/CreateProfile')
+      ),
+    },
+    {
+      path: '/org/profiles/edit/:id/:page?',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "ProfilePages" */ 'app/features/billing/profiles/ProfilePages')
+      ),
+    },
+    //********************************Billing**************************************
     // ADMIN
-
     {
       path: '/admin',
       // eslint-disable-next-line react/display-name
@@ -392,96 +473,6 @@ export function getAppRoutes(): RouteDescriptor[] {
       path: '/admin/stats',
       component: SafeDynamicImport(
         () => import(/* webpackChunkName: "ServerStats" */ 'app/features/admin/ServerStats')
-      ),
-    },
-    {
-      path: '/org/resourcetypes',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "ResourceTypeList" */ 'app/features/resourcetypes/ResourceTypeList')
-      ),
-    },
-    {
-      path: '/org/resourcetypes/new',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateResourceType" */ 'app/features/resourcetypes/CreateResourceType')
-      ),
-    },
-    {
-      path: '/org/resourcetypes/edit/:id/:page?',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "ResourceTypePages" */ 'app/features/resourcetypes/ResourceTypePages')
-      ),
-    },
-    {
-      path: '/org/grouptypes',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "GroupTypeList" */ 'app/features/grouptypes/GroupTypeList')
-      ),
-    },
-    {
-      path: '/org/grouptypes/new',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateGroupType" */ 'app/features/grouptypes/CreateGroupType')
-      ),
-    },
-    {
-      path: '/org/grouptypes/edit/:id/:page?',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "GroupTypePages" */ 'app/features/grouptypes/GroupTypePages')
-      ),
-    },
-    {
-      path: '/org/inventories',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "InventoryList" */ 'app/features/inventories/InventoryList')
-      ),
-    },
-    {
-      path: '/org/inventories/new',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateInventory" */ 'app/features/inventories/CreateInventory')
-      ),
-    },
-    {
-      path: '/org/inventories/edit/:id/:page?',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "InventoryPages" */ 'app/features/inventories/InventoryPages')
-      ),
-    },
-    {
-      path: '/org/orgtypes',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "OrgTypeList" */ 'app/features/orgtypes/OrgTypeList')
-      ),
-    },
-    {
-      path: '/org/orgtypes/new',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateOrgType" */ 'app/features/orgtypes/CreateOrgType')
-      ),
-    },
-    {
-      path: '/org/orgtypes/edit/:id/:page?',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "OrgTypePages" */ 'app/features/orgtypes/OrgTypePages')
-      ),
-    },
-    {
-      path: '/org/fixedcharges',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "FixedChargeList" */ 'app/features/fixedcharges/FixedChargeList')
-      ),
-    },
-    {
-      path: '/org/fixedcharges/new',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateFixedCharge" */ 'app/features/fixedcharges/CreateFixedCharge')
-      ),
-    },
-    {
-      path: '/org/fixedcharges/edit/:id/:page?',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "FixedChargePages" */ 'app/features/fixedcharges/FixedChargePages')
       ),
     },
     {

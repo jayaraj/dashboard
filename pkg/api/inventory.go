@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -37,7 +36,7 @@ func (hs *HTTPServer) CreateInventory(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
@@ -74,7 +73,7 @@ func (hs *HTTPServer) UpdateInventory(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	return response.Success("updated")
 }
@@ -98,7 +97,7 @@ func (hs *HTTPServer) DeleteInventory(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	return response.Success("deleted")
 }
@@ -119,7 +118,7 @@ func (hs *HTTPServer) GetInventoryByUUID(c *models.ReqContext) response.Response
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	cmd := dtos.GetInventoryByUUIDMsg{}
 	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
@@ -147,7 +146,7 @@ func (hs *HTTPServer) GetInventoryById(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	cmd := dtos.GetInventoryByIdMsg{}
 	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
@@ -186,7 +185,7 @@ func (hs *HTTPServer) SearchInventories(c *models.ReqContext) response.Response 
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)

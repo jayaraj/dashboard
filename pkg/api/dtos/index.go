@@ -47,6 +47,7 @@ const (
 	WeightDashboard
 	WeightExplore
 	WeightResource
+	WeightBilling
 	WeightAlerting
 	WeightDataConnections
 	WeightPlugin

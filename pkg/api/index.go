@@ -221,67 +221,36 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 	}
 
 	if c.IsSignedIn {
+
+		//********************Device Management**************************
 		deviceMgntNodes := []*dtos.NavLink{}
-		if hasAccess(ac.ReqGrafanaAdmin, inventoriesAccessEvaluator) {
+		if hasAccess(ac.ReqOrgAdminOrEditor, typesReadAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text: "Inventories",
+				Text: "Configuration Types",
+				Id:   "configurationtypes",
+				Url:  hs.Cfg.AppSubURL + "/org/configurationtypes",
+				Icon: "resource-type",
+			})
+		}
+		if hasAccess(ac.ReqGrafanaAdmin, inventoriesReadAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text: "Inventory",
 				Id:   "inventories",
 				Url:  hs.Cfg.AppSubURL + "/org/inventories",
 				Icon: "inventory",
 			})
 		}
-		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
-			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text: "Group Types",
-				Id:   "grouptypes",
-				Url:  hs.Cfg.AppSubURL + "/org/grouptypes",
-				Icon: "group-type",
-			})
-		}
-		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
-			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text: hs.Cfg.ResourceLabel + " Types",
-				Id:   "resourcetypes",
-				Url:  hs.Cfg.AppSubURL + "/org/resourcetypes",
-				Icon: "resource-type",
-			})
-		}
-		if hasAccess(ac.ReqOrgAdminOrEditor, fixedChargesAccessEvaluator) {
-			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text:        "Org Charges",
-				Id:          "fixedcharges",
-				Description: "Manage org charges",
-				Icon:        "fixed-charge",
-				Url:         hs.Cfg.AppSubURL + "/org/fixedcharges",
-			})
-		}
-		if hasAccess(ac.ReqOrgAdminOrEditor, resourceTypesAccessEvaluator) {
-			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text: "Org Configurations",
-				Id:   "orgtypes",
-				Url:  hs.Cfg.AppSubURL + "/org/orgtypes",
-				Icon: "org-type",
-			})
-		}
-		if hasAccess(ac.ReqGrafanaAdmin, bulksAccessEvaluator) {
+		if hasAccess(ac.ReqGrafanaAdmin, bulksReadAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
 				Text:        "Batch Process",
 				Id:          "bulks",
-				Description: "Perform repetitive jobs from csv files",
+				Description: "Trigger backend jobs from csv files",
 				Icon:        "upload-files",
 				Url:         hs.Cfg.AppSubURL + "/org/bulks",
 			})
 		}
-		if hs.Cfg.EnableBilling && hasAccess(ac.ReqSignedIn, invoicesAccessEvaluator) {
-			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text:        "Invoices",
-				Id:          "invoices",
-				Description: "Invoices",
-				Icon:        "invoice",
-				Url:         hs.Cfg.AppSubURL + "/org/invoices",
-			})
-		}
-		if hasAccess(ac.ReqSignedIn, resourcesAccessEvaluator) {
+
+		if hasAccess(ac.ReqSignedIn, resourcesReadAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
 				Text:        hs.Cfg.ResourceLabel + "s",
 				Id:          "resources",
@@ -290,7 +259,7 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 				Url:         hs.Cfg.AppSubURL + "/org/resources",
 			})
 		}
-		if hasAccess(ac.ReqSignedIn, groupsAccessEvaluator) {
+		if hasAccess(ac.ReqSignedIn, groupsReadAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
 				Text:        "Groups",
 				Id:          "resourcegroups",
@@ -302,8 +271,8 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 
 		if hs.Cfg.EnableResource && len(deviceMgntNodes) > 0 {
 			deviceMgntNode := &dtos.NavLink{
-				Id:         "resource",
-				Text:       hs.Cfg.ResourceLabel + " Management",
+				Id:         "devicemanagement",
+				Text:       "Device Management",
 				SubTitle:   "Organization: " + c.OrgName,
 				Icon:       "resource-management",
 				Url:        deviceMgntNodes[0].Url,
@@ -313,6 +282,56 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 			}
 			navTree = append(navTree, deviceMgntNode)
 		}
+
+		//********************Billing**************************
+		if hs.Cfg.EnableBilling {
+			billingMgntNodes := []*dtos.NavLink{}
+
+			if hasAccess(ac.ReqSignedIn, invoicesReadAccessEvaluator) {
+				billingMgntNodes = append(billingMgntNodes, &dtos.NavLink{
+					Text:        "Connections",
+					Id:          "connections",
+					Description: "Manage Connections, Invoices & etc",
+					Icon:        "group-type",
+					Url:         hs.Cfg.AppSubURL + "/org/connections",
+				})
+			}
+
+			if hasAccess(ac.ReqSignedIn, invoicesReadAccessEvaluator) {
+				billingMgntNodes = append(billingMgntNodes, &dtos.NavLink{
+					Text:        "Profiles",
+					Id:          "profiles",
+					Description: "Account profiles",
+					Icon:        "invoice",
+					Url:         hs.Cfg.AppSubURL + "/org/profiles",
+				})
+			}
+
+			if hasAccess(ac.ReqOrgAdminOrEditor, fixedChargesReadAccessEvaluator) {
+				billingMgntNodes = append(billingMgntNodes, &dtos.NavLink{
+					Text:        "Org Charges",
+					Id:          "fixedcharges",
+					Description: "Manage org charges",
+					Icon:        "fixed-charge",
+					Url:         hs.Cfg.AppSubURL + "/org/fixedcharges",
+				})
+			}
+
+			if len(deviceMgntNodes) > 0 {
+				deviceMgntNode := &dtos.NavLink{
+					Id:         "billing",
+					Text:       "Accounts Management",
+					SubTitle:   "Organization: " + c.OrgName,
+					Icon:       "invoice",
+					Url:        billingMgntNodes[0].Url,
+					Section:    dtos.NavSectionCore,
+					SortWeight: dtos.WeightBilling,
+					Children:   billingMgntNodes,
+				}
+				navTree = append(navTree, deviceMgntNode)
+			}
+		}
+
 	}
 
 	navTree = hs.addProfile(navTree, c)

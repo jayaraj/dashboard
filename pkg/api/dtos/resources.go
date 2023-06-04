@@ -9,6 +9,7 @@ type Resource struct {
 	UUID         string    `json:"uuid"`
 	Name         string    `json:"name"`
 	Type         string    `json:"type"`
+	ImageUrl     string    `json:"image_url"`
 	Latitude     *float64  `json:"latitude,omitempty"`
 	Longitude    *float64  `json:"longitude,omitempty"`
 	OnlineStatus *bool     `json:"online_status,omitempty"`
@@ -25,6 +26,7 @@ type CreateResourceMsg struct {
 	UUID          string                 `json:"uuid" binding:"Required"`
 	Name          string                 `json:"name" binding:"Required"`
 	Type          string                 `json:"type" binding:"Required"`
+	ImageUrl      string                 `json:"image_url,omitempty"`
 	Latitude      *float64               `json:"latitude,omitempty"`
 	Longitude     *float64               `json:"longitude,omitempty"`
 	Configuration map[string]interface{} `json:"configuration" binding:"Required"`
@@ -35,6 +37,7 @@ type UpdateResourceMsg struct {
 	Id        int64    `json:"-"`
 	UUID      string   `json:"uuid" binding:"required"`
 	Name      string   `json:"name" binding:"required"`
+	ImageUrl  string   `json:"image_url,omitempty"`
 	Latitude  *float64 `json:"latitude,omitempty"`
 	Longitude *float64 `json:"longitude,omitempty"`
 }
