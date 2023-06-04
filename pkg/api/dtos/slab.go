@@ -5,7 +5,7 @@ import "time"
 type Slab struct {
 	Id        int64     `json:"id"`
 	UpdatedAt time.Time `json:"updated_at"`
-	Type      string    `json:"type"`
+	ProfileId int64     `json:"profile_id"`
 	OrgId     int64     `json:"org_id"`
 	Slabs     uint      `json:"slabs"`
 	Tax       float64   `json:"tax"`
@@ -22,14 +22,18 @@ type Rate struct {
 	Description string  `json:"description"`
 }
 
-type GetSlabByTypeMsg struct {
-	Type   string `json:"-" binding:"required"`
-	Result Slab   `json:"-"`
+type GetSlabByNameMsg struct {
+	Profile string `json:"-" binding:"required"`
+	Result  Slab   `json:"-"`
+}
+
+type GetSlabByProfileIdMsg struct {
+	ProfileId int64 `json:"-" binding:"required"`
+	Result    Slab  `json:"-"`
 }
 
 type UpdateSlabMsg struct {
 	Id    int64   `json:"-"`
-	Type  string  `json:"type" binding:"required"`
 	Tax   float64 `json:"tax" binding:"required"`
 	Slabs uint    `json:"slabs" binding:"required"`
 	Rates []Rate  `json:"rates" binding:"required"`
@@ -40,10 +44,10 @@ type DeleteSlabMsg struct {
 }
 
 type CreateSlabMsg struct {
-	OrgId  int64   `json:"org_id"`
-	Type   string  `json:"type" binding:"required"`
-	Tax    float64 `json:"tax"`
-	Slabs  uint    `json:"slabs" binding:"required"`
-	Rates  []Rate  `json:"rates" binding:"required"`
-	Result Slab    `json:"-"`
+	OrgId     int64   `json:"org_id"`
+	ProfileId int64   `json:"profile_id" binding:"required"`
+	Tax       float64 `json:"tax"`
+	Slabs     uint    `json:"slabs" binding:"required"`
+	Rates     []Rate  `json:"rates" binding:"required"`
+	Result    Slab    `json:"-"`
 }

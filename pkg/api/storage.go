@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"mime"
 	"net/http"
@@ -42,7 +41,7 @@ func (hs *HTTPServer) UploadImage(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	fileLocation := struct {
 		Location string `json:"location"`

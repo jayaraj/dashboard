@@ -20,6 +20,6 @@
     "packages/jaeger-ui-components/typings",
     "packages/grafana-data/typings",
     "packages/grafana-ui/src/types",
-    "public/app/features/groups/UserListtsx"
+    "public/app/features/devicemanagement/groups/UserListtsx"
   ]
 }

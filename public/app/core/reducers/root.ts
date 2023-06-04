@@ -4,30 +4,33 @@ import sharedReducers from 'app/core/reducers';
 import ldapReducers from 'app/features/admin/state/reducers';
 import alertingReducers from 'app/features/alerting/state/reducers';
 import apiKeysReducers from 'app/features/api-keys/state/reducers';
-import bulksReducer from 'app/features/bulks/state/reducers';
 import panelEditorReducers from 'app/features/dashboard/components/PanelEditor/state/reducers';
 import dashboardNavsReducer from 'app/features/dashboard/containers/state/reducers';
 import dashboardReducers from 'app/features/dashboard/state/reducers';
 import dataSourcesReducers from 'app/features/datasources/state/reducers';
 import exploreReducers from 'app/features/explore/state/main';
-import fixedChargesReducer from 'app/features/fixedcharges/state/reducers';
 import foldersReducers from 'app/features/folders/state/reducers';
-import groupsReducer from 'app/features/groups/state/reducers';
-import groupTypesReducer from 'app/features/grouptypes/state/reducers';
-import inventoriesReducer from 'app/features/inventories/state/reducers';
 import invitesReducers from 'app/features/invites/state/reducers';
 import importDashboardReducers from 'app/features/manage-dashboards/state/reducers';
 import organizationReducers from 'app/features/org/state/reducers';
-import orgTypesReducer from 'app/features/orgtypes/state/reducers';
 import panelsReducers from 'app/features/panel/state/reducers';
 import { reducer as pluginsReducer } from 'app/features/plugins/admin/state/reducer';
 import userReducers from 'app/features/profile/state/reducers';
-import resourcesReducer from 'app/features/resources/state/reducers';
-import resourceTypesReducer from 'app/features/resourcetypes/state/reducers';
 import serviceAccountsReducer from 'app/features/serviceaccounts/state/reducers';
 import teamsReducers from 'app/features/teams/state/reducers';
 import usersReducers from 'app/features/users/state/reducers';
 import templatingReducers from 'app/features/variables/state/keyedVariablesReducer';
+
+//Device Management
+import configurationTypesReducer from 'app/features/devicemanagement/configurationtypes/state/reducers';
+import bulksReducer from 'app/features/devicemanagement/bulks/state/reducers';
+import groupsReducer from 'app/features/devicemanagement/groups/state/reducers';
+import inventoriesReducer from 'app/features/devicemanagement/inventories/state/reducers';
+import resourcesReducer from 'app/features/devicemanagement/resources/state/reducers';
+//Billing Management
+import connectionsReducer from 'app/features/billing/connections/state/reducers';
+import fixedChargesReducer from 'app/features/billing/fixedcharges/state/reducers';
+import profilesReducer from 'app/features/billing/profiles/state/reducers';
 
 import { alertingApi } from '../../features/alerting/unified/api/alertingApi';
 import { CleanUp, cleanUpAction } from '../actions/cleanUp';
@@ -52,14 +55,16 @@ const rootReducers = {
   ...panelsReducers,
   ...templatingReducers,
   ...dashboardNavsReducer,
-  ...resourceTypesReducer,
+
   ...inventoriesReducer,
   ...bulksReducer,
-  ...groupTypesReducer,
-  ...orgTypesReducer,
   ...resourcesReducer,
-  ...fixedChargesReducer,
   ...groupsReducer,
+  ...configurationTypesReducer,
+  
+  ...profilesReducer,
+  ...connectionsReducer,
+  ...fixedChargesReducer,
   plugins: pluginsReducer,
   [alertingApi.reducerPath]: alertingApi.reducer,
 };

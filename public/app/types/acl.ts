@@ -2,6 +2,7 @@ export enum OrgRole {
   Viewer = 'Viewer',
   Editor = 'Editor',
   Admin = 'Admin',
+  SuperAdmin = 'SuperAdmin'
 }
 
 export interface DashboardAclDTO {

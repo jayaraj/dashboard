@@ -8,4 +8,5 @@ export enum OrgRole {
   Admin = 'Admin',
   Editor = 'Editor',
   Viewer = 'Viewer',
+  SuperAdmin = 'SuperAdmin',
 }

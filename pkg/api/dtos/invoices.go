@@ -8,7 +8,10 @@ type Invoice struct {
 	Id            int64                `json:"id"`
 	UpdatedAt     time.Time            `json:"updated_at"`
 	OrgId         int64                `json:"org_id"`
-	GroupId       int64                `json:"group_id"`
+	GroupPathId   string               `json:"group_path_id"`
+	ConnectionExt int64                `json:"connection_ext"`
+	InvoiceExt    string               `json:"invoice_ext"`
+	ConnectionId  int64                `json:"connection_id"`
 	OldBalance    float64              `json:"old_balance"`
 	Amount        float64              `json:"amount"`
 	TotalCredits  float64              `json:"total_credits"`
@@ -17,8 +20,6 @@ type Invoice struct {
 	Login         *string              `json:"login,omitempty"`
 	From          time.Time            `json:"from"`
 	To            time.Time            `json:"to"`
-	Name          *string              `json:"name,omitempty"`
-	Path          *string              `json:"path,omitempty"`
 	Informations  []InvoiceInformation `json:"informations"`
 }
 
@@ -35,12 +36,12 @@ type InvoiceInformation struct {
 }
 
 type GetInvoicesMsg struct {
-	OrgId   int64     `json:"org_id"`
-	GroupId int64     `json:"group_id"`
-	From    time.Time `json:"from"`
-	To      time.Time `json:"to"`
-	Page    int64     `json:"page"`
-	PerPage int64     `json:"perPage"`
+	OrgId        int64     `json:"org_id"`
+	ConnectionId int64     `json:"connection_id"`
+	From         time.Time `json:"from"`
+	To           time.Time `json:"to"`
+	Page         int64     `json:"page"`
+	PerPage      int64     `json:"perPage"`
 
 	// swagger:ignore
 	Result Invoices `json:"result"`
@@ -67,9 +68,9 @@ type GetInvoiceByIdMsg struct {
 	Result Invoice `json:"result"`
 }
 
-type GetGroupTransactionsMsg struct {
-	OrgId   int64 `json:"org_id"`
-	GroupId int64 `json:"group_id"`
+type GetConnectionTransactionsMsg struct {
+	OrgId        int64 `json:"org_id"`
+	ConnectionId int64 `json:"connection_id"`
 
 	Page    int64 `json:"page"`
 	PerPage int64 `json:"perPage"`
@@ -79,23 +80,26 @@ type GetGroupTransactionsMsg struct {
 }
 
 type CreateInvoiceMsg struct {
-	OrgId   int64   `json:"org_id"`
-	GroupId int64   `json:"group_id"`
-	Login   *string `json:"login,omitempty"`
+	OrgId         int64   `json:"org_id"`
+	GroupId       int64   `json:"group_id"`
+	GroupPathId   string  `json:"group_path_id"`
+	ConnectionExt int64   `json:"connection_ext"`
+	ConnectionId  int64   `json:"connection_id"`
+	Login         *string `json:"login,omitempty"`
 
 	// swagger:ignore
 	Result Invoice `json:"result" validate:"-"`
 }
 
 type CreateTransactionMsg struct {
-	OrgId       int64                  `json:"org_id"`
-	GroupId     int64                  `json:"group_id"`
-	Type        string                 `json:"type"`
-	Tax         float64                `json:"tax"`
-	Amount      float64                `json:"amount"`
-	Description *string                `json:"description,omitempty"`
-	Login       *string                `json:"login,omitempty"`
-	Context     map[string]interface{} `json:"context"`
+	OrgId        int64                  `json:"org_id"`
+	ConnectionId int64                  `json:"connection_id"`
+	Type         string                 `json:"type"`
+	Tax          float64                `json:"tax"`
+	Amount       float64                `json:"amount"`
+	Description  *string                `json:"description,omitempty"`
+	Login        *string                `json:"login,omitempty"`
+	Context      map[string]interface{} `json:"context"`
 
 	// swagger:ignore
 	Result Transaction `json:"result"`
@@ -109,18 +113,17 @@ type Transactions struct {
 }
 
 type Transaction struct {
-	Id          int64                  `json:"id"`
-	UpdatedAt   time.Time              `json:"updated_at"`
-	OrgId       int64                  `json:"org_id"`
-	GroupId     int64                  `json:"group_id"`
-	Type        string                 `json:"type"`
-	Tax         float64                `json:"tax"`
-	Amount      float64                `json:"amount"`
-	Balance     float64                `json:"balance"`
-	Previous    string                 `json:"previous"`
-	Description *string                `json:"description,omitempty"`
-	Login       *string                `json:"login,omitempty"`
-	Context     map[string]interface{} `json:"context"`
+	Id           int64                  `json:"id"`
+	UpdatedAt    time.Time              `json:"updated_at"`
+	ConnectionId int64                  `json:"connection_id"`
+	Type         string                 `json:"type"`
+	Tax          float64                `json:"tax"`
+	Amount       float64                `json:"amount"`
+	Balance      float64                `json:"balance"`
+	Previous     string                 `json:"previous"`
+	Description  *string                `json:"description,omitempty"`
+	Login        *string                `json:"login,omitempty"`
+	Context      map[string]interface{} `json:"context"`
 }
 
 type SearchInvoicesMsg struct {
