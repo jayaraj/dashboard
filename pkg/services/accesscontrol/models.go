@@ -345,53 +345,100 @@ const (
 	// Team related scopes
 	ScopeTeamsAll = "teams:*"
 
+	/**************Device Management*************/
+
 	// Resources related actions
-	ActionResourcesRead  = "resources:read"
-	ActionResourcesWrite = "resources:write"
+	ActionResourcesCreate = "resources:create"
+	ActionResourcesDelete = "resources:delete"
+	ActionResourcesRead   = "resources:read"
+	ActionResourcesWrite  = "resources:write"
 	// Resources related scopes
 	ScopeResourcesAll = "resources:*"
 
 	// Groups related actions
-	ActionGroupsRead  = "groups:read"
-	ActionGroupsWrite = "groups:write"
+	ActionGroupsCreate = "groups:create"
+	ActionGroupsDelete = "groups:delete"
+	ActionGroupsRead   = "groups:read"
+	ActionGroupsWrite  = "groups:write"
 	// Resources related scopes
 	ScopeGroupsAll = "groups:*"
 
 	// Inventories related actions
-	ActionInventoriesRead  = "inventories:read"
-	ActionInventoriesWrite = "inventories:write"
+	ActionInventoriesCreate = "inventories:create"
+	ActionInventoriesDelete = "inventories:delete"
+	ActionInventoriesRead   = "inventories:read"
+	ActionInventoriesWrite  = "inventories:write"
 	// Inventories related scopes
 	ScopeInventoriesAll = "inventories:*"
 
 	// Bulks related actions
-	ActionBulksRead  = "bulks:read"
-	ActionBulksWrite = "bulks:write"
+	ActionBulksCreate = "bulks:create"
+	ActionBulksDelete = "bulks:delete"
+	ActionBulksRead   = "bulks:read"
+	ActionBulksWrite  = "bulks:write"
 	// Bulks related scopes
 	ScopeBulksAll = "bulks:*"
 
-	// ResourceTypes related actions
-	ActionResourceTypesRead  = "resourcetypes:read"
-	ActionResourceTypesWrite = "resourcetypes:write"
-	// ResourceTypes related scopes
-	ScopeResourceTypesAll = "resourcetypes:*"
+	// Types related actions
+	ActionTypesCreate = "types:create"
+	ActionTypesDelete = "types:delete"
+	ActionTypesRead   = "types:read"
+	ActionTypesWrite  = "types:write"
+	// Types related scopes
+	ScopeTypesAll = "types:*"
 
-	// Slab related actions
-	ActionSlabRead  = "slab:read"
-	ActionSlabWrite = "slab:write"
-	// Slab related scopes
-	ScopeSlabAll = "slab:*"
+	/**************Device Management*************/
+	/*******************Billing******************/
+
+	// Profiles related actions
+	ActionProfilesCreate = "profiles:create"
+	ActionProfilesDelete = "profiles:delete"
+	ActionProfilesRead   = "profiles:read"
+	ActionProfilesWrite  = "profiles:write"
+	// Profiles related scopes
+	ScopeProfilesAll = "profiles:*"
+
+	// Connections related actions
+	ActionConnectionsCreate = "connections:create"
+	ActionConnectionsDelete = "connections:delete"
+	ActionConnectionsRead   = "connections:read"
+	ActionConnectionsWrite  = "connections:write"
+	// Connections related scopes
+	ScopeConnectionsAll = "connections:*"
+
+	// Slabs related actions
+	ActionSlabsCreate = "slabs:create"
+	ActionSlabsDelete = "slabs:delete"
+	ActionSlabsRead   = "slabs:read"
+	ActionSlabsWrite  = "slabs:write"
+	// Slabs related scopes
+	ScopeSlabsAll = "slabs:*"
 
 	// Invoices related actions
-	ActionInvoicesRead  = "invoices:read"
-	ActionInvoicesWrite = "invoices:write"
+	ActionInvoicesCreate = "invoices:create"
+	ActionInvoicesDelete = "invoices:delete"
+	ActionInvoicesRead   = "invoices:read"
+	ActionInvoicesWrite  = "invoices:write"
 	// Invoices related scopes
 	ScopeInvoicesAll = "invoices:*"
 
+	// Transactions related actions
+	ActionTransactionsCreate = "transactions:create"
+	ActionTransactionsDelete = "transactions:delete"
+	ActionTransactionsRead   = "transactions:read"
+	ActionTransactionsWrite  = "transactions:write"
+	// Transactions related scopes
+	ScopeTransactionsAll = "transactions:*"
+
 	// FixedCharges related actions
-	ActionFixedChargesRead  = "fixedcharges:read"
-	ActionFixedChargesWrite = "fixedcharges:write"
+	ActionFixedChargesCreate = "fixedcharges:create"
+	ActionFixedChargesDelete = "fixedcharges:delete"
+	ActionFixedChargesRead   = "fixedcharges:read"
+	ActionFixedChargesWrite  = "fixedcharges:write"
 	// FixedCharges related scopes
 	ScopeFixedChargesAll = "fixedcharges:*"
+
+	/*******************Billing******************/
 
 	// Annotations related actions
 	ActionAnnotationsCreate = "annotations:create"

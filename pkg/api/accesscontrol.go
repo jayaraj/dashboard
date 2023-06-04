@@ -283,25 +283,29 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		Grants: []string{string(org.RoleAdmin)},
 	}
 
-	resourcesReaderRole := ac.RoleRegistration{
+	/**************Device Management*************/
+	resourcesCreatorRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
-			Name:        "fixed:resources:reader",
-			DisplayName: "Resource reader",
-			Description: "Read resources.",
+			Name:        "fixed:resources:creator",
+			DisplayName: "Resource creator",
+			Description: "Create, read, write or delete resources",
 			Group:       "Resources",
 			Version:     1,
 			Permissions: []ac.Permission{
-				{Action: ac.ActionResourcesRead},
+				{Action: ac.ActionResourcesCreate, Scope: ac.ScopeResourcesAll},
+				{Action: ac.ActionResourcesDelete, Scope: ac.ScopeResourcesAll},
+				{Action: ac.ActionResourcesRead, Scope: ac.ScopeResourcesAll},
+				{Action: ac.ActionResourcesWrite, Scope: ac.ScopeResourcesAll},
 			},
 		},
-		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
+		Grants: []string{string(org.RoleAdmin), string(ac.RoleGrafanaAdmin)},
 	}
 
 	resourcesWriterRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
 			Name:        "fixed:resources:writer",
 			DisplayName: "Resource writer",
-			Description: "Create, read, write, or delete a resource",
+			Description: "Read, write a resource",
 			Group:       "Resources",
 			Version:     1,
 			Permissions: []ac.Permission{
@@ -312,25 +316,42 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		Grants: []string{string(org.RoleEditor)},
 	}
 
-	groupsReaderRole := ac.RoleRegistration{
+	resourcesReaderRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
-			Name:        "fixed:groups:reader",
-			DisplayName: "Group reader",
-			Description: "Read groups.",
+			Name:        "fixed:resources:reader",
+			DisplayName: "Resource reader",
+			Description: "Read resources",
+			Group:       "Resources",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionResourcesRead},
+			},
+		},
+		Grants: []string{string(org.RoleViewer)},
+	}
+
+	groupsCreatorRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:groups:creator",
+			DisplayName: "Group creator",
+			Description: "Create, read, write or delete groups",
 			Group:       "Groups",
 			Version:     1,
 			Permissions: []ac.Permission{
-				{Action: ac.ActionGroupsRead},
+				{Action: ac.ActionGroupsCreate, Scope: ac.ScopeGroupsAll},
+				{Action: ac.ActionGroupsDelete, Scope: ac.ScopeGroupsAll},
+				{Action: ac.ActionGroupsRead, Scope: ac.ScopeGroupsAll},
+				{Action: ac.ActionGroupsWrite, Scope: ac.ScopeGroupsAll},
 			},
 		},
-		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
+		Grants: []string{string(org.RoleAdmin), string(ac.RoleGrafanaAdmin)},
 	}
 
 	groupsWriterRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
 			Name:        "fixed:groups:writer",
 			DisplayName: "Group writer",
-			Description: "Create, read, write, or delete a group",
+			Description: "Read, write a group",
 			Group:       "Groups",
 			Version:     1,
 			Permissions: []ac.Permission{
@@ -338,60 +359,33 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionGroupsWrite, Scope: ac.ScopeGroupsAll},
 			},
 		},
-		Grants: []string{string(org.RoleEditor)},
+		Grants: []string{string(org.RoleAdmin)},
 	}
 
-	resourceTypesReaderRole := ac.RoleRegistration{
+	groupsReaderRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
-			Name:        "fixed:resourcetypes:reader",
-			DisplayName: "ResourceType reader",
-			Description: "Read resourcetypes.",
-			Group:       "ResourceTypes",
+			Name:        "fixed:groups:reader",
+			DisplayName: "Group reader",
+			Description: "Read groups",
+			Group:       "Groups",
 			Version:     1,
 			Permissions: []ac.Permission{
-				{Action: ac.ActionResourceTypesRead},
+				{Action: ac.ActionGroupsRead},
 			},
 		},
-		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
+		Grants: []string{string(org.RoleViewer)},
 	}
 
-	resourceTypesWriterRole := ac.RoleRegistration{
+	inventoriesCreatorRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
-			Name:        "fixed:resourcetypes:writer",
-			DisplayName: "ResourceType writer",
-			Description: "Create, read, write, or delete a resource types",
-			Group:       "ResourceTypes",
-			Version:     1,
-			Permissions: []ac.Permission{
-				{Action: ac.ActionResourceTypesRead, Scope: ac.ScopeResourceTypesAll},
-				{Action: ac.ActionResourceTypesWrite, Scope: ac.ScopeResourceTypesAll},
-			},
-		},
-		Grants: []string{ac.RoleGrafanaAdmin},
-	}
-
-	inventoriesReaderRole := ac.RoleRegistration{
-		Role: ac.RoleDTO{
-			Name:        "fixed:inventories:reader",
-			DisplayName: "Inventory reader",
-			Description: "Read inventories.",
+			Name:        "fixed:inventories:creator",
+			DisplayName: "Inventory creator",
+			Description: "Create, read, write or delete a inventory",
 			Group:       "Inventories",
 			Version:     1,
 			Permissions: []ac.Permission{
-				{Action: ac.ActionInventoriesRead},
-			},
-		},
-		Grants: []string{string(ac.RoleGrafanaAdmin)},
-	}
-
-	inventoriesWriterRole := ac.RoleRegistration{
-		Role: ac.RoleDTO{
-			Name:        "fixed:inventories:writer",
-			DisplayName: "Inventory writer",
-			Description: "Create, read, write, or delete a inventory",
-			Group:       "Inventories",
-			Version:     1,
-			Permissions: []ac.Permission{
+				{Action: ac.ActionInventoriesCreate, Scope: ac.ScopeInventoriesAll},
+				{Action: ac.ActionInventoriesDelete, Scope: ac.ScopeInventoriesAll},
 				{Action: ac.ActionInventoriesRead, Scope: ac.ScopeInventoriesAll},
 				{Action: ac.ActionInventoriesWrite, Scope: ac.ScopeInventoriesAll},
 			},
@@ -399,28 +393,16 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		Grants: []string{ac.RoleGrafanaAdmin},
 	}
 
-	bulksReaderRole := ac.RoleRegistration{
+	bulksCreatorRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
-			Name:        "fixed:bulks:reader",
-			DisplayName: "Bulk reader",
-			Description: "Read bulks.",
+			Name:        "fixed:bulks:creator",
+			DisplayName: "Batch process creator",
+			Description: "Create, read, write or delete a batch proccess",
 			Group:       "Bulks",
 			Version:     1,
 			Permissions: []ac.Permission{
-				{Action: ac.ActionBulksRead},
-			},
-		},
-		Grants: []string{string(ac.RoleGrafanaAdmin)},
-	}
-
-	bulksWriterRole := ac.RoleRegistration{
-		Role: ac.RoleDTO{
-			Name:        "fixed:bulks:writer",
-			DisplayName: "Bulk writer",
-			Description: "Create, read, write, or delete a bulk",
-			Group:       "Bulks",
-			Version:     1,
-			Permissions: []ac.Permission{
+				{Action: ac.ActionBulksCreate, Scope: ac.ScopeBulksAll},
+				{Action: ac.ActionBulksDelete, Scope: ac.ScopeBulksAll},
 				{Action: ac.ActionBulksRead, Scope: ac.ScopeBulksAll},
 				{Action: ac.ActionBulksWrite, Scope: ac.ScopeBulksAll},
 			},
@@ -428,33 +410,164 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		Grants: []string{ac.RoleGrafanaAdmin},
 	}
 
-	slabReaderRole := ac.RoleRegistration{
+	typesCreatorRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
-			Name:        "fixed:slab:reader",
-			DisplayName: "Slab reader",
-			Description: "Read slab.",
-			Group:       "Slab",
+			Name:        "fixed:resourcetypes:creator",
+			DisplayName: "Types creator",
+			Description: "Create, read, write, or delete types",
+			Group:       "Types",
 			Version:     1,
 			Permissions: []ac.Permission{
-				{Action: ac.ActionSlabRead},
+				{Action: ac.ActionTypesCreate, Scope: ac.ScopeTypesAll},
+				{Action: ac.ActionTypesDelete, Scope: ac.ScopeTypesAll},
+				{Action: ac.ActionTypesRead, Scope: ac.ScopeTypesAll},
+				{Action: ac.ActionTypesWrite, Scope: ac.ScopeTypesAll},
+			},
+		},
+		Grants: []string{ac.RoleGrafanaAdmin},
+	}
+
+	typesReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:resourcetypes:reader",
+			DisplayName: "ResourceType reader",
+			Description: "Read resourcetypes.",
+			Group:       "ResourceTypes",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionTypesRead},
+			},
+		},
+		Grants: []string{string(org.RoleViewer)},
+	}
+
+	/**************Device Management*************/
+
+	/*******************Billing******************/
+
+	profilesCreatorRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:profiles:creator",
+			DisplayName: "Profiles creator",
+			Description: "Create, read, write, or delete profiles",
+			Group:       "Profiles",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionProfilesCreate, Scope: ac.ScopeProfilesAll},
+				{Action: ac.ActionProfilesDelete, Scope: ac.ScopeProfilesAll},
+				{Action: ac.ActionProfilesRead, Scope: ac.ScopeProfilesAll},
+				{Action: ac.ActionProfilesWrite, Scope: ac.ScopeProfilesAll},
+			},
+		},
+		Grants: []string{string(org.RoleAdmin)},
+	}
+
+	profilesReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:profiles:reader",
+			DisplayName: "Profiles reader",
+			Description: "Read  profiles",
+			Group:       "Profiles",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionProfilesRead},
+			},
+		},
+		Grants: []string{string(org.RoleViewer)},
+	}
+
+	connectionsCreatorRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:connection:creator",
+			DisplayName: "Connections creator",
+			Description: "Create, read, write, or delete connections",
+			Group:       "Connections",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionConnectionsCreate, Scope: ac.ScopeConnectionsAll},
+				{Action: ac.ActionConnectionsDelete, Scope: ac.ScopeConnectionsAll},
+				{Action: ac.ActionConnectionsRead, Scope: ac.ScopeConnectionsAll},
+				{Action: ac.ActionConnectionsWrite, Scope: ac.ScopeConnectionsAll},
+			},
+		},
+		Grants: []string{string(org.RoleAdmin)},
+	}
+
+	connectionsWriterRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:connections:writer",
+			DisplayName: "Connections writer",
+			Description: "Read or write connections",
+			Group:       "Connections",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionConnectionsRead, Scope: ac.ScopeConnectionsAll},
+				{Action: ac.ActionConnectionsWrite, Scope: ac.ScopeConnectionsAll},
+			},
+		},
+		Grants: []string{string(org.RoleEditor), string(org.RoleAdmin)},
+	}
+
+	connectionsReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:connections:reader",
+			DisplayName: "Connections reader",
+			Description: "Read connections",
+			Group:       "Connections",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionConnectionsRead},
 			},
 		},
 		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
 	}
 
-	slabWriterRole := ac.RoleRegistration{
+	slabsCreatorRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
-			Name:        "fixed:slab:writer",
-			DisplayName: "Slab writer",
-			Description: "Create, read, write, or delete a slab",
-			Group:       "Slab",
+			Name:        "fixed:slab:creator",
+			DisplayName: "Slabs creator",
+			Description: "Create, read, write, or delete slabs",
+			Group:       "Slabs",
 			Version:     1,
 			Permissions: []ac.Permission{
-				{Action: ac.ActionSlabRead, Scope: ac.ScopeSlabAll},
-				{Action: ac.ActionSlabWrite, Scope: ac.ScopeSlabAll},
+				{Action: ac.ActionSlabsCreate, Scope: ac.ScopeSlabsAll},
+				{Action: ac.ActionSlabsDelete, Scope: ac.ScopeSlabsAll},
+				{Action: ac.ActionSlabsRead, Scope: ac.ScopeSlabsAll},
+				{Action: ac.ActionSlabsWrite, Scope: ac.ScopeSlabsAll},
 			},
 		},
 		Grants: []string{string(org.RoleAdmin)},
+	}
+
+	slabsReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:slabs:reader",
+			DisplayName: "Slabs reader",
+			Description: "Read slabs",
+			Group:       "Slab",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionSlabsRead},
+			},
+		},
+		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
+	}
+
+	invoicesCreatorRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:invoices:creator",
+			DisplayName: "Invoices creator",
+			Description: "Create, read, write, or delete a invoices",
+			Group:       "Invoices",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionInvoicesCreate, Scope: ac.ScopeInvoicesAll},
+				{Action: ac.ActionInvoicesDelete, Scope: ac.ScopeInvoicesAll},
+				{Action: ac.ActionInvoicesRead, Scope: ac.ScopeInvoicesAll},
+				{Action: ac.ActionInvoicesWrite, Scope: ac.ScopeInvoicesAll},
+			},
+		},
+		Grants: []string{string(org.RoleAdmin), string(org.RoleEditor)},
 	}
 
 	invoicesReaderRole := ac.RoleRegistration{
@@ -471,16 +584,49 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
 	}
 
-	invoicesWriterRole := ac.RoleRegistration{
+	transactionsCreatorRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
-			Name:        "fixed:invoices:writer",
-			DisplayName: "Invoices writer",
-			Description: "Create, read, write, or delete a invoices",
-			Group:       "Invoices",
+			Name:        "fixed:transactions:creator",
+			DisplayName: "Transaction creator",
+			Description: "Create, read, write, or delete a transaction",
+			Group:       "Transactions",
 			Version:     1,
 			Permissions: []ac.Permission{
-				{Action: ac.ActionInvoicesRead, Scope: ac.ScopeInvoicesAll},
-				{Action: ac.ActionInvoicesWrite, Scope: ac.ScopeInvoicesAll},
+				{Action: ac.ActionTransactionsCreate, Scope: ac.ScopeTransactionsAll},
+				{Action: ac.ActionTransactionsDelete, Scope: ac.ScopeTransactionsAll},
+				{Action: ac.ActionTransactionsRead, Scope: ac.ScopeTransactionsAll},
+				{Action: ac.ActionTransactionsWrite, Scope: ac.ScopeTransactionsAll},
+			},
+		},
+		Grants: []string{string(org.RoleAdmin)},
+	}
+
+	transactionsReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:transactions:reader",
+			DisplayName: "Transaction reader",
+			Description: "Read Transactions",
+			Group:       "Transactions",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionTransactionsRead},
+			},
+		},
+		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
+	}
+
+	fixedChargesCreatorRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:fixedcharges:creator",
+			DisplayName: "FixedCharges creator",
+			Description: "Create, read, write, or delete a org charge",
+			Group:       "FixedCharges",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionFixedChargesCreate, Scope: ac.ScopeFixedChargesAll},
+				{Action: ac.ActionFixedChargesDelete, Scope: ac.ScopeFixedChargesAll},
+				{Action: ac.ActionFixedChargesRead, Scope: ac.ScopeFixedChargesAll},
+				{Action: ac.ActionFixedChargesWrite, Scope: ac.ScopeFixedChargesAll},
 			},
 		},
 		Grants: []string{string(org.RoleAdmin)},
@@ -500,20 +646,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
 	}
 
-	fixedChargesWriterRole := ac.RoleRegistration{
-		Role: ac.RoleDTO{
-			Name:        "fixed:fixedcharges:writer",
-			DisplayName: "Org Charges writer",
-			Description: "Create, read, write, or delete a org charge",
-			Group:       "FixedCharges",
-			Version:     1,
-			Permissions: []ac.Permission{
-				{Action: ac.ActionFixedChargesRead, Scope: ac.ScopeFixedChargesAll},
-				{Action: ac.ActionFixedChargesWrite, Scope: ac.ScopeFixedChargesAll},
-			},
-		},
-		Grants: []string{ac.RoleGrafanaAdmin},
-	}
+	/*******************Billing******************/
 
 	annotationsReaderRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
@@ -658,10 +791,11 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		annotationsReaderRole, dashboardAnnotationsWriterRole, annotationsWriterRole,
 		dashboardsCreatorRole, dashboardsReaderRole, dashboardsWriterRole,
 		foldersCreatorRole, foldersReaderRole, foldersWriterRole, apikeyReaderRole, apikeyWriterRole,
-		resourcesReaderRole, resourcesWriterRole, groupsReaderRole, groupsWriterRole,
-		resourceTypesReaderRole, resourceTypesWriterRole, slabReaderRole, slabWriterRole,
-		fixedChargesReaderRole, fixedChargesWriterRole, invoicesReaderRole, invoicesWriterRole,
-		inventoriesReaderRole, inventoriesWriterRole, bulksReaderRole, bulksWriterRole,
+		resourcesCreatorRole, resourcesWriterRole, resourcesReaderRole, groupsCreatorRole, groupsWriterRole,
+		groupsReaderRole, inventoriesCreatorRole, bulksCreatorRole, typesCreatorRole, typesReaderRole,
+		profilesCreatorRole, profilesReaderRole, connectionsCreatorRole, connectionsWriterRole, connectionsReaderRole,
+		slabsCreatorRole, slabsReaderRole, invoicesCreatorRole, invoicesReaderRole, transactionsCreatorRole,
+		transactionsReaderRole, fixedChargesCreatorRole, fixedChargesReaderRole,
 	)
 }
 
@@ -713,85 +847,216 @@ var teamsEditAccessEvaluator = ac.EvalAll(
 	),
 )
 
-var resourcesAccessEvaluator = ac.EvalAny(
+/**************Device Management*************/
+
+var resourcesReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionResourcesRead),
+	ac.EvalPermission(ac.ActionResourcesWrite),
+	ac.EvalPermission(ac.ActionResourcesCreate),
+	ac.EvalPermission(ac.ActionResourcesDelete),
+)
+
+var resourcesWriteAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionResourcesRead),
 	ac.EvalPermission(ac.ActionResourcesWrite),
 )
 
-var resourcesEditAccessEvaluator = ac.EvalAll(
+var resourcesCreateAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionResourcesRead),
 	ac.EvalPermission(ac.ActionResourcesWrite),
+	ac.EvalPermission(ac.ActionResourcesCreate),
+	ac.EvalPermission(ac.ActionResourcesDelete),
 )
 
-var groupsAccessEvaluator = ac.EvalAny(
+var groupsReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionGroupsRead),
+	ac.EvalPermission(ac.ActionGroupsWrite),
+	ac.EvalPermission(ac.ActionGroupsCreate),
+	ac.EvalPermission(ac.ActionGroupsDelete),
+)
+
+var groupsWriteAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionGroupsRead),
 	ac.EvalPermission(ac.ActionGroupsWrite),
 )
 
-var groupsEditAccessEvaluator = ac.EvalAll(
+var groupsCreateAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionGroupsRead),
 	ac.EvalPermission(ac.ActionGroupsWrite),
+	ac.EvalPermission(ac.ActionGroupsCreate),
+	ac.EvalPermission(ac.ActionGroupsDelete),
 )
 
-var resourceTypesAccessEvaluator = ac.EvalAny(
-	ac.EvalPermission(ac.ActionResourceTypesRead),
-	ac.EvalPermission(ac.ActionResourceTypesWrite),
-)
-
-var resourceTypesEditAccessEvaluator = ac.EvalAll(
-	ac.EvalPermission(ac.ActionResourceTypesRead),
-	ac.EvalPermission(ac.ActionResourceTypesWrite),
-)
-
-var inventoriesAccessEvaluator = ac.EvalAny(
+var inventoriesReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionInventoriesCreate),
+	ac.EvalPermission(ac.ActionInventoriesDelete),
 	ac.EvalPermission(ac.ActionInventoriesRead),
 	ac.EvalPermission(ac.ActionInventoriesWrite),
 )
 
-var inventoriesEditAccessEvaluator = ac.EvalAll(
+var inventoriesWriteAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionInventoriesRead),
 	ac.EvalPermission(ac.ActionInventoriesWrite),
 )
 
-var bulksAccessEvaluator = ac.EvalAny(
+var inventoriesCreateAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionInventoriesCreate),
+	ac.EvalPermission(ac.ActionInventoriesDelete),
+	ac.EvalPermission(ac.ActionInventoriesRead),
+	ac.EvalPermission(ac.ActionInventoriesWrite),
+)
+
+var bulksReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionBulksCreate),
+	ac.EvalPermission(ac.ActionBulksDelete),
 	ac.EvalPermission(ac.ActionBulksRead),
 	ac.EvalPermission(ac.ActionBulksWrite),
 )
 
-var bulksEditAccessEvaluator = ac.EvalAll(
+var bulksWriteAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionBulksRead),
 	ac.EvalPermission(ac.ActionBulksWrite),
 )
 
-var slabAccessEvaluator = ac.EvalAny(
-	ac.EvalPermission(ac.ActionSlabRead),
-	ac.EvalPermission(ac.ActionSlabWrite),
+var bulksCreateAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionBulksCreate),
+	ac.EvalPermission(ac.ActionBulksDelete),
+	ac.EvalPermission(ac.ActionBulksRead),
+	ac.EvalPermission(ac.ActionBulksWrite),
 )
 
-var slabEditAccessEvaluator = ac.EvalAll(
-	ac.EvalPermission(ac.ActionSlabRead),
-	ac.EvalPermission(ac.ActionSlabWrite),
+var typesReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionTypesRead),
+	ac.EvalPermission(ac.ActionTypesWrite),
+	ac.EvalPermission(ac.ActionTypesCreate),
+	ac.EvalPermission(ac.ActionTypesDelete),
 )
 
-var fixedChargesAccessEvaluator = ac.EvalAny(
+var typesWriteAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionTypesRead),
+	ac.EvalPermission(ac.ActionTypesWrite),
+)
+
+var typesCreateAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionTypesRead),
+	ac.EvalPermission(ac.ActionTypesWrite),
+	ac.EvalPermission(ac.ActionTypesCreate),
+	ac.EvalPermission(ac.ActionTypesDelete),
+)
+
+/**************Device Management*************/
+/*******************Billing******************/
+
+var profilesReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionProfilesCreate),
+	ac.EvalPermission(ac.ActionProfilesDelete),
+	ac.EvalPermission(ac.ActionProfilesRead),
+	ac.EvalPermission(ac.ActionProfilesWrite),
+)
+
+var profilesWriteAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionProfilesRead),
+	ac.EvalPermission(ac.ActionProfilesWrite),
+)
+
+var profilesCreateAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionProfilesCreate),
+	ac.EvalPermission(ac.ActionProfilesDelete),
+	ac.EvalPermission(ac.ActionProfilesRead),
+	ac.EvalPermission(ac.ActionProfilesWrite),
+)
+
+var slabsReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionSlabsCreate),
+	ac.EvalPermission(ac.ActionSlabsDelete),
+	ac.EvalPermission(ac.ActionSlabsRead),
+	ac.EvalPermission(ac.ActionSlabsWrite),
+)
+
+var slabsWriteAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionSlabsRead),
+	ac.EvalPermission(ac.ActionSlabsWrite),
+)
+
+var slabsCreateAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionSlabsCreate),
+	ac.EvalPermission(ac.ActionSlabsDelete),
+	ac.EvalPermission(ac.ActionSlabsRead),
+	ac.EvalPermission(ac.ActionSlabsWrite),
+)
+
+var connectionsReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionConnectionsCreate),
+	ac.EvalPermission(ac.ActionConnectionsDelete),
+	ac.EvalPermission(ac.ActionConnectionsRead),
+	ac.EvalPermission(ac.ActionConnectionsWrite),
+)
+
+var connectionsWriteAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionConnectionsRead),
+	ac.EvalPermission(ac.ActionConnectionsWrite),
+)
+
+var connectionsCreateAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionConnectionsCreate),
+	ac.EvalPermission(ac.ActionConnectionsDelete),
+	ac.EvalPermission(ac.ActionConnectionsRead),
+	ac.EvalPermission(ac.ActionConnectionsWrite),
+)
+
+var fixedChargesReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionFixedChargesCreate),
+	ac.EvalPermission(ac.ActionFixedChargesDelete),
 	ac.EvalPermission(ac.ActionFixedChargesRead),
 	ac.EvalPermission(ac.ActionFixedChargesWrite),
 )
 
-var fixedChargesEditAccessEvaluator = ac.EvalAll(
+var fixedChargesWriteAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionFixedChargesRead),
 	ac.EvalPermission(ac.ActionFixedChargesWrite),
 )
 
-var invoicesAccessEvaluator = ac.EvalAny(
+var fixedChargesCreateAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionFixedChargesCreate),
+	ac.EvalPermission(ac.ActionFixedChargesDelete),
+	ac.EvalPermission(ac.ActionFixedChargesRead),
+	ac.EvalPermission(ac.ActionFixedChargesWrite),
+)
+
+var invoicesReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionInvoicesCreate),
+	ac.EvalPermission(ac.ActionInvoicesDelete),
 	ac.EvalPermission(ac.ActionInvoicesRead),
 	ac.EvalPermission(ac.ActionInvoicesWrite),
 )
 
-var invoicesEditAccessEvaluator = ac.EvalAll(
+var invoicesWriteAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionInvoicesRead),
 	ac.EvalPermission(ac.ActionInvoicesWrite),
 )
+
+var invoicesCreateAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionInvoicesCreate),
+	ac.EvalPermission(ac.ActionInvoicesDelete),
+	ac.EvalPermission(ac.ActionInvoicesRead),
+	ac.EvalPermission(ac.ActionInvoicesWrite),
+)
+
+var transactionsReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionInvoicesCreate),
+	ac.EvalPermission(ac.ActionInvoicesDelete),
+	ac.EvalPermission(ac.ActionInvoicesRead),
+	ac.EvalPermission(ac.ActionInvoicesWrite),
+)
+
+var transactionsCreateAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionInvoicesCreate),
+	ac.EvalPermission(ac.ActionInvoicesDelete),
+	ac.EvalPermission(ac.ActionInvoicesRead),
+	ac.EvalPermission(ac.ActionInvoicesWrite),
+)
+
+/*******************Billing******************/
 
 // apiKeyAccessEvaluator is used to protect the "Configuration > API keys" page access
 var apiKeyAccessEvaluator = ac.EvalPermission(ac.ActionAPIKeyRead)

@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -40,7 +39,7 @@ func (hs *HTTPServer) CreateFixedCharge(c *models.ReqContext) response.Response 
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
@@ -77,7 +76,7 @@ func (hs *HTTPServer) UpdateFixedCharge(c *models.ReqContext) response.Response 
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	return response.Success("updated")
 }
@@ -101,7 +100,7 @@ func (hs *HTTPServer) DeleteFixedCharge(c *models.ReqContext) response.Response 
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	return response.Success("deleted")
 }
@@ -126,7 +125,7 @@ func (hs *HTTPServer) GetFixedChargeById(c *models.ReqContext) response.Response
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
@@ -150,7 +149,7 @@ func (hs *HTTPServer) GetFixedCharges(c *models.ReqContext) response.Response {
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
 		}
-		return response.Error(req.StatusCode, errResponse.Message, errors.New(errResponse.Message))
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
