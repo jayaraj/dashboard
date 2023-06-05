@@ -92,12 +92,12 @@ build-js: ## Build frontend assets.
 build: build-go build-js ## Build backend and frontend.
 
 run: $(BRA) ## Build and run web server on filesystem changes.
-	@APP_NAME="grafo" APP_MODE="development" APP_PROTOCOL="http" APP_PORT="3000" ROOT_URL="http://localhost:3000/" POSTGRES_HOST="platform.staging.grafo.live" \
-	POSTGRES_PORT=5432 POSTGRES_DBNAME="dashboard" POSTGRES_USER="postgres" POSTGRES_PASSWORD="Qwertyu10P" SMTP_HOST="smtp-relay.sendinblue.com:587" \
+	@APP_NAME="grafo" APP_MODE="development" APP_PROTOCOL="http" APP_PORT="3000" ROOT_URL="http://localhost:3000/" POSTGRES_HOST="localhost" \
+	POSTGRES_PORT=5432 POSTGRES_DBNAME="dashboard" POSTGRES_USER="postgres" POSTGRES_PASSWORD="" SMTP_HOST="smtp-relay.sendinblue.com:587" \
 	SMTP_USER="jayaraj.esvar@gmail.com" SMTP_PWD="123456" SMTP_FROM="jayaraj.esvar@gmail.com" SMTP_FROMNAME="Dashboard" ADMIN_USERNAME="admin" ADMIN_SECRET="admin" \
-	DATASERVICE_URL="http://localhost:9003" DATASERVICE_TOKEN="test" INFLUXDB_URL="139.59.79.185:8086" INFLUXDB_PWD="Qwertyu10P" INFLUXDB_USER="influx" \
-	RESOURCE_URL=http://localhost:9002/ RESOURCE_LABEL=Asset RESOURCE_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5X2lkIjoiMTIzNDU2NzgtMTIzNC0xMjM0LTEyMzQtMTIzNDU2Nzg5MDEyIiwiYXVkIjoiYXMiLCJpc3MiOiJhcyIsIm5iZiI6MTY4MDQzODMzNywic3ViIjoiYXBpX2tleSJ9.Re_8oxs_qxDj5TfenX69dv89bgj0g4IohkYNkcIB7nM \
-	NATS_URL=nats://localhost:4222 REDIS_HOST=localhost REDIS_PORT=6379 REDIS_PASSWORD=Qwertyu10P ENABLE_RESOURCE=true ENABLE_BILLING=true \
+	DATASERVICE_URL="http://localhost:9003" DATASERVICE_TOKEN="test" INFLUXDB_URL="139.59.79.185:8086" INFLUXDB_PWD="" INFLUXDB_USER="influx" \
+	RESOURCE_URL=http://localhost:9002/ RESOURCE_LABEL=Asset RESOURCE_TOKEN= \
+	NATS_URL=nats://localhost:4222 REDIS_HOST=localhost REDIS_PORT=6379 REDIS_PASSWORD= ENABLE_RESOURCE=true ENABLE_BILLING=true \
 	$(BRA) run
 
 run-frontend: deps-js ## Fetch js dependencies and watch frontend for rebuild
