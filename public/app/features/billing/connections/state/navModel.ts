@@ -32,6 +32,13 @@ export function buildNavModel(connection: Connection): NavModelItem {
       },
       {
         active: false,
+        icon: 'rss',
+        id: `connection-resources-${connection.id}`,
+        text: 'Resources',
+        url: `/org/connections/edit/${connection.id}/resources`,
+      },
+      {
+        active: false,
         icon: 'users-alt',
         id: `connection-users-${connection.id}`,
         text: 'Users',

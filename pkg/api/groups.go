@@ -48,12 +48,9 @@ func (hs *HTTPServer) CreateGroup(c *models.ReqContext) response.Response {
 }
 
 func (hs *HTTPServer) UpdateGroup(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
+	access, id := hs.IsGroupAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
 	dto := dtos.UpdateGroupMsg{
 		Id: id,
@@ -85,12 +82,9 @@ func (hs *HTTPServer) UpdateGroup(c *models.ReqContext) response.Response {
 }
 
 func (hs *HTTPServer) DeleteGroup(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
+	access, id := hs.IsGroupAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
 	url := fmt.Sprintf("%sapi/groups/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
@@ -112,12 +106,9 @@ func (hs *HTTPServer) DeleteGroup(c *models.ReqContext) response.Response {
 }
 
 func (hs *HTTPServer) GetGroupById(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
+	access, id := hs.IsGroupAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
 	url := fmt.Sprintf("%sapi/groups/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
@@ -263,33 +254,30 @@ func (hs *HTTPServer) isGroupAccessible(ctx context.Context, groupId int64, user
 	return true
 }
 
-func (hs *HTTPServer) IsGroupAccessible(c *models.ReqContext) bool {
+func (hs *HTTPServer) IsGroupAccessible(c *models.ReqContext) (bool, int64) {
 	groupId, ok := web.Params(c.Req)[":groupId"]
 	if !ok {
 		groupId = web.Params(c.Req)[":id"]
 	}
 	id, err := strconv.ParseInt(groupId, 10, 64)
 	if err != nil {
-		return false
+		return false, 0
 	}
 	if c.IsGrafanaAdmin {
-		return true
+		return true, id
 	}
 	user := dtos.User{
 		UserId: c.UserID,
 		OrgId:  c.OrgID,
 		Role:   dtos.ConvertRoleToString(hs.UserRole(c)),
 	}
-	return hs.isGroupAccessible(c.Req.Context(), id, user)
+	return hs.isGroupAccessible(c.Req.Context(), id, user), id
 }
 
 func (hs *HTTPServer) GetGroupResources(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
+	access, id := hs.IsGroupAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
 	query := c.Query("query")
 	perPage := c.QueryInt("perPage")
@@ -324,12 +312,9 @@ func (hs *HTTPServer) GetGroupResources(c *models.ReqContext) response.Response 
 }
 
 func (hs *HTTPServer) GetGroupUsers(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
+	access, id := hs.IsGroupAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
 	query := c.Query("query")
 	perPage := c.QueryInt("perPage")
@@ -367,12 +352,9 @@ func (hs *HTTPServer) GetGroupUsers(c *models.ReqContext) response.Response {
 }
 
 func (hs *HTTPServer) CreateGroupResource(c *models.ReqContext) response.Response {
-	if !hs.IsGroupAccessible(c) {
+	access, id := hs.IsGroupAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
 
 	dto := dtos.CreateGroupResourceMsg{

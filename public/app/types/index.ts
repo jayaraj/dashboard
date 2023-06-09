@@ -23,6 +23,7 @@ export * from './billing/slab';
 export * from './billing/connection';
 export * from './billing/connectionlog';
 export * from './billing/connectionuser';
+export * from './billing/connectionresource';
 export * from './billing/fixedCharge';
 export * from './billing/transaction';
 export * from './billing/invoice';

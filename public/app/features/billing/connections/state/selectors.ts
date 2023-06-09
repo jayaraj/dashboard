@@ -1,4 +1,4 @@
-import { Connection, ConnectionLogsState, ConnectionsState, ConnectionState, ConnectionUsersState, Invoice, InvoicesState, InvoiceState, OrgConfigurationState, QueryRange, TransactionsState} from 'app/types';
+import { Connection, ConnectionLogsState, ConnectionsState, ConnectionState, ConnectionUsersState, Invoice, InvoicesState, InvoiceState, OrgConfigurationState, QueryRange, TransactionsState, ConnectionResourcesState} from 'app/types';
 
 export const getConnectionsSearchQuery = (state: ConnectionsState) => state.searchQuery;
 export const getConnectionsSearchPage = (state: ConnectionsState) => state.searchPage;
@@ -9,6 +9,10 @@ export const getConnectionLogsCount = (state: ConnectionLogsState) => state.conn
 export const getConnectionUsers = (state: ConnectionUsersState) => state.connectionUsers;
 export const getConnectionUsersSearchPage = (state: ConnectionUsersState) => state.searchPage;
 export const getConnectionUsersCount = (state: ConnectionUsersState) => state.connectionUsersCount;
+export const getConnectionResources = (state: ConnectionResourcesState) => state.connectionResources;
+export const getConnectionResourcesSearchQuery = (state: ConnectionResourcesState) => state.searchQuery;
+export const getConnectionResourcesSearchPage = (state: ConnectionResourcesState) => state.searchPage;
+export const getConnectionResourcesCount = (state: ConnectionResourcesState) => state.connectionResourcesCount;
 export const getInvoicesCount = (state: InvoicesState) => state.invoicesCount;
 export const getInvoicesSearchPage = (state: InvoicesState) => state.searchPage;
 export const getInvoicesSearchRange = (state: InvoicesState) => state.searchRange;

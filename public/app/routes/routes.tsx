@@ -376,6 +376,10 @@ export function getAppRoutes(): RouteDescriptor[] {
       component: SafeDynamicImport(() => import(/* webpackChunkName: "ConnectionPage" */ 'app/features/billing/connections/ConnectionPages')),
     },
     {
+      path: '/org/connections/:id/resources/new',
+      component: SafeDynamicImport(() => import(/* webpackChunkName: "CreateResource" */ 'app/features/billing/connections/CreateResource')),
+    },
+    {
       path: '/org/connections/:id/invoices/:invoiceId',
       component: SafeDynamicImport(
         () => import(/* webpackChunkName: "InvoicePage" */ 'app/features/billing/connections/InvoicePage')
