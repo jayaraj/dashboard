@@ -8,14 +8,15 @@ import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { StoreState } from 'app/types';
 
+import ConnectionLogList from './ConnectionLogList';
+import ConnectionResourceList from './ConnectionResourceList';
 import ConnectionSettings from './ConnectionSettings';
+import ConnectionUserList from './ConnectionUserList';
 import InvoiceList from './InvoiceList';
+import TransactionList from './TransactionList';
 import { loadConnection } from './state/actions';
 import { getPageNav } from './state/navModel';
 import { getConnection } from './state/selectors';
-import TransactionList from './TransactionList';
-import ConnectionUserList from './ConnectionUserList';
-import ConnectionLogList from './ConnectionLogList';
 
 interface ConnectionPageRouteParams {
   id: string;
@@ -32,6 +33,7 @@ enum PageTypes {
   Invoices = 'invoices',
   Transactions = 'transactions',
   Logs = 'logs',
+  Resources = 'resources',
   Users = 'users',
   Settings = 'settings',
 }
@@ -82,7 +84,7 @@ export class ConnectionPages extends PureComponent<Props, State> {
   }
 
   getCurrentPage() {
-    const pages = ['invoices', 'transactions', 'logs', 'users', 'settings'];
+    const pages = ['invoices', 'transactions', 'logs', 'resources', 'users', 'settings'];
     const currentPage = this.props.pageName;
     return includes(pages, currentPage) ? currentPage : pages[0];
   }
@@ -97,13 +99,13 @@ export class ConnectionPages extends PureComponent<Props, State> {
         return <TransactionList/>;
       case PageTypes.Logs:
         return <ConnectionLogList/>;
+      case PageTypes.Resources:
+        return <ConnectionResourceList connection={connection!}/>;
       case PageTypes.Users:
         return <ConnectionUserList/>;
       case PageTypes.Settings:
         return <ConnectionSettings connection={connection!} />;
-        
     }
-
     return null;
   }
 

@@ -599,6 +599,7 @@ func (hs *HTTPServer) registerRoutes() {
 			connectionsRoute.Delete("/:connectionId", authorize(reqSignedIn, profilesCreateAccessEvaluator), routing.Wrap(hs.DeleteConnection))
 			connectionsRoute.Get("/:connectionId/logs", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetConnectionLogs))
 			connectionsRoute.Get("/:connectionId/users", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetConnectionUsers))
+			connectionsRoute.Get("/:connectionId/resources", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetConnectionResources))
 			connectionsRoute.Get("/:connectionId/invoices", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetInvoices))
 			connectionsRoute.Post("/:connectionId/invoices", authorize(reqEditorRole, invoicesCreateAccessEvaluator), routing.Wrap(hs.CreateInvoice))
 			connectionsRoute.Post("/:connectionId/transactions", authorize(reqEditorRole, transactionsCreateAccessEvaluator), routing.Wrap(hs.CreateTransaction))
@@ -609,6 +610,8 @@ func (hs *HTTPServer) registerRoutes() {
 			connectionsRoute.Get("/group/:groupId", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetConnectionByGroup))
 			connectionsRoute.Get("/group/:grouppath", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetConnectionsByGroupPathId))
 			connectionsRoute.Delete("/:connectionId/users/:userId", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.RemoveUserConnection))
+			connectionsRoute.Post("/:connectionId/resources", authorize(reqSignedIn, connectionsWriteAccessEvaluator), routing.Wrap(hs.CreateConnectionResource))
+			connectionsRoute.Delete("/:connectionId/resources/:resourceId", authorize(reqSignedIn, connectionsWriteAccessEvaluator), routing.Wrap(hs.RemoveConnectionResource))
 		})
 
 		// Invoices
@@ -627,11 +630,15 @@ func (hs *HTTPServer) registerRoutes() {
 			fixedchargesRoute.Get("/", authorize(reqSignedIn, fixedChargesReadAccessEvaluator), routing.Wrap(hs.GetFixedCharges))
 		})
 
+		// Dashboard
+		apiRoute.Group("/dashboards", func(dashboardRoute routing.RouteRegister) {
+			dashboardRoute.Get("/slug/:slug", authorize(reqSignedIn, ac.EvalPermission(dashboards.ActionDashboardsRead)), routing.Wrap(hs.GetDashboardUrlFromSlug))
+		})
+
 		/*******************Billing******************/
 
 		// Dashboard
 		apiRoute.Group("/dashboards", func(dashboardRoute routing.RouteRegister) {
-			dashboardRoute.Get("/slug/:slug", authorize(reqSignedIn, ac.EvalPermission(dashboards.ActionDashboardsRead)), routing.Wrap(hs.GetDashboardUrlFromSlug))
 			dashboardRoute.Get("/uid/:uid", authorize(reqSignedIn, ac.EvalPermission(dashboards.ActionDashboardsRead)), routing.Wrap(hs.GetDashboard))
 			dashboardRoute.Delete("/uid/:uid", authorize(reqSignedIn, ac.EvalPermission(dashboards.ActionDashboardsDelete)), routing.Wrap(hs.DeleteDashboardByUID))
 			dashboardRoute.Group("/uid/:uid", func(dashUidRoute routing.RouteRegister) {

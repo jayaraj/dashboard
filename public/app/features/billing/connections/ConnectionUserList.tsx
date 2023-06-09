@@ -53,7 +53,7 @@ export const ConnectionUserList: FC<Props> = ({
     const canWrite = contextSrv.hasAccess(AccessControlAction.ActionConnectionsWrite, fallback);
     const canDelete = (!canWrite)? contextSrv.user.id === user.user_id: canWrite;
     return (
-      <tr key={user.id}>
+      <tr key={user.user_id}>
         <td className="link-td">{user.name}</td>
         <td className="link-td">{user.login}</td>
         <td className="link-td">{user.email}</td>

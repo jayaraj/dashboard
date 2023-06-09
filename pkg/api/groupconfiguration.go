@@ -14,11 +14,8 @@ import (
 )
 
 func (hs *HTTPServer) UpdateGroupConfiguration(c *models.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
-	}
-	if id != 0 && !hs.IsGroupAccessible(c) {
+	access, id := hs.IsGroupAccessible(c)
+	if id != 0 && !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	config := web.Params(c.Req)[":config"]
@@ -53,12 +50,8 @@ func (hs *HTTPServer) UpdateGroupConfiguration(c *models.ReqContext) response.Re
 }
 
 func (hs *HTTPServer) GetGroupConfiguration(c *models.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
-	}
-
-	if id != 0 && !hs.IsGroupAccessible(c) {
+	access, id := hs.IsGroupAccessible(c)
+	if id != 0 && !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	config := web.Params(c.Req)[":config"]

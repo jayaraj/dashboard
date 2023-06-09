@@ -46,14 +46,6 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection }) 
 
   return (
     <>
-      {((connection) && (connection.id !== 0)) && (
-        <div className="page-action-bar">
-          <div className="gf-form gf-form--grow"></div>
-          {((group) && (group.id !== 0)) && (
-            <LinkButton href={`/org/groups/edit/${group.id}/resources`}>Group: {group.name}</LinkButton>
-          )}
-        </div>
-      )}
       <VerticalGroup>
         <Form
           defaultValues={{ ...connection }}
@@ -107,10 +99,14 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection }) 
                   </Field>
                 </VerticalGroup>
               </HorizontalGroup>
-              
-              <Button type="submit" disabled={!canWrite}>
-                Update
-              </Button>
+              <HorizontalGroup>
+                <Button type="submit" disabled={!canWrite}>
+                  Update
+                </Button>
+                {((group) && (group.id !== 0)) && (
+                  <LinkButton href={`/org/groups/edit/${group.id}/resources`}>Group: {group.name}</LinkButton>
+                )}
+              </HorizontalGroup> 
             </FieldSet>
           )}
         </Form>
