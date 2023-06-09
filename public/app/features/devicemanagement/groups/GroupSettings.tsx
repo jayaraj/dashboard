@@ -100,17 +100,6 @@ export const GroupSettings: FC<Props> = ({ group, updateGroup, updateGroupConfig
 
   return (
     <>
-      {(!group.child) && (
-        <div className="page-action-bar">
-          <div className="gf-form gf-form--grow"></div>
-          {((connection) && (connection.id !== 0)) && (
-            <LinkButton disabled={!canCreate} href={`/org/connections/edit/${connection.id}/settings`}>Connection: {connection.connection_ext}</LinkButton>
-          )}
-          {((!connection) || (connection.id === 0)) && (
-            <LinkButton disabled={!canCreate} href={`/org/groups/${group.id}/connections/new`}>Create Connection</LinkButton>
-          )}
-        </div>
-      )}
       <VerticalGroup>
         <Form
           defaultValues={{ name: group.name, type: group.type }}
@@ -139,9 +128,22 @@ export const GroupSettings: FC<Props> = ({ group, updateGroup, updateGroupConfig
                   <FormPanel configuration={{sections: configurationType.configuration.sections, elements: elements}} disabled={!canWrite} onChange={onChange}></FormPanel> 
                 </VerticalGroup>
               </HorizontalGroup>
-              <Button type="submit" disabled={!canWrite}>
-                Update
-              </Button>
+              <HorizontalGroup>
+                <Button type="submit" disabled={!canWrite}>
+                  Update
+                </Button>
+                {(!group.child) && (
+                  <>
+                    {((connection) && (connection.id !== 0)) && (
+                      <LinkButton disabled={!canCreate} href={`/org/connections/edit/${connection.id}/settings`}>Connection: {connection.connection_ext}</LinkButton>
+                    )}
+                    {((!connection) || (connection.id === 0)) && (
+                      <LinkButton disabled={!canCreate} href={`/org/groups/${group.id}/connections/new`}>Create Connection</LinkButton>
+                    )}
+                  </>
+                )}
+              </HorizontalGroup>
+              
             </FieldSet>
           )}
         </Form>

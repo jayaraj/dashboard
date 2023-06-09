@@ -1,9 +1,10 @@
 import { getBackendSrv } from '@grafana/runtime';
 import { updateNavIndex } from 'app/core/actions';
-import {CreateTransactionDTO, QueryRange, ThunkResult, UpdateConnectionDTO, connectionLogPageLimit, connectionPageLimit, invoicesPageLimit, transactionsPageLimit, connectionUserPageLimit } from 'app/types';
+import {CreateTransactionDTO, QueryRange, ThunkResult, UpdateConnectionDTO, connectionLogPageLimit, connectionPageLimit, invoicesPageLimit, transactionsPageLimit, connectionUserPageLimit, connectionResourcePageLimit } from 'app/types';
 
 import { buildNavModel } from './navModel';
-import { connectionLoaded, connectionsLoaded, setConnectionsSearchPage, setConnectionLogsSearchPage, setConnectionLogsCount, connectionLogsLoaded, connectionUsersLoaded, setConnectionUsersSearchPage, setConnectionUsersCount, invoicesLoaded, setInvoicesSearchRange, setInvoicesSearchPage, setInvoicesCount, invoiceLoaded, transactionsLoaded, setTransactionsSearchPage, setTransactionsCount, setConnectionsCount, orgConfigurationsLoaded } from './reducers';
+import { connectionLoaded, connectionsLoaded, setConnectionsSearchPage, setConnectionLogsSearchPage, setConnectionLogsCount, connectionLogsLoaded, connectionUsersLoaded, setConnectionUsersSearchPage, setConnectionUsersCount, invoicesLoaded, setInvoicesSearchRange, setInvoicesSearchPage, setInvoicesCount, invoiceLoaded, transactionsLoaded, setTransactionsSearchPage, setTransactionsCount, setConnectionsCount, orgConfigurationsLoaded, connectionResourcesLoaded, setConnectionResourcesSearchPage, setConnectionResourcesCount } from './reducers';
+
 
 export function loadConnections(query: string, page: number): ThunkResult<void> {
   return async (dispatch) => {
@@ -85,6 +86,27 @@ export function deleteConnectionUser(id: number): ThunkResult<void> {
     const connection = getStore().connection.connection;
     await getBackendSrv().delete(`/api/connections/${connection.id}/users/${id}`);
     dispatch(loadConnectionUsers(1));
+  };
+}
+
+export function loadConnectionResources(page: number): ThunkResult<void> {
+  return async (dispatch, getStore) => {
+    const connection = getStore().connection.connection;
+    const response = await getBackendSrv().get(`/api/connections/${connection.id}/resources`, {
+      page: page,
+      perPage: connectionResourcePageLimit,
+    });
+    dispatch(connectionResourcesLoaded(response.group_resources));
+    dispatch(setConnectionResourcesSearchPage(response.page));
+    dispatch(setConnectionResourcesCount(response.count));
+  };
+}
+
+export function deleteConnectionResource(id: number, uuid: string): ThunkResult<void> {
+  return async (dispatch, getStore) => {
+    const connection = getStore().connection.connection;
+    await getBackendSrv().delete(`/api/connections/${connection.id}/resources/${id}?uuid=${uuid}`);
+    dispatch(loadConnectionResources(1));
   };
 }
 
