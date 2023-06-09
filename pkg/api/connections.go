@@ -346,7 +346,7 @@ func (hs *HTTPServer) SendConnectionUserOtp(c *models.ReqContext) response.Respo
 	if err != nil {
 		return response.Error(500, "failed marshal create", err)
 	}
-	url := fmt.Sprintf("%sapi/connections/%d/otp", hs.ResourceService.GetConfig().BillingUrl, number)
+	url := fmt.Sprintf("%sapi/connections/number/%d/otp", hs.ResourceService.GetConfig().BillingUrl, number)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    body,
@@ -392,7 +392,7 @@ func (hs *HTTPServer) AddUserConnection(c *models.ReqContext) response.Response 
 	if err != nil {
 		return response.Error(500, "failed marshal create", err)
 	}
-	url := fmt.Sprintf("%sapi/connections/%d/users", hs.ResourceService.GetConfig().BillingUrl, number)
+	url := fmt.Sprintf("%sapi/connections/number/%d/users", hs.ResourceService.GetConfig().BillingUrl, number)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    body,
@@ -453,6 +453,9 @@ func (hs *HTTPServer) AddUserConnection(c *models.ReqContext) response.Response 
 		}
 	}
 
+	if c.OrgID != dto.Result.OrgId {
+		hs.changeOrg(c, dto.Result.OrgId)
+	}
 	return response.Success("added user to connection")
 }
 
@@ -610,6 +613,129 @@ func (hs *HTTPServer) RemoveUserConnection(c *models.ReqContext) response.Respon
 			}
 			return response.Error(500, "Could not add user to organization", err)
 		}
+		hs.changeOrg(c, 1)
+	} else {
+		hs.changeOrg(c, userAllConnections.Result.Connections[0].OrgId)
+	}
+	return response.Success("removed user from connection")
+}
+
+func (hs *HTTPServer) changeOrg(c *models.ReqContext, orgId int64) {
+
+	if !hs.validateUsingOrg(c.Req.Context(), c.UserID, orgId) {
+		hs.NotFoundHandler(c)
+	}
+
+	cmd := models.SetUsingOrgCommand{UserId: c.UserID, OrgId: orgId}
+
+	if err := hs.SQLStore.SetUsingOrg(c.Req.Context(), &cmd); err != nil {
+		hs.NotFoundHandler(c)
+	}
+
+	c.Redirect(hs.Cfg.AppSubURL + "/")
+}
+
+func (hs *HTTPServer) CreateConnectionResource(c *models.ReqContext) response.Response {
+	access, connection := hs.IsConnectionAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	dto := dtos.CreateGroupResourceMsg{
+		OrgId:   c.OrgID,
+		GroupId: connection.GroupId,
+	}
+	if err := web.Bind(c.Req, &dto); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+	body, err := json.Marshal(dto)
+	if err != nil {
+		return response.Error(500, "failed marshal create", err)
+	}
+	url := fmt.Sprintf("%sapi/connections/%d/resources?created_by=%s", hs.ResourceService.GetConfig().BillingUrl, connection.Id, c.NameOrFallback())
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    body,
+		HttpMethod: http.MethodPost,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to create", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+	return response.JSON(http.StatusOK, dto.Result)
+}
+
+func (hs *HTTPServer) GetConnectionResources(c *models.ReqContext) response.Response {
+	access, connection := hs.IsConnectionAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	query := c.Query("query")
+	perPage := c.QueryInt("perPage")
+	if perPage <= 0 {
+		perPage = 20
+	}
+	page := c.QueryInt("page")
+	if page <= 0 {
+		page = 1
+	}
+	url := fmt.Sprintf("%sapi/groups/%d/resources?query=%s&page=%d&perPage=%d", hs.ResourceService.GetConfig().ResourceUrl, connection.GroupId, query, page, perPage)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to get", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	dto := dtos.GetGroupResourcesMsg{}
+	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+	return response.JSON(http.StatusOK, dto.Result)
+}
+
+func (hs *HTTPServer) RemoveConnectionResource(c *models.ReqContext) response.Response {
+	access, connection := hs.IsConnectionAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	resourceId, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "resourceId is invalid", err)
+	}
+	uuid := c.Query("uuid")
+
+	url := fmt.Sprintf("%sapi/connections/%d/resources/%d?uuid=%s&deleted_by=%s", hs.ResourceService.GetConfig().BillingUrl, connection.Id, resourceId, uuid, c.NameOrFallback())
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodDelete,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to delete", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	return response.Success("removed user from connection")
 }

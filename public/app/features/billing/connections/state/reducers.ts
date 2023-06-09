@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { Connection, ConnectionLog, ConnectionLogsState, ConnectionsState, ConnectionState, ConnectionUser, ConnectionUsersState, Invoice, InvoicesState, InvoiceState, OrgConfiguration, OrgConfigurationState, QueryRange, Transaction, TransactionsState } from 'app/types';
+import { Connection, ConnectionLog, ConnectionLogsState, ConnectionsState, ConnectionState, ConnectionUser, ConnectionUsersState, Invoice, InvoicesState, InvoiceState, OrgConfiguration, OrgConfigurationState, QueryRange, Transaction, TransactionsState, ConnectionResource, ConnectionResourcesState } from 'app/types';
 
 export const initialConnectionsState: ConnectionsState = {
   connections: [],
@@ -97,6 +97,35 @@ export const { connectionUsersLoaded, setConnectionUsersSearchPage, setConnectio
   connectionUsersSlice.actions;
 export const connectionUsersReducer = connectionUsersSlice.reducer;
 
+export const initialConnectionResourcesState: ConnectionResourcesState = {
+  connectionResources: [],
+  connectionResourcesCount: 0,
+  searchPage: 1,
+  searchQuery: '',
+  hasFetched: false,
+};
+const connectionResourcesSlice = createSlice({
+  name: 'connectionResources',
+  initialState: initialConnectionResourcesState,
+  reducers: {
+    connectionResourcesLoaded: (state, action: PayloadAction<ConnectionResource[]>): ConnectionResourcesState => {
+      return { ...state, hasFetched: true, connectionResources: action.payload };
+    },
+    setConnectionResourcesSearchPage: (state, action: PayloadAction<number>): ConnectionResourcesState => {
+      return { ...state, searchPage: action.payload };
+    },
+    setConnectionResourcesSearchQuery: (state, action: PayloadAction<string>): ConnectionResourcesState => {
+      return { ...state, searchQuery: action.payload };
+    },
+    setConnectionResourcesCount: (state, action: PayloadAction<number>): ConnectionResourcesState => {
+      return { ...state, connectionResourcesCount: action.payload };
+    },
+  },
+});
+export const { connectionResourcesLoaded, setConnectionResourcesSearchQuery, setConnectionResourcesSearchPage, setConnectionResourcesCount } =
+  connectionResourcesSlice.actions;
+export const connectionResourcesReducer = connectionResourcesSlice.reducer;
+
 export const initialInvoicesState: InvoicesState = {
   invoices: [],
   invoicesCount: 0,
@@ -189,6 +218,7 @@ export default {
   connection: connectionReducer,
   connectionLogs: connectionLogsReducer,
   connectionUsers: connectionUsersReducer,
+  connectionResources: connectionResourcesReducer,
   invoices: invoicesReducer,
   invoice: invoiceReducer,
   transactions: transactionsReducer,
