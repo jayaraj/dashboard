@@ -3,25 +3,27 @@ import { connect, ConnectedProps } from 'react-redux';
 
 import { getBackendSrv, locationService } from '@grafana/runtime';
 import { Button, Form, Field, FieldSet, InputControl, Input, Select, VerticalGroup, HorizontalGroup } from '@grafana/ui';
+import { GroupPicker } from 'app/core/components/GroupPicker/GroupPicker';
 import { Page } from 'app/core/components/Page/Page';
 import { contextSrv } from 'app/core/core';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
-import { CreateConnectionDTO,  Profile,  StoreState,  connectionStatusTypes} from 'app/types';
+import { CreateConnectionDTO,  Group,  Profile,  StoreState,  connectionStatusTypes} from 'app/types';
 import { stringToSelectableValue, stringsToSelectableValues } from '../../alerting/unified/utils/amroutes';
 
-function mapStateToProps(state: StoreState) {
+
+interface OwnProps extends GrafanaRouteComponentProps<{}> {}
+function mapStateToProps(state: StoreState, props: OwnProps) {
   return {
   };
 }
 const mapDispatchToProps = {};
 const connector = connect(mapStateToProps, mapDispatchToProps);
-interface OwnProps extends GrafanaRouteComponentProps<{ id: string }> {}
 export type Props = OwnProps & ConnectedProps<typeof connector>;
 
-export const CreateConnection = ({match}: Props): JSX.Element => {
-  const canWrite = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
+export const CreateConnection = ({}: Props): JSX.Element => {
+  let canWrite = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
   let [profiles, setProfiles] = useState(stringsToSelectableValues([]as string[]));
-  const groupId = parseInt(match.params.id, 10);
+  const [group, setGroup] = useState<Group>({} as Group);
 
   useEffect(() => {
     profilesRequest();
@@ -34,7 +36,7 @@ export const CreateConnection = ({match}: Props): JSX.Element => {
 
   const create = async (dto: CreateConnectionDTO) => {
     const result = await getBackendSrv().post('/api/connections', {
-      group_id: groupId,
+      group_parent_id: group.id,
       profile: dto.profile,
       status: dto.status,
       name: dto.name,
@@ -52,15 +54,29 @@ export const CreateConnection = ({match}: Props): JSX.Element => {
     }
   };
 
+  const onChange = (group?: Group) => {
+    if (group) {
+      setGroup(group);
+    } else {
+      setGroup({} as Group)
+    }
+  }
+
+  const filterFunction = (g: Group) => {
+    return !g.type.toLowerCase().includes('connection');
+  };
+
   return (
     <Page navId="connections">
       <Page.Contents>
         <Form
           onSubmit={(dto: CreateConnectionDTO) => create(dto)}
-          disabled={!canWrite}
         >
           {({ register, control }) => (
             <FieldSet>
+              <Field label="Group" disabled={!canWrite} description="Select a leaf group/node to create a connection">
+                <GroupPicker onChange={onChange} filterFunction={filterFunction} ></GroupPicker>
+              </Field>
               <HorizontalGroup  align = 'normal'>
                 <VerticalGroup>
                   <Field label="Name" disabled={!canWrite}>
@@ -106,7 +122,7 @@ export const CreateConnection = ({match}: Props): JSX.Element => {
                 </VerticalGroup>
               </HorizontalGroup>
               
-              <Button type="submit" disabled={!canWrite}>
+              <Button type="submit" disabled={(!canWrite || !group.id )}>
                 Create
               </Button>
             </FieldSet>
