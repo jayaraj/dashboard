@@ -50,7 +50,7 @@ export interface Connection {
 }
 
 export interface CreateConnectionDTO {
-  group_id: number;
+  group_parent_id: number;
   profile: string;
   status: string;
   name: string;

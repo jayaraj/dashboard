@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
-import { Input, Field, Form, Button, FieldSet, VerticalGroup, HorizontalGroup, InputControl, Select, LinkButton} from '@grafana/ui';
+import { Input, Field, Form, Button, FieldSet, VerticalGroup, HorizontalGroup, InputControl, Select, InfoBox} from '@grafana/ui';
 import { contextSrv } from 'app/core/core';
 import { getBackendSrv } from 'app/core/services/backend_srv';
-import { AccessControlAction, Connection, Group, Profile, UpdateConnectionDTO, connectionStatusTypes } from 'app/types';
+import { AccessControlAction, Connection, Profile, UpdateConnectionDTO, connectionStatusTypes } from 'app/types';
 
 import { stringToSelectableValue, stringsToSelectableValues } from '../../alerting/unified/utils/amroutes';
 import { updateConnection } from './state/actions';
@@ -25,11 +25,11 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection }) 
   const fallback = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
   const canWrite = contextSrv.hasAccess(AccessControlAction.ActionConnectionsWrite, fallback);
   let [profiles, setProfiles] = useState(stringsToSelectableValues([]as string[]));
-  let [group, setGroup] = useState<Group>({} as Group);
+  let [groupPathname, setGroupPathname] = useState<string>('');
 
-  const groupRequest = async () => {
-    const response = await getBackendSrv().get(`/api/groups/${connection.group_id}`);
-    setGroup(response)
+  const groupPathnameRequest = async () => {
+    const response = await getBackendSrv().get(`/api/groups/${connection.group_id}/pathname`);
+    setGroupPathname(response.pathname)
   };
 
   const profilesRequest = async () => {
@@ -37,10 +37,9 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection }) 
     response.profiles.map((profile: Profile) => setProfiles((opts) => [...opts, stringToSelectableValue(profile.name)]))
   };
 
-
   useEffect(() => {
     profilesRequest();
-    groupRequest();
+    groupPathnameRequest();
   }, []);
 
 
@@ -54,6 +53,8 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection }) 
         >
           {({ register, control }) => (
             <FieldSet label={'Connection Settings'}>
+
+              <InfoBox>{groupPathname}</InfoBox>
               <HorizontalGroup   align = 'normal'>
                 <VerticalGroup>
                   <Field label="Name" disabled={!canWrite}>
@@ -103,9 +104,6 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection }) 
                 <Button type="submit" disabled={!canWrite}>
                   Update
                 </Button>
-                {((group) && (group.id !== 0)) && (
-                  <LinkButton href={`/org/groups/edit/${group.id}/resources`}>Group: {group.name}</LinkButton>
-                )}
               </HorizontalGroup> 
             </FieldSet>
           )}
