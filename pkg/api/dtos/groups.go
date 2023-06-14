@@ -84,6 +84,7 @@ type GetGroupByIdMsg struct {
 }
 
 type GetGroupsMsg struct {
+	Query   string `json:"query"`
 	User    User   `json:"user"`
 	Parent  int64  `json:"parent"`
 	Page    int64  `json:"page"`
@@ -95,6 +96,13 @@ type GetParentGroupsMsg struct {
 	GroupId int64 `json:"-"`
 	User    User  `json:"user"`
 	Result  Group `json:"-"`
+}
+
+type GetGroupPathNameMsg struct {
+	// swagger:ignore
+	Id int64 `json:"id"`
+	// swagger:ignore
+	Result string
 }
 
 type GroupResources struct {

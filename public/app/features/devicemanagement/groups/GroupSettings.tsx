@@ -3,12 +3,12 @@ import { connect, ConnectedProps } from 'react-redux';
 
 import { dateMath } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
-import { Button, Field, FieldSet, Form, VerticalGroup, Input, HorizontalGroup, LinkButton, Select } from '@grafana/ui';
+import { Button, Field, FieldSet, Form, VerticalGroup, Input, HorizontalGroup, Select } from '@grafana/ui';
 import { FormPanel } from 'app/core/components/CustomForm/components';
 import { FormElementType } from 'app/core/components/CustomForm/constants';
 import { FormElement, LayoutSection } from 'app/core/components/CustomForm/types';
 import { contextSrv } from 'app/core/services/context_srv';
-import { Group, AccessControlAction, GroupConfiguration, ConfigurationType, UpdateGroupDTO, Connection } from 'app/types';
+import { Group, AccessControlAction, GroupConfiguration, ConfigurationType, UpdateGroupDTO } from 'app/types';
 
 import { updateGroup, updateGroupConfiguration } from './state/actions';
 import { stringsToSelectableValues, stringToSelectableValue } from 'app/features/alerting/unified/utils/amroutes';
@@ -27,24 +27,17 @@ export type Props = ConnectedProps<typeof connector> & OwnProps;
 export const GroupSettings: FC<Props> = ({ group, updateGroup, updateGroupConfiguration }) => {
   const fallback = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
   const canWrite = contextSrv.hasAccess(AccessControlAction.ActionGroupsWrite, fallback);
-  const canCreate = contextSrv.hasAccess(AccessControlAction.ActionConnectionsCreate, fallback);
   const label = 'Group Settings';
   let [configurationType, setConfigurationType] = useState<ConfigurationType>({configuration: {sections: [] as LayoutSection[], elements: [] as FormElement[]}} as ConfigurationType);
   let [groupConfiguration, setGroupConfiguration] = useState<GroupConfiguration>({} as GroupConfiguration);
   let [updatedGroupConfiguration, setUpdatedGroupConfiguration] = useState<any>({});
   let [elements, setElements] = useState<FormElement[]>([]);
-  let [connection, setConnection] = useState<Connection>({} as Connection);
   let [types, setTypes] = useState(stringsToSelectableValues([]as string[]));
   let [type, setType] = useState<string>(group.type);
 
   const configurationTypeRequest = async (type: string) => {
     const response = await getBackendSrv().get(`/api/configurationtypes/association/group/type/${type}`);
     setConfigurationType(response)
-  };
-
-  const connectionRequest = async () => {
-    const response = await getBackendSrv().get(`/api/connections/group/${group.id}`);
-    setConnection(response)
   };
 
   const groupConfigurationRequest = async (type: string) => {
@@ -68,7 +61,6 @@ export const GroupSettings: FC<Props> = ({ group, updateGroup, updateGroupConfig
     typesRequest();
     configurationTypeRequest(type? type: group.type);
     groupConfigurationRequest(type? type: group.type);
-    connectionRequest();
   }, []);
 
   useEffect(() => {
@@ -132,16 +124,6 @@ export const GroupSettings: FC<Props> = ({ group, updateGroup, updateGroupConfig
                 <Button type="submit" disabled={!canWrite}>
                   Update
                 </Button>
-                {(!group.child) && (
-                  <>
-                    {((connection) && (connection.id !== 0)) && (
-                      <LinkButton disabled={!canCreate} href={`/org/connections/edit/${connection.id}/settings`}>Connection: {connection.connection_ext}</LinkButton>
-                    )}
-                    {((!connection) || (connection.id === 0)) && (
-                      <LinkButton disabled={!canCreate} href={`/org/groups/${group.id}/connections/new`}>Create Connection</LinkButton>
-                    )}
-                  </>
-                )}
               </HorizontalGroup>
               
             </FieldSet>

@@ -65,22 +65,21 @@ type ConnectionLogs struct {
 }
 
 type CreateConnectionMsg struct {
-	OrgId       int64      `json:"org_id"`
-	GroupId     int64      `json:"group_id" binding:"required"`
-	GroupPathId string     `json:"group_path_id"`
-	Profile     string     `json:"profile" binding:"required"`
-	Status      string     `json:"status" binding:"required"`
-	Name        string     `json:"name" binding:"required"`
-	Phone       string     `json:"phone" binding:"required"`
-	Email       string     `json:"email" binding:"required"`
-	Address1    string     `json:"address1" binding:"required"`
-	Address2    string     `json:"address2"`
-	City        string     `json:"city" binding:"required"`
-	State       string     `json:"state" binding:"required"`
-	Country     string     `json:"country" binding:"required"`
-	Pincode     string     `json:"pincode" binding:"required"`
-	Login       string     `json:"login"`
-	Result      Connection `json:"result"`
+	OrgId         int64      `json:"org_id"`
+	GroupParentId int64      `json:"group_parent_id" binding:"required"`
+	Profile       string     `json:"profile" binding:"required"`
+	Status        string     `json:"status" binding:"required"`
+	Name          string     `json:"name" binding:"required"`
+	Phone         string     `json:"phone" binding:"required"`
+	Email         string     `json:"email" binding:"required"`
+	Address1      string     `json:"address1" binding:"required"`
+	Address2      string     `json:"address2"`
+	City          string     `json:"city" binding:"required"`
+	State         string     `json:"state" binding:"required"`
+	Country       string     `json:"country" binding:"required"`
+	Pincode       string     `json:"pincode" binding:"required"`
+	Login         string     `json:"login"`
+	Result        Connection `json:"result"`
 }
 
 type UpdateConnectionMsg struct {

@@ -1,7 +1,9 @@
 import React, { PureComponent } from 'react';
 
 import { getBackendSrv } from '@grafana/runtime';
-import { DeleteButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, Select, CallToActionCard, Button, Input, Label, InlineField } from '@grafana/ui';
+import { DeleteButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, Select, CallToActionCard, Button, Input, Label, InlineField, LinkButton } from '@grafana/ui';
+import { SlideDown } from 'app/core/components/Animations/SlideDown';
+import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
 import { Page } from 'app/core/components/Page/Page';
 import PageLoader from 'app/core/components/PageLoader/PageLoader';
 import { contextSrv } from 'app/core/services/context_srv';
@@ -12,8 +14,6 @@ import { connectWithCleanUp } from '../../../core/components/connectWithCleanUp'
 import { deleteConnection, loadConnections } from './state/actions';
 import { setConnectionsSearchQuery } from './state/reducers';
 import { getConnectionsSearchQuery, getConnections, getConnectionsCount, getConnectionsSearchPage } from './state/selectors';
-import { SlideDown } from 'app/core/components/Animations/SlideDown';
-import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
 
 export interface Props {
   connections: Connection[];
@@ -135,6 +135,10 @@ export class ConnectionList extends PureComponent<Props, State> {
   renderEmptyList() {
     const { hasFetched, searchQuery } = this.props;
     const {isAdding, connectionExt, otp } = this.state;
+    const fallback = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
+    const canCreate = contextSrv.hasAccess(AccessControlAction.ActionConnectionsCreate, fallback);
+    const newConnectionHref = canCreate ? '/org/connections/new' : '#';
+
     return (
       <div>
         <div className="page-action-bar">
@@ -144,6 +148,9 @@ export class ConnectionList extends PureComponent<Props, State> {
           <Button className="pull-right" onClick={this.onSearch}>
             Search
           </Button>
+          <LinkButton href={newConnectionHref}  disabled={!canCreate}>
+            Create Connection
+          </LinkButton>
           <Button className="pull-right" onClick={this.onToggleAdding}>
             Add connection
           </Button>
@@ -188,6 +195,9 @@ export class ConnectionList extends PureComponent<Props, State> {
     const { connections, searchQuery, searchPage, connectionsCount } = this.props;
     const {isAdding, connectionExt, otp } = this.state;
     const totalPages = Math.ceil(connectionsCount / connectionPageLimit);
+    const fallback = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
+    const canCreate = contextSrv.hasAccess(AccessControlAction.ActionConnectionsCreate, fallback);
+    const newConnectionHref = canCreate ? '/org/connections/new' : '#';
 
     return (
       <>
@@ -198,6 +208,9 @@ export class ConnectionList extends PureComponent<Props, State> {
           <Button className="pull-right" onClick={this.onSearch}>
             Search
           </Button>
+          <LinkButton href={newConnectionHref}  disabled={!canCreate}>
+            Create Connection
+          </LinkButton>
           <Button className="pull-right" onClick={this.onToggleAdding}>
             Add connection
           </Button>

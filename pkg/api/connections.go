@@ -13,7 +13,6 @@ import (
 	"github.com/grafana/grafana/pkg/services/accesscontrol"
 	"github.com/grafana/grafana/pkg/services/org"
 	"github.com/grafana/grafana/pkg/services/resources"
-	"github.com/grafana/grafana/pkg/services/user"
 	"github.com/grafana/grafana/pkg/web"
 )
 
@@ -24,22 +23,15 @@ func (hs *HTTPServer) CreateConnection(c *models.ReqContext) response.Response {
 	if err := web.Bind(c.Req, &dto); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
 	}
-	if !hs.isGroupAccessible(c.Req.Context(), dto.GroupId, dtos.User{
+	if !hs.isGroupAccessible(c.Req.Context(), dto.GroupParentId, dtos.User{
 		UserId: c.UserID,
 		OrgId:  c.OrgID,
 		Role:   dtos.ConvertRoleToString(hs.UserRole(c)),
 	}) {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
-	query := models.GetUserProfileQuery{UserId: c.UserID}
-	if err := hs.SQLStore.GetUserProfile(c.Req.Context(), &query); err != nil {
-		if errors.Is(err, user.ErrUserNotFound) {
-			return response.Error(404, user.ErrUserNotFound.Error(), nil)
-		}
-		return response.Error(500, "Failed to get user", err)
-	}
 
-	dto.Login = query.Result.Login
+	dto.Login = c.NameOrFallback()
 	body, err := json.Marshal(dto)
 	if err != nil {
 		return response.Error(500, "failed marshal create", err)
@@ -451,6 +443,7 @@ func (hs *HTTPServer) AddUserConnection(c *models.ReqContext) response.Response 
 		if err := hs.accesscontrolService.DeleteUserPermissions(c.Req.Context(), 1, removeUsrCmd.UserId); err != nil {
 			hs.log.Warn("failed to delete permissions for user", "userID", removeUsrCmd.UserId, "orgID", 1, "err", err)
 		}
+		return hs.logoutUserFromAllDevicesInternal(c.Req.Context(), c.UserID)
 	}
 
 	if c.OrgID != dto.Result.OrgId {
@@ -575,6 +568,7 @@ func (hs *HTTPServer) RemoveUserConnection(c *models.ReqContext) response.Respon
 		if err := hs.accesscontrolService.DeleteUserPermissions(c.Req.Context(), 1, removeUsrCmd.UserId); err != nil {
 			hs.log.Warn("failed to delete permissions for user", "userID", removeUsrCmd.UserId, "orgID", 1, "err", err)
 		}
+		return hs.logoutUserFromAllDevicesInternal(c.Req.Context(), c.UserID)
 	}
 
 	//add user to default org 1
@@ -595,7 +589,7 @@ func (hs *HTTPServer) RemoveUserConnection(c *models.ReqContext) response.Respon
 		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 	userAllConnections := dtos.GetAllConnectionsByUserMsg{}
-	if err := json.Unmarshal(req.Response, &userConnections.Result); err != nil {
+	if err := json.Unmarshal(req.Response, &userAllConnections.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 
@@ -613,9 +607,7 @@ func (hs *HTTPServer) RemoveUserConnection(c *models.ReqContext) response.Respon
 			}
 			return response.Error(500, "Could not add user to organization", err)
 		}
-		hs.changeOrg(c, 1)
-	} else {
-		hs.changeOrg(c, userAllConnections.Result.Connections[0].OrgId)
+		return hs.logoutUserFromAllDevicesInternal(c.Req.Context(), c.UserID)
 	}
 	return response.Success("removed user from connection")
 }
