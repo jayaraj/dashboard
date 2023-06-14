@@ -1,4 +1,6 @@
 
+import { SelectableValue } from '@grafana/data';
+
 export const groupPageLimit = 50;
 
 export interface Group {
@@ -33,3 +35,11 @@ export interface GroupsState {
 export interface GroupState {
   group: Group;
 }
+
+export const groupToSelectableValue = (group: Group): SelectableValue<Group> => ({
+  label: group.name,
+  value: group,
+});
+
+export const groupsToSelectableValues = (arr: Group[] | undefined): Array<SelectableValue<Group>> =>
+  (arr ?? []).map(groupToSelectableValue);

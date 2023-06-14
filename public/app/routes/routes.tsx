@@ -320,12 +320,6 @@ export function getAppRoutes(): RouteDescriptor[] {
       ),
     },
     {
-      path: '/org/groups/:id/connections/new',
-      component: SafeDynamicImport(
-        () => import(/* webpackChunkName: "CreateConnection " */ 'app/features/billing/connections/CreateConnection')
-      ),
-    },
-    {
       path: '/org/groups/edit/:id/:page?',
       component: SafeDynamicImport(() => import(/* webpackChunkName: "GroupPages" */ 'app/features/devicemanagement/groups/GroupPages')),
     },
@@ -374,6 +368,12 @@ export function getAppRoutes(): RouteDescriptor[] {
     {
       path: '/org/connections/edit/:id/:page?',
       component: SafeDynamicImport(() => import(/* webpackChunkName: "ConnectionPage" */ 'app/features/billing/connections/ConnectionPages')),
+    },
+    {
+      path: '/org/connections/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateConnection" */ 'app/features/billing/connections/CreateConnection')
+      ),
     },
     {
       path: '/org/connections/:id/resources/new',

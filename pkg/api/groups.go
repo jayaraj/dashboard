@@ -146,6 +146,7 @@ func (hs *HTTPServer) GetGroupById(c *models.ReqContext) response.Response {
 }
 
 func (hs *HTTPServer) GetGroups(c *models.ReqContext) response.Response {
+	query := c.Query("query")
 	parent := c.QueryInt("parent")
 	perPage := c.QueryInt("perPage")
 	if perPage <= 0 {
@@ -156,6 +157,7 @@ func (hs *HTTPServer) GetGroups(c *models.ReqContext) response.Response {
 		page = 1
 	}
 	dto := dtos.GetGroupsMsg{
+		Query:  query,
 		Parent: int64(parent),
 		User: dtos.User{
 			UserId: c.UserID,
@@ -387,4 +389,37 @@ func (hs *HTTPServer) CreateGroupResource(c *models.ReqContext) response.Respons
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
+}
+
+func (hs *HTTPServer) GetGroupPathName(c *models.ReqContext) response.Response {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	url := fmt.Sprintf("%sapi/groups/%d/pathname", hs.ResourceService.GetConfig().ResourceUrl, id)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to get group", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	dto := dtos.GetGroupPathNameMsg{}
+	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+	resp := struct {
+		Pathname string `json:"pathname"`
+	}{
+		Pathname: dto.Result,
+	}
+	return response.JSON(http.StatusOK, resp)
 }
