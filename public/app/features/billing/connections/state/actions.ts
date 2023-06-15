@@ -1,9 +1,12 @@
+import { AppEvents } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
+import { appEvents } from 'app/core/core';
 import { updateNavIndex } from 'app/core/actions';
 import {CreateTransactionDTO, QueryRange, ThunkResult, UpdateConnectionDTO, connectionLogPageLimit, connectionPageLimit, invoicesPageLimit, transactionsPageLimit, connectionUserPageLimit, connectionResourcePageLimit } from 'app/types';
 
 import { buildNavModel } from './navModel';
 import { connectionLoaded, connectionsLoaded, setConnectionsSearchPage, setConnectionLogsSearchPage, setConnectionLogsCount, connectionLogsLoaded, connectionUsersLoaded, setConnectionUsersSearchPage, setConnectionUsersCount, invoicesLoaded, setInvoicesSearchRange, setInvoicesSearchPage, setInvoicesCount, invoiceLoaded, transactionsLoaded, setTransactionsSearchPage, setTransactionsCount, setConnectionsCount, orgConfigurationsLoaded, connectionResourcesLoaded, setConnectionResourcesSearchPage, setConnectionResourcesCount } from './reducers';
+import config from 'app/core/config';
 
 
 export function loadConnections(query: string, page: number): ThunkResult<void> {
@@ -81,10 +84,15 @@ export function loadConnectionUsers(page: number): ThunkResult<void> {
   };
 }
 
-export function deleteConnectionUser(id: number): ThunkResult<void> {
+export function deleteConnectionUser(id: number, orgId: number): ThunkResult<void> {
   return async (dispatch, getStore) => {
     const connection = getStore().connection.connection;
-    await getBackendSrv().delete(`/api/connections/${connection.id}/users/${id}`);
+    const response = await getBackendSrv().delete(`/api/connections/${connection.id}/users/${id}`);
+    if ((orgId !== response.org_id) && (response.org_id !== 0)) {
+      appEvents.emit(AppEvents.alertSuccess, ['User deleted']);
+      window.location.href = `${config.appSubUrl}${config.appSubUrl.endsWith('/') ? '' : '/'}?orgId=${response.org_id}`;
+      return;
+    }
     dispatch(loadConnectionUsers(1));
   };
 }
