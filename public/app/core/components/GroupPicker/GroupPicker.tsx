@@ -2,8 +2,8 @@ import { css } from '@emotion/css';
 import debouncePromise from 'debounce-promise';
 import React, { useEffect, useState, useCallback } from 'react';
 
-
-import { AsyncSelect, CustomScrollbar, useStyles, stylesFactory, HorizontalGroup, SelectValue } from '@grafana/ui';
+import { SelectableValue } from '@grafana/data';
+import { AsyncSelect, CustomScrollbar, useStyles, stylesFactory, HorizontalGroup } from '@grafana/ui';
 import { getBackendSrv } from 'app/core/services/backend_srv';
 import { Group } from 'app/types';
 
@@ -27,15 +27,15 @@ export const GroupPicker = ({onChange, filterFunction}: Props): JSX.Element | nu
     } 
   }, []);
 
-  const onSelected = (value: SelectValue<Group>, index: number) => {
+  const onSelected = (value: SelectableValue<Group>, index: number) => {
     setParents([
       ...parents.slice(0, index + 1)
     ]);
     if (value) {
-      if (value.value.child) {
+      if (value.value?.child) {
         setParents([
           ...parents.slice(0, index + 1),
-          { id: value.value.id},
+          { id: value.value!.id},
         ]);
       }
       if (onChange) {
@@ -67,7 +67,7 @@ export const GroupPicker = ({onChange, filterFunction}: Props): JSX.Element | nu
                 isClearable
                 defaultOptions={true}
                 loadOptions={(query: string) => debouncedLoadOptions(query, parent.id)}
-                onChange={(value: SelectValue<Group>) => onSelected(value, index)}
+                onChange={(value: SelectableValue<Group>) => onSelected(value, index)}
                 placeholder="Start typing to search"
                 noOptionsMessage="No groups found"
                 aria-label="Group picker"
