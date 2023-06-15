@@ -59,7 +59,7 @@ export const ConnectionUserList: FC<Props> = ({
         <td className="link-td">{user.email}</td>
         <td className="link-td"><OrgRolePicker aria-label="Role" value={user.role} disabled={true} onChange={()=>{}}/></td>
         <td className="text-right">
-          <DeleteButton aria-label="Delete" size="sm" disabled={!canDelete} onConfirm={() => deleteConnectionUser(user.user_id)}/>
+          <DeleteButton aria-label="Delete" size="sm" disabled={!canDelete} onConfirm={() => deleteConnectionUser(user.user_id, contextSrv.user.orgId)}/>
         </td>
       </tr>
     );

@@ -420,6 +420,10 @@ func (hs *HTTPServer) AddUserConnection(c *models.ReqContext) response.Response 
 		return response.Error(500, "Could not add user to organization", err)
 	}
 
+	var resp struct {
+		OrgId int64 `json:"org_id"`
+	}
+
 	//Removing user from org 1
 	if c.OrgID == 1 {
 		removeUsrCmd := &models.RemoveOrgUserCommand{
@@ -443,13 +447,18 @@ func (hs *HTTPServer) AddUserConnection(c *models.ReqContext) response.Response 
 		if err := hs.accesscontrolService.DeleteUserPermissions(c.Req.Context(), 1, removeUsrCmd.UserId); err != nil {
 			hs.log.Warn("failed to delete permissions for user", "userID", removeUsrCmd.UserId, "orgID", 1, "err", err)
 		}
-		return hs.logoutUserFromAllDevicesInternal(c.Req.Context(), c.UserID)
+		//return hs.logoutUserFromAllDevicesInternal(c.Req.Context(), c.UserID)
+		resp.OrgId = dto.Result.OrgId
+		return response.JSON(http.StatusOK, resp)
 	}
 
 	if c.OrgID != dto.Result.OrgId {
 		hs.changeOrg(c, dto.Result.OrgId)
+		resp.OrgId = dto.Result.OrgId
+		return response.JSON(http.StatusOK, resp)
 	}
-	return response.Success("added user to connection")
+	resp.OrgId = 0
+	return response.JSON(http.StatusOK, resp)
 }
 
 func (hs *HTTPServer) GetConnectionUsers(c *models.ReqContext) response.Response {
@@ -525,6 +534,9 @@ func (hs *HTTPServer) RemoveUserConnection(c *models.ReqContext) response.Respon
 		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
 
+	var resp struct {
+		OrgId int64 `json:"org_id"`
+	}
 	//connections by user delete from org if no connections
 	url = fmt.Sprintf("%sapi/orgs/%d/users/%d/connections", hs.ResourceService.GetConfig().BillingUrl, c.OrgID, c.UserID)
 	req = &resources.RestRequest{
@@ -546,32 +558,36 @@ func (hs *HTTPServer) RemoveUserConnection(c *models.ReqContext) response.Respon
 	if err := json.Unmarshal(req.Response, &userConnections.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
-	if userConnections.Result.Count == 0 {
-		removeUsrCmd := &models.RemoveOrgUserCommand{
-			UserId: c.UserID,
-			OrgId:  c.OrgID,
+	if userConnections.Result.Count != 0 {
+		resp.OrgId = 0
+		return response.JSON(http.StatusOK, resp)
+	}
+	//Remove from org and add it to 1
+	//****************** remove from org **********************
+	removeUsrCmd := &models.RemoveOrgUserCommand{
+		UserId: c.UserID,
+		OrgId:  c.OrgID,
+	}
+	if err := hs.SQLStore.RemoveOrgUser(c.Req.Context(), removeUsrCmd); err != nil {
+		if errors.Is(err, models.ErrLastOrgAdmin) {
+			return response.Error(400, "Cannot remove last organization admin", nil)
 		}
-		if err := hs.SQLStore.RemoveOrgUser(c.Req.Context(), removeUsrCmd); err != nil {
-			if errors.Is(err, models.ErrLastOrgAdmin) {
-				return response.Error(400, "Cannot remove last organization admin", nil)
-			}
-			return response.Error(500, "Failed to remove user from organization", err)
-		}
-
-		if removeUsrCmd.UserWasDeleted {
-			if err := hs.accesscontrolService.DeleteUserPermissions(c.Req.Context(), accesscontrol.GlobalOrgID, removeUsrCmd.UserId); err != nil {
-				hs.log.Warn("failed to delete permissions for user", "userID", removeUsrCmd.UserId, "orgID", accesscontrol.GlobalOrgID, "err", err)
-			}
-			return response.Success("User deleted")
-		}
-
-		if err := hs.accesscontrolService.DeleteUserPermissions(c.Req.Context(), 1, removeUsrCmd.UserId); err != nil {
-			hs.log.Warn("failed to delete permissions for user", "userID", removeUsrCmd.UserId, "orgID", 1, "err", err)
-		}
-		return hs.logoutUserFromAllDevicesInternal(c.Req.Context(), c.UserID)
+		return response.Error(500, "Failed to remove user from organization", err)
 	}
 
-	//add user to default org 1
+	if removeUsrCmd.UserWasDeleted {
+		if err := hs.accesscontrolService.DeleteUserPermissions(c.Req.Context(), accesscontrol.GlobalOrgID, removeUsrCmd.UserId); err != nil {
+			hs.log.Warn("failed to delete permissions for user", "userID", removeUsrCmd.UserId, "orgID", accesscontrol.GlobalOrgID, "err", err)
+		}
+		return response.Success("User deleted")
+	}
+
+	if err := hs.accesscontrolService.DeleteUserPermissions(c.Req.Context(), 1, removeUsrCmd.UserId); err != nil {
+		hs.log.Warn("failed to delete permissions for user", "userID", removeUsrCmd.UserId, "orgID", 1, "err", err)
+	}
+	//****************** remove from org **********************
+
+	//add user to default org 1 if not found in other orgs
 	url = fmt.Sprintf("%sapi/users/%d/connections", hs.ResourceService.GetConfig().BillingUrl, c.UserID)
 	req = &resources.RestRequest{
 		Url:        url,
@@ -607,24 +623,24 @@ func (hs *HTTPServer) RemoveUserConnection(c *models.ReqContext) response.Respon
 			}
 			return response.Error(500, "Could not add user to organization", err)
 		}
-		return hs.logoutUserFromAllDevicesInternal(c.Req.Context(), c.UserID)
+		//return hs.logoutUserFromAllDevicesInternal(c.Req.Context(), c.UserID)
+		hs.changeOrg(c, 1)
+		resp.OrgId = 1
+		return response.JSON(http.StatusOK, resp)
 	}
-	return response.Success("removed user from connection")
+	hs.changeOrg(c, userAllConnections.Result.Connections[0].OrgId)
+	resp.OrgId = userAllConnections.Result.Connections[0].OrgId
+	return response.JSON(http.StatusOK, resp)
 }
 
 func (hs *HTTPServer) changeOrg(c *models.ReqContext, orgId int64) {
-
 	if !hs.validateUsingOrg(c.Req.Context(), c.UserID, orgId) {
 		hs.NotFoundHandler(c)
 	}
-
 	cmd := models.SetUsingOrgCommand{UserId: c.UserID, OrgId: orgId}
-
 	if err := hs.SQLStore.SetUsingOrg(c.Req.Context(), &cmd); err != nil {
 		hs.NotFoundHandler(c)
 	}
-
-	c.Redirect(hs.Cfg.AppSubURL + "/")
 }
 
 func (hs *HTTPServer) CreateConnectionResource(c *models.ReqContext) response.Response {
