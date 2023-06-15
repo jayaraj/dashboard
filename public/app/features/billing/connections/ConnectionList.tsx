@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 
+import { AppEvents } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
+import { appEvents } from 'app/core/core';
 import { DeleteButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, Select, CallToActionCard, Button, Input, Label, InlineField, LinkButton } from '@grafana/ui';
 import { SlideDown } from 'app/core/components/Animations/SlideDown';
 import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
@@ -14,6 +16,7 @@ import { connectWithCleanUp } from '../../../core/components/connectWithCleanUp'
 import { deleteConnection, loadConnections } from './state/actions';
 import { setConnectionsSearchQuery } from './state/reducers';
 import { getConnectionsSearchQuery, getConnections, getConnectionsCount, getConnectionsSearchPage } from './state/selectors';
+import config from 'app/core/config';
 
 export interface Props {
   connections: Connection[];
@@ -59,7 +62,11 @@ export class ConnectionList extends PureComponent<Props, State> {
   onSubmit = async () => {
     const {connectionExt, otp } = this.state;
     await getBackendSrv().post(`/api/connections/number/${connectionExt}/users`, { otp: otp }).then((data) => {
-      console.log(data);
+      if ((contextSrv.user.orgId !== data.org_id) && (data.org_id !== 0)) {
+        appEvents.emit(AppEvents.alertSuccess, ['Connection added']);
+        window.location.href = `${config.appSubUrl}${config.appSubUrl.endsWith('/') ? '' : '/'}?orgId=${data.org_id}`;
+        return;
+      }
       return {};
     });
     this.fetchConnections('', 1);
