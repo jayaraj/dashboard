@@ -1,0 +1,17 @@
+{
+  "type": "panel",
+  "name": "Group Picker",
+  "id": "grouppicker",
+
+  "info": {
+    "description": "Group picker for resources",
+    "author": {
+      "name": "Group Picker",
+      "url": "https://www.grafo.com"
+    },
+    "logos": {
+      "small": "img/icn-grouppicker-panel.svg",
+      "large": "img/icn-grouppicker-panel.svg"
+    }
+  }
+}
