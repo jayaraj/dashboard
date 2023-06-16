@@ -54,7 +54,7 @@ import * as debugPanel from 'app/plugins/panel/debug/module';
 import * as dynamicForm from 'app/plugins/panel/dynamicform/module';
 import * as gaugePanel from 'app/plugins/panel/gauge/module';
 import * as gettingStartedPanel from 'app/plugins/panel/gettingstarted/module';
-import * as groupNavigator from 'app/plugins/panel/groupnavigator/module';
+import * as groupPicker from 'app/plugins/panel/grouppicker/module';
 import * as variableTable from 'app/plugins/panel/variabletable/module';
 import * as csvButton from 'app/plugins/panel/csvbutton/module';
 import * as histogramPanel from 'app/plugins/panel/histogram/module';
@@ -151,7 +151,7 @@ const builtInPlugins: any = {
   'app/plugins/panel/nodeGraph/module': nodeGraph,
   'app/plugins/panel/histogram/module': histogramPanel,
   'app/plugins/panel/alertGroups/module': alertGroupsPanel,
-  'app/plugins/panel/groupnavigator/module': groupNavigator,
+  'app/plugins/panel/grouppicker/module': groupPicker,
   'app/plugins/panel/variabletable/module': variableTable,
   'app/plugins/panel/csvbutton/module': csvButton,
   'app/plugins/panel/dynamicform/module': dynamicForm,
