@@ -15,7 +15,7 @@ export interface Props {
 export const GroupPicker = ({groupPath, onChange, filterFunction}: Props): JSX.Element | null => {
   const [loading, setLoading] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState<SelectableValue<Group>>({});
-  const [parents, setParents] = useState<Array<{id: number, selectedId: number, selectedGroup?: SelectableValue<Group>}>>([]);
+  const [parents, setParents] = useState<Array<{id: number, selectedId: number}>>([]);
   const loadOptions = useCallback(
     async (query: string, parent: number) => {
       const response = await getBackendSrv().get(`/api/groups?query=${query}&parent=${parent}&perPage=${1000}&page=${1}`);
@@ -33,7 +33,7 @@ export const GroupPicker = ({groupPath, onChange, filterFunction}: Props): JSX.E
     if (groupPath && groupPath !== '' && groupPath.includes(',')) {
       setLoading(true);
       const groupsIds = groupPath.split(',');
-      let paths = [];
+      let paths: Array<{id: number, selectedId: number}> = [];
       groupsIds.forEach((id, index) => {
         if (id === '0') {
           paths = [{ id: -1, selectedId: Number(groupsIds[index + 1])}];

@@ -69,14 +69,14 @@ export const CreateConnection = ({}: Props): JSX.Element => {
   return (
     <Page navId="connections">
       <Page.Contents>
+        <Field label="Group" disabled={!canWrite} description="Select a leaf group/node to create a connection">
+          <GroupPicker onChange={onChange} filterFunction={filterFunction} ></GroupPicker>
+        </Field>
         <Form
           onSubmit={(dto: CreateConnectionDTO) => create(dto)}
         >
           {({ register, control }) => (
             <FieldSet>
-              <Field label="Group" disabled={!canWrite} description="Select a leaf group/node to create a connection">
-                <GroupPicker onChange={onChange} filterFunction={filterFunction} ></GroupPicker>
-              </Field>
               <HorizontalGroup  align = 'normal'>
                 <VerticalGroup>
                   <Field label="Name" disabled={!canWrite}>
