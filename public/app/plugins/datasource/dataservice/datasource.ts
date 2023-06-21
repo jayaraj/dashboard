@@ -42,14 +42,17 @@ export class DataserviceDatasource extends DataSourceApi<DataserviceQuery, Datas
   query(options: any): Promise<DataQueryResponse> {
     const query = this.buildQueryParameters(options);
     query.targets = _.filter(query.targets, (item: { hide: boolean }) => item.hide !== true);
-    const grp = this.templateSrv.replace('${grp}', options.scopedVars, 'regex');
+    const grp = this.templateSrv.replace('${group}', options.scopedVars, 'regex');
+    let grpPath = this.templateSrv.replace('${grouppath}', options.scopedVars, 'regex');
     const resource = this.templateSrv.replace('${resource}', options.scopedVars, 'regex');
     const grpId = grp ? Number(grp) : 0;
+    grpPath = grpPath ? grpPath : '0,';
     const resourceId = resource ? Number(resource) : 0;
     query.user_id = this.context.user.id;
     query.org_id = this.context.user.orgId;
     query.resource_id = Number(resourceId);
     query.group_id = Number(grpId);
+    query.group_path = grpPath;
     query.role = this.context.user.isGrafanaAdmin
       ? this.convertRole('SuperAdmin')
       : this.convertRole(this.context.user.orgRole);

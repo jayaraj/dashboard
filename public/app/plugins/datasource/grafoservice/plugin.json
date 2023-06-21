@@ -1,0 +1,43 @@
+{
+  "dependencies": {
+    "grafanaDependency": ">=8.5.0",
+    "plugins": []
+  },
+  "id": "grafoservice",
+  "info": {
+    "author": {
+      "name": "Grafo",
+      "url": "https://grafo.live"
+    },
+    "description": "Grafo data source plugin",
+    "keywords": ["datasource", "grafoservice"],
+    "logos": {
+      "large": "img/logo.svg",
+      "small": "img/logo.svg"
+    },
+    "screenshots": [
+      {
+        "name": "Data source",
+        "path": "img/datasource.png"
+      }
+    ],
+    "updated": "2023-06-20",
+    "version": "1.0.0"
+  },
+  "metrics": true,
+  "routes": [
+    {
+      "method": "POST",
+      "path": "api",
+      "url": "{{ .JsonData.url }}/api",
+      "headers": [
+        {
+          "name": "token",
+          "content": "{{ .SecureJsonData.token }}"
+        }
+      ]
+    }
+  ],
+  "name": "Grafo Service",
+  "type": "datasource"
+}
