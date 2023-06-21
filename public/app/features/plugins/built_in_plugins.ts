@@ -41,6 +41,8 @@ const alertmanagerPlugin = async () =>
   await import(/* webpackChunkName: "alertmanagerPlugin" */ 'app/plugins/datasource/alertmanager/module');
 const dataservicePlugin = async () =>
   await import(/* webpackChunkName: "dataservicePlugin" */ 'app/plugins/datasource/dataservice/module');
+const grafoservicePlugin = async () =>
+  await import(/* webpackChunkName: "grafoservicePlugin" */ 'app/plugins/datasource/grafoservice/module');
 
 import { config } from '@grafana/runtime';
 import * as alertGroupsPanel from 'app/plugins/panel/alertGroups/module';
@@ -119,6 +121,7 @@ const builtInPlugins: any = {
   'app/plugins/datasource/tempo/module': tempoPlugin,
   'app/plugins/datasource/alertmanager/module': alertmanagerPlugin,
   'app/plugins/datasource/dataservice/module': dataservicePlugin,
+  'app/plugins/datasource/grafoservice/module': grafoservicePlugin,
 
   'app/plugins/panel/text/module': textPanel,
   'app/plugins/panel/timeseries/module': timeseriesPanel,

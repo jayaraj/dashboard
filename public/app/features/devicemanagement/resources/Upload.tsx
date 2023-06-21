@@ -77,6 +77,7 @@ export const Upload: FC<Props> = ({ isOpen, onCancel, resource, onUpload }) => {
               const extension = acceptedFiles[0].name.substring(acceptedFiles[0].name.lastIndexOf('.'));
               const file = new File([acceptedFiles[0]], `r-${resource.id}${extension}`, { type: acceptedFiles[0].type });
               formData.append('file', file);
+              formData.append('folder', 'images');
               setFormData(formData);
             },
           }}
