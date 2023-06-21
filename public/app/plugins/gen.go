@@ -25,6 +25,7 @@ var skipPlugins = map[string]bool{
 	"table":          true,
 	"timeseries":     true,
 	"dataservice":    true,
+	"grafoservice":   true,
 	"grouppicker":    true,
 	"variabletable":  true,
 	"csvbutton":      true,
