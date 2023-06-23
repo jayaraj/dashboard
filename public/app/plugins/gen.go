@@ -16,23 +16,24 @@ import (
 )
 
 var skipPlugins = map[string]bool{
-	"canvas":         true,
-	"heatmap":        true,
-	"heatmap-old":    true,
-	"candlestick":    true,
-	"state-timeline": true,
-	"status-history": true,
-	"table":          true,
-	"timeseries":     true,
-	"dataservice":    true,
-	"grafoservice":   true,
-	"grouppicker":    true,
-	"variabletable":  true,
-	"csvbutton":      true,
-	"dynamicform":    true,
-	"influxdb":       true, // plugin.json fails validation (defaultMatchFormat)
-	"mixed":          true, // plugin.json fails validation (mixed)
-	"opentsdb":       true, // plugin.json fails validation (defaultMatchFormat)
+	"canvas":            true,
+	"heatmap":           true,
+	"heatmap-old":       true,
+	"candlestick":       true,
+	"state-timeline":    true,
+	"status-history":    true,
+	"table":             true,
+	"timeseries":        true,
+	"dataservice":       true,
+	"grafoservice":      true,
+	"grouppicker":       true,
+	"groupbytypepicker": true,
+	"variabletable":     true,
+	"csvbutton":         true,
+	"dynamicform":       true,
+	"influxdb":          true, // plugin.json fails validation (defaultMatchFormat)
+	"mixed":             true, // plugin.json fails validation (mixed)
+	"opentsdb":          true, // plugin.json fails validation (defaultMatchFormat)
 }
 
 // Generate TypeScript for all plugin models.cue
