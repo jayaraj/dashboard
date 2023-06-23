@@ -92,6 +92,15 @@ type GetGroupsMsg struct {
 	Result  Groups `json:"-"`
 }
 
+type GetGroupsByTypeMsg struct {
+	Query   string `json:"query"`
+	Type    string `json:"type"`
+	User    User   `json:"user"`
+	Page    int64  `json:"page"`
+	PerPage int64  `json:"perPage"`
+	Result  Groups `json:"-"`
+}
+
 type GetParentGroupsMsg struct {
 	GroupId int64 `json:"-"`
 	User    User  `json:"user"`
