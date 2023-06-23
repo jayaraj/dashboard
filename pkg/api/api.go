@@ -473,6 +473,7 @@ func (hs *HTTPServer) registerRoutes() {
 		apiRoute.Group("/groups", func(groupsRoute routing.RouteRegister) {
 			groupsRoute.Post("/", authorize(reqOrgAdmin, groupsCreateAccessEvaluator), routing.Wrap(hs.CreateGroup))
 			groupsRoute.Get("/", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetGroups))
+			groupsRoute.Get("/searchbytype", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetGroupsByType))
 			groupsRoute.Get("/:groupId", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetGroupById))
 			groupsRoute.Put("/:groupId", authorize(reqEditorRole, groupsWriteAccessEvaluator), routing.Wrap(hs.UpdateGroup))
 			groupsRoute.Delete("/:groupId", authorize(reqOrgAdmin, groupsCreateAccessEvaluator), routing.Wrap(hs.DeleteGroup))

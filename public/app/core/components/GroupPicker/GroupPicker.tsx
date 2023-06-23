@@ -81,16 +81,16 @@ export const GroupPicker = ({groupPath, onChange, filterFunction}: Props): JSX.E
         onChange();
         setParents([{id: -1, selectedId: 0}]);
       }
-      let filteredGroups = {}
-      Object.values(selectedGroups).map((p) =>{
+      let filteredGroups: any = {}
+      Object.values(selectedGroups).map((p: SelectableValue<Group>) =>{
         for (let i = 0; i < index; i++) {
-          if (parents[i].id === p.value.parent) {
-            filteredGroups[p.value.parent] = p
+          if (parents[i].id === p.value!.parent) {
+            filteredGroups[p.value!.parent] = p
           }
         }
         return p;
       })
-      setSelectedGroups(prevItems => ({...filteredGroups}));
+      setSelectedGroups({...filteredGroups});
     }
   };
 
@@ -140,6 +140,7 @@ const getStyles = stylesFactory(() => ({
     overflow-x: auto;
     height: 100%;
     width: 100%;
+    padding: 5px 5px;
   `,
   spinner: css`
     display: flex;
