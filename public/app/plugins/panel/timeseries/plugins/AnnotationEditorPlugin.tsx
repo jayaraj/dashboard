@@ -2,6 +2,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useMountedState } from 'react-use';
 import uPlot from 'uplot';
 
+import { getTemplateSrv } from '@grafana/runtime';
 import { CartesianCoords2D, DataFrame, TimeZone } from '@grafana/data';
 import { PlotSelection, UPlotConfigBuilder } from '@grafana/ui';
 
@@ -19,6 +20,17 @@ interface AnnotationEditorPluginProps {
   children?: (props: { startAnnotating: StartAnnotatingFn }) => React.ReactNode;
 }
 
+const getTagsFromVariables = () => {
+  const variables = getTemplateSrv().getVariables();
+  return variables.reduce((acc: string[], variable) => {
+    if ('options' in variable && variable.name === 'nodeId') {
+      const selectedOptions = variable.options.filter((option) => option.selected);
+      return acc.concat(...selectedOptions.map((option) => option.text || ''));
+    }
+    return acc;
+  }, []);
+};
+
 /**
  * @alpha
  */
@@ -27,6 +39,7 @@ export const AnnotationEditorPlugin: React.FC<AnnotationEditorPluginProps> = ({ 
   const [bbox, setBbox] = useState<DOMRect>();
   const [isAddingAnnotation, setIsAddingAnnotation] = useState(false);
   const [selection, setSelection] = useState<PlotSelection | null>(null);
+  const [annotation, setAnnotation] = useState<Pick<AnnotationsDataFrameViewDTO, 'time' | 'timeEnd' | 'tags'>>();
   const isMounted = useMountedState();
 
   const clearSelection = useCallback(() => {
@@ -36,6 +49,7 @@ export const AnnotationEditorPlugin: React.FC<AnnotationEditorPluginProps> = ({ 
       plotInstance.current.setSelect({ top: 0, left: 0, width: 0, height: 0 });
     }
     setIsAddingAnnotation(false);
+    setAnnotation(undefined);
   }, [setIsAddingAnnotation, setSelection]);
 
   useLayoutEffect(() => {
@@ -70,15 +84,22 @@ export const AnnotationEditorPlugin: React.FC<AnnotationEditorPluginProps> = ({ 
     const setSelect = (u: uPlot) => {
       if (annotating) {
         setIsAddingAnnotation(true);
+        const min = u.posToVal(u.select.left, 'x');
+        const max = u.posToVal(u.select.left + u.select.width, 'x');
         setSelection({
-          min: u.posToVal(u.select.left, 'x'),
-          max: u.posToVal(u.select.left + u.select.width, 'x'),
+          min,
+          max,
           bbox: {
             left: u.select.left,
             top: 0,
             height: u.select.height,
             width: u.select.width,
           },
+        });
+        setAnnotation({
+          time: min,
+          timeEnd: max,
+          tags: getTagsFromVariables(),
         });
         annotating = false;
       }
@@ -131,6 +152,11 @@ export const AnnotationEditorPlugin: React.FC<AnnotationEditorPluginProps> = ({ 
       });
       setIsAddingAnnotation(true);
     },
+    setAnnotation({
+      time: min,
+      timeEnd: min,
+      tags: getTagsFromVariables(),
+    });
     [bbox]
   );
 
@@ -138,6 +164,7 @@ export const AnnotationEditorPlugin: React.FC<AnnotationEditorPluginProps> = ({ 
     <>
       {isAddingAnnotation && selection && bbox && (
         <AnnotationEditor
+          annotation={annotation as AnnotationsDataFrameViewDTO}
           selection={selection}
           onDismiss={clearSelection}
           onSave={clearSelection}
