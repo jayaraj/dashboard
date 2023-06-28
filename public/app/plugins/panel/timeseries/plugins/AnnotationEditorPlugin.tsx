@@ -150,13 +150,13 @@ export const AnnotationEditorPlugin: React.FC<AnnotationEditorPluginProps> = ({ 
           width: 0,
         },
       });
+      setAnnotation({
+        time: min,
+        timeEnd: min,
+        tags: getTagsFromVariables(),
+      });
       setIsAddingAnnotation(true);
     },
-    setAnnotation({
-      time: min,
-      timeEnd: min,
-      tags: getTagsFromVariables(),
-    });
     [bbox]
   );
 
