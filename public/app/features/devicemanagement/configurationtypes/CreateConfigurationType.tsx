@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { getBackendSrv, locationService } from '@grafana/runtime';
-import { Button, Form, Field, FieldSet, Label, VerticalGroup, InputControl, Input, Switch, Select, RadioButtonGroup } from '@grafana/ui';
+import { Button, Form, Field, FieldSet, Label, VerticalGroup, InputControl, Input, Switch, Select, RadioButtonGroup, HorizontalGroup } from '@grafana/ui';
 import { FormElementsEditor, LayoutSectionsEditor } from 'app/core/components/CustomForm/components';
 import { FormElement, LayoutSection } from 'app/core/components/CustomForm/types';
 import { Page } from 'app/core/components/Page/Page';
@@ -51,54 +51,60 @@ export const CreateConfigurationType = (): JSX.Element => {
         >
           {({ register, control }) => (
             <FieldSet>
-              <Field
-                label="Type"
-                description="can change only if no configurations are created based on this type."
-                disabled={!canWrite}
-              >
-                <Input {...register('type', { required: true })} width={40} />
-              </Field>
-              <Field
-                label="Associated with"
-                description=""
-                disabled={!canWrite}
-              >
-                <InputControl
-                  name="associated_with"
-                  control={control}
-                  rules={{
-                    required: true,
-                  }}
-                  render={({field: {onChange, ...field}}) => <Select {...field} onChange={(value) => onChange(value.value)} options={associationTypes} width={40}/>}
-                />
-              </Field>
-              <Field 
-              label="Role"
-              description="access permission"
-              disabled={!canWrite}
-              >
-                <InputControl
-                  render={({ field: { ref, ...field } }) => <RadioButtonGroup {...field} options={configurationRoles} />}
-                  control={control}
-                  name="role"
-                />
-              </Field>
-              <Field label="Measurement">
-                <Switch id="measurement" {...register('measurement')} />
-              </Field>
-              <Field
-                label="Configuration"
-                description="Edit Configuration Details"
-                disabled={!canWrite}
-              >
+              <HorizontalGroup align = 'normal'>
                 <VerticalGroup>
-                  <Label>Layouts</Label>
-                  <LayoutSectionsEditor onChange={onSectionsChange} sections={configuration.sections} ></LayoutSectionsEditor>
-                  <Label>Elements</Label>
-                  <FormElementsEditor elements={configuration.elements} onChange={onElementsChange} sections={configuration.sections} ></FormElementsEditor>
+                  <Field
+                    label="Type"
+                    description="can change only if no configurations are created based on this type."
+                    disabled={!canWrite}
+                  >
+                    <Input {...register('type', { required: true })} width={40} />
+                  </Field>
+                  <Field
+                    label="Associated with"
+                    description=""
+                    disabled={!canWrite}
+                  >
+                    <InputControl
+                      name="associated_with"
+                      control={control}
+                      rules={{
+                        required: true,
+                      }}
+                      render={({field: {onChange, ...field}}) => <Select {...field} onChange={(value) => onChange(value.value)} options={associationTypes} width={40}/>}
+                    />
+                  </Field>
+                  <Field 
+                  label="Role"
+                  description="access permission"
+                  disabled={!canWrite}
+                  >
+                    <InputControl
+                      render={({ field: { ref, ...field } }) => <RadioButtonGroup {...field} options={configurationRoles} />}
+                      control={control}
+                      name="role"
+                    />
+                  </Field>
+                  <Field label="Measurement">
+                    <Switch id="measurement" {...register('measurement')} />
+                  </Field>
                 </VerticalGroup>
-              </Field>
-              
+                <div style={{ padding: '0 50px'}} />
+                <VerticalGroup>
+                  <Field
+                      label="Configuration"
+                      description="Edit Configuration Details"
+                      disabled={!canWrite}
+                    >
+                    <VerticalGroup>
+                      <Label>Layouts</Label>
+                      <LayoutSectionsEditor onChange={onSectionsChange} sections={configuration.sections} ></LayoutSectionsEditor>
+                      <Label>Elements</Label>
+                      <FormElementsEditor elements={configuration.elements} onChange={onElementsChange} sections={configuration.sections} ></FormElementsEditor>
+                    </VerticalGroup>
+                  </Field>
+                </VerticalGroup>
+              </HorizontalGroup>
               <Button type="submit" disabled={!canWrite}>
                 Create
               </Button>

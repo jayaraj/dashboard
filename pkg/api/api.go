@@ -456,6 +456,7 @@ func (hs *HTTPServer) registerRoutes() {
 			resourcesRoute.Put("/:resourceId", authorize(reqEditorRole, resourcesWriteAccessEvaluator), routing.Wrap(hs.UpdateResource))
 			resourcesRoute.Delete("/:resourceId", authorize(reqOrgAdmin, resourcesCreateAccessEvaluator), routing.Wrap(hs.DeleteResource))
 			resourcesRoute.Get("/:resourceId/groups", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetResourceGroups))
+			resourcesRoute.Post("/uuid/:uuid/history/:dataType", reqOrgAdmin, routing.Wrap(hs.PostResourceHistoryData))
 		})
 
 		// ResourceConfiguration

@@ -224,20 +224,22 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 
 		//********************Device Management**************************
 		deviceMgntNodes := []*dtos.NavLink{}
-		if hasAccess(ac.ReqOrgAdminOrEditor, typesReadAccessEvaluator) {
+		if hasAccess(ac.ReqSignedIn, groupsReadAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text: "Configuration Types",
-				Id:   "configurationtypes",
-				Url:  hs.Cfg.AppSubURL + "/org/configurationtypes",
-				Icon: "resource-type",
+				Text:        "Groups",
+				Id:          "resourcegroups",
+				Description: "Manage org groups",
+				Icon:        "layer-group",
+				Url:         hs.Cfg.AppSubURL + "/org/groups",
 			})
 		}
-		if hasAccess(ac.ReqGrafanaAdmin, inventoriesReadAccessEvaluator) {
+		if hasAccess(ac.ReqSignedIn, resourcesReadAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text: "Inventory",
-				Id:   "inventories",
-				Url:  hs.Cfg.AppSubURL + "/org/inventories",
-				Icon: "inventory",
+				Text:        hs.Cfg.ResourceLabel + "s",
+				Id:          "resources",
+				Description: "Manage " + hs.Cfg.ResourceLabel + "s",
+				Icon:        "resource",
+				Url:         hs.Cfg.AppSubURL + "/org/resources",
 			})
 		}
 		if hasAccess(ac.ReqGrafanaAdmin, bulksReadAccessEvaluator) {
@@ -249,23 +251,20 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 				Url:         hs.Cfg.AppSubURL + "/org/bulks",
 			})
 		}
-
-		if hasAccess(ac.ReqSignedIn, resourcesReadAccessEvaluator) {
+		if hasAccess(ac.ReqGrafanaAdmin, inventoriesReadAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text:        hs.Cfg.ResourceLabel + "s",
-				Id:          "resources",
-				Description: "Manage " + hs.Cfg.ResourceLabel + "s",
-				Icon:        "resource",
-				Url:         hs.Cfg.AppSubURL + "/org/resources",
+				Text: "Inventory",
+				Id:   "inventories",
+				Url:  hs.Cfg.AppSubURL + "/org/inventories",
+				Icon: "inventory",
 			})
 		}
-		if hasAccess(ac.ReqSignedIn, groupsReadAccessEvaluator) {
+		if hasAccess(ac.ReqOrgAdminOrEditor, typesReadAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text:        "Groups",
-				Id:          "resourcegroups",
-				Description: "Manage org groups",
-				Icon:        "layer-group",
-				Url:         hs.Cfg.AppSubURL + "/org/groups",
+				Text: "Configuration Types",
+				Id:   "configurationtypes",
+				Url:  hs.Cfg.AppSubURL + "/org/configurationtypes",
+				Icon: "resource-type",
 			})
 		}
 
@@ -286,17 +285,15 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 		//********************Billing**************************
 		if hs.Cfg.EnableBilling {
 			billingMgntNodes := []*dtos.NavLink{}
-
 			if hasAccess(ac.ReqSignedIn, invoicesReadAccessEvaluator) {
 				billingMgntNodes = append(billingMgntNodes, &dtos.NavLink{
 					Text:        "Connections",
-					Id:          "connections",
+					Id:          "billingconnections",
 					Description: "Manage Connections, Invoices & etc",
 					Icon:        "group-type",
 					Url:         hs.Cfg.AppSubURL + "/org/connections",
 				})
 			}
-
 			if hasAccess(ac.ReqSignedIn, invoicesReadAccessEvaluator) {
 				billingMgntNodes = append(billingMgntNodes, &dtos.NavLink{
 					Text:        "Profiles",
@@ -306,7 +303,6 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 					Url:         hs.Cfg.AppSubURL + "/org/profiles",
 				})
 			}
-
 			if hasAccess(ac.ReqOrgAdminOrEditor, fixedChargesReadAccessEvaluator) {
 				billingMgntNodes = append(billingMgntNodes, &dtos.NavLink{
 					Text:        "Org Charges",

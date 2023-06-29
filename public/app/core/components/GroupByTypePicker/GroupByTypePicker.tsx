@@ -47,12 +47,12 @@ export const GroupByTypePicker = ({groupId, groupType, onChange, filterFunction}
       }
     } else {
       onChange();
-      setSelectedGroup();
+      setSelectedGroup(undefined);
     }
   };
 
   const onMenu = () => {
-    setSelectedGroup();
+    setSelectedGroup(undefined);
   }
 
   const styles = useStyles(getStyles);

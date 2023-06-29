@@ -2,7 +2,7 @@ import React, { FC, useState } from 'react';
 import { connect, ConnectedProps, useDispatch} from 'react-redux';
 
 import { SelectableValue } from '@grafana/data';
-import {  Modal, Select, VerticalGroup, FileDropzone, Button } from '@grafana/ui';
+import {  Modal, Select, VerticalGroup, FileDropzone, Button, HorizontalGroup, InlineField } from '@grafana/ui';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AccessControlAction} from 'app/types';
 
@@ -15,21 +15,25 @@ export interface OwnProps {
   onCancel: (open: boolean) => void;
 }
 
-const ACTION_TYPES: Array<SelectableValue<string>> = [
+const ObjectTypes: Array<SelectableValue<string>> = [
   {
-    label: 'Create inventories',
-    value: 'inventory',
-    description: `Upload a file for creating inventories`,
+    label: 'Inventories',
+    value: 'Inventories',
   },
   {
-    label: 'Create assets under groups',
-    value: 'resource',
-    description: `Upload a file for creating resources with in groups`,
+    label: 'Assets',
+    value: 'Resources',
   },
   {
-    label: 'Create groups',
-    value: 'group',
-    description: `Upload a file for creating groups`,
+    label: 'Groups',
+    value: 'Groups',
+  },
+];
+
+const FunctionTypes: Array<SelectableValue<string>> = [
+  {
+    label: 'Create',
+    value: 'create',
   },
 ];
 
@@ -49,13 +53,15 @@ export const Upload: FC<Props> = ({ isOpen, onCancel, loadBulks }) => {
   const [formData, setFormData] = useState<FormData>(new FormData());
   const [error, setError] = useState<ErrorResponse>({} as ErrorResponse);
   const [uploaded, setUploaded] = useState<ErrorResponse>({} as ErrorResponse);
-  const [action, setAction] = useState<string>('');
+  const [object, setObject] = useState<string>('');
+  const [operation, setOperation] = useState<string>('');
   const fallback = contextSrv.hasRole('ServerAdmin');
   const canCreate = contextSrv.hasAccess(AccessControlAction.ActionBulksCreate, fallback);
   const dispatch = useDispatch();
 
   const onSubmit = () => {
-    formData.append('action', action);
+    formData.append('object', object);
+    formData.append('operation', operation);
     setError({} as ErrorResponse);
     setUploaded({} as ErrorResponse);
     fetch('/api/bulks', {
@@ -88,7 +94,14 @@ export const Upload: FC<Props> = ({ isOpen, onCancel, loadBulks }) => {
     iconTooltip="upload file"
     >
       <VerticalGroup spacing="xs">
-        <Select onChange={(value) => {setAction(value.value?value.value:'');}} options={ACTION_TYPES} />
+        <HorizontalGroup>
+          <InlineField label="Object">
+            <Select width={30} onChange={(value) => {setObject(value.value?value.value:'');}} options={ObjectTypes} />
+          </InlineField>
+          <InlineField label="Function">
+            <Select width={30} onChange={(value) => {setOperation(value.value?value.value:'');}} options={FunctionTypes} />
+          </InlineField>
+        </HorizontalGroup>
         <FileDropzone
           readAs="readAsBinaryString"
           options={{
