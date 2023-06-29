@@ -102,3 +102,9 @@ type GetResourceGroupLeafsMsg struct {
 	User       User   `json:"user" binding:"required"`
 	Result     Groups `json:"-"`
 }
+
+type DataMsg struct {
+	Time time.Time          `json:"time" binding:"required"`
+	UUID string             `json:"uuid"`
+	Data map[string]float64 `json:"data" binding:"required"`
+}

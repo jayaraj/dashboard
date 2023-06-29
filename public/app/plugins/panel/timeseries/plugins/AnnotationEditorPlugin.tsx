@@ -2,8 +2,8 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useMountedState } from 'react-use';
 import uPlot from 'uplot';
 
-import { getTemplateSrv } from '@grafana/runtime';
 import { CartesianCoords2D, DataFrame, TimeZone } from '@grafana/data';
+import { getTemplateSrv } from '@grafana/runtime';
 import { PlotSelection, UPlotConfigBuilder } from '@grafana/ui';
 
 import { AnnotationEditor } from './annotations/AnnotationEditor';
@@ -23,7 +23,7 @@ interface AnnotationEditorPluginProps {
 const getTagsFromVariables = () => {
   const variables = getTemplateSrv().getVariables();
   return variables.reduce((acc: string[], variable) => {
-    if ('options' in variable && variable.name === 'nodeId') {
+    if ('options' in variable && variable.name.toLowerCase().includes(variable.description!.toLowerCase())) {
       const selectedOptions = variable.options.filter((option) => option.selected);
       return acc.concat(...selectedOptions.map((option) => option.text || ''));
     }

@@ -67,7 +67,7 @@ export const CreateConnection = ({}: Props): JSX.Element => {
   };
 
   return (
-    <Page navId="connections">
+    <Page navId="billingconnections">
       <Page.Contents>
         <Field label="Group" disabled={!canWrite} description="Select a leaf group/node to create a connection">
           <GroupPicker onChange={onChange} filterFunction={filterFunction} ></GroupPicker>
