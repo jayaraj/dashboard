@@ -5,14 +5,13 @@ datasources:
   type: dataservice
   access: proxy
   url: ${DATASERVICE_URL}
-  withCredentials: true
+  withCredentials: false
   jsonData:
      httpHeaderName1: "token"
   secureJsonData:
     httpHeaderValue1: ${DATASERVICE_TOKEN}
   version: 2
   editable: false
-
 - name: Influxservice
   type: influxdb
   access: proxy
@@ -22,6 +21,6 @@ datasources:
   jsonData:
       version: Flux
       organization: ${INFLUXDB_ORG}
-      defaultBucket: dashboard
+      defaultBucket: default
       tlsSkipVerify: true
   editable: false

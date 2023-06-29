@@ -102,7 +102,7 @@ export class InvoicePage extends PureComponent<Props, State> {
     const invoicesUrl = `org/connections/edit/${connectionId}/invoices`;
 
     return (
-      <Page navId="connections" pageNav={pageNav}>
+      <Page navId="billingconnections" pageNav={pageNav}>
         <Page.Contents isLoading={this.state.isLoading}>
           <div className="page-action-bar">
             <div className="gf-form gf-form--grow">

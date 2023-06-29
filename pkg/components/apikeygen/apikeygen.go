@@ -49,6 +49,7 @@ func New(orgId int64, name string) (KeyGenResult, error) {
 
 func Decode(keyString string) (*ApiKeyJson, error) {
 	jsonString, err := base64.StdEncoding.DecodeString(keyString)
+
 	if err != nil {
 		return nil, ErrInvalidApiKey
 	}
@@ -58,7 +59,6 @@ func Decode(keyString string) (*ApiKeyJson, error) {
 	if err != nil {
 		return nil, ErrInvalidApiKey
 	}
-
 	return &keyObj, nil
 }
 

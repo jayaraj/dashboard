@@ -113,7 +113,7 @@ export class ConnectionPages extends PureComponent<Props, State> {
     const { connection, pageNav } = this.props;
 
     return (
-      <Page navId="connections" pageNav={pageNav}>
+      <Page navId="billingconnections" pageNav={pageNav}>
         <Page.Contents isLoading={this.state.isLoading}>
           {connection && Object.keys(connection).length !== 0 && this.renderPage()}
         </Page.Contents>

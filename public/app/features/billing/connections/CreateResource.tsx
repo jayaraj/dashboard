@@ -56,7 +56,7 @@ export const CreateResource = ({connectionId, pageNav}: Props): JSX.Element => {
   };
 
   return (
-    <Page navId="connections" pageNav={pageNav}>
+    <Page navId="billingconnections" pageNav={pageNav}>
       <Page.Contents>
         <Form onSubmit={(dto: CreateResourceDTO) => create(dto)}>
           {({ register, control, errors }) => (

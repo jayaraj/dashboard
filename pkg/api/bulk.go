@@ -26,7 +26,8 @@ func (hs *HTTPServer) UploadBulk(c *models.ReqContext) response.Response {
 	contentType := mime.TypeByExtension(extension)
 	data := map[string]string{
 		"org":          fmt.Sprintf("%d", c.OrgID),
-		"action":       c.Req.PostFormValue("action"),
+		"object":       c.Req.PostFormValue("object"),
+		"operation":    c.Req.PostFormValue("operation"),
 		"content-type": contentType,
 	}
 	url := fmt.Sprintf("%sapi/upload", hs.ResourceService.GetConfig().ResourceUrl)
