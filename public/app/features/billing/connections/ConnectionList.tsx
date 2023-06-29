@@ -300,7 +300,7 @@ export class ConnectionList extends PureComponent<Props, State> {
     const { hasFetched } = this.props;
 
     return (
-      <Page navId="connections">
+      <Page navId="billingconnections">
         <Page.Contents isLoading={!hasFetched}>{this.renderList()}</Page.Contents>
       </Page>
     );

@@ -65,6 +65,22 @@ func (service *ResourcesService) GetConfig() *setting.Cfg {
 	return service.Cfg
 }
 
+func (service *ResourcesService) ResourcesTopic(msg string) string {
+	return fmt.Sprintf("resources.%s", msg)
+}
+
+func (service *ResourcesService) WriterTopic(msg string) string {
+	return fmt.Sprintf("writer.%s", msg)
+}
+
+func (service *ResourcesService) ReaderTopic(msg string) string {
+	return fmt.Sprintf("reader.%s", msg)
+}
+
+func (service *ResourcesService) BillingTopic(msg string) string {
+	return fmt.Sprintf("billing.%s", msg)
+}
+
 func (service *ResourcesService) RestRequest(ctx context.Context, request *RestRequest) (err error) {
 	netClient := &http.Client{
 		Timeout: time.Second * 10,

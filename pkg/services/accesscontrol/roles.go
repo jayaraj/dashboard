@@ -295,6 +295,17 @@ func BuildBasicRoleDefinitions() map[string]*RoleDTO {
 			Permissions: []Permission{},
 			Hidden:      true,
 		},
+		string(org.RoleSuperAdmin): {
+			Name:        BasicRolePrefix + "super_admin",
+			UID:         BasicRoleUIDPrefix + "super_admin",
+			OrgID:       GlobalOrgID,
+			Version:     1,
+			DisplayName: string(org.RoleSuperAdmin),
+			Description: "Super Admin role",
+			Group:       "Basic",
+			Permissions: []Permission{},
+			Hidden:      true,
+		},
 		RoleGrafanaAdmin: {
 			Name:        BasicRolePrefix + "grafana_admin",
 			UID:         BasicRoleUIDPrefix + "grafana_admin",

@@ -294,6 +294,34 @@ func (hs *HTTPServer) GetResourceGroups(c *models.ReqContext) response.Response 
 	return response.JSON(http.StatusOK, dto.Result)
 }
 
+func (hs *HTTPServer) PostResourceHistoryData(c *models.ReqContext) response.Response {
+	uuid := web.Params(c.Req)[":uuid"]
+	dataType := web.Params(c.Req)[":dataType"]
+
+	if dataType != "data" && dataType != "event" {
+		return response.Error(http.StatusBadRequest, "invalid url", nil)
+	}
+
+	topic := "historyData"
+	dto := dtos.DataMsg{
+		UUID: uuid,
+	}
+	if dataType != "data" {
+		topic = "historyEvent"
+	}
+	if err := web.Bind(c.Req, &dto); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+	body, err := json.Marshal(dto)
+	if err != nil {
+		return response.Error(500, "failed marshal create", err)
+	}
+	if _, err := hs.ResourceService.Request(c.Req.Context(), hs.ResourceService.WriterTopic(topic), body); err != nil {
+		return response.Error(500, "failed to write", err)
+	}
+	return response.Success("success")
+}
+
 // func (hs *HTTPServer) AddResourceGroups(c *models.ReqContext) response.Response {
 // 	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
 // 	if err != nil {
