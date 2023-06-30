@@ -304,6 +304,11 @@ func (hs *HTTPServer) PostResourceHistoryData(c *models.ReqContext) response.Res
 
 	topic := "historyData"
 	dto := dtos.DataMsg{
+		User: dtos.User{
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
+			Role:   dtos.ConvertRoleToString(hs.UserRole(c)),
+		},
 		UUID: uuid,
 	}
 	if dataType != "data" {
