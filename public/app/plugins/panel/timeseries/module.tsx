@@ -23,6 +23,12 @@ export const plugin = new PanelPlugin<TimeSeriesOptions, GraphFieldConfig>(TimeS
       category: ['Axis'],
       editor: TimezonesEditor,
       defaultValue: undefined,
+    }).addTextInput({
+      description: 'Filter Annotations',
+      name: 'Filter',
+      path: 'annotationFilter',
+      category: ['Annotations Options'],
+      defaultValue: undefined,
     });
   })
   .setSuggestionsSupplier(new TimeSeriesSuggestionsSupplier())
