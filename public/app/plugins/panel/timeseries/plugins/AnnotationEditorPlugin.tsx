@@ -18,12 +18,13 @@ interface AnnotationEditorPluginProps {
   timeZone: TimeZone;
   config: UPlotConfigBuilder;
   children?: (props: { startAnnotating: StartAnnotatingFn }) => React.ReactNode;
+  filter?: string;
 }
 
-const getTagsFromVariables = () => {
+const getTagsFromVariables = (filter?: string) => {
   const variables = getTemplateSrv().getVariables();
   return variables.reduce((acc: string[], variable) => {
-    if ('options' in variable && (variable.description === null || variable.name.toLowerCase().includes(variable.description!.toLowerCase())) ) {
+    if ('options' in variable && (filter === undefined || variable.name.toLowerCase().includes(filter!.toLowerCase())) ) {
       const selectedOptions = variable.options.filter((option) => option.selected);
       return acc.concat(...selectedOptions.map((option) => option.text || ''));
     }
@@ -34,7 +35,7 @@ const getTagsFromVariables = () => {
 /**
  * @alpha
  */
-export const AnnotationEditorPlugin: React.FC<AnnotationEditorPluginProps> = ({ data, timeZone, config, children }) => {
+export const AnnotationEditorPlugin: React.FC<AnnotationEditorPluginProps> = ({ data, timeZone, config, children, filter }) => {
   const plotInstance = useRef<uPlot>();
   const [bbox, setBbox] = useState<DOMRect>();
   const [isAddingAnnotation, setIsAddingAnnotation] = useState(false);
@@ -99,7 +100,7 @@ export const AnnotationEditorPlugin: React.FC<AnnotationEditorPluginProps> = ({ 
         setAnnotation({
           time: min,
           timeEnd: max,
-          tags: getTagsFromVariables(),
+          tags: getTagsFromVariables(filter),
         });
         annotating = false;
       }
@@ -153,7 +154,7 @@ export const AnnotationEditorPlugin: React.FC<AnnotationEditorPluginProps> = ({ 
       setAnnotation({
         time: min,
         timeEnd: min,
-        tags: getTagsFromVariables(),
+        tags: getTagsFromVariables(filter),
       });
       setIsAddingAnnotation(true);
     },

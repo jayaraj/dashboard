@@ -86,7 +86,7 @@ export const TimeSeriesPanel: React.FC<TimeSeriesPanelProps> = ({
             )}
             {/* Enables annotations creation*/}
             {enableAnnotationCreation ? (
-              <AnnotationEditorPlugin data={alignedDataFrame} timeZone={timeZone} config={config}>
+              <AnnotationEditorPlugin data={alignedDataFrame} timeZone={timeZone} config={config} filter={options.annotationFilter}>
                 {({ startAnnotating }) => {
                   return (
                     <ContextMenuPlugin
