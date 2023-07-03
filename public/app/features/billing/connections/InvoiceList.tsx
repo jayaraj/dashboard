@@ -77,7 +77,7 @@ export const InvoiceList: FC<Props> = ({
   };
 
   const renderInvoice = (invoice: Invoice) => {
-    const invoiceUrl = `org/invoices/${invoice.id}`;
+    const invoiceUrl = `/org/connections/${invoice.connection_id}/invoices/${invoice.id}`;
     return (
       <tr key={invoice.id}>
         <td className="link-td text-center">

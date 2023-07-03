@@ -7,7 +7,7 @@ import { Themeable2, withTheme2, LinkButton, Icon, Button } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
-import { StoreState } from 'app/types';
+import { Connection, Invoice, StoreState } from 'app/types';
 
 import InvoiceTable from './InvoiceTable';
 import { loadConnection, loadInvoice,  loadInvoiceTransactions, loadOrgConfigurations } from './state/actions';
@@ -114,7 +114,12 @@ export class InvoicePage extends PureComponent<Props, State> {
               <Icon name="arrow-up" />Invoices
             </LinkButton>
           </div>
-          <InvoiceTable connection={connection!} orgConfiguration={orgConfiguration}  invoice={invoice!} transactions={transactions}></InvoiceTable>
+          <InvoiceTable
+            connection={connection? connection: {} as Connection} 
+            orgConfiguration={orgConfiguration? orgConfiguration: {}}
+            invoice={invoice? invoice: {} as Invoice}
+            transactions={transactions}>
+          </InvoiceTable>
         </Page.Contents>
       </Page>
     );
