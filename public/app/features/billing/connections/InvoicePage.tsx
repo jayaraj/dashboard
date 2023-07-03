@@ -76,7 +76,7 @@ export class InvoicePage extends PureComponent<Props, State> {
   }
 
   async fetchInvoice() {
-    const { loadInvoice, loadConnection, loadInvoiceTransactions, invoiceId, connectionId } = this.props;
+    const { loadInvoice, loadConnection, loadInvoiceTransactions, invoiceId, connectionId, loadOrgConfigurations } = this.props;
     this.setState({ isLoading: true });
     const invoice = await loadInvoice(invoiceId);
     await loadConnection(connectionId);
