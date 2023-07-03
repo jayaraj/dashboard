@@ -26,7 +26,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ connection, orgConfiguratio
   const from = new Date( invoice?.from );
   const to = new Date( invoice?.to );
   const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
-  const words = capitalizeWords(numberToWords.toWords(invoice?invoice.amount:0));
+  const words = capitalizeWords(numberToWords.toWords((invoice.amount)?invoice.amount:0));
   return (
     <div id="invoicepage" className={styles.container}>
       <table className={styles.outertable}>
@@ -92,7 +92,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ connection, orgConfiguratio
                     </td>
                   </tr>
                   {
-                    invoice?.informations.map((info, index) => {return (
+                    invoice?.informations?.map((info, index) => {return (
                       <tr key={index}>
                         <td className={styles.detailsleft}>
                           {info.name}<br />
