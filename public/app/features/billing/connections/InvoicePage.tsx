@@ -28,8 +28,9 @@ function mapStateToProps(state: StoreState, props: OwnProps) {
   const invoice = getInvoice(state.invoice, invoiceId);
   const connection = getConnection(state.connection, connectionId);
   const transactions = getTransactions(state.transactions);
-  const groupLoadingNav = getPageNav('invoices');
-  const pageNav = getNavModel(state.navIndex, `connection-invoices-${invoiceId}`, groupLoadingNav).main;
+  const pageName = 'invoices';
+  const connectionLoadingNav = getPageNav(pageName as string);
+  const pageNav = getNavModel(state.navIndex, `connection-${pageName}-${connectionId}`, connectionLoadingNav).main;
   const orgConfiguration = getOrgConfigurations(state.orgConfiguration, connection?.org_id, 'details');
 
   return {
