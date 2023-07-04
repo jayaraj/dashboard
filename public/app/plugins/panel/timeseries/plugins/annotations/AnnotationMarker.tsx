@@ -95,11 +95,11 @@ export function AnnotationMarker({ annotation, timeZone, width }: Props) {
         timeFormatter={timeFormatter}
         onEdit={onAnnotationEdit}
         onDelete={onAnnotationDelete}
-        canEdit={canEditAnnotations!(annotation.dashboardUID)}
-        canDelete={canDeleteAnnotations!(annotation.dashboardUID)}
+        canEdit={true}
+        canDelete={true}
       />
     );
-  }, [canEditAnnotations, canDeleteAnnotations, onAnnotationDelete, onAnnotationEdit, timeFormatter, annotation]);
+  }, [onAnnotationDelete, onAnnotationEdit, timeFormatter, annotation]);
 
   const isRegionAnnotation = Boolean(annotation.isRegion) && width > MIN_REGION_ANNOTATION_WIDTH;
 

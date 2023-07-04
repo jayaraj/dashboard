@@ -30,7 +30,7 @@ export const TimeSeriesPanel: React.FC<TimeSeriesPanelProps> = ({
   replaceVariables,
   id,
 }) => {
-  const { sync, canAddAnnotations, onThresholdsChange, canEditThresholds, onSplitOpen } = usePanelContext();
+  const { sync, onThresholdsChange, canEditThresholds, onSplitOpen } = usePanelContext();
 
   const getFieldLinks = (field: Field, rowIndex: number) => {
     return getFieldLinksForExplore({ field, rowIndex, splitOpenFn: onSplitOpen, range: timeRange });
@@ -51,7 +51,7 @@ export const TimeSeriesPanel: React.FC<TimeSeriesPanelProps> = ({
     );
   }
 
-  const enableAnnotationCreation = Boolean(canAddAnnotations && canAddAnnotations());
+  const enableAnnotationCreation = true;
 
   return (
     <TimeSeries
@@ -86,7 +86,12 @@ export const TimeSeriesPanel: React.FC<TimeSeriesPanelProps> = ({
             )}
             {/* Enables annotations creation*/}
             {enableAnnotationCreation ? (
-              <AnnotationEditorPlugin data={alignedDataFrame} timeZone={timeZone} config={config} filter={options.annotationFilter}>
+              <AnnotationEditorPlugin
+                data={alignedDataFrame}
+                timeZone={timeZone}
+                config={config}
+                filter={options.annotationFilter}
+              >
                 {({ startAnnotating }) => {
                   return (
                     <ContextMenuPlugin

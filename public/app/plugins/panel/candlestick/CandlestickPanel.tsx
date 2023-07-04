@@ -38,7 +38,7 @@ export const CandlestickPanel: React.FC<CandlestickPanelProps> = ({
   onChangeTimeRange,
   replaceVariables,
 }) => {
-  const { sync, canAddAnnotations, onThresholdsChange, canEditThresholds, onSplitOpen } = usePanelContext();
+  const { sync, onThresholdsChange, canEditThresholds, onSplitOpen } = usePanelContext();
 
   const getFieldLinks = (field: Field, rowIndex: number) => {
     return getFieldLinksForExplore({ field, rowIndex, splitOpenFn: onSplitOpen, range: timeRange });
@@ -226,7 +226,7 @@ export const CandlestickPanel: React.FC<CandlestickPanelProps> = ({
     );
   }
 
-  const enableAnnotationCreation = Boolean(canAddAnnotations && canAddAnnotations());
+  const enableAnnotationCreation = true;
 
   return (
     <TimeSeries
