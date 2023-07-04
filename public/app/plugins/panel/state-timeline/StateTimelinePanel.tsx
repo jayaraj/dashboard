@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { CartesianCoords2D, DataFrame, FieldType, PanelProps } from '@grafana/data';
-import { Portal, UPlotConfigBuilder, usePanelContext, useTheme2, VizTooltipContainer, ZoomPlugin } from '@grafana/ui';
+import { Portal, UPlotConfigBuilder, useTheme2, VizTooltipContainer, ZoomPlugin } from '@grafana/ui';
 import { HoverEvent, addTooltipSupport } from '@grafana/ui/src/components/uPlot/config/addTooltipSupport';
 import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
 import { getLastStreamingDataFramePacket } from 'app/features/live/data/StreamingDataFrame';
@@ -43,7 +43,6 @@ export const StateTimelinePanel: React.FC<TimelinePanelProps> = ({
   const [focusedSeriesIdx, setFocusedSeriesIdx] = useState<number | null>(null);
   const [focusedPointIdx, setFocusedPointIdx] = useState<number | null>(null);
   const [shouldDisplayCloseButton, setShouldDisplayCloseButton] = useState<boolean>(false);
-  const { canAddAnnotations } = usePanelContext();
 
   const onCloseToolTip = () => {
     isToolTipOpen.current = false;
@@ -145,7 +144,7 @@ export const StateTimelinePanel: React.FC<TimelinePanelProps> = ({
       // console.log('STREAM Packet', packet);
     }
   }
-  const enableAnnotationCreation = Boolean(canAddAnnotations && canAddAnnotations());
+  const enableAnnotationCreation = true;
 
   return (
     <TimelineChart

@@ -658,7 +658,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionAnnotationsRead, Scope: ac.ScopeAnnotationsAll},
 			},
 		},
-		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
+		Grants: []string{string(org.RoleViewer), string(org.RoleEditor), string(org.RoleAdmin)},
 	}
 
 	dashboardAnnotationsWriterRole := ac.RoleRegistration{
@@ -673,7 +673,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionAnnotationsWrite, Scope: ac.ScopeAnnotationsTypeDashboard},
 			},
 		},
-		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
+		Grants: []string{string(org.RoleViewer), string(org.RoleEditor), string(org.RoleAdmin)},
 	}
 
 	annotationsWriterRole := ac.RoleRegistration{
@@ -688,7 +688,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionAnnotationsWrite, Scope: ac.ScopeAnnotationsAll},
 			},
 		},
-		Grants: []string{string(org.RoleViewer), string(org.RoleEditor)},
+		Grants: []string{string(org.RoleViewer), string(org.RoleEditor), string(org.RoleAdmin)},
 	}
 
 	dashboardsCreatorRole := ac.RoleRegistration{
