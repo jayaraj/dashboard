@@ -649,7 +649,7 @@ func (hs *HTTPServer) CreateConnectionResource(c *models.ReqContext) response.Re
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	dto := dtos.CreateGroupResourceMsg{
-		OrgId:   c.OrgID,
+		OrgId:   connection.OrgId,
 		GroupId: connection.GroupId,
 	}
 	if err := web.Bind(c.Req, &dto); err != nil {
