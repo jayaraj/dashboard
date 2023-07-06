@@ -50,9 +50,12 @@ type FileRequest struct {
 }
 
 func ProvideService(cfg *setting.Cfg) (resp *ResourcesService, err error) {
-	client, err := NATS.Connect(cfg.NatsUrl)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed while connecting nats")
+	var client *NATS.Conn
+	if cfg.EnableResource {
+		client, err = NATS.Connect(cfg.NatsUrl)
+		if err != nil {
+			return nil, errors.Wrapf(err, "failed while connecting nats")
+		}
 	}
 	return &ResourcesService{
 		Cfg:    cfg,
