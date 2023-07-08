@@ -1,14 +1,19 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
-import { CallToActionCard, VerticalGroup, HorizontalGroup, Pagination, DeleteButton, FilterInput, LinkButton} from '@grafana/ui';
+import { getBackendSrv } from '@grafana/runtime';
+import { CallToActionCard, VerticalGroup, HorizontalGroup, Pagination, DeleteButton, FilterInput, LinkButton, InlineField, Button, Input} from '@grafana/ui';
+import { SlideDown } from 'app/core/components/Animations/SlideDown';
+import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
+import PageLoader from 'app/core/components/PageLoader/PageLoader';
+import config from 'app/core/config';
 import { contextSrv } from 'app/core/services/context_srv';
 import { AccessControlAction, Connection, ConnectionResource, StoreState, connectionResourcePageLimit } from 'app/types';
+
 import { deleteConnectionResource, loadConnectionResources } from './state/actions';
-import { getConnectionResourcesSearchPage, getConnectionResources, getConnectionResourcesCount, getConnectionResourcesSearchQuery } from './state/selectors';
 import { setConnectionResourcesSearchQuery } from './state/reducers';
-import config from 'app/core/config';
-import PageLoader from 'app/core/components/PageLoader/PageLoader';
+import { getConnectionResourcesSearchPage, getConnectionResources, getConnectionResourcesCount, getConnectionResourcesSearchQuery } from './state/selectors';
+
 
 export interface OwnProps {
   connection: Connection,
@@ -49,9 +54,21 @@ export const ConnectionResourceList: FC<Props> = ({
   deleteConnectionResource,
   setConnectionResourcesSearchQuery}) => {
 
+  let [isAdding, setIsAdding] = useState<boolean>(false);
+  let [uuid, setUuid] = useState<string>('');
+
+  const onToggleAdding = () => {
+    setIsAdding(!isAdding);
+  }
+
   useEffect(() => {
     loadConnectionResources(1);
   }, []);
+
+  const onAdd = async () => {
+    await getBackendSrv().post(`/api/groups/${connection.group_id}/resources/${uuid}`);
+    loadConnectionResources(1);
+  }
 
   const onNavigate = async (page: number) => {
     loadConnectionResources(page);
@@ -87,10 +104,24 @@ export const ConnectionResourceList: FC<Props> = ({
           <div className="gf-form gf-form--grow">
             <FilterInput placeholder="Search" value={searchQuery} onChange={onSearchQueryChange} />
           </div>
+          <Button className="pull-right" onClick={onToggleAdding}>
+            Add {config.resourceLabel}
+          </Button>
           <LinkButton disabled={!canWrite} href={newResourceHref}>
             Create {config.resourceLabel}
           </LinkButton>
         </div>
+        <SlideDown in={isAdding}>
+          <div className="cta-form">
+            <CloseButton aria-label="Close dialogue" onClick={onToggleAdding} />
+            <InlineField  label="UUID" labelWidth={20}>
+              <Input id="uuid-input" type="text" width={30} placeholder="uuid" value={uuid} onChange={(event) => (setUuid(event.currentTarget.value))}/>
+            </InlineField>
+            <Button onClick={onAdd}>
+              Add
+            </Button>
+          </div>
+        </SlideDown>
         {!hasFetched ? <PageLoader /> : <CallToActionCard callToActionElement={<div />} message="No Resources found." />}
       </div>
     );
@@ -107,10 +138,24 @@ export const ConnectionResourceList: FC<Props> = ({
           <div className="gf-form gf-form--grow">
             <FilterInput placeholder="Search" value={searchQuery} onChange={onSearchQueryChange} />
           </div>
+          <Button className="pull-right" onClick={onToggleAdding}>
+            Add {config.resourceLabel}
+          </Button>
           <LinkButton disabled={!canWrite} href={newResourceHref}>
             Create {config.resourceLabel}
           </LinkButton>
         </div>
+        <SlideDown in={isAdding}>
+          <div className="cta-form">
+            <CloseButton aria-label="Close dialogue" onClick={onToggleAdding} />
+            <InlineField  label="UUID" labelWidth={20}>
+              <Input id="uuid-input" type="text" width={30} placeholder="uuid" value={uuid} onChange={(event) => (setUuid(event.currentTarget.value))}/>
+            </InlineField>
+            <Button onClick={onAdd}>
+              Add
+            </Button>
+          </div>
+        </SlideDown>
         <div className="admin-list-table">
           <VerticalGroup spacing="md">
             <table className="filter-table filter-table--hover form-inline">

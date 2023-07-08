@@ -1,7 +1,9 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -37,16 +39,52 @@ func (hs *HTTPServer) DeleteGroupResource(c *models.ReqContext) response.Respons
 	return response.Success("deleted")
 }
 
+func (hs *HTTPServer) GetResourceByUUID(ctx context.Context, uuid string) (dtos.Resource, error) {
+	resource := dtos.Resource{}
+	url := fmt.Sprintf("%sapi/resources/uuid/%s", hs.ResourceService.GetConfig().ResourceUrl, uuid)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := hs.ResourceService.RestRequest(ctx, req); err != nil {
+		return resource, err
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return resource, err
+		}
+		return resource, errors.New(errResponse.Message)
+	}
+	if err := json.Unmarshal(req.Response, &resource); err != nil {
+		return resource, err
+	}
+	return resource, nil
+}
+
 func (hs *HTTPServer) AddGroupResources(c *models.ReqContext) response.Response {
+	access, groupId := hs.IsGroupAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	uuid := web.Params(c.Req)[":uuid"]
+	resource, err := hs.GetResourceByUUID(c.Req.Context(), uuid)
+	if err != nil {
+		return response.Error(http.StatusNotFound, "uuid is not found", err)
+	}
+	if !hs.isResourceAccessible(c, resource.Id) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+
 	dto := dtos.AddGroupResourceMsg{
+		GroupId:    groupId,
+		ResourceId: resource.Id,
 		User: dtos.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
 			Role:   dtos.ConvertRoleToString(hs.UserRole(c)),
 		},
-	}
-	if err := web.Bind(c.Req, &dto); err != nil {
-		return response.Error(http.StatusBadRequest, "bad request data", err)
 	}
 	body, err := json.Marshal(dto)
 	if err != nil {
