@@ -219,11 +219,7 @@ func (hs *HTTPServer) SearchResources(c *models.ReqContext) response.Response {
 	return response.JSON(http.StatusOK, dto.Result)
 }
 
-func (hs *HTTPServer) IsResourceAccessible(c *models.ReqContext) bool {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
-	if err != nil {
-		return false
-	}
+func (hs *HTTPServer) isResourceAccessible(c *models.ReqContext, id int64) bool {
 	if c.IsGrafanaAdmin {
 		return true
 	}
@@ -252,6 +248,14 @@ func (hs *HTTPServer) IsResourceAccessible(c *models.ReqContext) bool {
 		return false
 	}
 	return true
+}
+
+func (hs *HTTPServer) IsResourceAccessible(c *models.ReqContext) bool {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
+	if err != nil {
+		return false
+	}
+	return hs.isResourceAccessible(c, id)
 }
 
 func (hs *HTTPServer) GetResourceGroups(c *models.ReqContext) response.Response {

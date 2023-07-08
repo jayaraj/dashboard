@@ -1,7 +1,10 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
-import { DeleteButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, LinkButton, Icon } from '@grafana/ui';
+import { getBackendSrv } from '@grafana/runtime';
+import { DeleteButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, LinkButton, Icon, InlineField, Button, Input } from '@grafana/ui';
+import { SlideDown } from 'app/core/components/Animations/SlideDown';
+import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
 import config from 'app/core/config';
 import { contextSrv } from 'app/core/services/context_srv';
 import { StoreState, AccessControlAction, GroupResource, Group, groupResourcePageLimit } from 'app/types';
@@ -38,7 +41,6 @@ export const ResourceList: FC<Props> = ({
   group,
   groupResources, 
   groupResourcesCount,
-  hasFetched,
   searchPage,
   searchQuery,
   loadGroupResources,
@@ -46,9 +48,21 @@ export const ResourceList: FC<Props> = ({
   setGroupResourcesSearchQuery,
   }) => {
 
+  let [isAdding, setIsAdding] = useState<boolean>(false);
+  let [uuid, setUuid] = useState<string>('');
+
+  const onToggleAdding = () => {
+    setIsAdding(!isAdding);
+  }
+
   useEffect(() => {
     getGroupResources('', 1);
   }, []);
+
+  const onAdd = async () => {
+    await getBackendSrv().post(`/api/groups/${group.id}/resources/${uuid}`);
+    getGroupResources('', 1);
+  }
 
   const getGroupResources = async (query: string, page: number ) => {
     await loadGroupResources(query, page);
@@ -98,6 +112,9 @@ export const ResourceList: FC<Props> = ({
           <div className="gf-form gf-form--grow">
             <FilterInput placeholder="Search" value={searchQuery} onChange={onSearchQueryChange} />
           </div>
+          <Button className="pull-right" onClick={onToggleAdding}>
+            Add {config.resourceLabel}
+          </Button>
           <LinkButton disabled={!canWrite} href={newResourceHref}>
             New {config.resourceLabel}
           </LinkButton>
@@ -105,6 +122,17 @@ export const ResourceList: FC<Props> = ({
             <Icon name="arrow-left" />Back
           </LinkButton>
         </div>
+        <SlideDown in={isAdding}>
+          <div className="cta-form">
+            <CloseButton aria-label="Close dialogue" onClick={onToggleAdding} />
+            <InlineField  label="UUID" labelWidth={20}>
+              <Input id="uuid-input" type="text" width={30} placeholder="uuid" value={uuid} onChange={(event) => (setUuid(event.currentTarget.value))}/>
+            </InlineField>
+            <Button onClick={onAdd}>
+              Add
+            </Button>
+          </div>
+        </SlideDown>
         <div className="admin-list-table">
           <VerticalGroup spacing="md">
             <table className="filter-table filter-table--hover form-inline">
