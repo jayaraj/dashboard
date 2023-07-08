@@ -482,6 +482,7 @@ func (hs *HTTPServer) registerRoutes() {
 			groupsRoute.Get("/:groupId/resources", authorize(reqSignedIn, resourcesReadAccessEvaluator), routing.Wrap(hs.GetGroupResources))
 			groupsRoute.Get("/:groupId/users", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetGroupUsers))
 			groupsRoute.Post("/:groupId/resources", authorize(reqEditorRole, resourcesWriteAccessEvaluator), routing.Wrap(hs.CreateGroupResource))
+			groupsRoute.Post("/:groupId/resources/:uuid", authorize(reqEditorRole, groupsWriteAccessEvaluator), routing.Wrap(hs.AddGroupResources))
 			groupsRoute.Get("/:groupId/pathname", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetGroupPathName))
 		})
 

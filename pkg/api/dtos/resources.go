@@ -51,7 +51,6 @@ type GetResourceByIdMsg struct {
 	Id     int64    `json:"-"`
 	Result Resource `json:"-"`
 }
-
 type SearchResourceMsg struct {
 	Query   string    `json:"query"`
 	User    User      `json:"user" binding:"required"`
