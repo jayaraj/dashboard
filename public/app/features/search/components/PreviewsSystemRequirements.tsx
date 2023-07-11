@@ -27,17 +27,16 @@ const Message = ({ requiredImageRendererPluginVersion }: { requiredImageRenderer
   if (requiredImageRendererPluginVersion) {
     return (
       <>
-        You must update the <MessageLink text="Grafana image renderer plugin" /> to version{' '}
-        {requiredImageRendererPluginVersion} to enable dashboard previews. Please contact your Grafana administrator to
-        update the plugin.
+        You must update the <MessageLink text="Image renderer plugin" /> to version {requiredImageRendererPluginVersion}{' '}
+        to enable dashboard previews. Please contact your administrator to update the plugin.
       </>
     );
   }
 
   return (
     <>
-      You must install the <MessageLink text="Grafana image renderer plugin" /> to enable dashboard previews. Please
-      contact your Grafana administrator to install the plugin.
+      You must install the <MessageLink text="Image renderer plugin" /> to enable dashboard previews. Please contact
+      your administrator to install the plugin.
     </>
   );
 };
