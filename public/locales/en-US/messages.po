@@ -517,7 +517,7 @@ msgstr "Embed HTML"
 
 #: public/app/features/dashboard/components/ShareModal/ShareEmbed.tsx
 msgid "share-modal.embed.html-description"
-msgstr "The HTML code below can be pasted and included in another web page. Unless anonymous access is enabled, the user viewing that page need to be signed into Grafana for the graph to load."
+msgstr "The HTML code below can be pasted and included in another web page. Unless anonymous access is enabled, the user viewing that page need to be signed into Dashboard for the graph to load."
 
 #: public/app/features/dashboard/components/ShareModal/ShareEmbed.tsx
 msgid "share-modal.embed.info"
@@ -577,7 +577,7 @@ msgstr "Image renderer plugin not installed"
 
 #: public/app/features/dashboard/components/ShareModal/ShareLink.tsx
 msgid "share-modal.link.render-instructions"
-msgstr "To render a panel image, you must install the <0>Grafana image renderer plugin</0>. Please contact your Grafana administrator to install the plugin."
+msgstr "To render a panel image, you must install the <0>Image renderer plugin</0>. Please contact your  administrator to install the plugin."
 
 #: public/app/features/dashboard/components/ShareModal/ShareLink.tsx
 msgid "share-modal.link.rendered-image"
