@@ -10,7 +10,7 @@ export const UserSignup: FC<{}> = () => {
 
   return (
     <VerticalGroup>
-      <div className={paddingTop}>New to Grafana?</div>
+      <div className={paddingTop}>New users please signup.</div>
       <LinkButton
         className={css`
           width: 100%;
