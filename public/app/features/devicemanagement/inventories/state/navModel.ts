@@ -1,6 +1,6 @@
 import { NavModelItem, NavModel } from '@grafana/data';
-import { Inventory } from 'app/types';
 import config from 'app/core/config';
+import { Inventory } from 'app/types';
 
 export function buildNavModel(inventory: Inventory): NavModelItem {
   const navModel = {
@@ -28,6 +28,9 @@ export function getPageNav(pageName: string): NavModel {
     id: 1,
     type: '',
     uuid: '',
+    resource_name: '',
+    resource_org: 0,
+    assigned: false,
   });
 
   let node: NavModelItem;
