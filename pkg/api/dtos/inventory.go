@@ -3,10 +3,13 @@ package dtos
 import "time"
 
 type Inventory struct {
-	Id        int64     `json:"id"`
-	UpdatedAt time.Time `json:"updated_at"`
-	UUID      string    `json:"uuid"`
-	Type      string    `json:"type"`
+	Id           int64     `json:"id"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	UUID         string    `json:"uuid"`
+	Type         string    `json:"type"`
+	ResourceOrg  int64     `json:"resource_org"`
+	ResourceName string    `json:"resource_name"`
+	Assigned     bool      `json:"assigned"`
 }
 
 type GetInventoryByUUIDMsg struct {
