@@ -1,10 +1,12 @@
-
 export const inventoryPageLimit = 50;
 
 export interface Inventory {
   id: number;
   type: string;
   uuid: string;
+  resource_name: string;
+  resource_org: number;
+  assigned: boolean;
 }
 
 export interface CreateInventoryDTO {

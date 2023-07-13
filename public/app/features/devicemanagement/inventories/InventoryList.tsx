@@ -1,6 +1,14 @@
 import React, { PureComponent } from 'react';
 
-import { DeleteButton, LinkButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination } from '@grafana/ui';
+import {
+  DeleteButton,
+  LinkButton,
+  FilterInput,
+  VerticalGroup,
+  HorizontalGroup,
+  Pagination,
+  Checkbox,
+} from '@grafana/ui';
 import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
 import { Page } from 'app/core/components/Page/Page';
 import config from 'app/core/config';
@@ -11,7 +19,12 @@ import { connectWithCleanUp } from '../../../core/components/connectWithCleanUp'
 
 import { deleteInventory, loadInventories } from './state/actions';
 import { setInventoriesSearchQuery } from './state/reducers';
-import { getInventoriesSearchQuery, getInventories, getInventoriesCount, getInventoriesSearchPage } from './state/selectors';
+import {
+  getInventoriesSearchQuery,
+  getInventories,
+  getInventoriesCount,
+  getInventoriesSearchPage,
+} from './state/selectors';
 
 export interface Props {
   inventories: Inventory[];
@@ -56,6 +69,23 @@ export class InventoryList extends PureComponent<Props> {
       <tr key={inventory.id}>
         <td className="link-td">{canCreate ? <a href={inventoryUrl}>{inventory.uuid}</a> : <>{inventory.uuid}</>}</td>
         <td className="link-td">{canCreate ? <a href={inventoryUrl}>{inventory.type}</a> : <>{inventory.type}</>}</td>
+        <td className="link-td">
+          {canCreate ? <a href={inventoryUrl}>{inventory.resource_org}</a> : <>{inventory.resource_org}</>}
+        </td>
+        <td className="link-td">
+          {canCreate ? <a href={inventoryUrl}>{inventory.resource_name}</a> : <>{inventory.resource_name}</>}
+        </td>
+        <td className="link-td">
+          {canCreate ? (
+            <a href={inventoryUrl}>
+              <Checkbox value={inventory.assigned} />
+            </a>
+          ) : (
+            <>
+              <Checkbox value={inventory.assigned} />
+            </>
+          )}
+        </td>
         <td className="text-right">
           <DeleteButton
             aria-label="Delete"
@@ -74,7 +104,15 @@ export class InventoryList extends PureComponent<Props> {
     const newHref = canCreate ? '/org/inventories/new' : '#';
     const buttonTitle = 'Create  ' + config.resourceLabel.toLowerCase();
     const title = 'No ' + config.resourceLabel.toLowerCase() + 's are available.';
-    return <EmptyListCTA title={title} buttonIcon="rss" buttonLink={newHref}  buttonDisabled={!canCreate} buttonTitle={buttonTitle} />;
+    return (
+      <EmptyListCTA
+        title={title}
+        buttonIcon="rss"
+        buttonLink={newHref}
+        buttonDisabled={!canCreate}
+        buttonTitle={buttonTitle}
+      />
+    );
   }
 
   renderInventoryList() {
@@ -92,7 +130,9 @@ export class InventoryList extends PureComponent<Props> {
           <div className="gf-form gf-form--grow">
             <FilterInput placeholder="Search" value={searchQuery} onChange={this.onSearchQueryChange} />
           </div>
-          <LinkButton className={disabledClass} href={newInventoryHref}>{buttonTitle}</LinkButton>
+          <LinkButton className={disabledClass} href={newInventoryHref}>
+            {buttonTitle}
+          </LinkButton>
         </div>
 
         <div className="admin-list-table">
@@ -102,6 +142,9 @@ export class InventoryList extends PureComponent<Props> {
                 <tr>
                   <th>UUID</th>
                   <th>Type</th>
+                  <th>Org</th>
+                  <th>Name</th>
+                  <th>Assigned</th>
                   <th style={{ width: '1%' }} />
                 </tr>
               </thead>
