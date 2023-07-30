@@ -50,6 +50,12 @@ type IsGroupAccessibleMsg struct {
 	Result  bool  `json:"-"`
 }
 
+type IsGroupPathAccessibleMsg struct {
+	GroupPath string `json:"group_path"`
+	User      User   `json:"user" binding:"required"`
+	Result    bool   `json:"-"`
+}
+
 type UpdateUserMsg struct {
 	Login string `json:"login"`
 	Email string `json:"email"`

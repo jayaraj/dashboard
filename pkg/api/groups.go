@@ -304,6 +304,37 @@ func (hs *HTTPServer) isGroupAccessible(ctx context.Context, groupId int64, user
 	return true
 }
 
+func (hs *HTTPServer) isGroupPathAccessible(c *models.ReqContext, grouPath string) bool {
+	if c.IsGrafanaAdmin {
+		return true
+	}
+	dto := dtos.IsGroupPathAccessibleMsg{
+		GroupPath: grouPath,
+		User: dtos.User{
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
+			Role:   dtos.ConvertRoleToString(hs.UserRole(c)),
+		},
+	}
+	body, err := json.Marshal(dto)
+	if err != nil {
+		return false
+	}
+	url := fmt.Sprintf("%sapi/groups/path/access", hs.ResourceService.GetConfig().ResourceUrl)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    body,
+		HttpMethod: http.MethodPost,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return false
+	}
+	if req.StatusCode != http.StatusOK {
+		return false
+	}
+	return true
+}
+
 func (hs *HTTPServer) IsGroupAccessible(c *models.ReqContext) (bool, int64) {
 	groupId, ok := web.Params(c.Req)[":groupId"]
 	if !ok {

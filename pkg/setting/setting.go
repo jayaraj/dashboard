@@ -68,6 +68,7 @@ var (
 	ApplicationName string
 	ResourceUrl     string
 	BillingUrl      string
+	ReaderUrl       string
 	EnableResource  bool
 	EnableBilling   bool
 	ResourceLabel   string
@@ -207,6 +208,7 @@ type Cfg struct {
 	AppTitle         string
 	ResourceUrl      string
 	BillingUrl       string
+	ReaderUrl        string
 	EnableResource   bool
 	EnableBilling    bool
 	ResourceLabel    string
@@ -917,6 +919,7 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	ApplicationName = valueAsString(iniFile.Section(""), "application_name", "dashboard")
 	ResourceUrl = valueAsString(iniFile.Section(""), "resource_url", "http://localhost:9002/")
 	BillingUrl = valueAsString(iniFile.Section(""), "billing_url", "http://localhost:9007/")
+	ReaderUrl = valueAsString(iniFile.Section(""), "reader_url", "http://localhost:9006/")
 	EnableResource = iniFile.Section("").Key("enable_resource").MustBool(false)
 	EnableBilling = iniFile.Section("").Key("enable_billing").MustBool(false)
 	ResourceLabel = valueAsString(iniFile.Section(""), "resource_label", "Asset")
@@ -925,6 +928,7 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	cfg.AppTitle = ApplicationName
 	cfg.ResourceUrl = ResourceUrl
 	cfg.BillingUrl = BillingUrl
+	cfg.ReaderUrl = ReaderUrl
 	cfg.EnableBilling = EnableBilling
 	cfg.EnableResource = EnableResource
 	cfg.ResourceLabel = ResourceLabel

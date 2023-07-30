@@ -25,6 +25,13 @@ export function buildNavModel(connection: Connection): NavModelItem {
       },
       {
         active: false,
+        icon: 'bell-edit',
+        id: `connection-alerts-${connection.id}`,
+        text: 'Alerts',
+        url: `org/connections/edit/${connection.id}/alerts`,
+      },
+      {
+        active: false,
         icon: 'gf-logs',
         id: `connection-logs-${connection.id}`,
         text: 'Logs',

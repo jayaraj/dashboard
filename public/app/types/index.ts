@@ -40,6 +40,8 @@ export * from './devicemanagement/inventory';
 export * from './devicemanagement/inventoryconfiguration';
 export * from './devicemanagement/bulk';
 export * from './devicemanagement/bulkerror';
+export * from './devicemanagement/alert';
+export * from './devicemanagement/alertdefinition';
 
 import * as CoreEvents from './events';
 export { CoreEvents };

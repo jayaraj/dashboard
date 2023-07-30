@@ -18,6 +18,13 @@ export function buildNavModel(group: Group): NavModelItem {
     id: `group-groups-${group.id}`,
     text: 'Sub-Groups',
     url: `org/groups/edit/${group.id}/groups`,
+  },
+  {
+    active: false,
+    icon: 'bell-edit',
+    id: `group-alerts-${group.id}`,
+    text: 'Alerts',
+    url: `org/groups/edit/${group.id}/alerts`,
   });
   if (!group.child) {
     pages.push({
@@ -28,7 +35,8 @@ export function buildNavModel(group: Group): NavModelItem {
       url: `org/groups/edit/${group.id}/resources`,
     });
   }
-  pages.push({
+  pages.push(
+    {
     active: false,
     icon: 'users-alt',
     id: `group-users-${group.id}`,

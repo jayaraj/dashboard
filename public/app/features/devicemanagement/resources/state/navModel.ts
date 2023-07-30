@@ -19,6 +19,13 @@ export function buildNavModel(resource: Resource): NavModelItem {
       },
       {
         active: false,
+        icon: 'bell-edit',
+        id: `resource-alerts-${resource.id}`,
+        text: 'Alerts',
+        url: `org/resources/edit/${resource.id}/alerts`,
+      },
+      {
+        active: false,
         icon: 'sliders-v-alt',
         id: `resource-settings-${resource.id}`,
         text: 'Settings',
