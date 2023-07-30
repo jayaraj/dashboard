@@ -73,6 +73,10 @@ export enum AccessControlAction {
   ActionBulksCreate = 'bulks:create',
   ActionTypesCreate = 'types:create',
   ActionTypesRead = 'types:read',
+  ActionAlertsRead = 'alerts:read',
+  ActionAlertsWrite = 'alerts:write',
+  ActionAlertDefinitionsWrite = 'alerts:write',
+  ActionAlertDefinitionsRead = 'alerts:read',
   /**************Device Management*************/
 
   /**************Billing*************/

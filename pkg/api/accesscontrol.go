@@ -376,6 +376,64 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		Grants: []string{string(org.RoleViewer)},
 	}
 
+	alertDefinitionsWriterRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:alertdefinitions:writer",
+			DisplayName: "Alert Definition writer",
+			Description: "Read  alert definitions",
+			Group:       "AlertDefinitions",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionAlertDefinitionsRead, Scope: ac.ScopeGroupsAll},
+				{Action: ac.ActionAlertDefinitionsWrite, Scope: ac.ScopeGroupsAll},
+			},
+		},
+		Grants: []string{ac.RoleGrafanaAdmin},
+	}
+
+	alertDefinitionsReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:alertdefinitions:reader",
+			DisplayName: "Alert Definition reader",
+			Description: "Read alert definitions",
+			Group:       "AlertDefinitions",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionAlertDefinitionsRead},
+			},
+		},
+		Grants: []string{string(org.RoleViewer)},
+	}
+
+	alertsWriterRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:alerts:writer",
+			DisplayName: "Alert writer",
+			Description: "Read  alerts",
+			Group:       "Alerts",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionAlertsRead, Scope: ac.ScopeGroupsAll},
+				{Action: ac.ActionAlertsWrite, Scope: ac.ScopeGroupsAll},
+			},
+		},
+		Grants: []string{string(org.RoleViewer)},
+	}
+
+	alertsReaderRole := ac.RoleRegistration{
+		Role: ac.RoleDTO{
+			Name:        "fixed:alerts:reader",
+			DisplayName: "Alert reader",
+			Description: "Read alerts",
+			Group:       "Alerts",
+			Version:     1,
+			Permissions: []ac.Permission{
+				{Action: ac.ActionAlertsRead},
+			},
+		},
+		Grants: []string{string(org.RoleViewer)},
+	}
+
 	inventoriesCreatorRole := ac.RoleRegistration{
 		Role: ac.RoleDTO{
 			Name:        "fixed:inventories:creator",
@@ -795,7 +853,8 @@ func (hs *HTTPServer) declareFixedRoles() error {
 		groupsReaderRole, inventoriesCreatorRole, bulksCreatorRole, typesCreatorRole, typesReaderRole,
 		profilesCreatorRole, profilesReaderRole, connectionsCreatorRole, connectionsWriterRole, connectionsReaderRole,
 		slabsCreatorRole, slabsReaderRole, invoicesCreatorRole, invoicesReaderRole, transactionsCreatorRole,
-		transactionsReaderRole, fixedChargesCreatorRole, fixedChargesReaderRole,
+		transactionsReaderRole, fixedChargesCreatorRole, fixedChargesReaderRole, alertDefinitionsReaderRole, alertDefinitionsWriterRole,
+		alertsReaderRole, alertsWriterRole,
 	)
 }
 
@@ -897,6 +956,24 @@ var inventoriesReadAccessEvaluator = ac.EvalAny(
 var inventoriesWriteAccessEvaluator = ac.EvalAll(
 	ac.EvalPermission(ac.ActionInventoriesRead),
 	ac.EvalPermission(ac.ActionInventoriesWrite),
+)
+
+var alertDefinitionsReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionAlertDefinitionsRead),
+	ac.EvalPermission(ac.ActionAlertDefinitionsWrite),
+)
+
+var alertDefinitionsWriteAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionAlertDefinitionsWrite),
+)
+
+var alertsReadAccessEvaluator = ac.EvalAny(
+	ac.EvalPermission(ac.ActionAlertsRead),
+	ac.EvalPermission(ac.ActionAlertsWrite),
+)
+
+var alertsWriteAccessEvaluator = ac.EvalAll(
+	ac.EvalPermission(ac.ActionAlertsWrite),
 )
 
 var inventoriesCreateAccessEvaluator = ac.EvalAll(

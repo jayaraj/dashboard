@@ -26,6 +26,7 @@ type IndexViewData struct {
 	AppTitle                string
 	ResourceUrl             string
 	BillingUrl              string
+	ReaderUrl               string
 	EnableResource          bool
 	EnableBilling           bool
 	ResourceLabel           string

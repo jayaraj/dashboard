@@ -100,6 +100,7 @@ func (hs *HTTPServer) getFrontendSettingsMap(c *models.ReqContext) (map[string]i
 		"appTitle":                            hs.Cfg.AppTitle,
 		"resourceUrl":                         hs.Cfg.ResourceUrl,
 		"billingUrl":                          hs.Cfg.BillingUrl,
+		"readerUrl":                           hs.Cfg.ReaderUrl,
 		"enableResource":                      hs.Cfg.EnableResource,
 		"enableBilling":                       hs.Cfg.EnableBilling,
 		"resourceLabel":                       hs.Cfg.ResourceLabel,

@@ -371,6 +371,18 @@ const (
 	// Inventories related scopes
 	ScopeInventoriesAll = "inventories:*"
 
+	// AlertDefinitions related actions
+	ActionAlertDefinitionsRead  = "alertdefinitions:read"
+	ActionAlertDefinitionsWrite = "alertdefinitions:write"
+	// AlertDefinitions related scopes
+	ScopeAlertDefinitionsAll = "alertdefinitions:*"
+
+	// Alerts related actions
+	ActionAlertsRead  = "alerts:read"
+	ActionAlertsWrite = "alerts:write"
+	// Alerts related scopes
+	ScopeAlertsAll = "alerts:*"
+
 	// Bulks related actions
 	ActionBulksCreate = "bulks:create"
 	ActionBulksDelete = "bulks:delete"

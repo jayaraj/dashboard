@@ -8,6 +8,7 @@ import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { StoreState } from 'app/types';
 
+import AlertList from './AlertList';
 import ResourceGroupList from './ResourceGroupList';
 import ResourceSettings from './ResourceSettings';
 import { loadResource } from './state/actions';
@@ -27,6 +28,7 @@ interface State {
 
 enum PageTypes {
   Groups = 'groups',
+  Alerts = 'alerts',
   Settings = 'settings',
 }
 
@@ -74,7 +76,7 @@ export class ResourcePages extends PureComponent<Props, State> {
   }
 
   getCurrentPage() {
-    const pages = ['groups', 'settings'];
+    const pages = ['groups', 'alerts', 'settings'];
     const currentPage = this.props.pageName;
     return includes(pages, currentPage) ? currentPage : pages[0];
   }
@@ -86,6 +88,8 @@ export class ResourcePages extends PureComponent<Props, State> {
     switch (currentPage) {
       case PageTypes.Groups:
         return <ResourceGroupList />;
+      case PageTypes.Alerts:
+        return <AlertList />;
       case PageTypes.Settings:
         return <ResourceSettings resource={resource!}/>;
     }

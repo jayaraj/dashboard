@@ -27,6 +27,8 @@ import bulksReducer from 'app/features/devicemanagement/bulks/state/reducers';
 import groupsReducer from 'app/features/devicemanagement/groups/state/reducers';
 import inventoriesReducer from 'app/features/devicemanagement/inventories/state/reducers';
 import resourcesReducer from 'app/features/devicemanagement/resources/state/reducers';
+import alertsReducer from 'app/features/devicemanagement/alerts/state/reducers';
+
 //Billing Management
 import connectionsReducer from 'app/features/billing/connections/state/reducers';
 import fixedChargesReducer from 'app/features/billing/fixedcharges/state/reducers';
@@ -61,6 +63,7 @@ const rootReducers = {
   ...resourcesReducer,
   ...groupsReducer,
   ...configurationTypesReducer,
+  ...alertsReducer,
   
   ...profilesReducer,
   ...connectionsReducer,
