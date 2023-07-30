@@ -17,15 +17,12 @@ interface Props {
 export const FormPanel: React.FC<Props> = ({configuration, onChange, disabled}) => {
   const theme = useTheme2();
   const styles = getStyles(theme);
-  const length = configuration.sections.length;
-  const width = (length <= 1)? 30: (length <= 2)? 65: (length <= 3)? 90: 100;
 
   return (
     <div
       className={cx(
         styles.wrapper,
         css`
-          width: ${width}%;
           height: 100%;
           margin-bottom: 20px;
         `

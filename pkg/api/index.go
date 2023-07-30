@@ -242,6 +242,14 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 				Url:         hs.Cfg.AppSubURL + "/org/resources",
 			})
 		}
+		if hasAccess(ac.ReqSignedIn, alertsReadAccessEvaluator) {
+			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
+				Text: "Alerts",
+				Id:   "alerts",
+				Url:  hs.Cfg.AppSubURL + "org/alertdefinitions",
+				Icon: "bell-edit",
+			})
+		}
 		if hasAccess(ac.ReqGrafanaAdmin, bulksReadAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
 				Text:        "Batch Process",
@@ -920,6 +928,7 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 		AppTitle:                setting.ApplicationName,
 		ResourceUrl:             setting.ResourceUrl,
 		BillingUrl:              setting.BillingUrl,
+		ReaderUrl:               setting.ReaderUrl,
 		EnableResource:          setting.EnableResource,
 		EnableBilling:           setting.EnableBilling,
 		ResourceLabel:           setting.ResourceLabel,

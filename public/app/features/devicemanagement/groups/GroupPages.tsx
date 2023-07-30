@@ -8,6 +8,7 @@ import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { StoreState } from 'app/types';
 
+import AlertList from './AlertList';
 import GroupResourceList from './GroupResourceList';
 import GroupSettings from './GroupSettings';
 import GroupUserList from './GroupUserList';
@@ -30,6 +31,7 @@ interface State {
 enum PageTypes {
   Groups = 'groups',
   Resources = 'resources',
+  Alerts = 'alerts',
   Users = 'users',
   Settings = 'settings',
 }
@@ -90,7 +92,7 @@ export class GroupPages extends PureComponent<Props, State> {
   }
 
   getCurrentPage() {
-    const pages = ['groups', 'resources', 'users', 'settings'];
+    const pages = ['groups', 'resources', 'alerts', 'users', 'settings'];
     const currentPage = this.props.pageName;
     return includes(pages, currentPage) ? currentPage : pages[0];
   }
@@ -104,6 +106,8 @@ export class GroupPages extends PureComponent<Props, State> {
         return <SubGroupList group={group!}/>;
       case PageTypes.Resources:
         return <GroupResourceList group={group!}/>;
+      case PageTypes.Alerts:
+          return <AlertList/>;
       case PageTypes.Users:
         return <GroupUserList group={group!}/>;
       case PageTypes.Settings:
