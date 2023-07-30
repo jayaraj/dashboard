@@ -324,6 +324,18 @@ export function getAppRoutes(): RouteDescriptor[] {
       component: SafeDynamicImport(() => import(/* webpackChunkName: "GroupPages" */ 'app/features/devicemanagement/groups/GroupPages')),
     },
     {
+      path: '/org/alertdefinitions',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "AlertDefinitionList" */ 'app/features/devicemanagement/alerts/AlertDefinitionList')
+      ),
+    },
+    {
+      path: '/org/alertdefinitions/edit/:id/:page?',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "AlertDefinitionPages" */ 'app/features/devicemanagement/alerts/AlertDefinitionPages')
+      ),
+    },
+    {
       path: '/org/configurationtypes',
       component: SafeDynamicImport(
         () => import(/* webpackChunkName: "ConfigurationTypeList" */ 'app/features/devicemanagement/configurationtypes/ConfigurationTypeList')

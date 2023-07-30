@@ -17,6 +17,7 @@ import TransactionList from './TransactionList';
 import { loadConnection } from './state/actions';
 import { getPageNav } from './state/navModel';
 import { getConnection } from './state/selectors';
+import ConnectionAlertList from './ConnectionAlertList';
 
 interface ConnectionPageRouteParams {
   id: string;
@@ -32,6 +33,7 @@ interface State {
 enum PageTypes {
   Invoices = 'invoices',
   Transactions = 'transactions',
+  Alerts = 'alerts',
   Logs = 'logs',
   Resources = 'resources',
   Users = 'users',
@@ -84,7 +86,7 @@ export class ConnectionPages extends PureComponent<Props, State> {
   }
 
   getCurrentPage() {
-    const pages = ['invoices', 'transactions', 'logs', 'resources', 'users', 'settings'];
+    const pages = ['invoices', 'transactions', 'alerts', 'logs', 'resources', 'users', 'settings'];
     const currentPage = this.props.pageName;
     return includes(pages, currentPage) ? currentPage : pages[0];
   }
@@ -97,6 +99,8 @@ export class ConnectionPages extends PureComponent<Props, State> {
         return <InvoiceList/>;
       case PageTypes.Transactions:
         return <TransactionList/>;
+      case PageTypes.Alerts:
+        return <ConnectionAlertList/>;
       case PageTypes.Logs:
         return <ConnectionLogList/>;
       case PageTypes.Resources:

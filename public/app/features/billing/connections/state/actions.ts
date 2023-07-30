@@ -2,11 +2,12 @@ import { AppEvents } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
 import { appEvents } from 'app/core/core';
 import { updateNavIndex } from 'app/core/actions';
-import {CreateTransactionDTO, QueryRange, ThunkResult, UpdateConnectionDTO, connectionLogPageLimit, connectionPageLimit, invoicesPageLimit, transactionsPageLimit, connectionUserPageLimit, connectionResourcePageLimit } from 'app/types';
+import {CreateTransactionDTO, QueryRange, ThunkResult, UpdateConnectionDTO, connectionLogPageLimit, connectionPageLimit, invoicesPageLimit, transactionsPageLimit, connectionUserPageLimit, connectionResourcePageLimit, alertPageLimit } from 'app/types';
 
 import { buildNavModel } from './navModel';
 import { connectionLoaded, connectionsLoaded, setConnectionsSearchPage, setConnectionLogsSearchPage, setConnectionLogsCount, connectionLogsLoaded, connectionUsersLoaded, setConnectionUsersSearchPage, setConnectionUsersCount, invoicesLoaded, setInvoicesSearchRange, setInvoicesSearchPage, setInvoicesCount, invoiceLoaded, transactionsLoaded, setTransactionsSearchPage, setTransactionsCount, setConnectionsCount, orgConfigurationsLoaded, connectionResourcesLoaded, setConnectionResourcesSearchPage, setConnectionResourcesCount } from './reducers';
 import config from 'app/core/config';
+import { alertDefinitionLoaded, alertsLoaded, setAlertsCount, setAlertsSearchPage } from 'app/features/devicemanagement/alerts/state/reducers';
 
 
 export function loadConnections(query: string, page: number): ThunkResult<void> {
@@ -192,5 +193,52 @@ export function loadOrgConfigurations(type: string): ThunkResult<void> {
   return async (dispatch) => {
     const response = await getBackendSrv().get(`/api/orgs/configurations/${type}`);
     dispatch(orgConfigurationsLoaded(response));
+  };
+}
+
+export function loadAlerts(query: string, page: number): ThunkResult<void> {
+  return async (dispatch, getStore) => {
+    const connection = getStore().connection.connection;
+    const response = await getBackendSrv().get(`/api/groups/${connection.group_id}/alerts/search`, {
+      query: query,
+      page: page,
+      perPage: alertPageLimit,
+      grouppath: connection.group_path_id,
+    });
+    dispatch(alertsLoaded(response.alerts));
+    dispatch(setAlertsSearchPage(response.page));
+    dispatch(setAlertsCount(response.count));
+  };
+}
+
+export function loadAlertDefinition(id: number): ThunkResult<void> {
+  return async (dispatch) => {
+    const response = await getBackendSrv().get(`/api/alertdefinitions/${id}`);
+    dispatch(alertDefinitionLoaded(response));
+    dispatch(updateNavIndex(buildNavModel(response)));
+  };
+}
+
+export function configureAlert(name: string, configuration: any, query: string, page: number): ThunkResult<void> {
+  return async (dispatch, getStore) => {
+    const connection = getStore().connection.connection;
+    await getBackendSrv().put(`/api/groups/${connection.group_id}/alerts/configuration`, {
+      name: name,
+      configuration: configuration,
+      grouppath: connection.group_path_id,
+    });
+    dispatch(loadAlerts(query, page));
+  };
+}
+
+export function enableAlert(name: string, enabled: boolean, query: string, page: number): ThunkResult<void> {
+  return async (dispatch, getStore) => {
+    const connection = getStore().connection.connection;
+    await getBackendSrv().put(`/api/groups/${connection.group_id}/alerts/enabled`, {
+      name: name,
+      enabled: enabled,
+      grouppath: connection.group_path_id,
+    });
+    dispatch(loadAlerts(query, page));
   };
 }

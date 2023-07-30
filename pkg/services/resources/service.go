@@ -86,7 +86,7 @@ func (service *ResourcesService) BillingTopic(msg string) string {
 
 func (service *ResourcesService) RestRequest(ctx context.Context, request *RestRequest) (err error) {
 	netClient := &http.Client{
-		Timeout: time.Second * 10,
+		Timeout: time.Second * 30,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
 				Renegotiation: tls.RenegotiateFreelyAsClient,

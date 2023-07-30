@@ -116,6 +116,8 @@ func (hs *HTTPServer) registerRoutes() {
 	r.Get("/org/configurationtypes", authorize(reqGrafanaAdmin, typesReadAccessEvaluator), hs.Index)
 	r.Get("/org/configurationtypes/edit/*", authorize(reqGrafanaAdmin, typesWriteAccessEvaluator), hs.Index)
 	r.Get("/org/configurationtypes/new", authorize(reqGrafanaAdmin, typesCreateAccessEvaluator), hs.Index)
+	r.Get("/org/alertdefinitions", authorize(reqSignedIn, alertsReadAccessEvaluator), hs.Index)
+	r.Get("/org/alertdefinitions/edit/*", authorize(reqGrafanaAdmin, alertDefinitionsReadAccessEvaluator), hs.Index)
 	/**************Device Management*************/
 	/*******************Billing******************/
 	r.Get("/org/profiles", authorize(reqOrgAdmin, profilesReadAccessEvaluator), hs.Index)
@@ -529,6 +531,20 @@ func (hs *HTTPServer) registerRoutes() {
 			inventoriesRoute.Put("/:inventoryId", authorize(reqGrafanaAdmin, inventoriesWriteAccessEvaluator), routing.Wrap(hs.UpdateInventory))
 			inventoriesRoute.Delete("/:inventoryId", authorize(reqGrafanaAdmin, inventoriesCreateAccessEvaluator), routing.Wrap(hs.DeleteInventory))
 			inventoriesRoute.Get("/uuid/:uuid", authorize(reqGrafanaAdmin, inventoriesReadAccessEvaluator), routing.Wrap(hs.GetInventoryByUUID))
+		})
+
+		// Alerts
+		apiRoute.Group("/alertdefinitions", func(alertdefinitionsRoute routing.RouteRegister) {
+			alertdefinitionsRoute.Put("/:alertDefinitionId", authorize(reqGrafanaAdmin, alertDefinitionsWriteAccessEvaluator), routing.Wrap(hs.UpdateAlertDefinition))
+			alertdefinitionsRoute.Get("/:alertDefinitionId", authorize(reqSignedIn, alertDefinitionsReadAccessEvaluator), routing.Wrap(hs.GetAlertDefinitionById))
+			alertdefinitionsRoute.Get("/search", authorize(reqSignedIn, alertDefinitionsReadAccessEvaluator), routing.Wrap(hs.SearchAlertDefinitions))
+		})
+
+		apiRoute.Group("/grafo/alerts", func(alertsRoute routing.RouteRegister) {
+			alertsRoute.Put("/configuration", authorize(reqEditorRole, alertsWriteAccessEvaluator), routing.Wrap(hs.ConfigureAlert))
+			alertsRoute.Put("/enabled", authorize(reqEditorRole, alertsWriteAccessEvaluator), routing.Wrap(hs.EnabledAlert))
+			alertsRoute.Get("/search", authorize(reqSignedIn, alertsReadAccessEvaluator), routing.Wrap(hs.SearchAlerts))
+			alertsRoute.Get("/:name", authorize(reqSignedIn, alertsReadAccessEvaluator), routing.Wrap(hs.GetGrafoAlert))
 		})
 
 		// InventoryConfiguration

@@ -33,6 +33,7 @@ export class GrafanaBootConfig implements GrafanaConfig {
   appTitle = '';
   resourceUrl = '';
   billingUrl = '';
+  readerUrl = '';
   enableBilling = false;
   enableResource = false;
   resourceLabel = '';
@@ -163,6 +164,7 @@ export class GrafanaBootConfig implements GrafanaConfig {
       appTitle: '',
       resourceUrl: '',
       billingUrl: '',
+      readerUrl: '',
       enableBilling: false,
       enableResource: false,
       resourceLabel: '',
