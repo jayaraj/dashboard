@@ -87,6 +87,7 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition }) =
     itemsPerPage: alertPageLimit
   }
   const interval = useRef<any>(null)
+  const actionIcons: React.ReactNode[] = [];
 
   useEffect(() => {
       if (!isCollapsed && association) {
@@ -107,8 +108,7 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition }) =
       };
   }, [isCollapsed, dispatch, queryString, alertState, association]);
 
-  const actionIcons: React.ReactNode[] = [];
-  if (canWriteAlertDefinitions) {
+  if (canWriteAlertDefinitions && association === 'org') {
     actionIcons.push(
       <ActionIcon
         aria-label="edit alert definition"
