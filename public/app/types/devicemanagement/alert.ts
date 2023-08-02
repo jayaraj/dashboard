@@ -36,6 +36,7 @@ export interface Alert {
   data: any;
   configuration: any;
   onEdit?: () => void;
+  setConfiguringAlert: (alert: Alert) => void;
 }
 
 export interface AlertsState {

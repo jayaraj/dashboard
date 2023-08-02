@@ -69,7 +69,8 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition }) =
     enabled: false,
     data: {},
     configuration: {},
-    onEdit: () => {onEdit();}
+    onEdit: () => {onEdit();},
+    setConfiguringAlert: (alert: Alert) => {},
   }
   const load = useCallback((newPage: number, alertState?: string, queryString?: string ) => {
     dispatch(loadAlertsByName(alertDefinition.name, newPage, associationType.current, alertState, queryString));

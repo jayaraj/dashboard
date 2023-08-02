@@ -55,20 +55,27 @@ export const AlertSettings: FC<Props> = ({
  
   const onConfigure = async () => {
     if (alert.id !== 0) {
-      await configureAlert(alert.name, updatedConfiguration, alert.associated_with);
+      await configureAlert(alert.name, updatedConfiguration, alert.associated_with, alert);
     } else {
       await configureAlert(alert.name, updatedConfiguration, association!);
     }
     if (alert.onEdit) {
       alert.onEdit();
     }
+    onCancel(false);
   };
 
   const onEnable = async (enabled: boolean) => {
-    await enableAlert(alert.name, enabled, association!);
+    if (alert.id !== 0) {
+      await enableAlert(alert.name, enabled, alert.associated_with, alert);
+    } else {
+      await enableAlert(alert.name, enabled, association!);
+    }
+    
     if (alert.onEdit) {
       alert.onEdit();
     }
+    onCancel(false);
   };
 
   useEffect( () => {

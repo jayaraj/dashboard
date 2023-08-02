@@ -1,9 +1,9 @@
 import { css, cx } from '@emotion/css';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
 import { useStyles2, Checkbox } from '@grafana/ui';
-import { Alert, AlertingState } from 'app/types';
+import { Alert, AlertingState, OrgRole } from 'app/types';
 import { ActionIcon } from './ActionIcon';
 import { AlertLabels } from './AlertLabels';
 import AlertSettings from './AlertSettings';
@@ -74,7 +74,6 @@ const columns: AlertTableColumnProps[] = [
     // eslint-disable-next-line react/display-name
     renderCell: ({ data }) => {
       const actionIcons: React.ReactNode[] = [];
-      let [isConfiguring, setIsConfiguring] = useState<boolean>(false);
       const styles = useStyles2(getStyles);
       actionIcons.push(
         <ActionIcon
@@ -83,13 +82,12 @@ const columns: AlertTableColumnProps[] = [
           key="configure"
           icon="pen"
           tooltip="configure alert"
-          onClick={() => setIsConfiguring(true)}
+          onClick={() => data.setConfiguringAlert(data)}
         />
       );
       return (
         <div className={styles.center}>
           <div className={styles.actionIcons}>{actionIcons}</div>
-          <AlertSettings isOpen={isConfiguring}  onCancel={(open: boolean ) => { setIsConfiguring(open);}} alert={data}/>
         </div>
       );
     },
@@ -102,11 +100,42 @@ export function AlertInstances(props: Props): JSX.Element | null {
   const styles = useStyles2(getStyles);
   const wrapperClass = cx(styles.wrapper, className, { [styles.wrapperMargin]: showGuidelines });
   const TableComponent = showGuidelines ? DynamicTableWithGuidelines : DynamicTable;
+  const [alert, setAlert] = useState<Alert>({
+    id: 0,
+    org_id: 0,
+    resource_id: 0,
+    group_path: '',
+    state: '',
+    message: '',
+    updated_at: '',
+    alert_definition_id: 0,
+    name: '',
+    description: '',
+    associated_with: '',
+    role: OrgRole.Viewer,
+    severity: '',
+    for: 0,
+    ticket_enabled: false,
+    enabled: false,
+    data: {},
+    configuration: {},
+    onEdit: () => {onEdit();},
+    setConfiguringAlert: (alert: Alert) => {},
+  });
+  const [isConfiguring, setIsConfiguring] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (alert.id !== 0) {
+      setIsConfiguring(true);
+    } else {
+      setIsConfiguring(false);
+    }
+  }, [alert]);
 
   const items = useMemo(
     (): AlertTableItemProps[] =>
       alerts.map((instance) => {
-        const alert = {...instance, onEdit:onEdit};
+        const alert = {...instance, onEdit:onEdit, setConfiguringAlert: setAlert};
         return {
         data: alert,
         id: instance.id,
@@ -126,6 +155,7 @@ export function AlertInstances(props: Props): JSX.Element | null {
         pagination={pagination}
         paginationStyles={styles.pagination}
       />
+      <AlertSettings isOpen={isConfiguring}  onCancel={(open: boolean ) => { setIsConfiguring(open);}} alert={alert}/>
     </div>
   );
 }

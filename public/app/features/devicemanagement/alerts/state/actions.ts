@@ -1,9 +1,8 @@
 import { getBackendSrv } from '@grafana/runtime';
 import { updateNavIndex } from 'app/core/actions';
-import {AlertStats, ThunkResult, UpdateAlertDefinitionDTO, alertDefinitionPageLimit  } from 'app/types';
+import {AlertStats, ThunkResult, UpdateAlertDefinitionDTO, alertDefinitionPageLimit, Alert, AlertingState, alertPageLimit } from 'app/types';
 
 import { buildNavModel } from './navModel';
-import { AlertingState, alertPageLimit } from 'app/types/devicemanagement/alert';
 import { alertDefinitionLoaded, alertDefinitionsLoaded, alertLoaded, alertsByNameLoaded, alertsByStateLoaded, setAlertDefinitionsSearchPage, setAlertDefinitionsStats, setAlertsByNamePage, setAlertsByNameStats, setAlertsByStatePage, setAlertsByStateStats } from './reducers';
 
 export function loadAlertsByName(name: string, page: number, association?: string, state?: string, query?: string): ThunkResult<void> {
@@ -151,7 +150,7 @@ export function updateAlertDefinition(dto: UpdateAlertDefinitionDTO): ThunkResul
   };
 }
 
-export function configureAlert(name: string, configuration: any, association: string): ThunkResult<void> {
+export function configureAlert(name: string, configuration: any, association: string, alert?: Alert): ThunkResult<void> {
   return async (_, getStore) => {
     let args: any = {
       name: name,
@@ -159,23 +158,35 @@ export function configureAlert(name: string, configuration: any, association: st
     };
     switch (association) {
       case 'group':
-        const gg = getStore().group.group;
-        args.group = gg.path
+        if (alert) {
+          args.group_path = alert.group_path
+        } else {
+          const gg = getStore().group.group;
+          args.group_path = gg.path
+        }
         break;
       case 'resource':
-        const rr = getStore().resource.resource;
-        args.resource = rr.id
+        if (alert) {
+          args.resource_id = alert.resource_id
+        } else {
+          const rr = getStore().resource.resource;
+          args.resource_id = rr.id
+        }
         break;
       case 'connection':
-        const cc = getStore().connection.connection;
-        args.group = cc.group_path_id;
+        if (alert) {
+          args.group_path = alert.group_path
+        } else {
+          const cc = getStore().connection.connection;
+          args.group_path = cc.group_path_id;
+        }
         break;
     }
     await getBackendSrv().put(`/api/grafo/alerts/configuration`, args);
   };
 }
 
-export function enableAlert(name: string, enabled: boolean, association: string): ThunkResult<void> {
+export function enableAlert(name: string, enabled: boolean, association: string, alert?: Alert): ThunkResult<void> {
   return async (_, getStore) => {
     let args: any = {
       name: name,
@@ -183,16 +194,28 @@ export function enableAlert(name: string, enabled: boolean, association: string)
     };
     switch (association) {
       case 'group':
-        const gg = getStore().group.group;
-        args.group = gg.path
+        if (alert) {
+          args.group_path = alert.group_path
+        } else {
+          const gg = getStore().group.group;
+          args.group_path = gg.path
+        }
         break;
       case 'resource':
-        const rr = getStore().resource.resource;
-        args.resource = rr.id
+        if (alert) {
+          args.resource_id = alert.resource_id
+        } else {
+          const rr = getStore().resource.resource;
+          args.resource_id = rr.id
+        }
         break;
       case 'connection':
-        const cc = getStore().connection.connection;
-        args.group = cc.group_path_id;
+        if (alert) {
+          args.group_path = alert.group_path
+        } else {
+          const cc = getStore().connection.connection;
+          args.group_path = cc.group_path_id;
+        }
         break;
     }
     await getBackendSrv().put(`/api/grafo/alerts/enabled`, args);
