@@ -1,9 +1,9 @@
 import { getBackendSrv } from '@grafana/runtime';
 import { updateNavIndex } from 'app/core/actions';
-import {AlertStats, ThunkResult, UpdateAlertDefinitionDTO, alertDefinitionPageLimit, Alert, AlertingState, alertPageLimit } from 'app/types';
+import {AlertStats, ThunkResult, UpdateAlertDefinitionDTO, alertDefinitionPageLimit, Alert, AlertingState, alertPageLimit, UpdateNotificationDTO } from 'app/types';
 
 import { buildNavModel } from './navModel';
-import { alertDefinitionLoaded, alertDefinitionsLoaded, alertLoaded, alertsByNameLoaded, alertsByStateLoaded, setAlertDefinitionsSearchPage, setAlertDefinitionsStats, setAlertsByNamePage, setAlertsByNameStats, setAlertsByStatePage, setAlertsByStateStats } from './reducers';
+import { alertDefinitionLoaded, alertDefinitionsLoaded, alertLoaded, alertNotificationLoaded, alertsByNameLoaded, alertsByStateLoaded, setAlertDefinitionsSearchPage, setAlertDefinitionsStats, setAlertsByNamePage, setAlertsByNameStats, setAlertsByStatePage, setAlertsByStateStats } from './reducers';
 
 export function loadAlertsByName(name: string, page: number, association?: string, state?: string, query?: string): ThunkResult<void> {
   return async (dispatch, getStore) => {
@@ -219,5 +219,22 @@ export function enableAlert(name: string, enabled: boolean, association: string,
         break;
     }
     await getBackendSrv().put(`/api/grafo/alerts/enabled`, args);
+  };
+}
+
+export function updateNotification(dto: UpdateNotificationDTO): ThunkResult<void> {
+  return async (dispatch) => {
+    await getBackendSrv().post(`/api/alertnotifications`, {
+      alert_definition_id: dto.alert_definition_id,
+      configuration: dto.configuration,
+    });
+    dispatch(loadNotification(dto.name));
+  };
+}
+
+export function loadNotification(name: string): ThunkResult<void> {
+  return async (dispatch) => {
+    const response = await getBackendSrv().get(`/api/alertnotifications/${name}`);
+    dispatch(alertNotificationLoaded(response));
   };
 }

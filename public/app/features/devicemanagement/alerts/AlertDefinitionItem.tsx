@@ -1,15 +1,16 @@
 import { css, cx } from '@emotion/css';
+import { capitalize } from 'lodash';
 import debouncePromise from 'debounce-promise';
 import React, { FC, useState, useEffect, useCallback, useRef  } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { usePrevious } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
-import { Icon, useStyles2, LoadingPlaceholder, Select, Checkbox } from '@grafana/ui';
+import { Icon, useStyles2, LoadingPlaceholder, Checkbox } from '@grafana/ui';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 
 import { OrgRolePicker } from 'app/features/admin/OrgRolePicker';
-import { ALERT_POLL_INTERVAL_MS, Alert, AlertDefinition, AlertingState, StoreState, alertPageLimit, associationTypes, severityTypes } from 'app/types';
+import { ALERT_POLL_INTERVAL_MS, Alert, AlertDefinition, AlertingState, StoreState, alertPageLimit } from 'app/types';
 import { ActionIcon } from './ActionIcon';
 import { AlertInstanceStateFilter } from './AlertInstanceStateFilter';
 import { AlertInstances } from './AlertInstances';
@@ -21,6 +22,7 @@ import { loadAlertsByName } from './state/actions';
 import { getAlertsByName, getAlertsByNameStats, getAlertsByNameLoaded, getAlertsByNameSearchPage } from './state/selectors';
 import { DynamicTablePagination, getFiltersFromUrlParams, useAlertsAccess } from './utils';
 import { setAlertsByNameFetched } from './state/reducers';
+import AlertNotifications from './AlertNotifications';
 
 interface Props {
   alertDefinition: AlertDefinition;
@@ -29,12 +31,14 @@ interface Props {
 export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition }) => {
   const dispatch = useDispatch();
   const styles = useStyles2(getStyles);
+  const iconStyle = getIconStyle(alertDefinition.severity);
   const [isCollapsed, setIsCollapsed] = useState(true);
   const [queryParams] = useQueryParams();
   const { association } = getFiltersFromUrlParams(queryParams);
   const associationType = useRef<any>(null);
   const { canWriteAlertDefinitions, canWriteAlerts } = useAlertsAccess();
   let [isConfiguring, setIsConfiguring] = useState<boolean>(false);
+  let [isConfiguringNotification, setIsConfiguringNotification] = useState<boolean>(false);
   const url = `org/alertdefinitions/edit/${alertDefinition.id}`;
   const [filterKey] = useState<number>(Math.floor(Math.random() * 100));
   const queryStringKey = `queryString-${filterKey}`;
@@ -133,6 +137,16 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition }) =
       />
     );
   }
+  actionIcons.push(
+    <ActionIcon
+      aria-label="configure notifications"
+      data-testid="configure-notification"
+      key="configure-notification"
+      icon="comment-alt-share"
+      tooltip="configure notifications"
+      onClick={() => setIsConfiguringNotification(true)}
+    />
+  );
 
   const renderAlertInstances =() => {
     return(
@@ -157,6 +171,9 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition }) =
           <div className={styles.cell} key={`icon-${alertDefinition.id}`}>
             <Icon name={isCollapsed ? 'folder' : 'folder-open'} />
           </div>
+          <div className={cx(styles.cell, iconStyle.icon)} key={`association-severity-${alertDefinition.id}`}>
+            <Icon name={getIcon(alertDefinition.associated_with)} title={capitalize(alertDefinition.associated_with) + ' level with severity: ' +  alertDefinition.severity} />
+          </div>
           <div className={styles.cell} key={`name-${alertDefinition.id}`}>
             <h6 className={styles.heading}>
               {alertDefinition.name}
@@ -165,17 +182,11 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition }) =
           <div className={cx(styles.cell, styles.hide)} key={`description-${alertDefinition.id}`}>
             <span>{alertDefinition.description}</span>
           </div>
-          <div className={cx(styles.cell, styles.hide)} key={`association-${alertDefinition.id}`}>
-            <Select  value={alertDefinition.associated_with} options={associationTypes} disabled={true}  onChange={()=>{}}/>
-          </div>
           <div className={cx(styles.cell, styles.hide)} key={`permission-${alertDefinition.id}`}>
             <OrgRolePicker aria-label="Role" value={alertDefinition.role} disabled={true}  onChange={()=>{}}/>
           </div>
-          <div className={cx(styles.cell, styles.hide)} key={`severity-${alertDefinition.id}`}>
-            <Select  value={alertDefinition.severity} options={severityTypes} disabled={true}  onChange={()=>{}}/>
-          </div>
           <div className={cx(styles.cell, styles.hide)} key={`ticketable-${alertDefinition.id}`}>
-            <Checkbox value={alertDefinition.ticket_enabled} onChange={()=>{}} label="Ticketable" />
+            <Checkbox value={alertDefinition.ticket_enabled} onChange={()=>{}} label="Ticketable" disabled={true} />
           </div>
         </div>
         <div className={styles.spacer} />
@@ -213,11 +224,53 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition }) =
       }
       {!isCollapsed && renderAlertInstances()}
       <AlertSettings isOpen={isConfiguring}  onCancel={(open: boolean ) => { setIsConfiguring(open);}} alert={alert}/>
+      <AlertNotifications isOpen={isConfiguringNotification }  onCancel={(open: boolean ) => { setIsConfiguringNotification(open);}} alertDefinition={alertDefinition}/>
     </div>
   );
 });
 
 AlertDefinitionItem.displayName = 'AlertDefinitionItem';
+
+export const getIcon = (association: string) => {
+  switch (association) {
+    case 'org': {
+      return 'cog';
+    }
+    case 'group': {
+      return 'layer-group';
+    }
+    case 'resource': {
+      return 'resource';
+    }
+    default: {
+      return 'question-circle';
+    }
+  }
+}
+
+const getSeverityColor = (severity: string) => {
+  switch (severity) {
+    case 'critical': {
+      return '#cc3300';
+    }
+    case 'major': {
+      return '#ff9966';
+    }
+    case 'minor': {
+      return '#ffcc00';
+    }
+    default: {
+      return '#9fa7b3';
+    }
+  }
+}
+
+export const getIconStyle = (severity: string) => ({
+  icon: css`
+    color: ${getSeverityColor(severity)};
+    font-weight: 500;
+  `,
+});
 
 export const getStyles = (theme: GrafanaTheme2) => ({
   wrapper: css`
@@ -312,12 +365,12 @@ export const getStyles = (theme: GrafanaTheme2) => ({
   `,
   row: css`
     display: grid;
-    grid-template-columns: 40px 20px 150px 300px 120px 120px 120px 100px;
+    grid-template-columns: 40px 20px 20px 150px 300px 120px 100px;
     grid-template-rows: 1fr auto;
     align-items: center;
 
     ${theme.breakpoints.down('sm')} {
-      grid-template-columns: 40px 20px auto;
+      grid-template-columns: 40px 20px 20px auto;
       padding: 0 ${theme.spacing(0.5)};
     }
   `,

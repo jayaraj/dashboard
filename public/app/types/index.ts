@@ -42,6 +42,7 @@ export * from './devicemanagement/bulk';
 export * from './devicemanagement/bulkerror';
 export * from './devicemanagement/alert';
 export * from './devicemanagement/alertdefinition';
+export * from './devicemanagement/alertnotification';
 
 import * as CoreEvents from './events';
 export { CoreEvents };

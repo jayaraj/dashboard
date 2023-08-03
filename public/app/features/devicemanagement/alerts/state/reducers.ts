@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { Alert, AlertsState, AlertDefinitionState, AlertDefinition, AlertState, AlertDefinitionsState, AlertingState, AlertStats } from 'app/types';
+import { Alert, Notification, AlertsState, AlertDefinitionState, AlertDefinition, AlertState, AlertDefinitionsState, AlertingState, AlertStats, NotificationState } from 'app/types';
 
 const initialAlertStats: AlertStats = {count: 0, alerting: 0, pending: 0, normal: 0}
 
@@ -115,9 +115,25 @@ export const alertDefinitionReducer = alertDefinitionSlice.reducer;
 export type AlertsReducerState = ReturnType<typeof alertsReducer>;
 export type AlertDefinitionsReducerState = ReturnType<typeof alertDefinitionsReducer>;
 
+export const initialNotificationState: NotificationState = {
+  alertNotification: {} as Notification,
+};
+const notificationSlice = createSlice({
+  name: 'notification',
+  initialState: initialNotificationState,
+  reducers: {
+    alertNotificationLoaded: (state, action: PayloadAction<Notification>): NotificationState => {
+      return { ...state, alertNotification: action.payload };
+    },
+  },
+});
+export const { alertNotificationLoaded } = notificationSlice.actions;
+export const alertNotificationReducer = notificationSlice.reducer;
+
 export default {
   alerts: alertsReducer,
   alert: alertReducer,
   alertDefinitions: alertDefinitionsReducer,
   alertDefinition: alertDefinitionReducer,
+  alertNotification: alertNotificationReducer,
 };

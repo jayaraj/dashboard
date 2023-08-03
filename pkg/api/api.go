@@ -547,6 +547,11 @@ func (hs *HTTPServer) registerRoutes() {
 			alertsRoute.Get("/:name", authorize(reqSignedIn, alertsReadAccessEvaluator), routing.Wrap(hs.GetGrafoAlert))
 		})
 
+		apiRoute.Group("/alertnotifications", func(alertsRoute routing.RouteRegister) {
+			alertsRoute.Post("/", authorize(reqSignedIn, alertsReadAccessEvaluator), routing.Wrap(hs.UpdateOrCreateAlertNotification))
+			alertsRoute.Get("/:name", authorize(reqSignedIn, alertsReadAccessEvaluator), routing.Wrap(hs.GetAlertNotification))
+		})
+
 		// InventoryConfiguration
 		apiRoute.Group("/inventories", func(configurationRoute routing.RouteRegister) {
 			configurationRoute.Put("/:inventoryId/configurations/:config", authorize(reqEditorRole, inventoriesWriteAccessEvaluator), routing.Wrap(hs.UpdateInventoryConfiguration))
