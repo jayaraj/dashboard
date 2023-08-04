@@ -251,10 +251,10 @@ export const getIcon = (association: string) => {
 const getSeverityColor = (severity: string) => {
   switch (severity) {
     case 'critical': {
-      return '#cc3300';
+      return '#dc143c';
     }
     case 'major': {
-      return '#ff9966';
+      return '#ff8c00';
     }
     case 'minor': {
       return '#ffcc00';

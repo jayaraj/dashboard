@@ -93,7 +93,7 @@ export const AlertDefinitionSettings: FC<Props> = ({ alertDefinition, updateAler
                     rules={{
                       required: true,
                     }}
-                    render={({ field }) => <Select {...field} options={associationTypes} width={40} />}
+                    render={({ field: {onChange, ...field}}) => <Select {...field} onChange={(value) => onChange(value.value)} options={associationTypes} width={40} />}
                   />
                 </Field>
                 <Field 
@@ -117,7 +117,7 @@ export const AlertDefinitionSettings: FC<Props> = ({ alertDefinition, updateAler
                     rules={{
                       required: true,
                     }}
-                    render={({ field }) => <Select {...field} options={severityTypes} width={40} />}
+                    render={({ field: {onChange, ...field}}) => <Select {...field} onChange={(value) => onChange(value.value)} options={severityTypes} width={40} />}
                   />
                 </Field>
                 <Field
