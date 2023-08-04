@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { usePrevious } from 'react-use';
 
 import { GrafanaTheme2 } from '@grafana/data';
-import { Icon, useStyles2, LoadingPlaceholder, Checkbox } from '@grafana/ui';
+import { Icon, useStyles2, LoadingPlaceholder} from '@grafana/ui';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 
 import { OrgRolePicker } from 'app/features/admin/OrgRolePicker';
@@ -171,22 +171,16 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition }) =
           <div className={styles.cell} key={`icon-${alertDefinition.id}`}>
             <Icon name={isCollapsed ? 'folder' : 'folder-open'} />
           </div>
-          <div className={cx(styles.cell, iconStyle.icon)} key={`association-severity-${alertDefinition.id}`}>
-            <Icon name={getIcon(alertDefinition.associated_with)} title={capitalize(alertDefinition.associated_with) + ' level with severity: ' +  alertDefinition.severity} />
-          </div>
           <div className={styles.cell} key={`name-${alertDefinition.id}`}>
             <h6 className={styles.heading}>
               {alertDefinition.name}
             </h6>
           </div>
-          <div className={cx(styles.cell, styles.hide)} key={`description-${alertDefinition.id}`}>
-            <span>{alertDefinition.description}</span>
-          </div>
           <div className={cx(styles.cell, styles.hide)} key={`permission-${alertDefinition.id}`}>
             <OrgRolePicker aria-label="Role" value={alertDefinition.role} disabled={true}  onChange={()=>{}}/>
           </div>
-          <div className={cx(styles.cell, styles.hide)} key={`ticketable-${alertDefinition.id}`}>
-            <Checkbox value={alertDefinition.ticket_enabled} onChange={()=>{}} label="Ticketable" disabled={true} />
+          <div className={cx(styles.cell, styles.hide)} key={`description-${alertDefinition.id}`}>
+            <span>{alertDefinition.description}</span>
           </div>
         </div>
         <div className={styles.spacer} />
@@ -196,6 +190,12 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition }) =
         {!!actionIcons.length && (
           <>
             <div className={styles.actionsSeparator}>|</div>
+            <div className={cx(styles.actionIcons, iconStyle.icon)}>
+              <Icon name={getIcon(alertDefinition.associated_with)} title={capitalize(alertDefinition.associated_with) + ' level with severity: ' +  alertDefinition.severity} />
+            </div>
+            {(alertDefinition.ticket_enabled)&& (<div className={cx(styles.actionIcons, styles.iconColor)}>
+              <Icon name="ticket" title={'Ticketable'} />
+            </div>)}
             <div className={styles.actionIcons}>{actionIcons}</div>
           </>
         )}
@@ -365,12 +365,12 @@ export const getStyles = (theme: GrafanaTheme2) => ({
   `,
   row: css`
     display: grid;
-    grid-template-columns: 40px 20px 20px 150px 300px 120px 100px;
+    grid-template-columns: 40px 20px 150px 120px auto;
     grid-template-rows: 1fr auto;
     align-items: center;
 
     ${theme.breakpoints.down('sm')} {
-      grid-template-columns: 40px 20px 20px auto;
+      grid-template-columns: 40px 20px auto;
       padding: 0 ${theme.spacing(0.5)};
     }
   `,
@@ -387,5 +387,8 @@ export const getStyles = (theme: GrafanaTheme2) => ({
       padding: ${theme.spacing(1)} 0;
       grid-template-columns: 1fr;
     }
+  `,
+  iconColor: css`
+    color: #339900;
   `,
 });

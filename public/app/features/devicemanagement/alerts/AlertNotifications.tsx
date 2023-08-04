@@ -74,7 +74,7 @@ export const AlertNotifications: FC<Props> = ({
 
   return (
     <Modal 
-    title="Configure Notification"
+    title="Configure Notifications"
     icon="comment-alt-share"
     isOpen={isOpen}
     closeOnEscape={true}

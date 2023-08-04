@@ -32,12 +32,22 @@ const columns: AlertTableColumnProps[] = [
     size: '80px',
   },
   {
+    id: 'name',
+    label: 'Name',
+    // eslint-disable-next-line react/display-name
+    renderCell: ({ data: { name } }) => (
+      <h6>{name}</h6>
+    ),
+    size: '150px',
+  },
+  {
     id: 'message',
     label: 'Message',
     // eslint-disable-next-line react/display-name
-    renderCell: ({ data: { message } }) => (
-      <>{message}</>
-    ),
+    renderCell: ({ data: { message } }) => {
+      const styles = useStyles2(getStyles);
+      return<div className={styles.text}>{message}</div>;
+  },
     size: '300px',
   },
   {
@@ -63,9 +73,10 @@ const columns: AlertTableColumnProps[] = [
     id: 'created',
     label: 'Created',
     // eslint-disable-next-line react/display-name
-    renderCell: ({ data: { updated_at } }) => (
-      <>{updated_at.startsWith('0001') ? '-' : updated_at.slice(0, 19).replace('T', ' ')}</>
-    ),
+    renderCell: ({ data: { updated_at } }) => {
+      const styles = useStyles2(getStyles);
+      return <div className={styles.text}>{updated_at.startsWith('0001') ? '-' : updated_at.slice(0, 19).replace('T', ' ')}</div>;
+    },
     size: '150px',
   },
   {
@@ -191,6 +202,17 @@ const getStyles = (theme: GrafanaTheme2) => {
     start: css`
       justify-content: flex-start;
       display: flex;
+    `,
+    text: css`
+      position: relative;
+      align-items: center;
+      display: flex;
+      flex: 1 1 auto;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+      gap: 6px;
+      color: ${theme.colors.text.secondary};
+      font-size: ${theme.typography.size.sm};
     `,
     actionIcons: css`
       & > * + * {
