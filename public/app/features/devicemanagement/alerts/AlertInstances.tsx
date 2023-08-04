@@ -166,7 +166,28 @@ export function AlertInstances(props: Props): JSX.Element | null {
         pagination={pagination}
         paginationStyles={styles.pagination}
       />
-      <AlertSettings isOpen={isConfiguring}  onCancel={(open: boolean ) => { setIsConfiguring(open);}} alert={alert}/>
+      <AlertSettings isOpen={isConfiguring}  onCancel={(open: boolean ) => { setIsConfiguring(open); setAlert({
+        id: 0,
+        org_id: 0,
+        resource_id: 0,
+        group_path: '',
+        state: '',
+        message: '',
+        updated_at: '',
+        alert_definition_id: 0,
+        name: '',
+        description: '',
+        associated_with: '',
+        role: OrgRole.Viewer,
+        severity: '',
+        for: 0,
+        ticket_enabled: false,
+        enabled: false,
+        data: {},
+        configuration: {},
+        onEdit: () => {onEdit();},
+        setConfiguringAlert: (alert: Alert) => {},
+      })}} alert={alert}/>
     </div>
   );
 }
