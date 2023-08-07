@@ -116,6 +116,8 @@ func (hs *HTTPServer) UpdateConnection(c *models.ReqContext) response.Response {
 	if err := web.Bind(c.Req, &dto); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
 	}
+	dto.Login = c.NameOrFallback()
+
 	body, err := json.Marshal(dto)
 	if err != nil {
 		return response.Error(500, "failed marshal update", err)
