@@ -46,6 +46,7 @@ const UsersTable: FC<Props> = (props) => {
             <th>Login</th>
             <th>Email</th>
             <th>Name</th>
+            <th>Phone</th>
             <th>Seen</th>
             <th>Role</th>
             <th style={{ width: '34px' }} />
@@ -73,6 +74,11 @@ const UsersTable: FC<Props> = (props) => {
                 <td className="max-width-5">
                   <span className="ellipsis" title={user.name}>
                     {user.name}
+                  </span>
+                </td>
+                <td className="max-width-5">
+                  <span className="ellipsis" title={user.phone}>
+                    {user.phone}
                   </span>
                 </td>
                 <td className="width-1">{user.lastSeenAtAge}</td>

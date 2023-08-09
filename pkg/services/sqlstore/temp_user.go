@@ -21,6 +21,7 @@ func (ss *SQLStore) CreateTempUser(ctx context.Context, cmd *models.CreateTempUs
 		user := &models.TempUser{
 			Email:           cmd.Email,
 			Name:            cmd.Name,
+			Phone:           cmd.Phone,
 			OrgId:           cmd.OrgId,
 			Code:            cmd.Code,
 			Role:            cmd.Role,
@@ -62,6 +63,7 @@ func (ss *SQLStore) GetTempUsersQuery(ctx context.Context, query *models.GetTemp
 	                tu.org_id         as org_id,
 	                tu.email          as email,
 									tu.name           as name,
+									tu.phone          as phone,
 									tu.role           as role,
 									tu.code           as code,
 									tu.status         as status,

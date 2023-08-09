@@ -93,6 +93,12 @@ func (hs *HTTPServer) addOrgUserHelper(c *models.ReqContext, cmd models.AddOrgUs
 		return response.Error(500, "Could not add user to organization", err)
 	}
 
+	if hs.ResourceService.GetConfig().EnableResource {
+		if err := hs.UpdateResourceServiceOrgUser(c.Req.Context(), cmd.OrgId, cmd.UserId); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to update org user", err)
+		}
+	}
+
 	return response.JSON(http.StatusOK, util.DynMap{
 		"message": "User added to organization",
 		"userId":  cmd.UserId,
@@ -345,8 +351,8 @@ func (hs *HTTPServer) updateOrgUserHelper(c *models.ReqContext, cmd models.Updat
 	}
 
 	if hs.ResourceService.GetConfig().EnableResource {
-		if err := hs.UpdateGroupUsers(c.Req.Context(), cmd.UserId); err != nil {
-			return response.Error(http.StatusInternalServerError, "Failed to update group user", err)
+		if err := hs.UpdateResourceServiceOrgUser(c.Req.Context(), cmd.OrgId, cmd.UserId); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to update org user", err)
 		}
 	}
 	return response.Success("Organization user updated")
@@ -425,6 +431,12 @@ func (hs *HTTPServer) removeOrgUserHelper(ctx context.Context, cmd *models.Remov
 	// This should be called from appropriate service when moved
 	if err := hs.accesscontrolService.DeleteUserPermissions(ctx, cmd.OrgId, cmd.UserId); err != nil {
 		hs.log.Warn("failed to delete permissions for user", "userID", cmd.UserId, "orgID", cmd.OrgId, "err", err)
+	}
+
+	if hs.ResourceService.GetConfig().EnableResource {
+		if err := hs.DeleteResourceServiceOrgUser(ctx, cmd.OrgId, cmd.UserId); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to delete org user", err)
+		}
 	}
 
 	return response.Success("User removed from organization")

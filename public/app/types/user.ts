@@ -7,6 +7,7 @@ export interface OrgUser extends WithAccessControlMetadata {
   lastSeenAt: string;
   lastSeenAtAge: string;
   login: string;
+  phone: string;
   name: string;
   orgId: number;
   role: OrgRole;
@@ -20,6 +21,7 @@ export interface User {
   avatarUrl: string;
   login: string;
   email: string;
+  phone: string;
   name: string;
   orgId?: number;
 }
@@ -30,6 +32,7 @@ export interface UserDTO extends WithAccessControlMetadata {
   id: number;
   login: string;
   email: string;
+  phone: string;
   name: string;
   isGrafanaAdmin: boolean;
   isDisabled: boolean;

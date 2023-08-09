@@ -11,6 +11,7 @@ import { PasswordField } from '../PasswordField/PasswordField';
 
 interface SignupDTO {
   name?: string;
+  phone?: string;
   email: string;
   username: string;
   orgName?: string;
@@ -39,6 +40,7 @@ export const SignupPage: FC<Props> = (props) => {
         email: formData.email,
         code: formData.code,
         username: formData.email,
+        phone: formData.phone,
         orgName: formData.orgName,
         password: formData.password,
         name: formData.name,
@@ -67,6 +69,14 @@ export const SignupPage: FC<Props> = (props) => {
             <>
               <Field label="Your name">
                 <Input id="user-name" {...register('name')} placeholder="(optional)" />
+              </Field>
+              <Field label="Your phone number">
+                <Input id="user-phone" {...register('phone', {
+                    pattern: {
+                      value: /^(\+[0-9]{1,3}|0[0-9]{1,3})[0-9]{10}$/,
+                      message: 'Phone is invalid',
+                    },
+                  })} placeholder="(optional) +(cc)(10 dig) / 0(cc)(10 dig)" />
               </Field>
               <Field label="Email" invalid={!!errors.email} error={errors.email?.message}>
                 <Input

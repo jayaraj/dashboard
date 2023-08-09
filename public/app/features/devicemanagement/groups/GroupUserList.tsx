@@ -91,6 +91,7 @@ export const GroupUserList: FC<Props> = ({
         <td className="link-td">{user.login}</td>
         <td className="link-td">{user.name}</td>
         <td className="link-td">{user.email}</td>
+        <td className="link-td">{user.phone}</td>
         <td className="link-td">{user.role}</td>
         <td className="text-right">
           <DeleteButton size="sm" disabled={!canWrite} onConfirm={() => deleteGroupUser(user.id)} />
@@ -139,6 +140,7 @@ export const GroupUserList: FC<Props> = ({
                   <th>Login</th>
                   <th>Name</th>
                   <th>Email</th>
+                  <th>Phone</th>
                   <th>Role</th>
                   <th style={{ width: '1%' }} />
                 </tr>

@@ -62,6 +62,7 @@ describe('userReducer', () => {
             user: {
               id: 2021,
               email: 'test@test.com',
+              phone: '',
               isDisabled: true,
               login: 'test',
               name: 'Test Account',
@@ -74,6 +75,7 @@ describe('userReducer', () => {
           user: {
             id: 2021,
             email: 'test@test.com',
+            phone: '',
             isDisabled: true,
             login: 'test',
             name: 'Test Account',

@@ -43,6 +43,7 @@ func (hs *HTTPServer) SignUp(c *models.ReqContext) response.Response {
 	cmd := models.CreateTempUserCommand{}
 	cmd.OrgId = -1
 	cmd.Email = form.Email
+	cmd.Phone = form.Phone
 	cmd.Status = models.TmpUserSignUpStarted
 	cmd.InvitedByUserId = c.UserID
 	cmd.Code, err = util.GetRandomString(20)
@@ -80,6 +81,7 @@ func (hs *HTTPServer) SignUpStep2(c *models.ReqContext) response.Response {
 		Email:    form.Email,
 		Login:    form.Username,
 		Name:     form.Name,
+		Phone:    form.Phone,
 		Password: form.Password,
 		OrgName:  form.OrgName,
 	}
@@ -99,6 +101,12 @@ func (hs *HTTPServer) SignUpStep2(c *models.ReqContext) response.Response {
 		}
 
 		return response.Error(500, "Failed to create user", err)
+	}
+
+	if hs.ResourceService.GetConfig().EnableResource {
+		if err := hs.UpdateResourceServiceOrgUser(c.Req.Context(), usr.OrgID, usr.ID); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to update org user", err)
+		}
 	}
 
 	// publish signup event

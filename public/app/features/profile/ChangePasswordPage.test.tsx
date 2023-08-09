@@ -16,6 +16,7 @@ const defaultProps: Props = {
     name: 'Test User',
     email: 'test@test.com',
     login: 'test',
+    phone: '',
     isDisabled: false,
     isGrafanaAdmin: false,
     orgId: 0,

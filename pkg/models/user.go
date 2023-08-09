@@ -15,6 +15,7 @@ func (p Password) IsWeak() bool {
 type UpdateUserCommand struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
+	Phone string `json:"phone"`
 	Login string `json:"login"`
 	Theme string `json:"theme"`
 
@@ -111,6 +112,7 @@ type UpdateUserLastSeenAtCommand struct {
 type UserProfileDTO struct {
 	Id             int64           `json:"id"`
 	Email          string          `json:"email"`
+	Phone          string          `json:"phone"`
 	Name           string          `json:"name"`
 	Login          string          `json:"login"`
 	Theme          string          `json:"theme"`
@@ -130,6 +132,7 @@ type UserSearchHitDTO struct {
 	Name          string               `json:"name"`
 	Login         string               `json:"login"`
 	Email         string               `json:"email"`
+	Phone         string               `json:"phone"`
 	AvatarUrl     string               `json:"avatarUrl"`
 	IsAdmin       bool                 `json:"isAdmin"`
 	IsDisabled    bool                 `json:"isDisabled"`

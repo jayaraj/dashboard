@@ -43,6 +43,7 @@ type ConnectionUser struct {
 	UserId int64  `json:"user_id"`
 	Login  string `json:"login"`
 	Email  string `json:"email"`
+	Phone  string `json:"phone"`
 	Name   string `json:"name"`
 	Role   string `json:"role"`
 }
@@ -140,6 +141,7 @@ type AddUserConnectionMsg struct {
 	UserId        int64      `json:"user_id" binding:"required"`
 	Login         string     `json:"login" binding:"required"`
 	Email         string     `json:"email" binding:"required"`
+	Phone         string     `json:"phone"`
 	Name          string     `json:"name" binding:"required"`
 	Role          string     `json:"role" binding:"required"`
 	CreatedBy     string     `json:"created_by" binding:"required"`

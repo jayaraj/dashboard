@@ -2,11 +2,13 @@ package dtos
 
 type SignUpForm struct {
 	Email string `json:"email" binding:"Required"`
+	Phone string `json:"phone"`
 }
 
 type SignUpStep2Form struct {
 	Email    string `json:"email"`
 	Name     string `json:"name"`
+	Phone    string `json:"phone"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Code     string `json:"code"`
@@ -17,6 +19,7 @@ type AdminCreateUserForm struct {
 	Email    string `json:"email"`
 	Login    string `json:"login"`
 	Name     string `json:"name"`
+	Phone    string `json:"phone"`
 	Password string `json:"password" binding:"Required"`
 	OrgId    int64  `json:"orgId"`
 }

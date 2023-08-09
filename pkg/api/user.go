@@ -96,6 +96,7 @@ func (hs *HTTPServer) GetUserByLoginOrEmail(c *models.ReqContext) response.Respo
 		Name:           usr.Name,
 		Email:          usr.Email,
 		Login:          usr.Login,
+		Phone:          usr.Phone,
 		Theme:          usr.Theme,
 		IsGrafanaAdmin: usr.IsAdmin,
 		OrgId:          usr.OrgID,
@@ -196,8 +197,8 @@ func (hs *HTTPServer) handleUpdateUser(ctx context.Context, cmd user.UpdateUserC
 	}
 
 	if hs.ResourceService.GetConfig().EnableResource {
-		if err := hs.UpdateGroupUsers(ctx, cmd.UserID); err != nil {
-			return response.Error(http.StatusInternalServerError, "Failed to update group user", err)
+		if err := hs.UpdateResourceServiceUser(ctx, cmd.UserID); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to update user", err)
 		}
 	}
 

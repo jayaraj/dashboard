@@ -64,7 +64,13 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection }) 
                     <Input {...register('email', { required: true })} id="email-input" width={40} />
                   </Field>
                   <Field label="Phone" disabled={!canWrite}>
-                    <Input {...register('phone', { required: true })} id="phone-input" width={40} />
+                    <Input {...register('phone', {
+                        required: true,
+                        pattern: {
+                          value: /^(\+[0-9]{1,3}|0[0-9]{1,3})[0-9]{10}$/,
+                          message: 'Phone is invalid',
+                        },
+                    })} id="phone-input" width={40} placeholder="+(cc)(10 dig) / 0(cc)(10 dig)" />
                   </Field>
                   <Field label="Address1" disabled={!canWrite}>
                     <Input {...register('address1', { required: true })} id="address1-input" width={40} />

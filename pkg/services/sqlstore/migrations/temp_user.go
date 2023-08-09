@@ -93,6 +93,11 @@ func addTempUserMigrations(mg *Migrator) {
 
 	// Ensure outstanding invites are given a valid lifetime post-migration
 	mg.AddMigration("Set created for temp users that will otherwise prematurely expire", &SetCreatedForOutstandingInvites{})
+
+	mg.AddMigration("Add phone column to temp_user", NewAddColumnMigration(tempUserV2, &Column{
+		Name: "phone", Type: DB_NVarchar, Length: 255, Nullable: true,
+	}))
+
 }
 
 type SetCreatedForOutstandingInvites struct {

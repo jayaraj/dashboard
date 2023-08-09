@@ -98,6 +98,7 @@ type OrgUserDTO struct {
 	UserId        int64           `json:"userId"`
 	Email         string          `json:"email"`
 	Name          string          `json:"name"`
+	Phone         string          `json:"phone"`
 	AvatarUrl     string          `json:"avatarUrl"`
 	Login         string          `json:"login"`
 	Role          string          `json:"role"`

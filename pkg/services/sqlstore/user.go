@@ -108,6 +108,7 @@ func (ss *SQLStore) createUser(ctx context.Context, sess *DBSession, args user.C
 	usr = user.User{
 		Email:            args.Email,
 		Name:             args.Name,
+		Phone:            args.Phone,
 		Login:            args.Login,
 		Company:          args.Company,
 		IsAdmin:          args.IsAdmin,
@@ -151,6 +152,7 @@ func (ss *SQLStore) createUser(ctx context.Context, sess *DBSession, args user.C
 		Name:      usr.Name,
 		Login:     usr.Login,
 		Email:     usr.Email,
+		Phone:     usr.Phone,
 	})
 
 	// create org user link
@@ -179,7 +181,7 @@ func (ss *SQLStore) createUser(ctx context.Context, sess *DBSession, args user.C
 	return usr, nil
 }
 
-//  deprecated method, use only for tests
+// deprecated method, use only for tests
 func (ss *SQLStore) CreateUser(ctx context.Context, cmd user.CreateUserCommand) (*user.User, error) {
 	var user user.User
 	createErr := ss.WithTransactionalDbSession(ctx, func(sess *DBSession) (err error) {
@@ -312,6 +314,7 @@ func (ss *SQLStore) UpdateUser(ctx context.Context, cmd *models.UpdateUserComman
 		user := user.User{
 			Name:    cmd.Name,
 			Email:   cmd.Email,
+			Phone:   cmd.Phone,
 			Login:   cmd.Login,
 			Theme:   cmd.Theme,
 			Updated: time.Now(),
@@ -333,6 +336,7 @@ func (ss *SQLStore) UpdateUser(ctx context.Context, cmd *models.UpdateUserComman
 			Name:      user.Name,
 			Login:     user.Login,
 			Email:     user.Email,
+			Phone:     user.Phone,
 		})
 
 		return nil
@@ -419,6 +423,7 @@ func (ss *SQLStore) GetUserProfile(ctx context.Context, query *models.GetUserPro
 			Id:             usr.ID,
 			Name:           usr.Name,
 			Email:          usr.Email,
+			Phone:          usr.Phone,
 			Login:          usr.Login,
 			Theme:          usr.Theme,
 			IsGrafanaAdmin: usr.IsAdmin,
@@ -502,6 +507,7 @@ func (ss *SQLStore) GetSignedInUser(ctx context.Context, query *models.GetSigned
 		u.id                  as user_id,
 		u.is_admin            as is_grafana_admin,
 		u.email               as email,
+		u.phone               as phone,
 		u.login               as login,
 		u.name                as name,
 		u.is_disabled         as is_disabled,
@@ -656,7 +662,7 @@ func (ss *SQLStore) SearchUsers(ctx context.Context, query *models.SearchUsersQu
 			sess.Limit(query.Limit, offset)
 		}
 
-		sess.Cols("u.id", "u.email", "u.name", "u.login", "u.is_admin", "u.is_disabled", "u.last_seen_at", "user_auth.auth_module")
+		sess.Cols("u.id", "u.email", "u.name", "u.phone", "u.login", "u.is_admin", "u.is_disabled", "u.last_seen_at", "user_auth.auth_module")
 		sess.Asc("u.login", "u.email")
 		if err := sess.Find(&query.Result.Users); err != nil {
 			return err

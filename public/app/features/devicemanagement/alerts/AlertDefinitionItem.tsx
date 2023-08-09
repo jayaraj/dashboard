@@ -14,15 +14,15 @@ import { ALERT_POLL_INTERVAL_MS, Alert, AlertDefinition, AlertingState, StoreSta
 import { ActionIcon } from './ActionIcon';
 import { AlertInstanceStateFilter } from './AlertInstanceStateFilter';
 import { AlertInstances } from './AlertInstances';
+import AlertNotifications from './AlertNotifications';
 import AlertSettings from './AlertSettings';
 import { CollapseToggle } from './CollapseToggle';
 import { MatcherFilter } from './MatcherFilter';
 import { Stats } from './Stats';
 import { loadAlertsByName } from './state/actions';
+import { setAlertsByNameFetched } from './state/reducers';
 import { getAlertsByName, getAlertsByNameStats, getAlertsByNameLoaded, getAlertsByNameSearchPage } from './state/selectors';
 import { DynamicTablePagination, getFiltersFromUrlParams, useAlertsAccess } from './utils';
-import { setAlertsByNameFetched } from './state/reducers';
-import AlertNotifications from './AlertNotifications';
 
 interface Props {
   alertDefinition: AlertDefinition;

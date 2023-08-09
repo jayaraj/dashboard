@@ -31,7 +31,7 @@ func (hs *HTTPServer) CreateConnection(c *models.ReqContext) response.Response {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 
-	dto.Login = c.NameOrFallback()
+	dto.Login = c.Login
 	body, err := json.Marshal(dto)
 	if err != nil {
 		return response.Error(500, "failed marshal create", err)
@@ -116,7 +116,7 @@ func (hs *HTTPServer) UpdateConnection(c *models.ReqContext) response.Response {
 	if err := web.Bind(c.Req, &dto); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
 	}
-	dto.Login = c.NameOrFallback()
+	dto.Login = c.Login
 
 	body, err := json.Marshal(dto)
 	if err != nil {
@@ -334,7 +334,7 @@ func (hs *HTTPServer) SendConnectionUserOtp(c *models.ReqContext) response.Respo
 	dto := dtos.SendConnectionUserOtpMsg{
 		ConnectionExt: number,
 		UserId:        c.UserID,
-		Name:          c.NameOrFallback(),
+		Name:          c.Login,
 	}
 	body, err := json.Marshal(dto)
 	if err != nil {
@@ -370,14 +370,15 @@ func (hs *HTTPServer) AddUserConnection(c *models.ReqContext) response.Response 
 		UserId:        c.UserID,
 		Login:         c.Login,
 		Email:         c.Email,
-		Name:          c.NameOrFallback(),
+		Phone:         c.Phone,
+		Name:          c.Login,
 		Role:          dtos.ConvertRoleToString(org.RoleViewer),
 		User: dtos.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
 			Role:   dtos.ConvertRoleToString(hs.UserRole(c)),
 		},
-		CreatedBy: c.NameOrFallback(),
+		CreatedBy: c.Login,
 	}
 	if err := web.Bind(c.Req, &dto); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
@@ -422,6 +423,10 @@ func (hs *HTTPServer) AddUserConnection(c *models.ReqContext) response.Response 
 		return response.Error(500, "Could not add user to organization", err)
 	}
 
+	if err := hs.UpdateResourceServiceOrgUser(c.Req.Context(), dto.Result.OrgId, c.UserID); err != nil {
+		return response.Error(http.StatusInternalServerError, "Failed to update org user", err)
+	}
+
 	var resp struct {
 		OrgId int64 `json:"org_id"`
 	}
@@ -439,6 +444,10 @@ func (hs *HTTPServer) AddUserConnection(c *models.ReqContext) response.Response 
 			return response.Error(500, "Failed to remove user from organization", err)
 		}
 
+		if err := hs.DeleteResourceServiceOrgUser(c.Req.Context(), 1, c.UserID); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to delete org user", err)
+		}
+
 		if removeUsrCmd.UserWasDeleted {
 			if err := hs.accesscontrolService.DeleteUserPermissions(c.Req.Context(), accesscontrol.GlobalOrgID, removeUsrCmd.UserId); err != nil {
 				hs.log.Warn("failed to delete permissions for user", "userID", removeUsrCmd.UserId, "orgID", accesscontrol.GlobalOrgID, "err", err)
@@ -449,7 +458,6 @@ func (hs *HTTPServer) AddUserConnection(c *models.ReqContext) response.Response 
 		if err := hs.accesscontrolService.DeleteUserPermissions(c.Req.Context(), 1, removeUsrCmd.UserId); err != nil {
 			hs.log.Warn("failed to delete permissions for user", "userID", removeUsrCmd.UserId, "orgID", 1, "err", err)
 		}
-		//return hs.logoutUserFromAllDevicesInternal(c.Req.Context(), c.UserID)
 		resp.OrgId = dto.Result.OrgId
 		return response.JSON(http.StatusOK, resp)
 	}
@@ -519,7 +527,7 @@ func (hs *HTTPServer) RemoveUserConnection(c *models.ReqContext) response.Respon
 		}
 	}
 
-	url := fmt.Sprintf("%sapi/connections/%d/users/%d?deleted_by=%s", hs.ResourceService.GetConfig().BillingUrl, connection.Id, userId, c.NameOrFallback())
+	url := fmt.Sprintf("%sapi/connections/%d/users/%d?deleted_by=%s", hs.ResourceService.GetConfig().BillingUrl, connection.Id, userId, c.Login)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,
@@ -577,6 +585,10 @@ func (hs *HTTPServer) RemoveUserConnection(c *models.ReqContext) response.Respon
 		return response.Error(500, "Failed to remove user from organization", err)
 	}
 
+	if err := hs.DeleteResourceServiceOrgUser(c.Req.Context(), c.OrgID, c.UserID); err != nil {
+		return response.Error(http.StatusInternalServerError, "Failed to delete org user", err)
+	}
+
 	if removeUsrCmd.UserWasDeleted {
 		if err := hs.accesscontrolService.DeleteUserPermissions(c.Req.Context(), accesscontrol.GlobalOrgID, removeUsrCmd.UserId); err != nil {
 			hs.log.Warn("failed to delete permissions for user", "userID", removeUsrCmd.UserId, "orgID", accesscontrol.GlobalOrgID, "err", err)
@@ -625,7 +637,11 @@ func (hs *HTTPServer) RemoveUserConnection(c *models.ReqContext) response.Respon
 			}
 			return response.Error(500, "Could not add user to organization", err)
 		}
-		//return hs.logoutUserFromAllDevicesInternal(c.Req.Context(), c.UserID)
+
+		if err := hs.UpdateResourceServiceOrgUser(c.Req.Context(), 1, c.UserID); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to update org user", err)
+		}
+
 		hs.changeOrg(c, 1)
 		resp.OrgId = 1
 		return response.JSON(http.StatusOK, resp)
@@ -661,7 +677,7 @@ func (hs *HTTPServer) CreateConnectionResource(c *models.ReqContext) response.Re
 	if err != nil {
 		return response.Error(500, "failed marshal create", err)
 	}
-	url := fmt.Sprintf("%sapi/connections/%d/resources?created_by=%s", hs.ResourceService.GetConfig().BillingUrl, connection.Id, c.NameOrFallback())
+	url := fmt.Sprintf("%sapi/connections/%d/resources?created_by=%s", hs.ResourceService.GetConfig().BillingUrl, connection.Id, c.Login)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    body,
@@ -731,7 +747,7 @@ func (hs *HTTPServer) RemoveConnectionResource(c *models.ReqContext) response.Re
 	}
 	uuid := c.Query("uuid")
 
-	url := fmt.Sprintf("%sapi/connections/%d/resources/%d?uuid=%s&deleted_by=%s", hs.ResourceService.GetConfig().BillingUrl, connection.Id, resourceId, uuid, c.NameOrFallback())
+	url := fmt.Sprintf("%sapi/connections/%d/resources/%d?uuid=%s&deleted_by=%s", hs.ResourceService.GetConfig().BillingUrl, connection.Id, resourceId, uuid, c.Login)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,

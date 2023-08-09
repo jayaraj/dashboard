@@ -34,6 +34,7 @@ type User struct {
 	Version       int
 	Email         string
 	Name          string
+	Phone         string
 	Login         string
 	Password      string
 	Salt          string
@@ -57,6 +58,7 @@ type CreateUserCommand struct {
 	Email            string
 	Login            string
 	Name             string
+	Phone            string
 	Company          string
 	OrgID            int64
 	OrgName          string
@@ -80,6 +82,7 @@ type GetUserByEmailQuery struct {
 type UpdateUserCommand struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
+	Phone string `json:"phone"`
 	Login string `json:"login"`
 	Theme string `json:"theme"`
 
@@ -126,6 +129,7 @@ type UserSearchHitDTO struct {
 	Name          string               `json:"name"`
 	Login         string               `json:"login"`
 	Email         string               `json:"email"`
+	Phone         string               `json:"phone"`
 	AvatarUrl     string               `json:"avatarUrl"`
 	IsAdmin       bool                 `json:"isAdmin"`
 	IsDisabled    bool                 `json:"isDisabled"`
@@ -142,6 +146,7 @@ type GetUserProfileQuery struct {
 type UserProfileDTO struct {
 	ID             int64           `json:"id"`
 	Email          string          `json:"email"`
+	Phone          string          `json:"phone"`
 	Name           string          `json:"name"`
 	Login          string          `json:"login"`
 	Theme          string          `json:"theme"`
@@ -202,6 +207,7 @@ type SignedInUser struct {
 	Login              string
 	Name               string
 	Email              string
+	Phone              string
 	ApiKeyID           int64 `xorm:"api_key_id"`
 	OrgCount           int
 	IsGrafanaAdmin     bool

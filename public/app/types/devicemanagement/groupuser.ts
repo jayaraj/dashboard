@@ -5,6 +5,7 @@ export interface GroupUser {
   id: number;
   login: string;
   email: string;
+  phone: string;
   name: string;
   role: string;
 }

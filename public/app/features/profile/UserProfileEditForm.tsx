@@ -74,6 +74,23 @@ export const UserProfileEditForm: FC<Props> = ({ user, isSavingUser, updateProfi
                 suffix={<InputSuffix />}
               />
             </Field>
+            <Field
+              label={t({ id: 'user-profile.fields.phone-label', message: 'Phone' })}
+              disabled={disabledEdit}
+            >
+              <Input
+                {...register('phone', {
+                    pattern: {
+                      value: /^(\+[0-9]{1,3}|0[0-9]{1,3})[0-9]{10}$/,
+                      message: 'Phone is invalid',
+                    },
+                  })}
+                id="edit-user-profile-phone"
+                defaultValue={user?.phone ?? ''}
+                placeholder={'+(cc)(10 dig) / 0(cc)(10 dig)'}
+                suffix={<InputSuffix />}
+              />
+            </Field>
 
             <div className="gf-form-button-row">
               <Button

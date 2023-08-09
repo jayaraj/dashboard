@@ -25,6 +25,7 @@ type UserCreated struct {
 	Name      string    `json:"name"`
 	Login     string    `json:"login"`
 	Email     string    `json:"email"`
+	Phone     string    `json:"phone"`
 }
 
 type SignUpStarted struct {
@@ -45,6 +46,7 @@ type UserUpdated struct {
 	Name      string    `json:"name"`
 	Login     string    `json:"login"`
 	Email     string    `json:"email"`
+	Phone     string    `json:"phone"`
 }
 
 type DataSourceDeleted struct {

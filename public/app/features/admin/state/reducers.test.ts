@@ -57,6 +57,7 @@ const getTestUserMapping = (): LdapUser => ({
 const getTestUser = (): UserDTO => ({
   id: 1,
   email: 'user@localhost',
+  phone: '',
   login: 'user',
   name: 'User',
   avatarUrl: '',

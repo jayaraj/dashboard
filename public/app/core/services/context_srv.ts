@@ -12,6 +12,7 @@ export class User implements CurrentUserInternal {
   id: number;
   login: string;
   email: string;
+  phone: string;
   name: string;
   externalUserId: string;
   lightTheme: boolean;
@@ -45,6 +46,7 @@ export class User implements CurrentUserInternal {
     this.lightTheme = false;
     this.hasEditPermissionInFolders = false;
     this.email = '';
+    this.phone = '';
     this.name = '';
     this.locale = '';
     this.weekStart = '';

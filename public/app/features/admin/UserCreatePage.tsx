@@ -18,6 +18,7 @@ interface UserDTO {
   password: string;
   email?: string;
   login?: string;
+  phone?: string;
 }
 
 const createUser = async (user: UserDTO) => getBackendSrv().post('/api/admin/users', user);
@@ -52,6 +53,16 @@ const UserCreatePage: React.FC<UserCreatePageProps> = ({ navModel }) => {
 
                 <Field label="Email">
                   <Input id="email-input" {...register('email')} />
+                </Field>
+
+                <Field label="Phone">
+                  <Input id="phone-input" {...register('phone', {
+                        required: true,
+                        pattern: {
+                          value: /^(\+[0-9]{1,3}|0[0-9]{1,3})[0-9]{10}$/,
+                          message: 'Phone is invalid',
+                        },
+                    })} placeholder="+(cc)(10 dig) / 0(cc)(10 dig)" />
                 </Field>
 
                 <Field label="Username">

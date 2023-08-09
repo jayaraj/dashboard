@@ -42,6 +42,7 @@ func (hs *HTTPServer) AdminCreateUser(c *models.ReqContext) response.Response {
 		Email:    form.Email,
 		Password: form.Password,
 		Name:     form.Name,
+		Phone:    form.Phone,
 		OrgID:    form.OrgId,
 	}
 
@@ -67,6 +68,18 @@ func (hs *HTTPServer) AdminCreateUser(c *models.ReqContext) response.Response {
 		}
 
 		return response.Error(500, "failed to create user", err)
+	}
+
+	if hs.ResourceService.GetConfig().EnableResource {
+		if form.OrgId != 0 {
+			if err := hs.UpdateResourceServiceOrgUser(c.Req.Context(), form.OrgId, usr.ID); err != nil {
+				return response.Error(http.StatusInternalServerError, "Failed to update org user", err)
+			}
+		} else {
+			if err := hs.UpdateResourceServiceUser(c.Req.Context(), usr.ID); err != nil {
+				return response.Error(http.StatusInternalServerError, "Failed to update user", err)
+			}
+		}
 	}
 
 	metrics.MApiAdminUserCreate.Inc()
@@ -196,6 +209,12 @@ func (hs *HTTPServer) AdminDeleteUser(c *models.ReqContext) response.Response {
 			return response.Error(404, user.ErrUserNotFound.Error(), nil)
 		}
 		return response.Error(500, "Failed to delete user", err)
+	}
+
+	if hs.ResourceService.GetConfig().EnableResource {
+		if err := hs.DeleteResourceServiceUser(c.Req.Context(), userID); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to delete user", err)
+		}
 	}
 
 	return response.Success("User deleted")

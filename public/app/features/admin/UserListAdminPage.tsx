@@ -118,6 +118,7 @@ const UserListAdminPageUnConnected = ({
                     <th>Login</th>
                     <th>Email</th>
                     <th>Name</th>
+                    <th>Phone</th>
                     <th>Belongs to</th>
                     {showLicensedRole && (
                       <th>
@@ -202,6 +203,11 @@ const UserListItem = memo(({ user, showLicensedRole }: UserListItemProps) => {
       <td className="link-td max-width-10">
         <a className="ellipsis" href={editUrl} title={user.name} aria-label={getUsersAriaLabel(user.name)}>
           {user.name}
+        </a>
+      </td>
+      <td className="link-td max-width-10">
+        <a className="ellipsis" href={editUrl} title={user.phone} aria-label={getUsersAriaLabel(user.phone)}>
+          {user.phone}
         </a>
       </td>
 

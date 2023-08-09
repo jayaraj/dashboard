@@ -33,6 +33,7 @@ type CurrentUser struct {
 	ExternalUserId             string             `json:"externalUserId"`
 	Login                      string             `json:"login"`
 	Email                      string             `json:"email"`
+	Phone                      string             `json:"phone"`
 	Name                       string             `json:"name"`
 	LightTheme                 bool               `json:"lightTheme"`
 	OrgCount                   int                `json:"orgCount"`

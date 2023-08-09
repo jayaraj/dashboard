@@ -57,10 +57,18 @@ type IsGroupPathAccessibleMsg struct {
 }
 
 type UpdateUserMsg struct {
-	Login string `json:"login"`
-	Email string `json:"email"`
-	Name  string `json:"name"`
-	Role  string `json:"role"`
+	Login string `json:"login" binding:"required"`
+	Email string `json:"email" binding:"required"`
+	Phone string `json:"phone,omitempty"`
+	Name  string `json:"name,omitempty"`
+}
+
+type UpdateOrgUserMsg struct {
+	Login string `json:"login" binding:"required"`
+	Email string `json:"email" binding:"required"`
+	Name  string `json:"name,omitempty"`
+	Phone string `json:"phone,omitempty"`
+	Role  string `json:"role" binding:"required"`
 }
 
 type AddGroupResourceMsg struct {
@@ -178,17 +186,20 @@ type GroupUser struct {
 	UserId    int64     `json:"user_id"`
 	Login     string    `json:"login"`
 	Email     string    `json:"email"`
+	Phone     string    `json:"phone"`
 	Name      string    `json:"name"`
 	Role      string    `json:"role"`
 }
 
 type AddGroupUserMsg struct {
+	OrgId     int64  `json:"org_id"`
 	GroupId   int64  `json:"group_id"`
 	GroupPath string `json:"group_path"`
 	User      User   `json:"user"`
 	UserId    int64  `json:"user_id"`
 	Login     string `json:"login"`
 	Email     string `json:"email"`
+	Phone     string `json:"phone"`
 	Name      string `json:"name"`
 	Role      string `json:"role"`
 }

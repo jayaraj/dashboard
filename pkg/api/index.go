@@ -269,7 +269,7 @@ func (hs *HTTPServer) getNavTree(c *models.ReqContext, hasEditPerm bool, prefs *
 		}
 		if hasAccess(ac.ReqOrgAdminOrEditor, typesReadAccessEvaluator) {
 			deviceMgntNodes = append(deviceMgntNodes, &dtos.NavLink{
-				Text: "Configuration Types",
+				Text: "Configuration",
 				Id:   "configurationtypes",
 				Url:  hs.Cfg.AppSubURL + "/org/configurationtypes",
 				Icon: "resource-type",
@@ -902,6 +902,7 @@ func (hs *HTTPServer) setIndexViewData(c *models.ReqContext) (*dtos.IndexViewDat
 			OrgId:                      c.OrgID,
 			OrgName:                    c.OrgName,
 			OrgRole:                    c.OrgRole,
+			Phone:                      c.Phone,
 			GravatarUrl:                dtos.GetGravatarUrl(c.Email),
 			IsGrafanaAdmin:             c.IsGrafanaAdmin,
 			LightTheme:                 prefs.Theme == lightName,

@@ -40,6 +40,7 @@ func (ss *sqlStore) Insert(ctx context.Context, cmd *user.User) (int64, error) {
 			Name:      cmd.Name,
 			Login:     cmd.Login,
 			Email:     cmd.Email,
+			Phone:     cmd.Phone,
 		})
 		return nil
 	})

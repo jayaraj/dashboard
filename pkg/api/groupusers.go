@@ -16,7 +16,7 @@ import (
 	"github.com/grafana/grafana/pkg/web"
 )
 
-func (hs *HTTPServer) UpdateGroupUsers(ctx context.Context, userId int64) error {
+func (hs *HTTPServer) UpdateResourceServiceOrgUser(ctx context.Context, orgId int64, userId int64) error {
 	query := models.GetUserProfileQuery{UserId: userId}
 	if err := hs.SQLStore.GetUserProfile(ctx, &query); err != nil {
 		return err
@@ -26,9 +26,10 @@ func (hs *HTTPServer) UpdateGroupUsers(ctx context.Context, userId int64) error 
 		return err
 	}
 
-	updateUser := dtos.UpdateUserMsg{
+	updateUser := dtos.UpdateOrgUserMsg{
 		Login: query.Result.Login,
 		Email: query.Result.Email,
+		Phone: query.Result.Phone,
 		Name:  query.Result.Name,
 		Role:  dtos.ConvertRoleToString(roleMsg.Result),
 	}
@@ -36,11 +37,86 @@ func (hs *HTTPServer) UpdateGroupUsers(ctx context.Context, userId int64) error 
 	if err != nil {
 		return err
 	}
-	url := fmt.Sprintf("%sapi/groups/users/%d", hs.ResourceService.GetConfig().ResourceUrl, userId)
+	url := fmt.Sprintf("%sapi/orgs/%d/users/%d", hs.ResourceService.GetConfig().ResourceUrl, orgId, userId)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPut,
+	}
+	if err := hs.ResourceService.RestRequest(ctx, req); err != nil {
+		return err
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return err
+		}
+		return errors.New(errResponse.Message)
+	}
+	return nil
+}
+
+func (hs *HTTPServer) DeleteResourceServiceOrgUser(ctx context.Context, orgId int64, userId int64) error {
+	url := fmt.Sprintf("%sapi/orgs/%d/users/%d", hs.ResourceService.GetConfig().ResourceUrl, orgId, userId)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodDelete,
+	}
+	if err := hs.ResourceService.RestRequest(ctx, req); err != nil {
+		return err
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return err
+		}
+		return errors.New(errResponse.Message)
+	}
+	return nil
+}
+
+func (hs *HTTPServer) UpdateResourceServiceUser(ctx context.Context, userId int64) error {
+	query := models.GetUserProfileQuery{UserId: userId}
+	if err := hs.SQLStore.GetUserProfile(ctx, &query); err != nil {
+		return err
+	}
+
+	updateUser := dtos.UpdateUserMsg{
+		Login: query.Result.Login,
+		Email: query.Result.Email,
+		Phone: query.Result.Phone,
+		Name:  query.Result.Name,
+	}
+	body, err := json.Marshal(&updateUser)
+	if err != nil {
+		return err
+	}
+	url := fmt.Sprintf("%sapi/users/%d", hs.ResourceService.GetConfig().ResourceUrl, userId)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    body,
+		HttpMethod: http.MethodPut,
+	}
+	if err := hs.ResourceService.RestRequest(ctx, req); err != nil {
+		return err
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return err
+		}
+		return errors.New(errResponse.Message)
+	}
+	return nil
+}
+
+func (hs *HTTPServer) DeleteResourceServiceUser(ctx context.Context, userId int64) error {
+	url := fmt.Sprintf("%sapi/users/%d", hs.ResourceService.GetConfig().ResourceUrl, userId)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodDelete,
 	}
 	if err := hs.ResourceService.RestRequest(ctx, req); err != nil {
 		return err
@@ -82,6 +158,7 @@ func (hs *HTTPServer) DeleteGroupUsers(c *models.ReqContext) response.Response {
 
 func (hs *HTTPServer) AddGroupUsers(c *models.ReqContext) response.Response {
 	orgUser := dtos.AddGroupUserMsg{
+		OrgId: c.OrgID,
 		User: dtos.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
@@ -110,6 +187,7 @@ func (hs *HTTPServer) AddGroupUsers(c *models.ReqContext) response.Response {
 		return response.Error(500, "Failed to get org user", err)
 	}
 	orgUser.Email = query.Result.Email
+	orgUser.Phone = query.Result.Phone
 	orgUser.Login = query.Result.Login
 	orgUser.Name = query.Result.Name
 	orgUser.Role = dtos.ConvertRoleToString(roleMsg.Result)

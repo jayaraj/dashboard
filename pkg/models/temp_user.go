@@ -29,6 +29,7 @@ type TempUser struct {
 	Version         int
 	Email           string
 	Name            string
+	Phone           string
 	Role            org.RoleType
 	InvitedByUserId int64
 	Status          TempUserStatus
@@ -48,6 +49,7 @@ type TempUser struct {
 type CreateTempUserCommand struct {
 	Email           string
 	Name            string
+	Phone           string
 	OrgId           int64
 	InvitedByUserId int64
 	Status          TempUserStatus
@@ -91,6 +93,7 @@ type TempUserDTO struct {
 	Id             int64          `json:"id"`
 	OrgId          int64          `json:"orgId"`
 	Name           string         `json:"name"`
+	Phone          string         `json:"phone"`
 	Email          string         `json:"email"`
 	Role           org.RoleType   `json:"role"`
 	InvitedByLogin string         `json:"invitedByLogin"`
