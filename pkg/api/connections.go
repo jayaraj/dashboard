@@ -334,7 +334,7 @@ func (hs *HTTPServer) SendConnectionUserOtp(c *models.ReqContext) response.Respo
 	dto := dtos.SendConnectionUserOtpMsg{
 		ConnectionExt: number,
 		UserId:        c.UserID,
-		Name:          c.Login,
+		Name:          c.NameOrFallback(),
 	}
 	body, err := json.Marshal(dto)
 	if err != nil {
@@ -371,7 +371,7 @@ func (hs *HTTPServer) AddUserConnection(c *models.ReqContext) response.Response 
 		Login:         c.Login,
 		Email:         c.Email,
 		Phone:         c.Phone,
-		Name:          c.Login,
+		Name:          c.NameOrFallback(),
 		Role:          dtos.ConvertRoleToString(org.RoleViewer),
 		User: dtos.User{
 			UserId: c.UserID,
