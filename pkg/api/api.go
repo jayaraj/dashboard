@@ -552,6 +552,10 @@ func (hs *HTTPServer) registerRoutes() {
 			alertsRoute.Get("/:name", authorize(reqSignedIn, alertsReadAccessEvaluator), routing.Wrap(hs.GetAlertNotification))
 		})
 
+		apiRoute.Group("/notifications", func(alertsRoute routing.RouteRegister) {
+			alertsRoute.Get("/whatsapp", reqGrafanaAdmin, routing.Wrap(hs.GetWhatsapp))
+		})
+
 		// InventoryConfiguration
 		apiRoute.Group("/inventories", func(configurationRoute routing.RouteRegister) {
 			configurationRoute.Put("/:inventoryId/configurations/:config", authorize(reqEditorRole, inventoriesWriteAccessEvaluator), routing.Wrap(hs.UpdateInventoryConfiguration))

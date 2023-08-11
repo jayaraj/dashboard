@@ -26,3 +26,10 @@ type GetAlertNotificationMsg struct {
 	// swagger:ignore
 	Result Notification `json:"result"`
 }
+
+// swagger:model WhatsappResponse
+type WhatsappQR struct {
+	LoggedIn bool          `json:"logged_in"`
+	QRCode   string        `json:"qr_code"`
+	Timeout  time.Duration `json:"timeout"`
+}

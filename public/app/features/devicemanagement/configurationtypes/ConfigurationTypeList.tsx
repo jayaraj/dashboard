@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
-import { DeleteButton, LinkButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, Select } from '@grafana/ui';
+import { DeleteButton, LinkButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, Select, Button } from '@grafana/ui';
 import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
 import { Page } from 'app/core/components/Page/Page';
 import { contextSrv, User } from 'app/core/services/context_srv';
@@ -9,6 +9,7 @@ import { StoreState, ConfigurationType, configurationTypePageLimit, associationT
 import { connectWithCleanUp } from '../../../core/components/connectWithCleanUp';
 
 import { OrgRolePicker } from '../../admin/OrgRolePicker';
+import WhatsappConfiguration from './WhatsappConfiguration';
 import { deleteConfigurationType, loadConfigurationTypes } from './state/actions';
 import { setConfigurationTypesSearchQuery } from './state/reducers';
 import { getSearchQuery, getConfigurationTypes, getConfigurationTypesCount, getConfigurationTypeSearchPage } from './state/selectors';
@@ -25,9 +26,22 @@ export interface Props {
   signedInUser: User;
 }
 
-export class ConfigurationTypeList extends PureComponent<Props> {
+export interface State {
+  isWhatsappOpen: boolean;
+}
+
+export class ConfigurationTypeList extends PureComponent<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { isWhatsappOpen: false };
+  }
+
   componentDidMount() {
     this.fetchConfigurationTypes('', 1);
+  }
+
+  setWhatsappOpen = (open: boolean) => {
+    this.setState({ isWhatsappOpen: open });
   }
 
   async fetchConfigurationTypes(query: string, page: number) {
@@ -81,15 +95,27 @@ export class ConfigurationTypeList extends PureComponent<Props> {
   }
 
   renderEmptyList() {
+    const  isWhatsappOpen = this.state.isWhatsappOpen? true: false;
     const canWrite = this.props.signedInUser.isGrafanaAdmin;
     const newHref = canWrite ? '/org/configurationtypes/new' : '#';
     const buttonTitle = ' New Type';
     const title = 'No types are available';
-    return <EmptyListCTA title={title} buttonIcon="rss" buttonLink={newHref} buttonTitle={buttonTitle} />;
+    return (<>
+              <div className="page-action-bar">
+                <div className="gf-form gf-form--grow">
+                </div>
+                <Button variant="secondary" icon="whatsapp" onClick={() => this.setWhatsappOpen(true)}>
+                  Configure
+                </Button>
+              </div>
+              <EmptyListCTA title={title} buttonIcon="rss" buttonLink={newHref} buttonTitle={buttonTitle} />
+              <WhatsappConfiguration isOpen={isWhatsappOpen}  onCancel={(open: boolean ) => { this.setWhatsappOpen(open);}}/>
+            </>);
   }
 
   renderConfigurationTypeList() {
     const { configurationTypes, searchQuery, searchPage, configurationTypesCount } = this.props;
+    const  isWhatsappOpen = this.state.isWhatsappOpen? true: false;
     const canWrite = this.props.signedInUser.isGrafanaAdmin;
     const disabledClass = canWrite ? '' : ' disabled';
     const url = canWrite ? '/org/configurationtypes/new' : '#';
@@ -101,7 +127,9 @@ export class ConfigurationTypeList extends PureComponent<Props> {
           <div className="gf-form gf-form--grow">
             <FilterInput placeholder="Search" value={searchQuery} onChange={this.onSearchQueryChange} />
           </div>
-
+          <Button variant="secondary" icon="whatsapp" onClick={() => this.setWhatsappOpen(true)}>
+            Configure
+          </Button>
           <LinkButton className={disabledClass} href={url}>
             New Type
           </LinkButton>
@@ -131,6 +159,7 @@ export class ConfigurationTypeList extends PureComponent<Props> {
             </HorizontalGroup>
           </VerticalGroup>
         </div>
+        <WhatsappConfiguration isOpen={isWhatsappOpen}  onCancel={this.setWhatsappOpen}/>
       </>
     );
   }
