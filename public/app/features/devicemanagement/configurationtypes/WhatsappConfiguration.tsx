@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import React, { FC, useEffect, useState, useRef, useCallback } from 'react';
+import React, { FC, useEffect, useState, useRef } from 'react';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { connect, ConnectedProps } from 'react-redux';
 
@@ -43,12 +43,12 @@ export const WhatsappConfiguration: FC<Props> = ({ isOpen, onCancel}) => {
   };
 
   React.useEffect(() => {
-    let tt: number = 0
+    let timeoutId: number | ReturnType<typeof setTimeout>
     if (timer > 0) {  
-      tt = setTimeout(() => setTimer(timer - 1), 1000);
+      timeoutId = setTimeout(() => setTimer(timer - 1), 1000);
     }
     return () => {
-      clearTimeout(tt);
+      clearTimeout(timeoutId);
     };
   });
 
