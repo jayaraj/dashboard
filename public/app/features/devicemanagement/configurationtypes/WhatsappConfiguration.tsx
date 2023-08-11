@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import React, { FC, useEffect, useState, useRef } from 'react';
+import React, { FC, useEffect, useState, useRef, useCallback } from 'react';
 import useAsyncFn from 'react-use/lib/useAsyncFn';
 import { connect, ConnectedProps } from 'react-redux';
 
@@ -28,38 +28,43 @@ export const WhatsappConfiguration: FC<Props> = ({ isOpen, onCancel}) => {
   const qrCode = (state.value)? state.value.qr_code: '';
   const styles = useStyles2(getStyles);
   const interval = useRef<any>(null)
+  const timerInterval = useRef<any>(null);
   const [timer, setTimer] = useState(0);
   const secounds = (timer > 9) ? '' + timer : '0' + timer;
   const getWhatsapp = async () => {
     setIsLoading(true);
     const response = await getBackendSrv().get('/api/notifications/whatsapp');
     if (!response.logged_in) {
+      clearInterval(timerInterval.current!);
       setTimer(30);
     }
     setIsLoading(false);
     return response;
   };
 
-  useEffect( () => {
-    if (isOpen) {
-      fetchWhatsapp();
+  React.useEffect(() => {
+    let tt: number = 0
+    if (timer > 0) {  
+      tt = setTimeout(() => setTimer(timer - 1), 1000);
     }
-  }, [isOpen]);
+    return () => {
+      clearTimeout(tt);
+    };
+  });
 
   useEffect(() => {
-    if (state && state.value && !state.value.logged_in && !interval.current) {
-      interval.current = setInterval(() => fetchWhatsapp(), 30000);
+    if (!interval.current && isOpen) {
+      fetchWhatsapp();
+      interval.current = setInterval(() => fetchWhatsapp(), 33000);
     }
     return () => {
       clearInterval(interval.current!);
+      clearInterval(timerInterval.current!);
+      interval.current = null;
+      timerInterval.current = null;
+      setTimer(0);
     };
-}, [state]);
-
-React.useEffect(() => {
-  if (timer > 0) {
-    setTimeout(() => setTimer(timer - 1), 1000);
-  }
-}, [timer]);
+}, [isOpen]);
 
   return (
     <Modal 

@@ -104,7 +104,7 @@ export class ConfigurationTypeList extends PureComponent<Props, State> {
               <div className="page-action-bar">
                 <div className="gf-form gf-form--grow">
                 </div>
-                <Button variant="secondary" icon="whatsapp" onClick={() => this.setWhatsappOpen(true)}>
+                <Button variant="secondary" disabled={!canWrite} icon="whatsapp" onClick={() => this.setWhatsappOpen(true)}>
                   Configure
                 </Button>
               </div>
@@ -127,7 +127,7 @@ export class ConfigurationTypeList extends PureComponent<Props, State> {
           <div className="gf-form gf-form--grow">
             <FilterInput placeholder="Search" value={searchQuery} onChange={this.onSearchQueryChange} />
           </div>
-          <Button variant="secondary" icon="whatsapp" onClick={() => this.setWhatsappOpen(true)}>
+          <Button variant="secondary" disabled={!canWrite} icon="whatsapp" onClick={() => this.setWhatsappOpen(true)}>
             Configure
           </Button>
           <LinkButton className={disabledClass} href={url}>
