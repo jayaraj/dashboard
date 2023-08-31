@@ -8,9 +8,10 @@ import { TimescaleEditorForm, TimescaleEditFormDTO } from './TimescaleEditorForm
 interface TimescaleEditorProps extends HTMLAttributes<HTMLDivElement> {
   onSave: (data: TimescaleEditFormDTO) => void;
   onDismiss: () => void;
+  scales: string[];
 }
 
-export const TimescaleEditor: React.FC<TimescaleEditorProps> = ({ onDismiss, onSave, style }) => {
+export const TimescaleEditor: React.FC<TimescaleEditorProps> = ({ onDismiss, onSave, scales, style }) => {
   const [popperTrigger, setPopperTrigger] = useState<HTMLDivElement | null>(null);
   const [editorPopover, setEditorPopover] = useState<HTMLDivElement | null>(null);
 
@@ -34,6 +35,7 @@ export const TimescaleEditor: React.FC<TimescaleEditorProps> = ({ onDismiss, onS
         <TimescaleEditorForm
           onSave={onSave}
           onDismiss={onDismiss}
+          scales={scales}
           ref={setEditorPopover}
           style={popper.styles.popper}
           {...popper.attributes.popper}

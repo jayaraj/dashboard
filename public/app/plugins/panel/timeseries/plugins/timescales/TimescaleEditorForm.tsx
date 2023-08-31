@@ -3,7 +3,7 @@ import React, { HTMLAttributes, useRef, useState, useCallback } from 'react';
 import useClickAway from 'react-use/lib/useClickAway';
 
 import { GrafanaTheme2 } from '@grafana/data';
-import { Button, Field, HorizontalGroup, TextArea, useStyles2 } from '@grafana/ui';
+import { Button, Field, HorizontalGroup, Select, useStyles2 } from '@grafana/ui';
 import { NumberInput } from 'app/core/components/OptionsUI/NumberInput';
 import { useAppNotification } from 'app/core/copy/appNotification';
 
@@ -11,19 +11,21 @@ export interface TimescaleEditFormDTO {
   description: string;
   min: number;
   max: number;
+  scale: string;
 }
 
 interface TimescaleEditorFormProps extends HTMLAttributes<HTMLDivElement> {
   onSave: (data: TimescaleEditFormDTO) => void;
   onDismiss: () => void;
+  scales: string[];
 }
 
 export const TimescaleEditorForm = React.forwardRef<HTMLDivElement, TimescaleEditorFormProps>(
-  ({ onSave, onDismiss, className, ...otherProps }, ref) => {
+  ({ onSave, onDismiss, className, scales, ...otherProps }, ref) => {
     const styles = useStyles2(getStyles);
     const clickAwayRef = useRef(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [formData, setFormData] = useState<TimescaleEditFormDTO>({ description: '', min: 0, max: 0 });
+    const [formData, setFormData] = useState<TimescaleEditFormDTO>({ description: '', min: 0, max: 0, scale: scales.length ? scales[0] : '' });
     const notifyApp = useAppNotification();
 
     useClickAway(clickAwayRef, () => {
@@ -85,13 +87,16 @@ export const TimescaleEditorForm = React.forwardRef<HTMLDivElement, TimescaleEdi
                 }}
               />
             </Field>
-            <Field label={'Description'}>
-              <TextArea
-                value={formData.description}
-                onChange={(event) => {
+            <Field label={'Scale'}>
+              <Select
+                value={formData.scale}
+                options= {
+                  scales.map((value: string) => ({value, label: value}))
+                }
+                onChange={(value: any) => {
                   setFormData({
                     ...formData,
-                    description: event.currentTarget.value,
+                    scale: value.value,
                   });
                 }}
               />
