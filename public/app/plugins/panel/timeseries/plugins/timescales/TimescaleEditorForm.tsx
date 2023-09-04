@@ -1,11 +1,26 @@
 import { css, cx } from '@emotion/css';
-import React, { HTMLAttributes, useRef, useState, useCallback } from 'react';
+import React, { HTMLAttributes, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useClickAway from 'react-use/lib/useClickAway';
 
-import { GrafanaTheme2 } from '@grafana/data';
-import { Button, Field, HorizontalGroup, Select, useStyles2 } from '@grafana/ui';
+import {
+  AlertErrorPayload,
+  AlertPayload,
+  AppEvents,
+  DataFrame,
+  Field as FieldItem,
+  getDataFrameRow,
+  getDisplayProcessor,
+  GrafanaTheme2,
+} from '@grafana/data';
+import { getAppEvents, locationService } from '@grafana/runtime';
+import { Button, Field, HorizontalGroup, Select, Table, useStyles2, useTheme2 } from '@grafana/ui';
 import { NumberInput } from 'app/core/components/OptionsUI/NumberInput';
-import { useAppNotification } from 'app/core/copy/appNotification';
+
+/**
+ * Constants
+ */
+const MaxRows = 10;
+const RowHeight = 36;
 
 export interface TimescaleEditFormDTO {
   description: string;
@@ -18,32 +33,138 @@ interface TimescaleEditorFormProps extends HTMLAttributes<HTMLDivElement> {
   onSave: (data: TimescaleEditFormDTO) => void;
   onDismiss: () => void;
   scales: string[];
+  timescalesFrame: DataFrame | null;
 }
 
+const getTimescaleData = (data: DataFrame | null, metric: string) => {
+  const defaultData = {
+    min: 0,
+    max: 0,
+    scale: metric,
+  };
+
+  if (!data) {
+    return defaultData;
+  }
+
+  const index = data.fields
+    .find((field) => field.name === 'metric')
+    ?.values.toArray()
+    .findIndex((value) => value === metric);
+
+  if (index === undefined || index < 0) {
+    return defaultData;
+  }
+
+  const row = getDataFrameRow(data, index);
+
+  return {
+    min: row[data.fields.findIndex((field) => field.name === 'min')] as number,
+    max: row[data.fields.findIndex((field) => field.name === 'max')] as number,
+    scale: metric,
+  };
+};
+
 export const TimescaleEditorForm = React.forwardRef<HTMLDivElement, TimescaleEditorFormProps>(
-  ({ onSave, onDismiss, className, scales, ...otherProps }, ref) => {
+  ({ onSave, onDismiss, className, scales, timescalesFrame, ...otherProps }, ref) => {
+    const theme = useTheme2();
     const styles = useStyles2(getStyles);
-    const clickAwayRef = useRef(null);
+    const clickAwayRef = useRef<HTMLDivElement>(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [formData, setFormData] = useState<TimescaleEditFormDTO>({ description: '', min: 0, max: 0, scale: scales.length ? scales[0] : '' });
-    const notifyApp = useAppNotification();
+    const [formData, setFormData] = useState<TimescaleEditFormDTO>({
+      description: '',
+      min: 0,
+      max: 0,
+      scale: scales.length ? scales[0] : '',
+    });
+    const [size, setSize] = useState({
+      width: 0,
+      height: 0,
+    });
+
+    /**
+     * Events
+     */
+    const appEvents = getAppEvents();
 
     useClickAway(clickAwayRef, () => {
       onDismiss();
     });
 
+    useEffect(() => {
+      const formElement = document.querySelector(`.${styles.editor}`);
+      if (formElement && timescalesFrame) {
+        setSize({
+          width: formElement.clientWidth,
+          height: (Math.min(timescalesFrame.length, MaxRows) + 1) * RowHeight,
+        });
+      }
+    }, [ref, styles.editor, timescalesFrame]);
+
+    useEffect(() => {
+      if (timescalesFrame) {
+        setFormData((previous) => ({
+          ...previous,
+          ...getTimescaleData(timescalesFrame, previous.scale),
+        }));
+      }
+    }, [timescalesFrame]);
+
     const onSubmit = useCallback(
       async (data: TimescaleEditFormDTO) => {
+        const notifySuccess = (payload: AlertPayload) =>
+          appEvents.publish({ type: AppEvents.alertSuccess.name, payload });
+        const notifyError = (payload: AlertErrorPayload) =>
+          appEvents.publish({ type: AppEvents.alertError.name, payload });
+
         setIsLoading(true);
         try {
           await onSave(data);
+          notifySuccess(['Scales updated successfully.']);
+          locationService.reload();
         } catch (error: any) {
           setIsLoading(false);
-          notifyApp.error('Update scale Error', error);
+          notifyError(['Scales Error', error]);
         }
       },
-      [onSave, notifyApp]
+      [onSave, appEvents]
     );
+
+    const tableData = useMemo((): DataFrame | null => {
+      if (!timescalesFrame) {
+        return null;
+      }
+
+      /**
+       * Set Display Names
+       */
+      timescalesFrame.fields.forEach((field) => {
+        if (field.name === 'metric') {
+          field.config.displayName = 'Scale';
+        } else if (field.name === 'min') {
+          field.config.displayName = 'Minimum';
+        } else if (field.name === 'max') {
+          field.config.displayName = 'Maximum';
+        }
+      });
+
+      const fields = timescalesFrame.fields.map((field) => ({
+        ...field,
+        display: getDisplayProcessor({
+          field,
+          theme,
+        }),
+      }));
+
+      return {
+        ...timescalesFrame,
+        fields: [
+          fields.find((field) => field.name === 'metric'),
+          fields.find((field) => field.name === 'min'),
+          fields.find((field) => field.name === 'max'),
+        ].filter((field) => !!field) as FieldItem[],
+      };
+    }, [theme, timescalesFrame]);
 
     const form = (
       <div // Timescale editor
@@ -53,9 +174,11 @@ export const TimescaleEditorForm = React.forwardRef<HTMLDivElement, TimescaleEdi
       >
         <div className={styles.header}>
           <HorizontalGroup justify={'space-between'} align={'center'}>
-            <div className={styles.title}>Update scale</div>
+            <div className={styles.title}>Set Custom scales</div>
           </HorizontalGroup>
         </div>
+        {tableData && <Table data={tableData} width={size.width} height={size.height} />}
+        <hr />
         <div className={styles.editorForm}>
           <form
             onSubmit={(e) => {
@@ -63,7 +186,20 @@ export const TimescaleEditorForm = React.forwardRef<HTMLDivElement, TimescaleEdi
               onSubmit(formData);
             }}
           >
-            <Field label={'Min'}>
+            <Field label={'Scale'}>
+              <Select
+                value={formData.scale}
+                options={scales.map((value: string) => ({ value, label: value }))}
+                onChange={(value: any) => {
+                  setFormData({
+                    ...formData,
+                    ...getTimescaleData(timescalesFrame, value.value),
+                    scale: value.value,
+                  });
+                }}
+              />
+            </Field>
+            <Field label={'Minimum'}>
               <NumberInput
                 value={formData.min}
                 min={0}
@@ -75,7 +211,7 @@ export const TimescaleEditorForm = React.forwardRef<HTMLDivElement, TimescaleEdi
                 }}
               />
             </Field>
-            <Field label={'Max'}>
+            <Field label={'Maximum'}>
               <NumberInput
                 value={formData.max}
                 min={0}
@@ -83,20 +219,6 @@ export const TimescaleEditorForm = React.forwardRef<HTMLDivElement, TimescaleEdi
                   setFormData({
                     ...formData,
                     max: value || 0,
-                  });
-                }}
-              />
-            </Field>
-            <Field label={'Scale'}>
-              <Select
-                value={formData.scale}
-                options= {
-                  scales.map((value: string) => ({value, label: value}))
-                }
-                onChange={(value: any) => {
-                  setFormData({
-                    ...formData,
-                    scale: value.value,
                   });
                 }}
               />
