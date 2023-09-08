@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useCallback  } from 'react';
 
-import { Field, PanelProps, CartesianCoords2D } from '@grafana/data';
+import { DataFrame, Field, PanelProps, CartesianCoords2D, toDataFrame } from '@grafana/data';
 import { PanelDataErrorView, getBackendSrv } from '@grafana/runtime';
 import { TooltipDisplayMode } from '@grafana/schema';
 import { usePanelContext, TimeSeries, TooltipPlugin, ZoomPlugin, KeyboardPlugin, MenuItemProps } from '@grafana/ui';
@@ -47,18 +47,57 @@ export const TimeSeriesPanel: React.FC<TimeSeriesPanelProps> = ({
   const frames = useMemo(() => prepareGraphableFields(data.series, config.theme2, timeRange), [data, timeRange]);
   const timezones = useMemo(() => getTimezones(options.timezone, timeZone), [options.timezone, timeZone]);
 
+  const [timescalesFrame, setTimescalesFrame] = useState<DataFrame | null>(null);
+
   const mappings = fieldConfig.defaults.mappings;
   let scales: string[] = [];
 
   if (mappings && mappings.length) {
-    mappings.map((mapping: any) => mapping.options).map((mapping: any) => {
-      Object.keys(mapping).forEach((key: string) => {
-        if (key.toLowerCase().match(/scale/)) {
-          scales.push(mapping[key].text);
-        }
-      }) 
-    });
+    mappings
+      .map((mapping: any) => mapping.options)
+      .map((mapping: any) => {
+        Object.keys(mapping).forEach((key: string) => {
+          if (key.toLowerCase().match(/scale/)) {
+            scales.push(mapping[key].text);
+          }
+        });
+      });
   }
+
+  const getTimescales = useCallback(async () => {
+    const user = config.bootData.user;
+    const userId = user?.id;
+    const rawSql = `select last(min, time) as min, last(max, time) as max, metric from scales where user_id='${userId}' group by metric;`;
+    const target = data.request?.targets[0];
+    const datasourceId = target?.datasource?.uid;
+    const refId = target?.refId;
+
+    if (refId) {
+      const response = await getBackendSrv().post('/api/ds/query', {
+        debug: true,
+        from: 'now-1h',
+        publicDashboardAccessToken: 'string',
+        queries: [
+          {
+            datasource: {
+              uid: datasourceId,
+            },
+            format: 'table',
+            intervalMs: 86400000,
+            maxDataPoints: 1092,
+            rawSql,
+            refId,
+          },
+        ],
+        to: 'now',
+      });
+
+      setTimescalesFrame(toDataFrame(response.results?.[refId]?.frames[0]));
+      return;
+    }
+
+    setTimescalesFrame(null);
+  }, [data.request?.targets]);
 
   const onAddTimescale = useCallback(
     async (formData: TimescaleEditFormDTO) => {
@@ -123,12 +162,13 @@ export const TimeSeriesPanel: React.FC<TimeSeriesPanelProps> = ({
 
         const defaultContextMenuItems: MenuItemProps[] = scales.length ? [
           {
-            label: 'Update scale',
-            ariaLabel: 'Update scale',
+            label: 'Custom scales',
+            ariaLabel: 'Custom scales',
             icon: 'channel-add',
             onClick: (e, p) => {
               setTimescaleTriggerCoords(p.coords);
               setAddingTimescale(true);
+              getTimescales();
             },
           },
         ] : [];
@@ -213,6 +253,7 @@ export const TimeSeriesPanel: React.FC<TimeSeriesPanelProps> = ({
                   left: timescaleTriggerCoords?.viewport?.x,
                   top: timescaleTriggerCoords?.viewport?.y,
                 }}
+                timescalesFrame={timescalesFrame}
               />
             )}
             {data.annotations && (
