@@ -47,6 +47,7 @@ export interface Connection {
   country: string;
   pincode: string;
   connection_ext: number;
+  tags: string[];
 }
 
 export interface CreateConnectionDTO {
@@ -62,6 +63,7 @@ export interface CreateConnectionDTO {
   state: string;
   country: string;
   pincode: string;
+  tags: string[];
 }
 
 export interface UpdateConnectionDTO {
@@ -76,6 +78,7 @@ export interface UpdateConnectionDTO {
   state: string;
   country: string;
   pincode: string;
+  tags: string[];
 }
 
 export interface ConnectionsState {

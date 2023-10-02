@@ -81,7 +81,8 @@ export function getPageNav(pageName: string): NavModel {
     state: '',
     country: '',
     pincode: '',
-    connection_ext: 0
+    connection_ext: 0,
+    tags: [],  
   });
 
   let node: NavModelItem;

@@ -79,6 +79,7 @@ type CreateConnectionMsg struct {
 	State         string     `json:"state" binding:"required"`
 	Country       string     `json:"country" binding:"required"`
 	Pincode       string     `json:"pincode" binding:"required"`
+	Tags          []string   `json:"tags"`
 	Login         string     `json:"login"`
 	Result        Connection `json:"result"`
 }

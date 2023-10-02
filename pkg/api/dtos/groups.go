@@ -41,6 +41,7 @@ type Group struct {
 	Parent    *int64    `json:"parent,omitempty"`
 	Child     *bool     `json:"child,omitempty"`
 	Level     int64     `json:"level"`
+	Tags      string    `json:"tags"`
 	Groups    []Group   `json:"groups,omitempty"`
 }
 
@@ -83,13 +84,15 @@ type CreateGroupMsg struct {
 	OrgId         int64                  `json:"org_id"`
 	Parent        *int64                 `json:"parent,omitempty"`
 	Configuration map[string]interface{} `json:"configuration" binding:"Required"`
+	Tags          []string               `json:"tags"`
 	Result        Group                  `json:"-"`
 }
 
 type UpdateGroupMsg struct {
-	Id   int64  `json:"-"`
-	Name string `json:"name" binding:"required"`
-	Type string `json:"type"`
+	Id   int64    `json:"-"`
+	Name string   `json:"name" binding:"required"`
+	Type string   `json:"type"`
+	Tags []string `json:"tags"`
 }
 
 type GetGroupByIdMsg struct {

@@ -1,6 +1,7 @@
+import { css } from '@emotion/css';
 import React, { PureComponent } from 'react';
 
-import { DeleteButton, LinkButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination } from '@grafana/ui';
+import { DeleteButton, LinkButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, TagList } from '@grafana/ui';
 import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
 import { Page } from 'app/core/components/Page/Page';
 import { contextSrv } from 'app/core/services/context_srv';
@@ -50,12 +51,16 @@ export class GroupList extends PureComponent<Props> {
     const fallback = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
     const canRead = contextSrv.hasAccess(AccessControlAction.ActionGroupsRead, fallback);
     const canCreate = contextSrv.hasAccess(AccessControlAction.ActionGroupsCreate, fallback);
+    const tags = group.tags? group.tags.replace(/^\{+|\"+|\}+$/g, '').split(',').filter(function (str: string) {return str !== 'NULL'}) : [];
 
     return (
       <tr key={group.id}>
         <td className="link-td">{canRead ? <a href={groupUrl}>{group.name}</a> : <>{group.name}</>}</td>
         <td className="link-td">{canRead ? <a href={groupUrl}>{group.type}</a> : <>{group.type}</>}</td>
         <td className="link-td">{canRead ? <a href={groupUrl}>{group.path}</a> : <>{group.path}</>}</td>
+        <td className="link-td">
+          {canRead ? <a href={groupUrl}><TagList tags={tags} className={css`justify-content: flex-start;`}/></a> : <TagList tags={tags} className={css`justify-content: flex-start;`}/>}
+        </td>
         <td className="text-right">
           <DeleteButton size="sm" disabled={!canCreate} onConfirm={() => this.deleteGroup(group)} />
         </td>
@@ -96,6 +101,7 @@ export class GroupList extends PureComponent<Props> {
                   <th>Name</th>
                   <th>Type</th>
                   <th>Path</th>
+                  <th>Tags</th>
                   <th style={{ width: '1%' }} />
                 </tr>
               </thead>

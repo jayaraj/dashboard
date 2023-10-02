@@ -2,7 +2,7 @@ import { AppEvents } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
 import { appEvents } from 'app/core/core';
 import { updateNavIndex } from 'app/core/actions';
-import {CreateTransactionDTO, QueryRange, ThunkResult, UpdateConnectionDTO, connectionLogPageLimit, connectionPageLimit, invoicesPageLimit, transactionsPageLimit, connectionUserPageLimit, connectionResourcePageLimit } from 'app/types';
+import {CreateTransactionDTO, QueryRange, ThunkResult, UpdateConnectionDTO, connectionLogPageLimit, connectionPageLimit, invoicesPageLimit, transactionsPageLimit, connectionUserPageLimit, connectionResourcePageLimit, Connection } from 'app/types';
 
 import { buildNavModel } from './navModel';
 import { connectionLoaded, connectionsLoaded, setConnectionsSearchPage, setConnectionLogsSearchPage, setConnectionLogsCount, connectionLogsLoaded, connectionUsersLoaded, setConnectionUsersSearchPage, setConnectionUsersCount, invoicesLoaded, setInvoicesSearchRange, setInvoicesSearchPage, setInvoicesCount, invoiceLoaded, transactionsLoaded, setTransactionsSearchPage, setTransactionsCount, setConnectionsCount, orgConfigurationsLoaded, connectionResourcesLoaded, setConnectionResourcesSearchPage, setConnectionResourcesCount } from './reducers';
@@ -25,7 +25,7 @@ export function loadConnections(query: string, page: number): ThunkResult<void> 
 export function loadConnection(id: number): ThunkResult<void> {
   return async (dispatch) => {
     const response = await getBackendSrv().get(`/api/connections/${id}`);
-    dispatch(connectionLoaded(response));
+    dispatch(loadConnectionTags(response));
     dispatch(updateNavIndex(buildNavModel(response)));
   };
 }
@@ -48,6 +48,15 @@ export function updateConnection(dto: UpdateConnectionDTO): ThunkResult<void> {
       pincode: dto.pincode,
     });
     dispatch(loadConnection(connection.id));
+  };
+}
+
+export function updateConnectionTags(tags: string[]): ThunkResult<void> {
+  return async (_, getStore) => {
+    const connection = getStore().connection.connection;
+    await getBackendSrv().put(`/api/groups/${connection.group_id}/tags`, {
+      tags: tags,
+    });
   };
 }
 
@@ -192,5 +201,12 @@ export function loadOrgConfigurations(type: string): ThunkResult<void> {
   return async (dispatch) => {
     const response = await getBackendSrv().get(`/api/orgs/configurations/${type}`);
     dispatch(orgConfigurationsLoaded(response));
+  };
+}
+
+export function loadConnectionTags(connection: Connection): ThunkResult<void> {
+  return async (dispatch) => {
+    const response = await getBackendSrv().get(`/api/groups/${connection.group_id}/tags/search`, {page: 1, perPage: 1000});
+    dispatch(connectionLoaded({...connection, tags: response.tags.map((tag) => (tag.tag))}));
   };
 }

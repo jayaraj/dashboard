@@ -65,6 +65,7 @@ export function getPageNav(pageName: string): NavModel {
     path: '',
     type: '',
     level: 0,
+    tags: '',
     groups: [] as Group[],
   });
 

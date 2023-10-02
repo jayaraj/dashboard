@@ -33,6 +33,7 @@ export function updateGroup(dto: UpdateGroupDTO): ThunkResult<void> {
     const group = getStore().group.group;
     await getBackendSrv().put(`/api/groups/${group.id}`, {
       name: dto.name,
+      tags: dto.tags,
     });
     dispatch(loadGroup(group.id));
   };

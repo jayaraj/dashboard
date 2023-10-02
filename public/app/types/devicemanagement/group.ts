@@ -11,6 +11,7 @@ export interface Group {
   level: number;
   parent: number;
   child: boolean;
+  tags: string;
   groups: Group[];
 }
 
@@ -18,10 +19,12 @@ export interface CreateGroupDTO {
   name: string;
   type: string;
   parent: number;
+  tags: string[];
 }
 
 export interface UpdateGroupDTO {
   name: string;
+  tags: string[];
 }
 
 export interface GroupsState {

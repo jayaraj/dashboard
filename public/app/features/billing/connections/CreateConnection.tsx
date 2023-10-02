@@ -9,7 +9,7 @@ import { contextSrv } from 'app/core/core';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { CreateConnectionDTO,  Group,  Profile,  StoreState,  connectionStatusTypes} from 'app/types';
 import { stringToSelectableValue, stringsToSelectableValues } from '../../alerting/unified/utils/amroutes';
-
+import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 
 interface OwnProps extends GrafanaRouteComponentProps<{}> {}
 function mapStateToProps(state: StoreState, props: OwnProps) {
@@ -34,6 +34,14 @@ export const CreateConnection = ({}: Props): JSX.Element => {
     response.profiles.map((profile: Profile) => setProfiles((opts) => [...opts, stringToSelectableValue(profile.name)]))
   };
 
+  const getTags =  async () => {
+    const response = await getBackendSrv().get('/api/tags', {page: 1, perPage: 1000});
+    return response.tags.map(({ tag }) => ({
+      term: tag,
+      count: 1,
+    }));
+  }
+
   const create = async (dto: CreateConnectionDTO) => {
     const result = await getBackendSrv().post('/api/connections', {
       group_parent_id: group.id,
@@ -48,6 +56,7 @@ export const CreateConnection = ({}: Props): JSX.Element => {
       state: dto.state,
       country: dto.country,
       pincode: dto.pincode,
+      tags: dto.tags,
     });
     if (result.id) {
       locationService.push(`/org/connections/edit/${result.id}`);
@@ -74,6 +83,10 @@ export const CreateConnection = ({}: Props): JSX.Element => {
         </Field>
         <Form
           onSubmit={(dto: CreateConnectionDTO) => create(dto)}
+          defaultValues={{ 
+            group_parent_id: 0, profile: '', status: '', name: '', 
+            phone: '', email: '', address1: '', address2: '', city: '',
+            pincode: '', country: '', state: '', tags: [] }}
         >
           {({ register, control }) => (
             <FieldSet>
@@ -106,6 +119,24 @@ export const CreateConnection = ({}: Props): JSX.Element => {
                 </VerticalGroup>
                 <div style={{ padding: '0 50px'}} />
                 <VerticalGroup>
+                  <Field label={'Tags'}>
+                    <InputControl
+                      control={control}
+                      name="tags"
+                      render={({ field: { ref, onChange, ...field } }) => {
+                        return (
+                          <TagFilter
+                            allowCustomValue
+                            placeholder="Add tags"
+                            onChange={onChange}
+                            tagOptions={getTags}
+                            tags={field.value}
+                            width={40}
+                          />
+                        );
+                      }}
+                    />
+                  </Field>
                   <Field label="Profile" disabled={!canWrite}>
                     <InputControl name="profile" control={control} rules={{ required: true }}
                       render={({field: {onChange, ...field}}) => <Select {...field} onChange={(value) => onChange(value.value)} options={profiles} width={40}/>}

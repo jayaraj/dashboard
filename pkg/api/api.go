@@ -472,6 +472,11 @@ func (hs *HTTPServer) registerRoutes() {
 			orgRoute.Delete("/:id", authorize(reqOrgAdmin, resourcesCreateAccessEvaluator), routing.Wrap(hs.DeleteResourceConfiguration))
 		})
 
+		//Tags
+		apiRoute.Group("/tags", func(tagsRoute routing.RouteRegister) {
+			tagsRoute.Get("/", reqSignedIn, routing.Wrap(hs.GetTags))
+		})
+
 		// Groups
 		apiRoute.Group("/groups", func(groupsRoute routing.RouteRegister) {
 			groupsRoute.Post("/", authorize(reqOrgAdmin, groupsCreateAccessEvaluator), routing.Wrap(hs.CreateGroup))
@@ -486,6 +491,8 @@ func (hs *HTTPServer) registerRoutes() {
 			groupsRoute.Post("/:groupId/resources", authorize(reqEditorRole, resourcesWriteAccessEvaluator), routing.Wrap(hs.CreateGroupResource))
 			groupsRoute.Post("/:groupId/resources/:uuid", authorize(reqEditorRole, groupsWriteAccessEvaluator), routing.Wrap(hs.AddGroupResources))
 			groupsRoute.Get("/:groupId/pathname", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetGroupPathName))
+			groupsRoute.Get("/:groupId/tags/search", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetGroupTags))
+			groupsRoute.Put("/:groupId/tags", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.UpdateGroupTags))
 		})
 
 		// GroupConfiguration

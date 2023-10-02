@@ -7,10 +7,12 @@ import { getBackendSrv } from 'app/core/services/backend_srv';
 import { AccessControlAction, Connection, Profile, UpdateConnectionDTO, connectionStatusTypes } from 'app/types';
 
 import { stringToSelectableValue, stringsToSelectableValues } from '../../alerting/unified/utils/amroutes';
-import { updateConnection } from './state/actions';
+import { updateConnection, updateConnectionTags } from './state/actions';
+import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 
 const mapDispatchToProps = {
   updateConnection,
+  updateConnectionTags,
 };
 
 const connector = connect(null, mapDispatchToProps);
@@ -21,7 +23,7 @@ export interface OwnProps {
 
 export type Props = ConnectedProps<typeof connector> & OwnProps;
 
-export const ConnectionSettings: FC<Props> = ({ connection, updateConnection }) => {
+export const ConnectionSettings: FC<Props> = ({ connection, updateConnection, updateConnectionTags }) => {
   const fallback = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
   const canWrite = contextSrv.hasAccess(AccessControlAction.ActionConnectionsWrite, fallback);
   let [profiles, setProfiles] = useState(stringsToSelectableValues([]as string[]));
@@ -37,18 +39,28 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection }) 
     response.profiles.map((profile: Profile) => setProfiles((opts) => [...opts, stringToSelectableValue(profile.name)]))
   };
 
+  const getTags =  async () => {
+    const response = await getBackendSrv().get('/api/tags', {page: 1, perPage: 1000});
+    return response.tags.map(({ tag }) => ({
+      term: tag,
+      count: 1,
+    }));
+  }
+
   useEffect(() => {
     profilesRequest();
     groupPathnameRequest();
   }, []);
 
-
   return (
     <>
       <VerticalGroup>
         <Form
-          defaultValues={{ ...connection }}
-          onSubmit={(update: UpdateConnectionDTO) => updateConnection(update)}
+          defaultValues={{ ...connection}}
+          onSubmit={(update: UpdateConnectionDTO) => {
+            updateConnectionTags(update.tags);
+            updateConnection(update);
+          }}
           disabled={!canWrite}
         >
           {({ register, control }) => (
@@ -84,6 +96,24 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection }) 
                 </VerticalGroup>
                 <div style={{ padding: '0 50px'}} />
                 <VerticalGroup>
+                  <Field label={'Tags'}>
+                    <InputControl
+                      control={control}
+                      name="tags"
+                      render={({ field: { ref, onChange, ...field } }) => {
+                        return (
+                          <TagFilter
+                            allowCustomValue
+                            placeholder="Add tags"
+                            onChange={onChange}
+                            tagOptions={getTags}
+                            tags={field.value}
+                            width={40}
+                          />
+                        );
+                      }}
+                    />
+                  </Field>
                   <Field label="Profile" disabled={!canWrite}>
                     <InputControl name="profile" control={control} rules={{ required: true }}
                       render={({field: {onChange, ...field}}) => <Select {...field} onChange={(value) => onChange(value.value)} options={profiles} width={40}/>}

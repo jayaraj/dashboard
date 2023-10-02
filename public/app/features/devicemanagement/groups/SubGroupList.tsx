@@ -1,7 +1,8 @@
+import { css } from '@emotion/css';
 import React, { FC, useEffect } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
-import { DeleteButton, FilterInput, LinkButton, VerticalGroup, Icon, HorizontalGroup, Pagination, CallToActionCard} from '@grafana/ui';
+import { DeleteButton, FilterInput, LinkButton, VerticalGroup, Icon, HorizontalGroup, Pagination, CallToActionCard, TagList} from '@grafana/ui';
 import PageLoader from 'app/core/components/PageLoader/PageLoader';
 import { contextSrv } from 'app/core/services/context_srv';
 import { StoreState, AccessControlAction, Group, groupPageLimit } from 'app/types';
@@ -69,6 +70,7 @@ export const SubGroupList: FC<Props> = ({
     const groupUrl = `org/groups/edit/${group.id}`;
     const fallback = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
     const canWrite = contextSrv.hasAccess(AccessControlAction.ActionGroupsWrite, fallback);
+    const tags = group.tags? group.tags.replace(/^\{+|\"+|\}+$/g, '').split(',').filter(function (str: string) {return str !== 'NULL'}) : [];
 
     return (
       <tr key={group.id}>
@@ -80,6 +82,9 @@ export const SubGroupList: FC<Props> = ({
         </td>
         <td className="link-td">
           <a href={groupUrl}>{group.path}</a>
+        </td>
+        <td className="link-td">
+          <a href={groupUrl}><TagList tags={tags} className={css`justify-content: flex-start;`}/></a>
         </td>
         <td className="text-right">
           <DeleteButton size="sm" disabled={!canWrite} onConfirm={() => deleteGroup(group.parent, group.id)} />
@@ -116,6 +121,7 @@ export const SubGroupList: FC<Props> = ({
                   <th>Name</th>
                   <th>Type</th>
                   <th>Path</th>
+                  <th>Tags</th>
                   <th style={{ width: '1%' }} />
                 </tr>
               </thead>

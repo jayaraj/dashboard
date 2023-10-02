@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 
 import { dateMath } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
-import { Button, Field, FieldSet, Form, VerticalGroup, Input, HorizontalGroup, Select } from '@grafana/ui';
+import { Button, Field, FieldSet, Form, VerticalGroup, Input, HorizontalGroup, Select, InputControl } from '@grafana/ui';
 import { FormPanel } from 'app/core/components/CustomForm/components';
 import { FormElementType } from 'app/core/components/CustomForm/constants';
 import { FormElement, LayoutSection } from 'app/core/components/CustomForm/types';
@@ -12,6 +12,7 @@ import { Group, AccessControlAction, GroupConfiguration, ConfigurationType, Upda
 
 import { updateGroup, updateGroupConfiguration } from './state/actions';
 import { stringsToSelectableValues, stringToSelectableValue } from 'app/features/alerting/unified/utils/amroutes';
+import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 
 const mapDispatchToProps = {
   updateGroup,
@@ -56,6 +57,14 @@ export const GroupSettings: FC<Props> = ({ group, updateGroup, updateGroupConfig
     response.configuration_types.map((type: ConfigurationType) => setTypes((opts) => [...opts, stringToSelectableValue(type.type)]))
   };
 
+  const getTags =  async () => {
+    const response = await getBackendSrv().get('/api/tags', {page: 1, perPage: 1000});
+    return response.tags.map(({ tag }) => ({
+      term: tag,
+      count: 1,
+    }));
+  }
+
   useEffect(() => {
     setType(group.type);
     typesRequest();
@@ -94,14 +103,14 @@ export const GroupSettings: FC<Props> = ({ group, updateGroup, updateGroupConfig
     <>
       <VerticalGroup>
         <Form
-          defaultValues={{ name: group.name, type: group.type }}
+          defaultValues={{ name: group.name, type: group.type, tags: group.tags? group.tags.replace(/^\{+|\"+|\}+$/g, '').split(',').filter(function (str: string) {return str !== 'NULL'}) : [] }}
           onSubmit={(update: UpdateGroupDTO) => {
             updateGroup(update);
             updateGroupConfiguration(type, updatedGroupConfiguration?updatedGroupConfiguration:{});
           }}
           disabled={!canWrite}
         >
-          {({ register }) => (
+          {({ register, control }) => (
             <FieldSet label={label}>
               <HorizontalGroup   align = 'normal'>
                 <VerticalGroup>
@@ -110,6 +119,24 @@ export const GroupSettings: FC<Props> = ({ group, updateGroup, updateGroupConfig
                   </Field>
                   <Field label="Type" disabled={true}>
                     <Input {...register('type')} disabled={true} type="string" id="group-type" width={40} />
+                  </Field>
+                  <Field label={'Tags'}>
+                    <InputControl
+                      control={control}
+                      name="tags"
+                      render={({ field: { ref, onChange, ...field } }) => {
+                        return (
+                          <TagFilter
+                            allowCustomValue
+                            placeholder="Add tags"
+                            onChange={onChange}
+                            tagOptions={getTags}
+                            tags={field.value}
+                            width={40}
+                          />
+                        );
+                      }}
+                    />
                   </Field>
                 </VerticalGroup>
                 <div style={{ padding: '0 50px'}} />
