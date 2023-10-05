@@ -2,7 +2,9 @@ package api
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -11,6 +13,7 @@ import (
 	"github.com/grafana/grafana/pkg/infra/metrics"
 	"github.com/grafana/grafana/pkg/models"
 	"github.com/grafana/grafana/pkg/services/org"
+	"github.com/grafana/grafana/pkg/services/resources"
 	"github.com/grafana/grafana/pkg/setting"
 	"github.com/grafana/grafana/pkg/util"
 	"github.com/grafana/grafana/pkg/web"
@@ -18,7 +21,7 @@ import (
 
 // swagger:route GET /org org getCurrentOrg
 //
-// Get current Organization
+// # Get current Organization
 //
 // Responses:
 // 200: getCurrentOrgResponse
@@ -296,12 +299,51 @@ func (hs *HTTPServer) DeleteOrgByID(c *models.ReqContext) response.Response {
 		}
 		return response.Error(http.StatusInternalServerError, "Failed to update organization", err)
 	}
+
+	if hs.ResourceService.GetConfig().EnableResource {
+		url := fmt.Sprintf("%sapi/orgs/%d", hs.ResourceService.GetConfig().ResourceUrl, orgID)
+		req := &resources.RestRequest{
+			Url:        url,
+			Request:    nil,
+			HttpMethod: http.MethodDelete,
+		}
+		if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to update organization", err)
+		}
+		if req.StatusCode != http.StatusOK {
+			var errResponse dtos.ErrorResponse
+			if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+				return response.Error(http.StatusInternalServerError, "Failed to unmarshal response", err)
+			}
+			return response.Error(http.StatusInternalServerError, errResponse.Message, nil)
+		}
+	}
+
+	if hs.ResourceService.GetConfig().EnableBilling {
+		url := fmt.Sprintf("%sapi/orgs/%d", hs.ResourceService.GetConfig().BillingUrl, orgID)
+		req := &resources.RestRequest{
+			Url:        url,
+			Request:    nil,
+			HttpMethod: http.MethodDelete,
+		}
+		if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to update organization", err)
+		}
+		if req.StatusCode != http.StatusOK {
+			var errResponse dtos.ErrorResponse
+			if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+				return response.Error(http.StatusInternalServerError, "Failed to unmarshal response", err)
+			}
+			return response.Error(http.StatusInternalServerError, errResponse.Message, nil)
+		}
+	}
+
 	return response.Success("Organization deleted")
 }
 
 // swagger:route GET /orgs orgs searchOrgs
 //
-// Search all Organizations
+// # Search all Organizations
 //
 // Security:
 // - basic:
