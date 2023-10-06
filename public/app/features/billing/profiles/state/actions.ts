@@ -22,6 +22,7 @@ export function loadProfile(id: number): ThunkResult<void> {
   return async (dispatch) => {
     const response = await getBackendSrv().get(`/api/profiles/${id}`);
     dispatch(profileLoaded(response));
+    dispatch(loadSlab(id));
     dispatch(updateNavIndex(buildNavModel(response)));
   };
 }
