@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -310,12 +309,14 @@ func (hs *HTTPServer) DeleteOrgByID(c *models.ReqContext) response.Response {
 		if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
 			return response.Error(http.StatusInternalServerError, "Failed to update organization", err)
 		}
-		if req.StatusCode != http.StatusOK {
-			var errResponse dtos.ErrorResponse
-			if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-				return response.Error(http.StatusInternalServerError, "Failed to unmarshal response", err)
-			}
-			return response.Error(http.StatusInternalServerError, errResponse.Message, nil)
+		url = fmt.Sprintf("%sapi/orgs/%d", hs.ResourceService.GetConfig().ReaderUrl, orgID)
+		req = &resources.RestRequest{
+			Url:        url,
+			Request:    nil,
+			HttpMethod: http.MethodDelete,
+		}
+		if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+			return response.Error(http.StatusInternalServerError, "Failed to update organization", err)
 		}
 	}
 
@@ -328,13 +329,6 @@ func (hs *HTTPServer) DeleteOrgByID(c *models.ReqContext) response.Response {
 		}
 		if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
 			return response.Error(http.StatusInternalServerError, "Failed to update organization", err)
-		}
-		if req.StatusCode != http.StatusOK {
-			var errResponse dtos.ErrorResponse
-			if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-				return response.Error(http.StatusInternalServerError, "Failed to unmarshal response", err)
-			}
-			return response.Error(http.StatusInternalServerError, errResponse.Message, nil)
 		}
 	}
 
