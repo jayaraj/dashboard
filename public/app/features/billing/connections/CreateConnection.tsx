@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { getBackendSrv, locationService } from '@grafana/runtime';
 import { Button, Form, Field, FieldSet, InputControl, Input, Select, VerticalGroup, HorizontalGroup } from '@grafana/ui';
 import { GroupPicker } from 'app/core/components/GroupPicker/GroupPicker';
 import { Page } from 'app/core/components/Page/Page';
+import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 import { contextSrv } from 'app/core/core';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
-import { CreateConnectionDTO,  Group,  Profile,  StoreState,  connectionStatusTypes} from 'app/types';
-import { stringToSelectableValue, stringsToSelectableValues } from '../../alerting/unified/utils/amroutes';
-import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
+import { CreateConnectionDTO, Group, StoreState,  connectionStatusTypes} from 'app/types';
 
 interface OwnProps extends GrafanaRouteComponentProps<{}> {}
 function mapStateToProps(state: StoreState, props: OwnProps) {
@@ -22,21 +21,11 @@ export type Props = OwnProps & ConnectedProps<typeof connector>;
 
 export const CreateConnection = ({}: Props): JSX.Element => {
   let canWrite = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
-  let [profiles, setProfiles] = useState(stringsToSelectableValues([]as string[]));
   const [group, setGroup] = useState<Group>({} as Group);
 
-  useEffect(() => {
-    profilesRequest();
-  }, []);
-
-  const profilesRequest = async () => {
-    const response = await getBackendSrv().get('/api/orgs/profiles', { query: '', page: 1, perPage: 100 });
-    response.profiles.map((profile: Profile) => setProfiles((opts) => [...opts, stringToSelectableValue(profile.name)]))
-  };
-
   const getTags =  async () => {
-    const response = await getBackendSrv().get('/api/tags', {page: 1, perPage: 1000});
-    return response.tags.map(({ tag }) => ({
+    const response = await getBackendSrv().get('/api/tags/group', {page: 1, perPage: 1000});
+    return response.tags.map(({ tag }: {tag: string}) => ({
       term: tag,
       count: 1,
     }));
@@ -45,7 +34,6 @@ export const CreateConnection = ({}: Props): JSX.Element => {
   const create = async (dto: CreateConnectionDTO) => {
     const result = await getBackendSrv().post('/api/connections', {
       group_parent_id: group.id,
-      profile: dto.profile,
       status: dto.status,
       name: dto.name,
       phone: dto.phone,
@@ -84,7 +72,7 @@ export const CreateConnection = ({}: Props): JSX.Element => {
         <Form
           onSubmit={(dto: CreateConnectionDTO) => create(dto)}
           defaultValues={{ 
-            group_parent_id: 0, profile: '', status: '', name: '', 
+            group_parent_id: 0, status: '', name: '', 
             phone: '', email: '', address1: '', address2: '', city: '',
             pincode: '', country: '', state: '', tags: [] }}
         >
@@ -135,11 +123,6 @@ export const CreateConnection = ({}: Props): JSX.Element => {
                           />
                         );
                       }}
-                    />
-                  </Field>
-                  <Field label="Profile" disabled={!canWrite}>
-                    <InputControl name="profile" control={control} rules={{ required: true }}
-                      render={({field: {onChange, ...field}}) => <Select {...field} onChange={(value) => onChange(value.value)} options={profiles} width={40}/>}
                     />
                   </Field>
                   <Field label="Status" disabled={!canWrite}>

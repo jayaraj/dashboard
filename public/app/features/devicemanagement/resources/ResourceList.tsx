@@ -1,6 +1,7 @@
+import { css } from '@emotion/css';
 import React, { PureComponent } from 'react';
 
-import {  DeleteButton, LinkButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination } from '@grafana/ui';
+import {  DeleteButton, LinkButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, TagList } from '@grafana/ui';
 import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
 import { Page } from 'app/core/components/Page/Page';
 import config from 'app/core/config';
@@ -51,12 +52,16 @@ export class ResourceList extends PureComponent<Props> {
     const fallback = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
     const canRead = contextSrv.hasAccess(AccessControlAction.ActionResourcesRead, fallback);
     const canWrite = contextSrv.hasAccess(AccessControlAction.ActionResourcesWrite, fallback);
+    const tags = resource.tags? resource.tags.replace(/^\{+|\"+|\}+$/g, '').split(',').filter(function (str: string) {return str !== 'NULL'}) : [];
 
     return (
       <tr key={resource.id}>
         <td className="link-td">{canRead ? <a href={resourceUrl}>{resource.name}</a> : <>{resource.name}</>}</td>
         <td className="link-td">{canRead ? <a href={resourceUrl}>{resource.uuid}</a> : <>{resource.uuid}</>}</td>
         <td className="link-td">{canRead ? <a href={resourceUrl}>{resource.type}</a> : <>{resource.type}</>}</td>
+        <td className="link-td">
+          {canRead ? <a href={resourceUrl}><TagList tags={tags} className={css`justify-content: flex-start;`}/></a> : <TagList tags={tags} className={css`justify-content: flex-start;`}/>}
+        </td>
         <td className="text-right">
           <DeleteButton size="sm" disabled={!canWrite} onConfirm={() => this.deleteResource(resource)} />
         </td>
@@ -100,6 +105,7 @@ export class ResourceList extends PureComponent<Props> {
                   <th>Name</th>
                   <th>UUID</th>
                   <th>Type</th>
+                  <th>Tags</th>
                   <th />
                   <th style={{ width: '1%' }} />
                 </tr>

@@ -35,7 +35,6 @@ export interface Connection {
   org_id: number;
   group_id: number;
   group_path_id: number;
-  profile: string;
   status: string;
   name: string;
   phone: string;
@@ -52,7 +51,6 @@ export interface Connection {
 
 export interface CreateConnectionDTO {
   group_parent_id: number;
-  profile: string;
   status: string;
   name: string;
   phone: string;
@@ -67,7 +65,6 @@ export interface CreateConnectionDTO {
 }
 
 export interface UpdateConnectionDTO {
-  profile: string;
   status: string;
   name: string;
   phone: string;

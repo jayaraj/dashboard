@@ -11,7 +11,6 @@ type Connection struct {
 	GroupId       int64     `json:"group_id"`
 	GroupPathId   string    `json:"group_path_id"`
 	GroupPathName string    `json:"group_path_name"`
-	Profile       string    `json:"profile"`
 	Status        string    `json:"status"`
 	Name          string    `json:"name"`
 	Phone         string    `json:"phone"`
@@ -188,4 +187,51 @@ type GetAllConnectionsByUserMsg struct {
 	Page    int64       `json:"page"`
 	PerPage int64       `json:"perPage"`
 	Result  Connections `json:"result"`
+}
+
+type ConnectionResources struct {
+	Count               int64                `json:"count"`
+	ConnectionResources []ConnectionResource `json:"resources"`
+	Page                int64                `json:"page"`
+	PerPage             int64                `json:"perPage"`
+}
+
+type ConnectionResource struct {
+	Id              int64     `json:"id"`
+	UpdatedAt       time.Time `json:"updated_at"`
+	ResourceId      int64     `json:"resource_id"`
+	ResourceUUID    string    `json:"resource_uuid"`
+	ResourceName    string    `json:"resource_name"`
+	ResourceType    string    `json:"resource_type"`
+	ResourceTags    string    `json:"resource_tags"`
+	ResourceProfile string    `json:"resource_profile"`
+}
+
+type GetConnectionResourcesMsg struct {
+	ConnectionId int64               `json:"connection_id"`
+	Query        string              `json:"query"`
+	Page         int64               `json:"page"`
+	PerPage      int64               `json:"perPage"`
+	Result       ConnectionResources `json:"-"`
+}
+
+type UpdateConnectionResourceMsg struct {
+	ConnectionId int64  `json:"connection_id"`
+	ResourceId   int64  `json:"resource_id"`
+	ProfileName  string `json:"profile_name" binding:"required"`
+}
+
+type CreateConnectionResourceMsg struct {
+	GroupId       int64                  `json:"group_id"`
+	OrgId         int64                  `json:"org_id"`
+	UUID          string                 `json:"uuid" binding:"Required"`
+	Name          string                 `json:"name" binding:"Required"`
+	Type          string                 `json:"type" binding:"Required"`
+	ImageUrl      string                 `json:"image_url"`
+	Configuration map[string]interface{} `json:"configuration" binding:"Required"`
+	Latitude      *float64               `json:"latitude,omitempty"`
+	Longitude     *float64               `json:"longitude,omitempty"`
+	Tags          []string               `json:"tags"`
+	ProfileName   string                 `json:"profile_name"`
+	Result        Resource               `json:"-"`
 }

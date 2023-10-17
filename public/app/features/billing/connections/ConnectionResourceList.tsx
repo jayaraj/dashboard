@@ -1,19 +1,21 @@
+import { css } from '@emotion/css';
 import React, { FC, useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { getBackendSrv } from '@grafana/runtime';
-import { CallToActionCard, VerticalGroup, HorizontalGroup, Pagination, DeleteButton, FilterInput, LinkButton, InlineField, Button, Input} from '@grafana/ui';
+import { CallToActionCard, VerticalGroup, HorizontalGroup, Pagination, DeleteButton, FilterInput, LinkButton, InlineField, Button, Input, TagList, Select} from '@grafana/ui';
 import { SlideDown } from 'app/core/components/Animations/SlideDown';
 import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
 import PageLoader from 'app/core/components/PageLoader/PageLoader';
 import config from 'app/core/config';
 import { contextSrv } from 'app/core/services/context_srv';
-import { AccessControlAction, Connection, ConnectionResource, StoreState, connectionResourcePageLimit } from 'app/types';
+import { AccessControlAction, Connection, ConnectionResource, Profile, StoreState, connectionResourcePageLimit } from 'app/types';
+
+import { stringToSelectableValue, stringsToSelectableValues } from '../../alerting/unified/utils/amroutes';
 
 import { deleteConnectionResource, loadConnectionResources } from './state/actions';
 import { setConnectionResourcesSearchQuery } from './state/reducers';
 import { getConnectionResourcesSearchPage, getConnectionResources, getConnectionResourcesCount, getConnectionResourcesSearchQuery } from './state/selectors';
-
 
 export interface OwnProps {
   connection: Connection,
@@ -53,7 +55,8 @@ export const ConnectionResourceList: FC<Props> = ({
   loadConnectionResources,
   deleteConnectionResource,
   setConnectionResourcesSearchQuery}) => {
-
+    
+  let [profiles, setProfiles] = useState(stringsToSelectableValues([]as string[]));
   let [isAdding, setIsAdding] = useState<boolean>(false);
   let [uuid, setUuid] = useState<string>('');
 
@@ -61,7 +64,13 @@ export const ConnectionResourceList: FC<Props> = ({
     setIsAdding(!isAdding);
   }
 
+  const profilesRequest = async () => {
+    const response = await getBackendSrv().get('/api/orgs/profiles', { query: '', page: 1, perPage: 1000 });
+    response.profiles.map((profile: Profile) => setProfiles((opts) => [...opts, stringToSelectableValue(profile.name)]))
+  };
+
   useEffect(() => {
+    profilesRequest();
     loadConnectionResources(1);
   }, []);
 
@@ -78,16 +87,32 @@ export const ConnectionResourceList: FC<Props> = ({
     setConnectionResourcesSearchQuery(value);
   };
 
+  const onProfileChange = async (value: string, resourceId: number) => {
+    await getBackendSrv().put(`/api/connections/${connection.id}/resources/${resourceId}`, {profile_name: value});
+    loadConnectionResources(searchPage);
+  };
+
   const renderResource = (resource: ConnectionResource) => {
+    const resourceUrl = `org/resources/edit/${resource.resource_id}`;
     const fallback = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
-    const canDelete = contextSrv.hasAccess(AccessControlAction.ActionConnectionsWrite, fallback);
+    const canWrite = contextSrv.hasAccess(AccessControlAction.ActionConnectionsWrite, fallback);
+    const tags = resource.resource_tags? resource.resource_tags.replace(/^\{+|\"+|\}+$/g, '').split(',').filter(function (str: string) {return str !== 'NULL'}) : [];
+
     return (
       <tr key={resource.resource_id}>
-        <td className="link-td">{resource.resource_name}</td>
-        <td className="link-td">{resource.resource_uuid}</td>
-        <td className="link-td">{resource.resource_type}</td>
+        <td className="link-td"><a href={resourceUrl}>{resource.resource_name}</a></td>
+        <td className="link-td"><a href={resourceUrl}>{resource.resource_uuid}</a></td>
+        <td className="link-td"><a href={resourceUrl}>{resource.resource_type}</a></td>
+        <td className="link-td">
+          <a href={resourceUrl}>
+            <Select value={resource.resource_profile} onChange={(value) => onProfileChange(value.value!, resource.resource_id)} options={profiles} placeholder="Choose profile..."  width={30}/>
+          </a>
+        </td>
+        <td className="link-td">
+          <a href={resourceUrl}><TagList tags={tags} className={css`justify-content: flex-start;`}/></a>
+        </td>
         <td className="text-right">
-          <DeleteButton aria-label="Delete" size="sm" disabled={!canDelete} onConfirm={() => deleteConnectionResource(resource.resource_id, resource.resource_uuid)}/>
+          <DeleteButton aria-label="Delete" size="sm" disabled={!canWrite} onConfirm={() => deleteConnectionResource(resource.resource_id, resource.resource_uuid)}/>
         </td>
       </tr>
     );
@@ -164,6 +189,8 @@ export const ConnectionResourceList: FC<Props> = ({
                   <th>Name</th>
                   <th>UUID</th>
                   <th>Type</th>
+                  <th>Profile</th>
+                  <th>Tags</th>
                   <th style={{ width: '1%' }} />
                 </tr>
               </thead>

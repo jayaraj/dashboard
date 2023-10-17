@@ -8,6 +8,7 @@ export interface Resource {
   name: string;
   latitude: number;
   longitude: number;
+  tags: string;
 }
 
 export interface CreateResourceDTO {
@@ -17,6 +18,7 @@ export interface CreateResourceDTO {
   name: string;
   latitude: number;
   longitude: number;
+  tags: string[];
 }
 
 export interface UpdateResourceDTO {
@@ -25,6 +27,7 @@ export interface UpdateResourceDTO {
   image_url: string;
   latitude: number;
   longitude: number;
+  tags: string[];
 }
 
 export interface ResourcesState {

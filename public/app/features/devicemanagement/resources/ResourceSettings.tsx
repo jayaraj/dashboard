@@ -4,10 +4,11 @@ import { connect, ConnectedProps } from 'react-redux';
 
 import { dateMath, GrafanaTheme2 } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
-import { Button, Field, FieldSet, Form, VerticalGroup, Input, useTheme2, Select, HorizontalGroup } from '@grafana/ui';
+import { Button, Field, FieldSet, Form, VerticalGroup, Input, useTheme2, Select, HorizontalGroup, InputControl } from '@grafana/ui';
 import { FormPanel } from 'app/core/components/CustomForm/components';
 import { FormElementType } from 'app/core/components/CustomForm/constants';
 import { FormElement, LayoutSection } from 'app/core/components/CustomForm/types';
+import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 import config from 'app/core/config';
 import { contextSrv } from 'app/core/services/context_srv';
 import { stringsToSelectableValues, stringToSelectableValue } from 'app/features/alerting/unified/utils/amroutes';
@@ -54,6 +55,14 @@ export const ResourceSettings: FC<Props> = ({ resource, updateResource, updateRe
     const response = await getBackendSrv().get(`/api/resources/${resource.id}/configurations/${type}`);
     setResourceConfiguration(response)
   };
+
+  const getTags =  async () => {
+    const response = await getBackendSrv().get('/api/tags/resource', {page: 1, perPage: 1000});
+    return response.tags.map(({ tag }: {tag: string}) => ({
+      term: tag,
+      count: 1,
+    }));
+  }
 
   const onSelect = async (type?: string) => {
     configurationTypeRequest(type? type: resource.type);
@@ -109,7 +118,7 @@ export const ResourceSettings: FC<Props> = ({ resource, updateResource, updateRe
       
       
       <Form
-        defaultValues={{ ...resource }}
+        defaultValues={{ ...resource, tags: resource.tags? resource.tags.replace(/^\{+|\"+|\}+$/g, '').split(',').filter(function (str: string) {return str !== 'NULL'}) : [] }}
         onSubmit={(dto: UpdateResourceDTO) => {
           dto.image_url = imageUrl;
           updateResource(dto);
@@ -117,7 +126,7 @@ export const ResourceSettings: FC<Props> = ({ resource, updateResource, updateRe
         }}
         disabled={!canWrite}
       >
-        {({ register }) => (
+        {({ register, control }) => (
           <FieldSet label={label}>
             <HorizontalGroup   align = 'normal'>
                 <VerticalGroup>
@@ -129,6 +138,24 @@ export const ResourceSettings: FC<Props> = ({ resource, updateResource, updateRe
                   </Field>
                   <Field label="Type" disabled={true}>
                     <Input {...register('type')} disabled={true} type="string" id="resource-type" width={40} />
+                  </Field>
+                  <Field label={'Tags'}>
+                    <InputControl
+                      control={control}
+                      name="tags"
+                      render={({ field: { ref, onChange, ...field } }) => {
+                        return (
+                          <TagFilter
+                            allowCustomValue
+                            placeholder="Add tags"
+                            onChange={onChange}
+                            tagOptions={getTags}
+                            tags={field.value}
+                            width={40}
+                          />
+                        );
+                      }}
+                    />
                   </Field>
                   <Field label="Image Url" disabled={!canWrite}>
                     <HorizontalGroup>

@@ -13,6 +13,7 @@ type Resource struct {
 	Latitude     *float64  `json:"latitude,omitempty"`
 	Longitude    *float64  `json:"longitude,omitempty"`
 	OnlineStatus *bool     `json:"online_status,omitempty"`
+	Tags         string    `json:"tags"`
 }
 
 type User struct {
@@ -30,6 +31,7 @@ type CreateResourceMsg struct {
 	Latitude      *float64               `json:"latitude,omitempty"`
 	Longitude     *float64               `json:"longitude,omitempty"`
 	Configuration map[string]interface{} `json:"configuration" binding:"Required"`
+	Tags          []string               `json:"tags"`
 	Result        Resource               `json:"-"`
 }
 
@@ -40,6 +42,7 @@ type UpdateResourceMsg struct {
 	ImageUrl  string   `json:"image_url,omitempty"`
 	Latitude  *float64 `json:"latitude,omitempty"`
 	Longitude *float64 `json:"longitude,omitempty"`
+	Tags      []string `json:"tags"`
 }
 
 type CloneResourceMsg struct {

@@ -459,6 +459,8 @@ func (hs *HTTPServer) registerRoutes() {
 			resourcesRoute.Delete("/:resourceId", authorize(reqOrgAdmin, resourcesCreateAccessEvaluator), routing.Wrap(hs.DeleteResource))
 			resourcesRoute.Get("/:resourceId/groups", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetResourceGroups))
 			resourcesRoute.Post("/uuid/:uuid/history/:dataType", reqOrgAdmin, routing.Wrap(hs.PostResourceHistoryData))
+			resourcesRoute.Get("/:resourceId/tags/search", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetResourceTags))
+			resourcesRoute.Put("/:resourceId/tags", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.UpdateResourceTags))
 		})
 
 		// ResourceConfiguration
@@ -474,7 +476,7 @@ func (hs *HTTPServer) registerRoutes() {
 
 		//Tags
 		apiRoute.Group("/tags", func(tagsRoute routing.RouteRegister) {
-			tagsRoute.Get("/", reqSignedIn, routing.Wrap(hs.GetTags))
+			tagsRoute.Get("/:association", reqSignedIn, routing.Wrap(hs.GetTags))
 		})
 
 		// Groups
@@ -636,6 +638,7 @@ func (hs *HTTPServer) registerRoutes() {
 			connectionsRoute.Get("/:connectionId/logs", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetConnectionLogs))
 			connectionsRoute.Get("/:connectionId/users", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetConnectionUsers))
 			connectionsRoute.Get("/:connectionId/resources", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetConnectionResources))
+			connectionsRoute.Put("/:connectionId/resources/:resourceId", authorize(reqSignedIn, connectionsWriteAccessEvaluator), routing.Wrap(hs.UpdateConnectionResource))
 			connectionsRoute.Get("/:connectionId/invoices", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetInvoices))
 			connectionsRoute.Post("/:connectionId/invoices", authorize(reqEditorRole, invoicesCreateAccessEvaluator), routing.Wrap(hs.CreateInvoice))
 			connectionsRoute.Post("/:connectionId/transactions", authorize(reqEditorRole, transactionsCreateAccessEvaluator), routing.Wrap(hs.CreateTransaction))

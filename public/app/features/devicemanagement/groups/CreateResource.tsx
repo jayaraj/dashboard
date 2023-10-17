@@ -4,13 +4,14 @@ import { connect, ConnectedProps } from 'react-redux';
 import { getBackendSrv, locationService } from '@grafana/runtime';
 import { Button, Select, Form, Field, Input, FieldSet, InputControl, Themeable2, withTheme2} from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
+import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 import config from 'app/core/config';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { stringToSelectableValue, stringsToSelectableValues } from 'app/features/alerting/unified/utils/amroutes';
 import { ConfigurationType, CreateResourceDTO, StoreState } from 'app/types';
-import { getPageNav } from './state/navModel';
 
+import { getPageNav } from './state/navModel';
 
 interface OwnProps extends GrafanaRouteComponentProps<{ id: string }>, Themeable2 {}
 function mapStateToProps(state: StoreState, props: OwnProps) {
@@ -50,16 +51,28 @@ export const CreateResource = ({groupId, pageNav}: Props): JSX.Element => {
       image_url: dto.image_url,
       uuid: dto.uuid,
       configuration: {},
+      tags: dto.tags,
     });
     if (result.id) {
       locationService.push(`/org/resources/edit/${result.id}`);
     }
   };
 
+  const getTags =  async () => {
+    const response = await getBackendSrv().get('/api/tags/resource', {page: 1, perPage: 1000});
+    return response.tags.map(({ tag }: {tag: string}) => ({
+      term: tag,
+      count: 1,
+    }));
+  }
+
   return (
     <Page navId="resourcegroups" pageNav={pageNav}>
       <Page.Contents>
-        <Form onSubmit={(dto: CreateResourceDTO) => create(dto)}>
+        <Form 
+        onSubmit={(dto: CreateResourceDTO) => create(dto)}
+        defaultValues={{ name: '', type: '', tags: [], image_url: '', uuid: '', latitude: 0, longitude: 0 }}
+        >
           {({ register, control, errors }) => (
             <FieldSet label={label}>
               <Field label="Name" required invalid={!!errors.name} error="Name is required">
@@ -71,6 +84,24 @@ export const CreateResource = ({groupId, pageNav}: Props): JSX.Element => {
               <Field label="Type" required invalid={!!errors.type} error="Type is required">
                 <InputControl name="type" control={control} rules={{ required: true }}
                   render={({field: {onChange, ...field}}) => <Select {...field} onChange={(value) => onChange(value.value)} options={types} width={40}/>}
+                />
+              </Field>
+              <Field label={'Tags'}>
+                <InputControl
+                  control={control}
+                  name="tags"
+                  render={({ field: { ref, onChange, ...field } }) => {
+                    return (
+                      <TagFilter
+                        allowCustomValue
+                        placeholder="Add tags"
+                        onChange={onChange}
+                        tagOptions={getTags}
+                        tags={field.value}
+                        width={40}
+                      />
+                    );
+                  }}
                 />
               </Field>
               <Field label="Image Url">

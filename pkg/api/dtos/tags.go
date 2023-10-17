@@ -43,3 +43,20 @@ type UpdateGroupTagsMsg struct {
 	// swagger:ignore
 	GroupId int64 `json:"group_id"`
 }
+
+type GetResourceTagsMsg struct {
+	Query   string `json:"query,omitempty"`
+	Page    int64  `json:"page"`
+	PerPage int64  `json:"perPage"`
+	// swagger:ignore
+	ResourceId int64 `json:"resource_id"`
+	// swagger:ignore
+	Result Tags `json:"result"`
+}
+
+// swagger:model UpdateResourceTagsRequest
+type UpdateResourceTagsMsg struct {
+	Tags []string `json:"tags" binding:"required"`
+	// swagger:ignore
+	ResourceId int64 `json:"resource_id"`
+}

@@ -7,12 +7,13 @@ import { Button, Field, FieldSet, Form, VerticalGroup, Input, HorizontalGroup, S
 import { FormPanel } from 'app/core/components/CustomForm/components';
 import { FormElementType } from 'app/core/components/CustomForm/constants';
 import { FormElement, LayoutSection } from 'app/core/components/CustomForm/types';
+import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 import { contextSrv } from 'app/core/services/context_srv';
+import { stringsToSelectableValues, stringToSelectableValue } from 'app/features/alerting/unified/utils/amroutes';
 import { Group, AccessControlAction, GroupConfiguration, ConfigurationType, UpdateGroupDTO } from 'app/types';
 
 import { updateGroup, updateGroupConfiguration } from './state/actions';
-import { stringsToSelectableValues, stringToSelectableValue } from 'app/features/alerting/unified/utils/amroutes';
-import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
+
 
 const mapDispatchToProps = {
   updateGroup,
@@ -58,8 +59,8 @@ export const GroupSettings: FC<Props> = ({ group, updateGroup, updateGroupConfig
   };
 
   const getTags =  async () => {
-    const response = await getBackendSrv().get('/api/tags', {page: 1, perPage: 1000});
-    return response.tags.map(({ tag }) => ({
+    const response = await getBackendSrv().get('/api/tags/group', {page: 1, perPage: 1000});
+    return response.tags.map(({ tag }: {tag: string}) => ({
       term: tag,
       count: 1,
     }));

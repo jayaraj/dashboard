@@ -4,10 +4,10 @@ import { connect, ConnectedProps } from 'react-redux';
 import { getBackendSrv, locationService } from '@grafana/runtime';
 import { Button, Form, Field, Input, FieldSet, InputControl, Select, Themeable2, withTheme2 } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
+import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { stringToSelectableValue, stringsToSelectableValues } from 'app/features/alerting/unified/utils/amroutes';
 import { ConfigurationType, CreateGroupDTO, StoreState } from 'app/types';
-import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 
 function mapStateToProps(state: StoreState) {
   return {
@@ -50,8 +50,8 @@ export const CreateGroup = ({match}: Props): JSX.Element => {
   };
 
   const getTags =  async () => {
-    const response = await getBackendSrv().get('/api/tags', {page: 1, perPage: 1000});
-    return response.tags.map(({ tag }) => ({
+    const response = await getBackendSrv().get('/api/tags/group', {page: 1, perPage: 1000});
+    return response.tags.map(({ tag }: {tag: string}) => ({
       term: tag,
       count: 1,
     }));

@@ -666,7 +666,7 @@ func (hs *HTTPServer) CreateConnectionResource(c *models.ReqContext) response.Re
 	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
-	dto := dtos.CreateGroupResourceMsg{
+	dto := dtos.CreateConnectionResourceMsg{
 		OrgId:   connection.OrgId,
 		GroupId: connection.GroupId,
 	}
@@ -713,7 +713,7 @@ func (hs *HTTPServer) GetConnectionResources(c *models.ReqContext) response.Resp
 	if page <= 0 {
 		page = 1
 	}
-	url := fmt.Sprintf("%sapi/groups/%d/resources?query=%s&page=%d&perPage=%d", hs.ResourceService.GetConfig().ResourceUrl, connection.GroupId, query, page, perPage)
+	url := fmt.Sprintf("%sapi/connections/%d/resources?query=%s&page=%d&perPage=%d", hs.ResourceService.GetConfig().BillingUrl, connection.Id, query, page, perPage)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,
@@ -729,11 +729,51 @@ func (hs *HTTPServer) GetConnectionResources(c *models.ReqContext) response.Resp
 		}
 		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
-	dto := dtos.GetGroupResourcesMsg{}
+	dto := dtos.GetConnectionResourcesMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
+}
+
+func (hs *HTTPServer) UpdateConnectionResource(c *models.ReqContext) response.Response {
+	access, connection := hs.IsConnectionAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	resourceId, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "resourceId is invalid", err)
+	}
+	dto := dtos.UpdateConnectionResourceMsg{
+		ConnectionId: connection.Id,
+		ResourceId:   resourceId,
+	}
+	if err := web.Bind(c.Req, &dto); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+	body, err := json.Marshal(dto)
+	if err != nil {
+		return response.Error(500, "failed marshal create", err)
+	}
+	url := fmt.Sprintf("%sapi/connections/%d/resources/%d", hs.ResourceService.GetConfig().BillingUrl, connection.Id, resourceId)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    body,
+		HttpMethod: http.MethodPut,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to create", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+
+	return response.Success("updated")
 }
 
 func (hs *HTTPServer) RemoveConnectionResource(c *models.ReqContext) response.Response {

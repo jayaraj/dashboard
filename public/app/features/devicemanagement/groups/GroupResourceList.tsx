@@ -1,8 +1,9 @@
+import { css } from '@emotion/css';
 import React, { FC, useEffect, useState } from 'react';
 import { connect, ConnectedProps } from 'react-redux';
 
 import { getBackendSrv } from '@grafana/runtime';
-import { DeleteButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, LinkButton, Icon, InlineField, Button, Input } from '@grafana/ui';
+import { DeleteButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, LinkButton, Icon, InlineField, Button, Input, TagList } from '@grafana/ui';
 import { SlideDown } from 'app/core/components/Animations/SlideDown';
 import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
 import config from 'app/core/config';
@@ -80,6 +81,7 @@ export const ResourceList: FC<Props> = ({
     const resourceUrl = `org/resources/edit/${resource.resource_id}`;
     const fallback = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
     const canWrite = contextSrv.hasAccess(AccessControlAction.ActionGroupsWrite, fallback);
+    const tags = resource.resource_tags? resource.resource_tags.replace(/^\{+|\"+|\}+$/g, '').split(',').filter(function (str: string) {return str !== 'NULL'}) : [];
 
     return (
       <tr key={resource.id}>
@@ -91,6 +93,9 @@ export const ResourceList: FC<Props> = ({
         </td>
         <td className="link-td">
           <a href={resourceUrl}>{resource.resource_type}</a>
+        </td>
+        <td className="link-td">
+          <a href={resourceUrl}><TagList tags={tags} className={css`justify-content: flex-start;`}/></a>
         </td>
         <td className="text-right">
           <DeleteButton size="sm" disabled={!canWrite} onConfirm={() => deleteGroupResource(resource.id)} />
@@ -141,6 +146,7 @@ export const ResourceList: FC<Props> = ({
                   <th>Name</th>
                   <th>UUID</th>
                   <th>Type</th>
+                  <th>Tags</th>
                   <th style={{ width: '1%' }} />
                 </tr>
               </thead>

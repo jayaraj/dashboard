@@ -40,6 +40,7 @@ export function updateResource(dto: UpdateResourceDTO): ThunkResult<void> {
       image_url: dto.image_url,
       longitude: Number(dto.longitude),
       latitude: Number(dto.latitude),
+      tags: dto.tags,
     });
     dispatch(loadResource(resource.id));
   };

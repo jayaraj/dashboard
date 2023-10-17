@@ -2,12 +2,13 @@ import React, { PureComponent } from 'react';
 
 import { AppEvents } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
-import { appEvents } from 'app/core/core';
 import { DeleteButton, FilterInput, VerticalGroup, HorizontalGroup, Pagination, Select, CallToActionCard, Button, Input, Label, InlineField, LinkButton } from '@grafana/ui';
 import { SlideDown } from 'app/core/components/Animations/SlideDown';
 import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
 import { Page } from 'app/core/components/Page/Page';
 import PageLoader from 'app/core/components/PageLoader/PageLoader';
+import config from 'app/core/config';
+import { appEvents } from 'app/core/core';
 import { contextSrv } from 'app/core/services/context_srv';
 import { StoreState, Connection, connectionPageLimit, connectionStatusTypes, AccessControlAction } from 'app/types';
 
@@ -16,7 +17,6 @@ import { connectWithCleanUp } from '../../../core/components/connectWithCleanUp'
 import { deleteConnection, loadConnections } from './state/actions';
 import { setConnectionsSearchQuery } from './state/reducers';
 import { getConnectionsSearchQuery, getConnections, getConnectionsCount, getConnectionsSearchPage } from './state/selectors';
-import config from 'app/core/config';
 
 export interface Props {
   connections: Connection[];
@@ -114,9 +114,6 @@ export class ConnectionList extends PureComponent<Props, State> {
         </td>
         <td className="link-td">
           <a href={url}>{connection.name}</a> 
-        </td>
-        <td className="link-td">
-          <a href={url}>{connection.profile}</a> 
         </td>
         <td className="link-td">
           <a href={url}>{connection.address1}</a>
@@ -260,7 +257,6 @@ export class ConnectionList extends PureComponent<Props, State> {
                 <tr>
                   <th>Connection Number</th>
                   <th>Name</th>
-                  <th>Profile</th>
                   <th>Address</th>
                   <th>City</th>
                   <th>Status</th>

@@ -46,6 +46,7 @@ export function getPageNav(pageName: string): NavModel {
     image_url: '',
     longitude: 0,
     latitude: 0,
+    tags: '',
   });
 
   let node: NavModelItem;

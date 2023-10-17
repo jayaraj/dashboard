@@ -1,12 +1,12 @@
 import { AppEvents } from '@grafana/data';
 import { getBackendSrv } from '@grafana/runtime';
-import { appEvents } from 'app/core/core';
 import { updateNavIndex } from 'app/core/actions';
+import config from 'app/core/config';
+import { appEvents } from 'app/core/core';
 import {CreateTransactionDTO, QueryRange, ThunkResult, UpdateConnectionDTO, connectionLogPageLimit, connectionPageLimit, invoicesPageLimit, transactionsPageLimit, connectionUserPageLimit, connectionResourcePageLimit, Connection } from 'app/types';
 
 import { buildNavModel } from './navModel';
 import { connectionLoaded, connectionsLoaded, setConnectionsSearchPage, setConnectionLogsSearchPage, setConnectionLogsCount, connectionLogsLoaded, connectionUsersLoaded, setConnectionUsersSearchPage, setConnectionUsersCount, invoicesLoaded, setInvoicesSearchRange, setInvoicesSearchPage, setInvoicesCount, invoiceLoaded, transactionsLoaded, setTransactionsSearchPage, setTransactionsCount, setConnectionsCount, orgConfigurationsLoaded, connectionResourcesLoaded, setConnectionResourcesSearchPage, setConnectionResourcesCount } from './reducers';
-import config from 'app/core/config';
 
 
 export function loadConnections(query: string, page: number): ThunkResult<void> {
@@ -35,7 +35,6 @@ export function updateConnection(dto: UpdateConnectionDTO): ThunkResult<void> {
     const connection = getStore().connection.connection;
     await getBackendSrv().put(`/api/connections/${connection.id}`, {
       id: connection.id,
-      profile: dto.profile,
       status: dto.status,
       name: dto.name,
       phone: dto.phone,
@@ -113,7 +112,7 @@ export function loadConnectionResources(page: number): ThunkResult<void> {
       page: page,
       perPage: connectionResourcePageLimit,
     });
-    dispatch(connectionResourcesLoaded(response.group_resources));
+    dispatch(connectionResourcesLoaded(response.resources));
     dispatch(setConnectionResourcesSearchPage(response.page));
     dispatch(setConnectionResourcesCount(response.count));
   };
@@ -207,6 +206,6 @@ export function loadOrgConfigurations(type: string): ThunkResult<void> {
 export function loadConnectionTags(connection: Connection): ThunkResult<void> {
   return async (dispatch) => {
     const response = await getBackendSrv().get(`/api/groups/${connection.group_id}/tags/search`, {page: 1, perPage: 1000});
-    dispatch(connectionLoaded({...connection, tags: response.tags.map((tag) => (tag.tag))}));
+    dispatch(connectionLoaded({...connection, tags: response.tags.map(({tag}: {tag: string}) => (tag))}));
   };
 }

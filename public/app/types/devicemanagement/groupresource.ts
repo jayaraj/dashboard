@@ -6,6 +6,7 @@ export interface GroupResource {
   resource_uuid: string;
   resource_name: string;
   resource_type: string;
+  resource_tags: string;
 }
 
 export interface GroupResourcesState {

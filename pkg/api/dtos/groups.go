@@ -145,6 +145,7 @@ type GroupResource struct {
 	ResourceUUID string    `json:"resource_uuid"`
 	ResourceName string    `json:"resource_name"`
 	ResourceType string    `json:"resource_type"`
+	ResourceTags string    `json:"resource_tags"`
 }
 
 type CreateGroupResourceMsg struct {
@@ -157,6 +158,7 @@ type CreateGroupResourceMsg struct {
 	Configuration map[string]interface{} `json:"configuration" binding:"Required"`
 	Latitude      *float64               `json:"latitude,omitempty"`
 	Longitude     *float64               `json:"longitude,omitempty"`
+	Tags          []string               `json:"tags"`
 	Result        Resource               `json:"-"`
 }
 
