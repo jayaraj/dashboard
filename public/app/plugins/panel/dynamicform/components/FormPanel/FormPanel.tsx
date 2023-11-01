@@ -9,7 +9,7 @@ import { contextSrv } from 'app/core/services/context_srv';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { AccessControlAction } from 'app/types';
 
-import { ButtonVariant, LayoutVariant, RequestMethod, FormElementType, LevelVariant } from '../../constants';
+import { ButtonVariant, LayoutVariant, RequestMethod, FormElementType } from '../../constants';
 import { getStyles } from '../../styles';
 import { FormElement, PanelOptions } from '../../types';
 import { FormElements } from '../FormElements';
@@ -197,23 +197,16 @@ export const FormPanel: React.FC<Props> = ({
        */
       executeCustomCode(options.update.code, initial, response);
     } else {
-      
-      let url = `/api/orgs/configurations/${options.configuration.type}`
-      if (options.configuration.level === LevelVariant.GROUP) {
-        const group = replaceVariables('${grp}');
-        url = `/api/groups/${group}/configurations/${options.configuration.type}`
-      }
-      if (options.configuration.level === LevelVariant.RESOURCE) {
-        const resource = replaceVariables('${resource}');
-        url = `/api/resources/${resource}/configurations/${options.configuration.type}`
-      }
+      let resource = replaceVariables('${resource}');
+      resource = resource? resource: '0';
+      let url = `/api/resources/${resource}/downlink`
       const payload = JSON.parse(replaceVariables(JSON.stringify(body)));
   
       /**
        * Fetch
        */
       const response = await getBackendSrv()
-        .put(`${url}`, { configuration: payload })
+        .post(`${url}`, { command: options.configuration.type, data: payload })
         .catch((error: Error) => {
           console.error(error);
           setError(error.toString());
@@ -322,15 +315,10 @@ export const FormPanel: React.FC<Props> = ({
       executeCustomCode(options.initial.code, json, response);
 
     } else {
-      let url = `/api/orgs/configurations/${options.configuration.type}`
-      if (options.configuration.level === LevelVariant.GROUP) {
-        const group = replaceVariables('${grp}');
-        url = `/api/groups/${group}/configurations/${options.configuration.type}`
-      }
-      if (options.configuration.level === LevelVariant.RESOURCE) {
-        const resource = replaceVariables('${resource}');
-        url = `/api/resources/${resource}/configurations/${options.configuration.type}`
-      }
+
+      let resource = replaceVariables('${resource}');
+      resource = resource? resource: '0';
+      let url = `/api/resources/${resource}/downlink/${options.configuration.type}`
       /**
        * Fetch
        */

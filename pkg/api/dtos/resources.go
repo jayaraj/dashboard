@@ -111,3 +111,14 @@ type DataMsg struct {
 	UUID string             `json:"uuid"`
 	Data map[string]float64 `json:"data" binding:"required"`
 }
+
+type DownlinkMsg struct {
+	ResourceId int64                  `json:"resource_id"`
+	Command    string                 `json:"command" binding:"required"`
+	Data       map[string]interface{} `json:"data" binding:"required"`
+}
+
+type GetResourceDownlinkMsg struct {
+	ResourceId int64  `json:"resource_id"`
+	Type       string `json:"type"`
+}

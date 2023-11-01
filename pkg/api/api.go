@@ -461,6 +461,8 @@ func (hs *HTTPServer) registerRoutes() {
 			resourcesRoute.Post("/uuid/:uuid/history/:dataType", reqOrgAdmin, routing.Wrap(hs.PostResourceHistoryData))
 			resourcesRoute.Get("/:resourceId/tags/search", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetResourceTags))
 			resourcesRoute.Put("/:resourceId/tags", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.UpdateResourceTags))
+			resourcesRoute.Post("/:resourceId/downlink", authorize(reqSignedIn, resourcesReadAccessEvaluator), routing.Wrap(hs.ResourceDownlink))
+			resourcesRoute.Get("/:resourceId/downlink/:config", authorize(reqSignedIn, resourcesReadAccessEvaluator), routing.Wrap(hs.GetResourceDownlink))
 		})
 
 		// ResourceConfiguration

@@ -84,6 +84,10 @@ func (service *ResourcesService) BillingTopic(msg string) string {
 	return fmt.Sprintf("billing.%s", msg)
 }
 
+func (service *ResourcesService) SubscriberTopic(msg string) string {
+	return fmt.Sprintf("subscriber.%s", msg)
+}
+
 func (service *ResourcesService) RestRequest(ctx context.Context, request *RestRequest) (err error) {
 	netClient := &http.Client{
 		Timeout: time.Second * 30,

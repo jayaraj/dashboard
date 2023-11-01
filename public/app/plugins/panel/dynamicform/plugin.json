@@ -43,6 +43,6 @@
     "updated": "%TODAY%",
     "version": "%VERSION%"
   },
-  "name": "Data Form",
+  "name": "Downlink Data Form",
   "type": "panel"
 }

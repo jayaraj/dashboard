@@ -24,8 +24,6 @@ import {
   InitialHighlightColorDefault,
   LayoutVariant,
   LayoutVariantOptions,
-  LevelVariant,
-  LevelVariantOptions,
   RequestMethod,
   RequestMethodInitialOptions,
   RequestMethodUpdateOptions,
@@ -101,16 +99,6 @@ export const plugin = new PanelPlugin<PanelOptions>(FormPanel).setPanelOptions((
         ],
       },
       defaultValue: false,
-    })
-    .addRadio({
-      path: 'configuration.level',
-      name: 'Level',
-      category: ['Level'],
-      settings: {
-        options: LevelVariantOptions,
-      },
-      defaultValue: LevelVariant.ORG,
-      showIf: (config: any) => config.configuration.external === false,
     })
     .addTextInput({
       path: 'configuration.type',

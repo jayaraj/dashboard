@@ -331,109 +331,56 @@ func (hs *HTTPServer) PostResourceHistoryData(c *models.ReqContext) response.Res
 	return response.Success("success")
 }
 
-// func (hs *HTTPServer) AddResourceGroups(c *models.ReqContext) response.Response {
-// 	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
-// 	if err != nil {
-// 		return response.Error(http.StatusBadRequest, "id is invalid", err)
-// 	}
-// 	dto := dtos.AddGroupResourceMsg{
-// 		ResourceId: id,
-// 		User: dtos.User{
-// 			UserId: c.UserID,
-// 			OrgId:  c.OrgID,
-// 			Role:   dtos.ConvertRoleToString(hs.UserRole(c)),
-// 		},
-// 	}
-// 	if err := web.Bind(c.Req, &dto); err != nil {
-// 		return response.Error(http.StatusBadRequest, "bad request data", err)
-// 	}
-// 	body, err := json.Marshal(dto)
-// 	if err != nil {
-// 		return response.Error(500, "failed marshal add", err)
-// 	}
-// 	url := fmt.Sprintf("%sapi/groups/%d/resource", hs.ResourceService.GetConfig().ResourceUrl, dto.GroupId)
-// 	req := &resources.RestRequest{
-// 		Url:        url,
-// 		Request:    body,
-// 		HttpMethod: http.MethodPost,
-// 	}
-// 	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
-// 		return response.Error(500, "failed to add", err)
-// 	}
-// 	if req.StatusCode != http.StatusOK {
-// 		var errResponse dtos.ErrorResponse
-// 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-// 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
-// 		}
-// 		return response.Error(req.StatusCode, errResponse.Message, nil)
-// 	}
-// 	return response.Success("added")
-// }
+func (hs *HTTPServer) ResourceDownlink(c *models.ReqContext) response.Response {
+	if !hs.IsResourceAccessible(c) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	dto := dtos.DownlinkMsg{
+		ResourceId: id,
+	}
+	if err := web.Bind(c.Req, &dto); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+	body, err := json.Marshal(dto)
+	if err != nil {
+		return response.Error(500, "failed marshal create", err)
+	}
+	if err := hs.ResourceService.Publish(c.Req.Context(), hs.ResourceService.SubscriberTopic("downlink"), body); err != nil {
+		return response.Error(500, "failed to update", err)
+	}
+	return response.Success("updated")
+}
 
-// func (hs *HTTPServer) GetResourceGroupLeafs(c *models.ReqContext) response.Response {
-// 	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
-// 	if err != nil {
-// 		return response.Error(http.StatusBadRequest, "id is invalid", err)
-// 	}
-// 	query := c.Query("query")
-// 	dto := dtos.GetResourceGroupLeafsMsg{
-// 		ResourceId: id,
-// 		Query:      query,
-// 		User: dtos.User{
-// 			UserId: c.UserID,
-// 			OrgId:  c.OrgID,
-// 			Role:   dtos.ConvertRoleToString(hs.UserRole(c)),
-// 		},
-// 	}
-// 	body, err := json.Marshal(dto)
-// 	if err != nil {
-// 		return response.Error(500, "failed marshal group leafs", err)
-// 	}
-// 	url := fmt.Sprintf("%sapi/resources/%d/groups/leafs", hs.ResourceService.GetConfig().ResourceUrl, dto.ResourceId)
-// 	req := &resources.RestRequest{
-// 		Url:        url,
-// 		Request:    body,
-// 		HttpMethod: http.MethodPost,
-// 	}
-// 	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
-// 		return response.Error(500, "failed to get group leafs", err)
-// 	}
-// 	if req.StatusCode != http.StatusOK {
-// 		var errResponse dtos.ErrorResponse
-// 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-// 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
-// 		}
-// 		return response.Error(req.StatusCode, errResponse.Message, nil)
-// 	}
-// 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-// 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
-// 	}
-// 	return response.JSON(http.StatusOK, dto.Result)
-// }
+func (hs *HTTPServer) GetResourceDownlink(c *models.ReqContext) response.Response {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	if id != 0 && !hs.IsResourceAccessible(c) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	config := web.Params(c.Req)[":config"]
 
-// func (hs *HTTPServer) DeleteResourceGroup(c *models.ReqContext) response.Response {
-// 	if !hs.IsResourceAccessible(c) {
-// 		return response.Error(http.StatusForbidden, "cannot access", nil)
-// 	}
-// 	id, err := strconv.ParseInt(web.Params(c.Req)[":groupId"], 10, 64)
-// 	if err != nil {
-// 		return response.Error(http.StatusBadRequest, "id is invalid", err)
-// 	}
-// 	url := fmt.Sprintf("%sapi/resources/groups/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
-// 	req := &resources.RestRequest{
-// 		Url:        url,
-// 		Request:    nil,
-// 		HttpMethod: http.MethodDelete,
-// 	}
-// 	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
-// 		return response.Error(500, "failed to get", err)
-// 	}
-// 	if req.StatusCode != http.StatusOK {
-// 		var errResponse dtos.ErrorResponse
-// 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-// 			return response.Error(req.StatusCode, "failed unmarshal error ", err)
-// 		}
-// 		return response.Error(req.StatusCode, errResponse.Message, nil)
-// 	}
-// 	return response.Success("deleted")
-// }
+	url := fmt.Sprintf("%sapi/resources/%d/downlink/%s", hs.ResourceService.GetConfig().ResourceUrl, id, config)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to get", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+
+	return response.JSON(http.StatusOK, req.Response)
+}
