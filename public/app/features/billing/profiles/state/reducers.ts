@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { Profile, ProfilesState, ProfileState, Slab, SlabState } from 'app/types';
+import { Profile, ProfilesState, ProfileState, Slab, SlabsState, SlabState } from 'app/types';
 
 export const initialProfilesState: ProfilesState = {
   profiles: [],
@@ -51,10 +51,38 @@ const profileSlice = createSlice({
 export const { profileLoaded } = profileSlice.actions;
 export const profileReducer = profileSlice.reducer;
 
+export const initialSlabsState: SlabsState = {
+  slabs: [],
+  slabsCount: 0,
+  searchPage: 1,
+  searchQuery: '',
+  hasFetched: false,
+};
+const slabsSlice = createSlice({
+  name: 'slabs',
+  initialState: initialSlabsState,
+  reducers: {
+    slabsLoaded: (state, action: PayloadAction<Slab[]>): SlabsState => {
+      return { ...state, hasFetched: true, slabs: action.payload };
+    },
+    setSlabsSearchPage: (state, action: PayloadAction<number>): SlabsState => {
+      return { ...state, searchPage: action.payload };
+    },
+    setSlabsSearchQuery: (state, action: PayloadAction<string>): SlabsState => {
+      return { ...state, searchQuery: action.payload };
+    },
+    setSlabsCount: (state, action: PayloadAction<number>): SlabsState => {
+      return { ...state, slabsCount: action.payload };
+    },
+  },
+});
+export const { slabsLoaded, setSlabsSearchPage, setSlabsSearchQuery, setSlabsCount } =
+  slabsSlice.actions;
+export const slabsReducer = slabsSlice.reducer;
+
 export const initialSlabState: SlabState = {
   slab: {} as Slab,
 };
-
 const slabSlice = createSlice({
   name: 'slab',
   initialState: initialSlabState,
@@ -64,7 +92,6 @@ const slabSlice = createSlice({
     },
   },
 });
-
 export const { slabLoaded } = slabSlice.actions;
 export const slabReducer = slabSlice.reducer;
 
@@ -72,4 +99,5 @@ export default {
   profiles: profilesReducer,
   profile: profileReducer,
   slab: slabReducer,
+  slabs: slabsReducer,
 };

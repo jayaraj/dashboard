@@ -12,9 +12,9 @@ export function buildNavModel(profile: Profile): NavModelItem {
       {
         active: false,
         icon: 'tax',
-        id: `profile-slab-${profile.id}`,
+        id: `profile-slabs-${profile.id}`,
         text: 'Slabs',
-        url: `/org/profiles/edit/${profile.id}/slab`,
+        url: `/org/profiles/edit/${profile.id}/slabs`,
       },
       {
         active: false,

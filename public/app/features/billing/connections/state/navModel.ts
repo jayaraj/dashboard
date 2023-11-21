@@ -70,6 +70,7 @@ export function getPageNav(pageName: string): NavModel {
     org_id: 0,
     group_id: 0,
     group_path_id: 0,
+    profile: '',
     status: '',
     name: '',
     phone: '',

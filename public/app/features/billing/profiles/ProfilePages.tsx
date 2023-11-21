@@ -9,10 +9,10 @@ import { getNavModel } from 'app/core/selectors/navModel';
 import { StoreState } from 'app/types';
 
 import ProfileSettings from './ProfileSettings';
-import SlabSettings from './SlabSettings';
 import { loadProfile } from './state/actions';
 import { getPageNav } from './state/navModel';
-import { getProfile, getSlab } from './state/selectors';
+import { getProfile } from './state/selectors';
+import SlabList from './SlabList';
 
 interface ProfilePageRouteParams {
   id: string;
@@ -26,24 +26,22 @@ interface State {
 }
 
 enum PageTypes {
-  Slab = 'slab',
+  Slabs = 'slabs',
   Settings = 'settings',
 }
 
 function mapStateToProps(state: StoreState, props: OwnProps) {
   const profileId = parseInt(props.match.params.id, 10);
-  const pageName = props.match.params.page || 'slab';
+  const pageName = props.match.params.page || 'slabs';
   const profileLoadingNav = getPageNav(pageName as string);
   const pageNav = getNavModel(state.navIndex, `profile-${pageName}-${profileId}`, profileLoadingNav).main;
   const profile = getProfile(state.profile, profileId);
-  const slab = getSlab(state.slab, profileId)
 
   return {
     pageNav,
     profileId: profileId,
     pageName: pageName,
-    profile,
-    slab,
+    profile
   };
 }
 
@@ -79,17 +77,17 @@ export class ProfilePages extends PureComponent<Props, State> {
   }
 
   getCurrentPage() {
-    const pages = ['settings', 'slab'];
+    const pages = ['settings', 'slabs'];
     const currentPage = this.props.pageName;
     return includes(pages, currentPage) ? currentPage : pages[0];
   }
 
   renderPage(): React.ReactNode {
     const currentPage = this.getCurrentPage();
-    const { profile, slab } = this.props;
+    const { profile } = this.props;
     switch (currentPage) {
-      case PageTypes.Slab:
-        return <SlabSettings slab={slab!} />;
+      case PageTypes.Slabs:
+        return <SlabList profile={profile!} />;
       case PageTypes.Settings:
         return <ProfileSettings profile={profile!} />;
     }

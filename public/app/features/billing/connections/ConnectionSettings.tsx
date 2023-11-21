@@ -5,8 +5,9 @@ import { Input, Field, Form, Button, FieldSet, VerticalGroup, HorizontalGroup, I
 import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 import { contextSrv } from 'app/core/core';
 import { getBackendSrv } from 'app/core/services/backend_srv';
-import { AccessControlAction, Connection, UpdateConnectionDTO, connectionStatusTypes } from 'app/types';
+import { AccessControlAction, Connection, Profile, UpdateConnectionDTO, connectionStatusTypes } from 'app/types';
 
+import { stringToSelectableValue, stringsToSelectableValues } from '../../alerting/unified/utils/amroutes';
 import { updateConnection, updateConnectionTags } from './state/actions';
 
 const mapDispatchToProps = {
@@ -25,11 +26,17 @@ export type Props = ConnectedProps<typeof connector> & OwnProps;
 export const ConnectionSettings: FC<Props> = ({ connection, updateConnection, updateConnectionTags }) => {
   const fallback = contextSrv.hasRole('ServerAdmin') || contextSrv.hasRole('Admin');
   const canWrite = contextSrv.hasAccess(AccessControlAction.ActionConnectionsWrite, fallback);
+  let [profiles, setProfiles] = useState(stringsToSelectableValues([]as string[]));
   let [groupPathname, setGroupPathname] = useState<string>('');
 
   const groupPathnameRequest = async () => {
     const response = await getBackendSrv().get(`/api/groups/${connection.group_id}/pathname`);
     setGroupPathname(response.pathname)
+  };
+
+  const profilesRequest = async () => {
+    const response = await getBackendSrv().get('/api/orgs/profiles', { query: '', page: 1, perPage: 100 });
+    response.profiles.map((profile: Profile) => setProfiles((opts) => [...opts, stringToSelectableValue(profile.name)]))
   };
 
   const getTags =  async () => {
@@ -41,6 +48,7 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection, up
   }
 
   useEffect(() => {
+    profilesRequest();
     groupPathnameRequest();
   }, []);
 
@@ -104,6 +112,11 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection, up
                           />
                         );
                       }}
+                    />
+                  </Field>
+                  <Field label="Profile" disabled={!canWrite}>
+                    <InputControl name="profile" control={control} rules={{ required: true }}
+                      render={({field: {onChange, ...field}}) => <Select {...field} onChange={(value) => onChange(value.value)} options={profiles} width={40}/>}
                     />
                   </Field>
                   <Field label="Status" disabled={!canWrite}>

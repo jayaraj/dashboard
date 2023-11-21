@@ -428,6 +428,18 @@ export function getAppRoutes(): RouteDescriptor[] {
       ),
     },
     {
+      path: '/org/profiles/:id/slabs/new',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "CreateSlab" */ 'app/features/billing/profiles/CreateSlab')
+      ),
+    },
+    {
+      path: '/org/profiles/:id/slabs/edit/:slabId',
+      component: SafeDynamicImport(
+        () => import(/* webpackChunkName: "SlabSettings" */ 'app/features/billing/profiles/SlabSettings')
+      ),
+    },
+    {
       path: '/org/profiles/edit/:id/:page?',
       component: SafeDynamicImport(
         () => import(/* webpackChunkName: "ProfilePages" */ 'app/features/billing/profiles/ProfilePages')

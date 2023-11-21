@@ -105,9 +105,13 @@ func (hs *HTTPServer) DeleteSlab(c *models.ReqContext) response.Response {
 	return response.Success("deleted")
 }
 
-func (hs *HTTPServer) GetSlabByName(c *models.ReqContext) response.Response {
-	profile := web.Params(c.Req)[":name"]
-	url := fmt.Sprintf("%sapi/orgs/%d/profiles/%s/slab", hs.ResourceService.GetConfig().BillingUrl, c.OrgID, profile)
+func (hs *HTTPServer) GetSlabByProfileTag(c *models.ReqContext) response.Response {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":profileId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	tag := web.Params(c.Req)[":tag"]
+	url := fmt.Sprintf("%sapi/profiles/%d/slab/%s", hs.ResourceService.GetConfig().BillingUrl, id, tag)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,
@@ -116,16 +120,16 @@ func (hs *HTTPServer) GetSlabByName(c *models.ReqContext) response.Response {
 	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
 		return response.Error(500, "failed to get", err)
 	}
-	cmd := dtos.GetSlabByNameMsg{}
+	cmd := dtos.GetSlabByProfileTagMsg{}
 	if req.StatusCode != http.StatusOK {
 		if req.StatusCode == http.StatusNotFound {
 			cmd.Result = dtos.Slab{
-				Id:        0,
-				ProfileId: 0,
-				OrgId:     c.OrgID,
-				Slabs:     1,
-				Tax:       0.0,
-				Rates:     []dtos.Rate{{From: 0, To: 0, Final: true, Amount: 0.0, Description: ""}},
+				Id:    0,
+				OrgId: c.OrgID,
+				Slabs: 1,
+				Tag:   "",
+				Tax:   0.0,
+				Rates: []dtos.Rate{{From: 0, To: 0, Final: true, Amount: 0.0, Description: ""}},
 			}
 			return response.JSON(http.StatusOK, cmd.Result)
 		}
@@ -141,12 +145,12 @@ func (hs *HTTPServer) GetSlabByName(c *models.ReqContext) response.Response {
 	return response.JSON(http.StatusOK, cmd.Result)
 }
 
-func (hs *HTTPServer) GetSlabByProfileId(c *models.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":profileId"], 10, 64)
+func (hs *HTTPServer) GetSlabById(c *models.ReqContext) response.Response {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":slabId"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
-	url := fmt.Sprintf("%sapi/profiles/%d/slab", hs.ResourceService.GetConfig().BillingUrl, id)
+	url := fmt.Sprintf("%sapi/slabs/%d", hs.ResourceService.GetConfig().BillingUrl, id)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,
@@ -155,18 +159,8 @@ func (hs *HTTPServer) GetSlabByProfileId(c *models.ReqContext) response.Response
 	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
 		return response.Error(500, "failed to get", err)
 	}
-	cmd := dtos.GetSlabByProfileIdMsg{}
+	cmd := dtos.GetSlabByIdMsg{}
 	if req.StatusCode != http.StatusOK {
-		if req.StatusCode == http.StatusNotFound {
-			cmd.Result = dtos.Slab{
-				Id:    0,
-				OrgId: c.OrgID,
-				Slabs: 1,
-				Tax:   0.0,
-				Rates: []dtos.Rate{{From: 0, To: 0, Final: true, Amount: 0.0, Description: ""}},
-			}
-			return response.JSON(http.StatusOK, cmd.Result)
-		}
 		var errResponse dtos.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
 			return response.Error(req.StatusCode, "failed unmarshal error ", err)

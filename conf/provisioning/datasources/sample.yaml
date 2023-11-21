@@ -20,7 +20,7 @@ datasources:
     token: ${INFLUXDB_PWD}
   jsonData:
       version: Flux
-      organization: ${INFLUXDB_ORG}
+      organization: ${INFLUXDB_ORG} 
       defaultBucket: default
       tlsSkipVerify: true
   editable: false

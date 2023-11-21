@@ -116,6 +116,9 @@ export class ConnectionList extends PureComponent<Props, State> {
           <a href={url}>{connection.name}</a> 
         </td>
         <td className="link-td">
+          <a href={url}>{connection.profile}</a> 
+        </td>
+        <td className="link-td">
           <a href={url}>{connection.address1}</a>
         </td>
         <td className="link-td">
@@ -257,6 +260,7 @@ export class ConnectionList extends PureComponent<Props, State> {
                 <tr>
                   <th>Connection Number</th>
                   <th>Name</th>
+                  <th>Profile</th>
                   <th>Address</th>
                   <th>City</th>
                   <th>Status</th>

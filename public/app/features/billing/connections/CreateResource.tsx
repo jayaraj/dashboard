@@ -9,7 +9,7 @@ import config from 'app/core/config';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
 import { stringToSelectableValue, stringsToSelectableValues } from 'app/features/alerting/unified/utils/amroutes';
-import { ConfigurationType, CreateConnectionResourceDTO, StoreState, Profile} from 'app/types';
+import { ConfigurationType, CreateConnectionResourceDTO, StoreState} from 'app/types';
 
 import { getPageNav } from './state/navModel';
 
@@ -32,17 +32,10 @@ export type Props = OwnProps & ConnectedProps<typeof connector>;
 export const CreateResource = ({connectionId, pageNav}: Props): JSX.Element => {
   const label = 'Create ' + config.resourceLabel;
   let [types, setTypes] = useState(stringsToSelectableValues([]as string[]));
-  let [profiles, setProfiles] = useState(stringsToSelectableValues([]as string[]));
 
   useEffect(() => {
-    profilesRequest();
     typesRequest();
   }, []);
-
-  const profilesRequest = async () => {
-    const response = await getBackendSrv().get('/api/orgs/profiles', { query: '', page: 1, perPage: 1000 });
-    response.profiles.map((profile: Profile) => setProfiles((opts) => [...opts, stringToSelectableValue(profile.name)]))
-  };
 
   const typesRequest = async () => {
     const response = await getBackendSrv().get('/api/configurationtypes/association/resource', { measurement: true, query: '', page: 1, perPage: 1000 });
@@ -59,7 +52,6 @@ export const CreateResource = ({connectionId, pageNav}: Props): JSX.Element => {
       uuid: dto.uuid,
       configuration: {},
       tags: dto.tags,
-      profile_name: dto.profile_name,
     });
     if (result.id) {
       locationService.push(`/org/connections/edit/${connectionId}/resources`);
@@ -79,7 +71,7 @@ export const CreateResource = ({connectionId, pageNav}: Props): JSX.Element => {
       <Page.Contents>
         <Form 
           onSubmit={(dto: CreateConnectionResourceDTO) => create(dto)}
-          defaultValues={{ name: '', type: '', tags: [], image_url: '', uuid: '', latitude: 0, longitude: 0, profile_name: ''}}
+          defaultValues={{ name: '', type: '', tags: [], image_url: '', uuid: '', latitude: 0, longitude: 0}}
         >
           {({ register, control, errors }) => (
             <FieldSet label={label}>
@@ -110,11 +102,6 @@ export const CreateResource = ({connectionId, pageNav}: Props): JSX.Element => {
                       />
                     );
                   }}
-                />
-              </Field>
-              <Field label="ProfileName" required invalid={!!errors.type} error="Profile is required">
-                <InputControl name="profile_name" control={control} rules={{ required: true }}
-                  render={({field: {onChange, ...field}}) => <Select {...field} onChange={(value) => onChange(value.value)} options={profiles} width={40}/>}
                 />
               </Field>
               <Field label="Image Url">

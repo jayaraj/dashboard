@@ -35,6 +35,7 @@ export function updateConnection(dto: UpdateConnectionDTO): ThunkResult<void> {
     const connection = getStore().connection.connection;
     await getBackendSrv().put(`/api/connections/${connection.id}`, {
       id: connection.id,
+      profile: dto.profile,
       status: dto.status,
       name: dto.name,
       phone: dto.phone,
@@ -112,7 +113,7 @@ export function loadConnectionResources(page: number): ThunkResult<void> {
       page: page,
       perPage: connectionResourcePageLimit,
     });
-    dispatch(connectionResourcesLoaded(response.resources));
+    dispatch(connectionResourcesLoaded(response.group_resources));
     dispatch(setConnectionResourcesSearchPage(response.page));
     dispatch(setConnectionResourcesCount(response.count));
   };

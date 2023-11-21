@@ -1,12 +1,22 @@
-import { Profile, ProfilesState, ProfileState, Slab, SlabState } from 'app/types';
+import { Profile, ProfilesState, ProfileState, Slab, SlabsState, SlabState } from 'app/types';
 
 export const getSearchQuery = (state: ProfilesState) => state.searchQuery;
 export const getProfileSearchPage = (state: ProfilesState) => state.searchPage;
 export const getProfilesCount = (state: ProfilesState) => state.profilesCount;
+export const getSlabsSearchQuery = (state: SlabsState) => state.searchQuery;
+export const getSlabsSearchPage = (state: SlabsState) => state.searchPage;
+export const getSlabsCount = (state: SlabsState) => state.slabsCount;
 
+export const getSlabs = (state: SlabsState) => {
+  const regex = RegExp(state.searchQuery, 'i');
 
-export const getSlab = (state: SlabState, currentProfileId: any): Slab | null => {
-  if (state.slab.profile_id === parseInt(currentProfileId, 10)) {
+  return state.slabs.filter((slab) => {
+    return regex.test(slab.tag);
+  });
+};
+
+export const getSlab = (state: SlabState, currentId: any): Slab | null => {
+  if (state.slab.id === parseInt(currentId, 10)) {
     return state.slab;
   }
   return null;

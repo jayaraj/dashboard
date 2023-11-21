@@ -11,6 +11,7 @@ type Connection struct {
 	GroupId       int64     `json:"group_id"`
 	GroupPathId   string    `json:"group_path_id"`
 	GroupPathName string    `json:"group_path_name"`
+	Profile       string    `json:"profile"`
 	Status        string    `json:"status"`
 	Name          string    `json:"name"`
 	Phone         string    `json:"phone"`
@@ -197,14 +198,13 @@ type ConnectionResources struct {
 }
 
 type ConnectionResource struct {
-	Id              int64     `json:"id"`
-	UpdatedAt       time.Time `json:"updated_at"`
-	ResourceId      int64     `json:"resource_id"`
-	ResourceUUID    string    `json:"resource_uuid"`
-	ResourceName    string    `json:"resource_name"`
-	ResourceType    string    `json:"resource_type"`
-	ResourceTags    string    `json:"resource_tags"`
-	ResourceProfile string    `json:"resource_profile"`
+	Id           int64     `json:"id"`
+	UpdatedAt    time.Time `json:"updated_at"`
+	ResourceId   int64     `json:"resource_id"`
+	ResourceUUID string    `json:"resource_uuid"`
+	ResourceName string    `json:"resource_name"`
+	ResourceType string    `json:"resource_type"`
+	ResourceTags string    `json:"resource_tags"`
 }
 
 type GetConnectionResourcesMsg struct {
@@ -213,12 +213,6 @@ type GetConnectionResourcesMsg struct {
 	Page         int64               `json:"page"`
 	PerPage      int64               `json:"perPage"`
 	Result       ConnectionResources `json:"-"`
-}
-
-type UpdateConnectionResourceMsg struct {
-	ConnectionId int64  `json:"connection_id"`
-	ResourceId   int64  `json:"resource_id"`
-	ProfileName  string `json:"profile_name" binding:"required"`
 }
 
 type CreateConnectionResourceMsg struct {
@@ -232,6 +226,5 @@ type CreateConnectionResourceMsg struct {
 	Latitude      *float64               `json:"latitude,omitempty"`
 	Longitude     *float64               `json:"longitude,omitempty"`
 	Tags          []string               `json:"tags"`
-	ProfileName   string                 `json:"profile_name"`
 	Result        Resource               `json:"-"`
 }

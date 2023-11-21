@@ -77,7 +77,7 @@ export const PageToolbar: FC<Props> = React.memo(
           <nav aria-label="Search links" className={styles.navElement}>
             {(title || leftItems?.length) && (
               <div className={styles.titleWrapper}>
-                {parent && parent !== 'General' && <h1 className={styles.titleText}>{parent}/</h1>}
+                {/* {parent && parent !== 'General' && <h1 className={styles.titleText}>{parent}/</h1>} */}
                 {title && <h1 className={styles.titleText}>{title}</h1>}
 
                 {leftItems?.map((child, index) => (

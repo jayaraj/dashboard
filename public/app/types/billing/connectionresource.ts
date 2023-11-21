@@ -25,5 +25,4 @@ export interface CreateConnectionResourceDTO {
   latitude: number;
   longitude: number;
   tags: string[];
-  profile_name: string;
 }

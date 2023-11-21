@@ -1,9 +1,9 @@
 import { getBackendSrv } from '@grafana/runtime';
 import { updateNavIndex } from 'app/core/actions';
-import {CreateSlabDTO, ThunkResult, UpdateProfileDTO, UpdateSlabDTO, profilePageLimit } from 'app/types';
+import { ThunkResult, UpdateProfileDTO, profilePageLimit, slabPageLimit } from 'app/types';
 
 import { buildNavModel } from './navModel';
-import { profileLoaded, profilesLoaded, setProfileSearchPage, setProfileCount, slabLoaded } from './reducers';
+import { profileLoaded, profilesLoaded, setProfileSearchPage, setProfileCount, slabLoaded, slabsLoaded, setSlabsSearchPage, setSlabsCount } from './reducers';
 
 export function loadProfiles(query: string, page: number): ThunkResult<void> {
   return async (dispatch) => {
@@ -22,7 +22,6 @@ export function loadProfile(id: number): ThunkResult<void> {
   return async (dispatch) => {
     const response = await getBackendSrv().get(`/api/profiles/${id}`);
     dispatch(profileLoaded(response));
-    dispatch(loadSlab(id));
     dispatch(updateNavIndex(buildNavModel(response)));
   };
 }
@@ -46,35 +45,23 @@ export function deleteProfile(id: number): ThunkResult<void> {
   };
 }
 
+export function loadSlabs(id: number, query: string, page: number): ThunkResult<void> {
+  return async (dispatch) => {
+    const response = await getBackendSrv().get(`/api/profiles/${id}/slabs`, {
+      query: query,
+      page: page,
+      perPage: slabPageLimit,
+    });
+    dispatch(slabsLoaded(response.slabs));
+    dispatch(setSlabsSearchPage(response.page));
+    dispatch(setSlabsCount(response.count));
+  };
+}
+
 export function loadSlab(id: number): ThunkResult<void> {
   return async (dispatch) => {
-    const response = await getBackendSrv().get(`/api/profiles/${id}/slab`);
+    const response = await getBackendSrv().get(`/api/slabs/${id}`);
     dispatch(slabLoaded(response));
-  };
-}
-
-export function createSlab(dto: CreateSlabDTO): ThunkResult<void> {
-  return async (dispatch, getStore) => {
-    const profile = getStore().profile.profile;
-    await getBackendSrv().post(`/api/slabs`, {
-      tax: dto.tax,
-      slabs: dto.rates?.length,
-      rates: dto.rates,
-      profile_id: profile.id,
-    });
-    dispatch(loadSlab(profile.id));
-  };
-}
-
-export function updateSlab(dto: UpdateSlabDTO): ThunkResult<void> {
-  return async (dispatch, getStore) => {
-    const profile = getStore().profile.profile;
-    await getBackendSrv().put(`/api/slabs/${dto.id}`, {
-      tax: dto.tax,
-      slabs: dto.rates?.length,
-      rates: dto.rates,
-    });
-    dispatch(loadSlab(profile.id));
   };
 }
 
@@ -82,7 +69,7 @@ export function deleteSlab(id: number): ThunkResult<void> {
   return async (dispatch, getStore) => {
     const profile = getStore().profile.profile;
     await getBackendSrv().delete(`/api/slabs/${id}`);
-    dispatch(loadSlab(profile.id));
+    dispatch(loadSlabs(profile.id, '', 1));
   };
 }
 

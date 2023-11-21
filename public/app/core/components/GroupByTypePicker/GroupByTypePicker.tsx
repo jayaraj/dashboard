@@ -16,10 +16,18 @@ export interface Props {
 export const GroupByTypePicker = ({groupId, groupType, onChange, filterFunction}: Props): JSX.Element | null => {
   const [loading, setLoading] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<SelectableValue<Group>>();
+  const [defaultGroup, setDefaultGroup] = useState<Group>();
   const loadOptions = useCallback(
     async (query: string) => {
       const response = await getBackendSrv().get(`/api/groups/searchbytype?type=${groupType}&query=${query}&parent=${parent}&perPage=${1000}&page=${1}`);
       const filteredGroups = response.groups.filter((g: Group) => filterFunction(g));
+      if ((filteredGroups.length > 0)&&(!groupId || groupId === 0)) {
+        setSelectedGroup({value: filteredGroups[0], label: filteredGroups[0].name});
+        if (onChange) {
+          onChange(filteredGroups[0]);
+        }
+      }
+      setDefaultGroup(filteredGroups[0]);
       return filteredGroups.map((g: Group) => ({value: g, label: g.name}));
     },[filterFunction]);
   const debouncedLoadOptions = debouncePromise(loadOptions, 300, { leading: true });
@@ -46,13 +54,24 @@ export const GroupByTypePicker = ({groupId, groupType, onChange, filterFunction}
         onChange(value.value);
       }
     } else {
-      onChange();
-      setSelectedGroup(undefined);
+      if (defaultGroup) {
+        setSelectedGroup({value: defaultGroup, label: defaultGroup.name});
+        if (onChange) {
+          onChange(defaultGroup);
+        }
+      } else {
+        if (onChange) {
+          onChange();
+        }
+        setSelectedGroup(undefined);
+      }
     }
   };
 
   const onMenu = () => {
-    setSelectedGroup(undefined);
+    if (defaultGroup) {
+      setSelectedGroup({value: defaultGroup, label: defaultGroup.name});
+    }
   }
 
   const styles = useStyles(getStyles);

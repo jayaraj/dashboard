@@ -123,6 +123,8 @@ func (hs *HTTPServer) registerRoutes() {
 	r.Get("/org/profiles", authorize(reqOrgAdmin, profilesReadAccessEvaluator), hs.Index)
 	r.Get("/org/profiles/edit/*", authorize(reqOrgAdmin, profilesWriteAccessEvaluator), hs.Index)
 	r.Get("/org/profiles/new", authorize(reqOrgAdmin, profilesCreateAccessEvaluator), hs.Index)
+	r.Get("/org/profiles/:id/slabs/new", authorize(reqOrgAdmin, slabsCreateAccessEvaluator), hs.Index)
+	r.Get("/org/profiles/:id/slabs/edit/*", authorize(reqOrgAdmin, slabsCreateAccessEvaluator), hs.Index)
 	r.Get("/org/connections", authorize(reqSignedIn, connectionsReadAccessEvaluator), hs.Index)
 	r.Get("/org/connections/edit/*", authorize(reqSignedIn, connectionsWriteAccessEvaluator), hs.Index)
 	r.Get("/org/connections/:id/invoices/:invoiceId", authorize(reqSignedIn, invoicesReadAccessEvaluator), hs.Index)
@@ -612,21 +614,22 @@ func (hs *HTTPServer) registerRoutes() {
 			profilesRoute.Post("/", authorize(reqOrgAdmin, profilesCreateAccessEvaluator), routing.Wrap(hs.CreateProfile))
 			profilesRoute.Put("/:profileId", authorize(reqOrgAdmin, profilesWriteAccessEvaluator), routing.Wrap(hs.UpdateProfile))
 			profilesRoute.Get("/:profileId", authorize(reqSignedIn, profilesReadAccessEvaluator), routing.Wrap(hs.GetProfileById))
-			profilesRoute.Get("/:profileId/slab", authorize(reqSignedIn, profilesReadAccessEvaluator), routing.Wrap(hs.GetSlabByProfileId))
 			profilesRoute.Delete("/:profileId", authorize(reqSignedIn, profilesCreateAccessEvaluator), routing.Wrap(hs.DeleteProfile))
+			profilesRoute.Get("/:profileId/slabs", authorize(reqSignedIn, profilesReadAccessEvaluator), routing.Wrap(hs.GetSlabsByProfile))
+			profilesRoute.Get("/:profileId/slabs/:tag", authorize(reqSignedIn, profilesReadAccessEvaluator), routing.Wrap(hs.GetSlabByProfileTag))
 		})
 
 		//Orgs
 		apiRoute.Group("/orgs", func(orgsRoute routing.RouteRegister) {
 			orgsRoute.Get("/profiles/:name", authorize(reqSignedIn, profilesReadAccessEvaluator), routing.Wrap(hs.GetProfileByName))
 			orgsRoute.Get("/profiles", authorize(reqSignedIn, profilesReadAccessEvaluator), routing.Wrap(hs.SearchProfiles))
-			orgsRoute.Get("/profiles/:name/slab", authorize(reqSignedIn, slabsReadAccessEvaluator), routing.Wrap(hs.GetSlabByName))
 		})
 
 		//Slabs
 		apiRoute.Group("/slabs", func(slabsRoute routing.RouteRegister) {
 			slabsRoute.Post("/", authorize(reqEditorRole, slabsCreateAccessEvaluator), routing.Wrap(hs.CreateSlab))
 			slabsRoute.Put("/:slabId", authorize(reqEditorRole, slabsWriteAccessEvaluator), routing.Wrap(hs.UpdateSlab))
+			slabsRoute.Get("/:slabId", authorize(reqEditorRole, slabsReadAccessEvaluator), routing.Wrap(hs.GetSlabById))
 			slabsRoute.Delete("/:slabId", authorize(reqEditorRole, slabsCreateAccessEvaluator), routing.Wrap(hs.DeleteSlab))
 		})
 
@@ -640,7 +643,6 @@ func (hs *HTTPServer) registerRoutes() {
 			connectionsRoute.Get("/:connectionId/logs", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetConnectionLogs))
 			connectionsRoute.Get("/:connectionId/users", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetConnectionUsers))
 			connectionsRoute.Get("/:connectionId/resources", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetConnectionResources))
-			connectionsRoute.Put("/:connectionId/resources/:resourceId", authorize(reqSignedIn, connectionsWriteAccessEvaluator), routing.Wrap(hs.UpdateConnectionResource))
 			connectionsRoute.Get("/:connectionId/invoices", authorize(reqSignedIn, connectionsReadAccessEvaluator), routing.Wrap(hs.GetInvoices))
 			connectionsRoute.Post("/:connectionId/invoices", authorize(reqEditorRole, invoicesCreateAccessEvaluator), routing.Wrap(hs.CreateInvoice))
 			connectionsRoute.Post("/:connectionId/transactions", authorize(reqEditorRole, transactionsCreateAccessEvaluator), routing.Wrap(hs.CreateTransaction))

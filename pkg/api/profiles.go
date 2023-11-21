@@ -190,3 +190,40 @@ func (hs *HTTPServer) GetProfileByName(c *models.ReqContext) response.Response {
 	}
 	return response.JSON(http.StatusOK, cmd.Result)
 }
+
+func (hs *HTTPServer) GetSlabsByProfile(c *models.ReqContext) response.Response {
+	query := c.Query("query")
+	perPage := c.QueryInt("perPage")
+	if perPage <= 0 {
+		perPage = 20
+	}
+	page := c.QueryInt("page")
+	if page <= 0 {
+		page = 1
+	}
+	id, err := strconv.ParseInt(web.Params(c.Req)[":profileId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	url := fmt.Sprintf("%sapi/profiles/%d/slabs?query=%s&page=%d&perPage=%d", hs.ResourceService.GetConfig().BillingUrl, id, query, page, perPage)
+	req := &resources.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to get", err)
+	}
+	cmd := dtos.GetSlabsByProfileMsg{}
+	if req.StatusCode != http.StatusOK {
+		var errResponse dtos.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+	return response.JSON(http.StatusOK, cmd.Result)
+}
