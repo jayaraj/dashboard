@@ -46,6 +46,8 @@ export function updateConnection(dto: UpdateConnectionDTO): ThunkResult<void> {
       state: dto.state,
       country: dto.country,
       pincode: dto.pincode,
+      latitude: Number(dto.latitude),
+      longitude: Number(dto.longitude),
     });
     dispatch(loadConnection(connection.id));
   };

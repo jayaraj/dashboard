@@ -57,6 +57,8 @@ export const CreateConnection = ({}: Props): JSX.Element => {
       country: dto.country,
       pincode: dto.pincode,
       tags: dto.tags,
+      latitude: Number(dto.latitude),
+	    longitude: Number(dto.longitude),
     });
     if (result.id) {
       locationService.push(`/org/connections/edit/${result.id}`);
@@ -86,7 +88,7 @@ export const CreateConnection = ({}: Props): JSX.Element => {
           defaultValues={{ 
             group_parent_id: 0, profile: '', status: '', name: '', 
             phone: '', email: '', address1: '', address2: '', city: '',
-            pincode: '', country: '', state: '', tags: [] }}
+            pincode: '', country: '', state: '', tags: [], latitude: 0.0, longitude: 0.0 }}
         >
           {({ register, control }) => (
             <FieldSet>
@@ -115,6 +117,9 @@ export const CreateConnection = ({}: Props): JSX.Element => {
                   </Field>
                   <Field label="Pincode" disabled={!canWrite}>
                     <Input {...register('pincode', { required: true })} id="pincode-input" width={40} />
+                  </Field>
+                  <Field label="latitude" disabled={!canWrite}>
+                    <Input {...register('latitude', { required: true })} id="latitude-input" width={40} />
                   </Field>
                 </VerticalGroup>
                 <div style={{ padding: '0 50px'}} />
@@ -155,6 +160,9 @@ export const CreateConnection = ({}: Props): JSX.Element => {
                   </Field>
                   <Field label="state" disabled={!canWrite}>
                     <Input {...register('state', { required: true })} id="state-input" width={40} />
+                  </Field>
+                  <Field label="longitude" disabled={!canWrite}>
+                    <Input {...register('longitude', { required: true })} id="longitude-input" width={40} />
                   </Field>
                 </VerticalGroup>
               </HorizontalGroup>

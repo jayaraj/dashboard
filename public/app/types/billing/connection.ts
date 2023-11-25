@@ -48,6 +48,8 @@ export interface Connection {
   pincode: string;
   connection_ext: number;
   tags: string[];
+  latitude: number;
+	longitude: number;
 }
 
 export interface CreateConnectionDTO {
@@ -64,6 +66,8 @@ export interface CreateConnectionDTO {
   country: string;
   pincode: string;
   tags: string[];
+  latitude: number;
+	longitude: number;
 }
 
 export interface UpdateConnectionDTO {
@@ -79,6 +83,8 @@ export interface UpdateConnectionDTO {
   country: string;
   pincode: string;
   tags: string[];
+  latitude: number;
+	longitude: number;
 }
 
 export interface ConnectionsState {

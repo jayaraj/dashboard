@@ -107,7 +107,7 @@ export const SlabSettings  = ({slabId, pageNav, slab, loadSlab}: Props): JSX.Ele
       <Page.Contents>
         <FormProvider {...formSlab}>
           <form onSubmit={handleSubmit(update)}>
-            <FieldSet label={'Create slabs'}>
+            <FieldSet label={'Update slabs'}>
               <Field label={'Tag'}>
                 <InputControl
                   control={control}

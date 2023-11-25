@@ -23,6 +23,8 @@ type Connection struct {
 	Country       string    `json:"country"`
 	Pincode       string    `json:"pincode"`
 	ConnectionExt int64     `json:"connection_ext"`
+	Latitude      float64   `json:"latitude"`
+	Longitude     float64   `json:"longitude"`
 }
 
 type Connections struct {
@@ -81,23 +83,27 @@ type CreateConnectionMsg struct {
 	Pincode       string     `json:"pincode" binding:"required"`
 	Tags          []string   `json:"tags"`
 	Login         string     `json:"login"`
+	Latitude      float64    `json:"latitude,omitempty"`
+	Longitude     float64    `json:"longitude,omitempty"`
 	Result        Connection `json:"result"`
 }
 
 type UpdateConnectionMsg struct {
-	Id       int64  `json:"-"`
-	Profile  string `json:"profile" binding:"required"`
-	Status   string `json:"status" binding:"required"`
-	Name     string `json:"name" binding:"required"`
-	Phone    string `json:"phone" binding:"required"`
-	Email    string `json:"email" binding:"required"`
-	Address1 string `json:"address1" binding:"required"`
-	Address2 string `json:"address2"`
-	City     string `json:"city" binding:"required"`
-	State    string `json:"state" binding:"required"`
-	Country  string `json:"country" binding:"required"`
-	Pincode  string `json:"pincode" binding:"required"`
-	Login    string `json:"login"`
+	Id        int64   `json:"-"`
+	Profile   string  `json:"profile" binding:"required"`
+	Status    string  `json:"status" binding:"required"`
+	Name      string  `json:"name" binding:"required"`
+	Phone     string  `json:"phone" binding:"required"`
+	Email     string  `json:"email" binding:"required"`
+	Address1  string  `json:"address1" binding:"required"`
+	Address2  string  `json:"address2"`
+	City      string  `json:"city" binding:"required"`
+	State     string  `json:"state" binding:"required"`
+	Country   string  `json:"country" binding:"required"`
+	Pincode   string  `json:"pincode" binding:"required"`
+	Login     string  `json:"login"`
+	Latitude  float64 `json:"latitude,omitempty"`
+	Longitude float64 `json:"longitude,omitempty"`
 }
 
 type GetConnectionByIdMsg struct {

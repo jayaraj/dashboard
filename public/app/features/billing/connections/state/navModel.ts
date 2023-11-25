@@ -83,6 +83,8 @@ export function getPageNav(pageName: string): NavModel {
     pincode: '',
     connection_ext: 0,
     tags: [],  
+    latitude: 0,
+	  longitude: 0,
   });
 
   let node: NavModelItem;

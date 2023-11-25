@@ -93,6 +93,9 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection, up
                   <Field label="Pincode" disabled={!canWrite}>
                     <Input {...register('pincode', { required: true })} id="pincode-input" width={40} />
                   </Field>
+                  <Field label="latitude" disabled={!canWrite}>
+                    <Input {...register('latitude', { required: true })} id="latitude-input" width={40} />
+                  </Field>
                 </VerticalGroup>
                 <div style={{ padding: '0 50px'}} />
                 <VerticalGroup>
@@ -133,6 +136,9 @@ export const ConnectionSettings: FC<Props> = ({ connection, updateConnection, up
                   </Field>
                   <Field label="Country" disabled={!canWrite}>
                     <Input {...register('country', { required: true })} id="country-input" width={40} />
+                  </Field>
+                  <Field label="longitude" disabled={!canWrite}>
+                    <Input {...register('longitude', { required: true })} id="longitude-input" width={40} />
                   </Field>
                 </VerticalGroup>
               </HorizontalGroup>
