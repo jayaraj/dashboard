@@ -38,8 +38,15 @@ export const GroupByTypePicker = ({groupId, groupType, onChange, filterFunction}
       setLoading(true);
         loadGroup(groupId);
       setLoading(false);
+    } else {
+      if (defaultGroup) {
+        setSelectedGroup({value: defaultGroup, label: defaultGroup.name});
+        if (onChange) {
+          onChange(defaultGroup);
+        }
+      }
     }
-  }, [groupId]);
+  }, [groupId, defaultGroup]);
 
   const onSelected = (value: SelectableValue<Group>) => {
     if (value) {
