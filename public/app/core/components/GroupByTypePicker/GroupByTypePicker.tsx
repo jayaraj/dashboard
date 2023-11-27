@@ -21,12 +21,6 @@ export const GroupByTypePicker = ({groupId, groupType, onChange, filterFunction}
     async (query: string) => {
       const response = await getBackendSrv().get(`/api/groups/searchbytype?type=${groupType}&query=${query}&parent=${parent}&perPage=${1000}&page=${1}`);
       const filteredGroups = response.groups.filter((g: Group) => filterFunction(g));
-      if ((filteredGroups.length > 0)&&(!groupId || groupId === 0)) {
-        setSelectedGroup({value: filteredGroups[0], label: filteredGroups[0].name});
-        if (onChange) {
-          onChange(filteredGroups[0]);
-        }
-      }
       setDefaultGroup(filteredGroups[0]);
       return filteredGroups.map((g: Group) => ({value: g, label: g.name}));
     },[filterFunction]);
