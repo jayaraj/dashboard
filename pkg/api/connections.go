@@ -106,12 +106,12 @@ func (hs *HTTPServer) SearchConnections(c *models.ReqContext) response.Response 
 }
 
 func (hs *HTTPServer) UpdateConnection(c *models.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	access, connection := hs.IsConnectionAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	dto := &dtos.UpdateConnectionMsg{
-		Id: id,
+		Id: connection.Id,
 	}
 	if err := web.Bind(c.Req, &dto); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
@@ -122,7 +122,7 @@ func (hs *HTTPServer) UpdateConnection(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(500, "failed marshal update", err)
 	}
-	url := fmt.Sprintf("%sapi/connections/%d", hs.ResourceService.GetConfig().BillingUrl, id)
+	url := fmt.Sprintf("%sapi/connections/%d", hs.ResourceService.GetConfig().BillingUrl, connection.Id)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    body,
@@ -142,39 +142,19 @@ func (hs *HTTPServer) UpdateConnection(c *models.ReqContext) response.Response {
 }
 
 func (hs *HTTPServer) GetConnectionById(c *models.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	access, connection := hs.IsConnectionAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
-	url := fmt.Sprintf("%sapi/connections/%d", hs.ResourceService.GetConfig().BillingUrl, id)
-	req := &resources.RestRequest{
-		Url:        url,
-		Request:    nil,
-		HttpMethod: http.MethodGet,
-	}
-	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
-		return response.Error(500, "failed to get", err)
-	}
-	cmd := dtos.GetConnectionByIdMsg{}
-	if req.StatusCode != http.StatusOK {
-		var errResponse dtos.ErrorResponse
-		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			return response.Error(req.StatusCode, "failed unmarshal error ", err)
-		}
-		return response.Error(req.StatusCode, errResponse.Message, nil)
-	}
-	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
-		return response.Error(req.StatusCode, "failed unmarshal error ", err)
-	}
-	return response.JSON(http.StatusOK, cmd.Result)
+	return response.JSON(http.StatusOK, connection)
 }
 
 func (hs *HTTPServer) DeleteConnection(c *models.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	access, connection := hs.IsConnectionAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
-	url := fmt.Sprintf("%sapi/connections/%d", hs.ResourceService.GetConfig().BillingUrl, id)
+	url := fmt.Sprintf("%sapi/connections/%d", hs.ResourceService.GetConfig().BillingUrl, connection.Id)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,
@@ -194,9 +174,9 @@ func (hs *HTTPServer) DeleteConnection(c *models.ReqContext) response.Response {
 }
 
 func (hs *HTTPServer) GetConnectionLogs(c *models.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	access, connection := hs.IsConnectionAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	perPage := c.QueryInt("perPage")
 	if perPage <= 0 {
@@ -207,7 +187,7 @@ func (hs *HTTPServer) GetConnectionLogs(c *models.ReqContext) response.Response 
 		page = 1
 	}
 
-	url := fmt.Sprintf("%sapi/connections/%d/logs?page=%d&perPage=%d", hs.ResourceService.GetConfig().BillingUrl, id, page, perPage)
+	url := fmt.Sprintf("%sapi/connections/%d/logs?page=%d&perPage=%d", hs.ResourceService.GetConfig().BillingUrl, connection.Id, page, perPage)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,
