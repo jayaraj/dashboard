@@ -114,11 +114,3 @@ export function updateGroupConfiguration(type: string, configuration: any): Thun
   };
 }
 
-export function deleteGroupConfiguration(): ThunkResult<void> {
-  return async (dispatch, getStore) => {
-    const configuration = getStore().groupConfiguration.configuration;
-    const group = getStore().group.group;
-    await getBackendSrv().delete(`/api/groupconfigurations/${configuration.id}`);
-    dispatch(loadGroupConfiguration(group.type));
-  };
-}

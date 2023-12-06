@@ -91,12 +91,3 @@ export function updateResourceConfiguration(type: string, configuration: any): T
     dispatch(loadResourceConfiguration(type));
   };
 }
-
-export function deleteGroupConfiguration(): ThunkResult<void> {
-  return async (dispatch, getStore) => {
-    const configuration = getStore().resourceConfiguration.configuration;
-    const resource = getStore().resource.resource;
-    await getBackendSrv().delete(`/api/resourceconfigurations/${configuration.id}`);
-    dispatch(loadResourceConfiguration(resource.type));
-  };
-}

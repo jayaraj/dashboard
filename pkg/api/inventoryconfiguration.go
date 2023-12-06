@@ -91,27 +91,3 @@ func (hs *HTTPServer) GetInventoryConfiguration(c *models.ReqContext) response.R
 
 	return response.JSON(http.StatusOK, req.Response)
 }
-
-func (hs *HTTPServer) DeleteInventoryConfiguration(c *models.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":id"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
-	}
-	url := fmt.Sprintf("%sapi/inventoryconfigurations/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
-	req := &resources.RestRequest{
-		Url:        url,
-		Request:    nil,
-		HttpMethod: http.MethodDelete,
-	}
-	if err := hs.ResourceService.RestRequest(c.Req.Context(), req); err != nil {
-		return response.Error(500, "failed to delete", err)
-	}
-	if req.StatusCode != http.StatusOK {
-		var errResponse dtos.ErrorResponse
-		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			return response.Error(req.StatusCode, "failed unmarshal error ", err)
-		}
-		return response.Error(req.StatusCode, errResponse.Message, nil)
-	}
-	return response.Success("deleted")
-}

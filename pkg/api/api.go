@@ -473,11 +473,6 @@ func (hs *HTTPServer) registerRoutes() {
 			configurationRoute.Get("/:resourceId/configurations/:config", authorize(reqSignedIn, resourcesReadAccessEvaluator), routing.Wrap(hs.GetResourceConfiguration))
 		})
 
-		// ResourceConfiguration
-		apiRoute.Group("/resourceconfigurations", func(orgRoute routing.RouteRegister) {
-			orgRoute.Delete("/:id", authorize(reqOrgAdmin, resourcesCreateAccessEvaluator), routing.Wrap(hs.DeleteResourceConfiguration))
-		})
-
 		//Tags
 		apiRoute.Group("/tags", func(tagsRoute routing.RouteRegister) {
 			tagsRoute.Get("/:association", reqSignedIn, routing.Wrap(hs.GetTags))
@@ -505,11 +500,6 @@ func (hs *HTTPServer) registerRoutes() {
 		apiRoute.Group("/groups", func(configurationRoute routing.RouteRegister) {
 			configurationRoute.Put("/:groupId/configurations/:config", authorize(reqEditorRole, groupsWriteAccessEvaluator), routing.Wrap(hs.UpdateGroupConfiguration))
 			configurationRoute.Get("/:groupId/configurations/:config", authorize(reqSignedIn, groupsReadAccessEvaluator), routing.Wrap(hs.GetGroupConfiguration))
-		})
-
-		// GroupConfiguration
-		apiRoute.Group("/groupconfigurations", func(orgRoute routing.RouteRegister) {
-			orgRoute.Delete("/:id", authorize(reqOrgAdmin, groupsCreateAccessEvaluator), routing.Wrap(hs.DeleteGroupConfiguration))
 		})
 
 		//Groupusers
@@ -575,11 +565,6 @@ func (hs *HTTPServer) registerRoutes() {
 			configurationRoute.Get("/:inventoryId/configurations/:config", authorize(reqSignedIn, inventoriesReadAccessEvaluator), routing.Wrap(hs.GetInventoryConfiguration))
 		})
 
-		// InventoryConfiguration
-		apiRoute.Group("/inventoryconfigurations", func(orgRoute routing.RouteRegister) {
-			orgRoute.Delete("/:id", authorize(reqOrgAdmin, inventoriesCreateAccessEvaluator), routing.Wrap(hs.DeleteInventoryConfiguration))
-		})
-
 		//Bulk
 		apiRoute.Group("/bulks", func(inventoriesRoute routing.RouteRegister) {
 			inventoriesRoute.Post("/", authorize(reqGrafanaAdmin, bulksCreateAccessEvaluator), routing.Wrap(hs.UploadBulk))
@@ -598,11 +583,6 @@ func (hs *HTTPServer) registerRoutes() {
 		apiRoute.Group("/orgs", func(configurationRoute routing.RouteRegister) {
 			configurationRoute.Put("/configurations/:config", authorize(reqEditorRole, ac.EvalPermission(ac.ActionResourcesWrite)), routing.Wrap(hs.UpdateOrgConfiguration))
 			configurationRoute.Get("/configurations/:config", authorize(reqSignedIn, ac.EvalPermission(ac.ActionResourcesRead)), routing.Wrap(hs.GetOrgConfiguration))
-		})
-
-		// OrgConfiguration
-		apiRoute.Group("/orgconfigurations", func(orgRoute routing.RouteRegister) {
-			orgRoute.Delete("/:id", authorize(reqOrgAdmin, groupsWriteAccessEvaluator), routing.Wrap(hs.DeleteOrgConfiguration))
 		})
 
 		/**************Device Management*************/

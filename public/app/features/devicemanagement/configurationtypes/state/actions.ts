@@ -76,11 +76,3 @@ export function updateOrgConfiguration(configuration: any): ThunkResult<void> {
     dispatch(loadOrgConfiguration());
   };
 }
-
-export function deleteGroupConfiguration(): ThunkResult<void> {
-  return async (dispatch, getStore) => {
-    const configuration = getStore().orgConfiguration.configuration;
-    await getBackendSrv().delete(`/api/orgconfigurations/${configuration.id}`);
-    dispatch(loadOrgConfiguration());
-  };
-}

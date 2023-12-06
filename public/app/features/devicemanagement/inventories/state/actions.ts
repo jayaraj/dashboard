@@ -66,12 +66,3 @@ export function updateInventoryConfiguration(type: string, configuration: any): 
     dispatch(loadInventoryConfiguration(type));
   };
 }
-
-export function deleteInventoryConfiguration(): ThunkResult<void> {
-  return async (dispatch, getStore) => {
-    const configuration = getStore().inventoryConfiguration.configuration;
-    const inventory = getStore().inventory.inventory;
-    await getBackendSrv().delete(`/api/inventoryconfigurations/${configuration.id}`);
-    dispatch(loadInventoryConfiguration(inventory.type));
-  };
-}
