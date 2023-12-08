@@ -176,7 +176,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ connection, orgConfiguratio
             <td className="value">
             <table>
               <tbody>
-                <tr><td>Credits</td><td><span>-</span>{invoice?.total_credits}</td></tr>
+                <tr><td>Credits</td><td>{invoice?.total_credits}</td></tr>
               </tbody>
             </table>
             </td>
@@ -187,7 +187,7 @@ const InvoiceTable: React.FC<InvoiceTableProps> = ({ connection, orgConfiguratio
             <td className="value">
               <table>
                 <tbody>
-                  <tr><td>Payments</td><td><span>-</span>{invoice?.total_payments}</td></tr>
+                  <tr><td>Payments</td><td>{invoice?.total_payments}</td></tr>
                 </tbody>
               </table>
             </td>

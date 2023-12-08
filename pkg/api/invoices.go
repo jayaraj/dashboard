@@ -175,13 +175,10 @@ func (hs *HTTPServer) CreateInvoice(c *models.ReqContext) response.Response {
 	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
-	}
+
 	dto := dtos.CreateInvoiceMsg{
 		OrgId:         c.OrgID,
-		GroupId:       id,
+		GroupId:       connection.GroupId,
 		GroupPathId:   connection.GroupPathId,
 		ConnectionExt: connection.ConnectionExt,
 		ConnectionId:  connection.Id,
