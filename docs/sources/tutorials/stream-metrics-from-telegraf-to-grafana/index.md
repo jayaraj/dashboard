@@ -75,7 +75,7 @@ The only thing left here is to create a dashboard with streaming data.
 1. Click **Dashboards** in the left-side menu.
 1. Click **New** and select **New Dashboard**.
 1. On the empty dashboard, click **+ Add visualization**.
-1. In the modal that opens, select the `-- Grafana --` data source.
+1. In the modal that opens, select the `-- Datasource --` data source.
 1. Select `Live Measurements` query type.
 1. Find and select `stream/custom_stream_id/cpu` measurement for Channel field.
 1. Save dashboard changes.

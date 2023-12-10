@@ -27,6 +27,8 @@ type Message struct {
 func setDefaultTemplateData(cfg *setting.Cfg, data map[string]any, u *user.User) {
 	data["AppUrl"] = setting.AppUrl
 	data["BuildVersion"] = setting.BuildVersion
+	data["AppTitle"] = setting.AppTitle
+	data["LoginTitle"] = setting.LoginTitle
 	data["BuildStamp"] = setting.BuildStamp
 	data["EmailCodeValidHours"] = cfg.EmailCodeValidMinutes / 60
 	data["Subject"] = map[string]any{}

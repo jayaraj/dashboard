@@ -115,7 +115,7 @@ export function getNavTitle(navId: string | undefined) {
     case 'storage':
       return t('nav.storage.title', 'Storage');
     case 'upgrading':
-      return t('nav.upgrading.title', 'Stats and license');
+      return t('nav.upgrading.title', 'Stats');
     case 'monitoring':
       return t('nav.monitoring.title', 'Observability');
     case 'infrastructure':

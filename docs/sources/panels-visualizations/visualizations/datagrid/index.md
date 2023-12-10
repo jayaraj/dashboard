@@ -37,11 +37,11 @@ inside a dashboard.
 Through it, you can manipulate data queried from any data source, you can start from a blank slate, or you can pull data from a dragged and dropped file. You can then use the panel as a simple tabular
 visualization, or you can modify the data—and even remove it altogether—to create a blank slate.
 
-Editing the dataset changes the data source to use the inbuilt `-- Grafana --` data source, thus replacing the old data source settings and related queries, while also copying the current dataset into the dashboard model.
+Editing the dataset changes the data source to use the inbuilt `-- Datasource --` data source, thus replacing the old data source settings and related queries, while also copying the current dataset into the dashboard model.
 
 You can then use the panel as a data source for other panels, by using the inbuilt `-- Dashboard --` data source to pull the datagrid data. This allows for an interactive dashboard experience, where you can modify the data and see the changes reflected in other panels.
 
-Learn more about the inbuilt `-- Grafana --` and `-- Dashboard --` data sources in the [special data sources][] documentation.
+Learn more about the inbuilt `-- Datasource --` and `-- Dashboard --` data sources in the [special data sources][] documentation.
 
 ## Context menu
 

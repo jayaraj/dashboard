@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 
 import { colorManipulator } from '@grafana/data';
 import { useTheme2 } from '@grafana/ui';
+import config from 'app/core/config';
 
 export interface BrandComponentProps {
   className?: string;
@@ -10,7 +11,7 @@ export interface BrandComponentProps {
 }
 
 export const LoginLogo: FC<BrandComponentProps & { logo?: string }> = ({ className, logo }) => {
-  return <img className={className} src={`${logo ? logo : 'public/img/grafana_icon.svg'}`} alt="Grafana" />;
+  return <img className={className} src={`${logo ? logo : 'public/img/whitelabel/grafana_icon.svg'}`} alt="Dashboard" />;
 };
 
 const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
@@ -24,7 +25,7 @@ const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
       right: 0,
       bottom: 0,
       top: 0,
-      background: `url(public/img/g8_login_${theme.isDark ? 'dark' : 'light'}.svg)`,
+      background: `url(public/img/whitelabel/g8_login_${theme.isDark ? 'dark' : 'light'}.svg)`,
       backgroundPosition: 'top center',
       backgroundSize: 'auto',
       backgroundRepeat: 'no-repeat',
@@ -43,7 +44,7 @@ const LoginBackground: FC<BrandComponentProps> = ({ className, children }) => {
 };
 
 const MenuLogo: FC<BrandComponentProps> = ({ className }) => {
-  return <img className={className} src="public/img/grafana_icon.svg" alt="Grafana" />;
+  return <img className={className} src="public/img/whitelabel/grafana_icon.svg" alt="Dashboard" />;
 };
 
 const LoginBoxBackground = () => {
@@ -59,8 +60,8 @@ export class Branding {
   static LoginBackground = LoginBackground;
   static MenuLogo = MenuLogo;
   static LoginBoxBackground = LoginBoxBackground;
-  static AppTitle = 'Grafana';
-  static LoginTitle = 'Welcome to Grafana';
+  static AppTitle = config.appTitle;
+  static LoginTitle = config.loginTitle;
   static HideEdition = false;
   static GetLoginSubTitle = (): null | string => {
     return null;

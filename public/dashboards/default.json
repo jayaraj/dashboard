@@ -1,5 +1,5 @@
 {
-  "title": "Grafana",
+  "title": "Dashboard",
   "tags": [],
   "timezone": "browser",
   "editable": true,
@@ -18,12 +18,12 @@
           "mode": "html",
           "content": "<div class=\"text-center\" style=\"padding-top: 15px\">\n<img src=\"img/logo_transparent_200x.png\"> \n</div>",
           "style": {},
-          "title": "Welcome to"
+          "title": "Welcome"
         }
       ]
     },
     {
-      "title": "Welcome to Grafana",
+      "title": "Welcome",
       "height": "210px",
       "collapse": false,
       "editable": true,

@@ -154,6 +154,8 @@ export interface GrafanaConfig {
   auth: AuthSettings;
   minRefreshInterval: string;
   appSubUrl: string;
+  appTitle: string;
+  loginTitle: string;
   windowTitlePrefix: string;
   buildInfo: BuildInfo;
   newPanelTitle: string;

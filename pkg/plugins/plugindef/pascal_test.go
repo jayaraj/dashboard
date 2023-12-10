@@ -11,7 +11,7 @@ func TestDerivePascal(t *testing.T) {
 		id, name, out string
 	}{
 		{
-			name: "-- Grafana --",
+			name: "-- Datasource --",
 			out:  "Grafana",
 		},
 		{

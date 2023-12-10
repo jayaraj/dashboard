@@ -86,7 +86,7 @@ export function DataSourceDropdown(props: DataSourceDropdownProps) {
   // Used to move the focus to the footer when tabbing from the input
   const [footerRef, setFooterRef] = useState<HTMLElement | null>();
   const currentDataSourceInstanceSettings = useDatasource(current);
-  const grafanaDS = useDatasource('-- Grafana --');
+  const grafanaDS = useDatasource('-- Datasource --');
   const currentValue = Boolean(!current && noDefault) ? undefined : currentDataSourceInstanceSettings;
   const prefixIcon =
     filterTerm && isOpen ? <DataSourceLogoPlaceHolder /> : <DataSourceLogo dataSource={currentValue} />;

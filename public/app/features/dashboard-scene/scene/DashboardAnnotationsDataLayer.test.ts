@@ -45,7 +45,7 @@ describe('DashboardAnnotationsDataLayer', () => {
         builtIn: 1,
         datasource: {
           type: 'grafana',
-          uid: '-- Grafana --',
+          uid: '-- Datasource --',
         },
         enable: true,
         hide: true,

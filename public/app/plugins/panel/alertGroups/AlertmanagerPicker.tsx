@@ -11,7 +11,7 @@ interface Props {
 }
 
 function getAlertManagerLabel(alertManager: AlertManagerDataSource) {
-  return alertManager.name === GRAFANA_RULES_SOURCE_NAME ? 'Grafana' : alertManager.name.slice(0, 37);
+  return alertManager.name === GRAFANA_RULES_SOURCE_NAME ? 'Dashboard' : alertManager.name.slice(0, 37);
 }
 
 export const AlertManagerPicker = ({ onChange, current, dataSources }: Props) => {

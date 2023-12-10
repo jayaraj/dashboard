@@ -70,7 +70,7 @@ exports[`transformSceneToSaveModel Given a scene with rows Should transform back
         "builtIn": 1,
         "datasource": {
           "type": "grafana",
-          "uid": "-- Grafana --",
+          "uid": "-- Datasource --",
         },
         "enable": true,
         "hide": true,

@@ -56,7 +56,7 @@ export const mockNavModel: NavIndex = {
       {
         id: 'import',
         text: 'Import',
-        subTitle: 'Import dashboard from file or Grafana.com',
+        subTitle: 'Import dashboard from file',
         icon: 'plus',
         url: '/dashboard/import',
         hideFromTabs: true,
@@ -117,7 +117,7 @@ export const mockNavModel: NavIndex = {
         {
           id: 'import',
           text: 'Import',
-          subTitle: 'Import dashboard from file or Grafana.com',
+          subTitle: 'Import dashboard from file',
           icon: 'plus',
           url: '/dashboard/import',
           hideFromTabs: true,
@@ -179,7 +179,7 @@ export const mockNavModel: NavIndex = {
         {
           id: 'import',
           text: 'Import',
-          subTitle: 'Import dashboard from file or Grafana.com',
+          subTitle: 'Import dashboard from file',
           icon: 'plus',
           url: '/dashboard/import',
           hideFromTabs: true,
@@ -241,7 +241,7 @@ export const mockNavModel: NavIndex = {
         {
           id: 'import',
           text: 'Import',
-          subTitle: 'Import dashboard from file or Grafana.com',
+          subTitle: 'Import dashboard from file',
           icon: 'plus',
           url: '/dashboard/import',
           hideFromTabs: true,
@@ -303,7 +303,7 @@ export const mockNavModel: NavIndex = {
         {
           id: 'import',
           text: 'Import',
-          subTitle: 'Import dashboard from file or Grafana.com',
+          subTitle: 'Import dashboard from file',
           icon: 'plus',
           url: '/dashboard/import',
           hideFromTabs: true,
@@ -366,7 +366,7 @@ export const mockNavModel: NavIndex = {
         {
           id: 'import',
           text: 'Import',
-          subTitle: 'Import dashboard from file or Grafana.com',
+          subTitle: 'Import dashboard from file',
           icon: 'plus',
           url: '/dashboard/import',
           hideFromTabs: true,
@@ -430,7 +430,7 @@ export const mockNavModel: NavIndex = {
         {
           id: 'import',
           text: 'Import',
-          subTitle: 'Import dashboard from file or Grafana.com',
+          subTitle: 'Import dashboard from file ',
           icon: 'plus',
           url: '/dashboard/import',
           hideFromTabs: true,
@@ -441,7 +441,7 @@ export const mockNavModel: NavIndex = {
   import: {
     id: 'import',
     text: 'Import',
-    subTitle: 'Import dashboard from file or Grafana.com',
+    subTitle: 'Import dashboard from file',
     icon: 'plus',
     url: '/dashboard/import',
     hideFromTabs: true,
@@ -494,7 +494,7 @@ export const mockNavModel: NavIndex = {
         {
           id: 'import',
           text: 'Import',
-          subTitle: 'Import dashboard from file or Grafana.com',
+          subTitle: 'Import dashboard from file',
           icon: 'plus',
           url: '/dashboard/import',
           hideFromTabs: true,
@@ -1275,7 +1275,7 @@ export const mockNavModel: NavIndex = {
   help: {
     id: 'help',
     text: 'Help',
-    subTitle: 'Grafana v8.5.0-pre (f1c4da095b)',
+    subTitle: 'v8.5.0-pre (f1c4da095b)',
     icon: 'question-circle',
     url: '#',
   },

@@ -718,14 +718,14 @@ export function mockDashboardDto(
 }
 
 export const onCallPluginMetaMock: PluginMeta = {
-  name: 'Grafana OnCall',
+  name: 'OnCall',
   id: 'grafana-oncall-app',
   type: PluginType.app,
   module: 'plugins/grafana-oncall-app/module',
   baseUrl: 'public/plugins/grafana-oncall-app',
   info: {
-    author: { name: 'Grafana Labs' },
-    description: 'Grafana OnCall',
+    author: { name: 'Dashboard' },
+    description: 'OnCall',
     updated: '',
     version: '',
     links: [],

@@ -47,7 +47,7 @@ We strongly recommend that you change the default administrator password.
 
 If you've already set up a data source that you know how to query, refer to [Create a dashboard]({{< relref "../dashboards/build-dashboards/create-dashboard" >}}) instead.
 
-To create your first dashboard using the built-in `-- Grafana --` data source:
+To create your first dashboard using the built-in `-- Datasource --` data source:
 
 1. Click **Dashboards** in the left-side menu.
 1. On the Dashboards page, click **New** and select **New Dashboard** from the drop-down menu.
@@ -55,7 +55,7 @@ To create your first dashboard using the built-in `-- Grafana --` data source:
 
    ![Empty dashboard state](/media/docs/grafana/dashboards/empty-dashboard-10.2.png)
 
-1. In the dialog box that opens, click `-- Grafana --`:
+1. In the dialog box that opens, click `-- Datasource --`:
 
    {{< figure class="float-right"  src="/media/docs/grafana/dashboards/screenshot-data-source-selector-10.0.png" max-width="800px" alt="Select data source dialog box" >}}
 

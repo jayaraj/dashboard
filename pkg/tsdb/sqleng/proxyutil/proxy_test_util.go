@@ -13,6 +13,7 @@ import (
 	"time"
 
 	sdkproxy "github.com/grafana/grafana-plugin-sdk-go/backend/proxy"
+	"github.com/grafana/grafana/pkg/setting"
 	"github.com/stretchr/testify/require"
 )
 
@@ -26,8 +27,8 @@ func SetupTestSecureSocksProxySettings(t *testing.T) *sdkproxy.ClientCfg {
 	ca := &x509.Certificate{
 		SerialNumber: big.NewInt(2019),
 		Subject: pkix.Name{
-			Organization: []string{"Grafana Labs"},
-			CommonName:   "Grafana",
+			Organization: []string{setting.AppTitle},
+			CommonName:   setting.AppTitle,
 		},
 		NotBefore:             time.Now(),
 		NotAfter:              time.Now().AddDate(10, 0, 0),
@@ -58,8 +59,8 @@ func SetupTestSecureSocksProxySettings(t *testing.T) *sdkproxy.ClientCfg {
 	cert := &x509.Certificate{
 		SerialNumber: big.NewInt(2019),
 		Subject: pkix.Name{
-			Organization: []string{"Grafana Labs"},
-			CommonName:   "Grafana",
+			Organization: []string{setting.AppTitle},
+			CommonName:   setting.AppTitle,
 		},
 		NotBefore:    time.Now(),
 		NotAfter:     time.Now().AddDate(10, 0, 0),

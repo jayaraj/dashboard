@@ -30,8 +30,8 @@ export function RuleConfigStatus({ rule }: RuleConfigStatusProps) {
       content={
         <div>
           A minimum evaluation interval of{' '}
-          <span className={styles.globalLimitValue}>{config.unifiedAlerting.minInterval}</span> has been configured in
-          Grafana and will be used instead of the {rule.group.interval} interval configured for the Rule Group.
+          <span className={styles.globalLimitValue}>{config.unifiedAlerting.minInterval}</span> has been configured 
+          and will be used instead of the {rule.group.interval} interval configured for the Rule Group.
         </div>
       }
     >

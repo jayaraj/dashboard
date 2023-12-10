@@ -3,7 +3,7 @@ import { connect, ConnectedProps } from 'react-redux';
 
 import { SelectableValue } from '@grafana/data';
 import { config, locationService } from '@grafana/runtime';
-import { Button, FilterInput, LinkButton, Select, VerticalGroup } from '@grafana/ui';
+import { FilterInput, LinkButton, Select, VerticalGroup } from '@grafana/ui';
 import appEvents from 'app/core/app_events';
 import { Page } from 'app/core/components/Page/Page';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
@@ -121,9 +121,6 @@ export class AlertRuleListUnconnected extends PureComponent<Props> {
                 Add NG Alert
               </LinkButton>
             )}
-            <Button variant="secondary" onClick={this.onOpenHowTo}>
-              How to add an alert
-            </Button>
           </div>
           <DeprecationNotice />
           <VerticalGroup spacing="none">

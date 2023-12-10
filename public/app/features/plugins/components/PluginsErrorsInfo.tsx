@@ -22,7 +22,7 @@ export function PluginsErrorsInfo({ filterByPluginType }: PluginsErrorInfoProps)
 
   return (
     <Alert
-      title="Unsigned plugins were found during plugin initialization. Grafana Labs cannot guarantee the integrity of these plugins. We recommend only using signed plugins."
+      title="Unsigned plugins were found during plugin initialization. We cannot guarantee the integrity of these plugins. We recommend only using signed plugins."
       aria-label={selectors.pages.PluginsList.signatureErrorNotice}
       severity="warning"
     >

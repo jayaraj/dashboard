@@ -101,7 +101,7 @@ export function DataSourceModal({
     [analyticsInteractionSrc]
   );
 
-  const grafanaDS = useDatasource('-- Grafana --');
+  const grafanaDS = useDatasource('-- Datasource --');
 
   const onFileDrop = getFileDropToQueryHandler((query, fileRejections) => {
     if (!grafanaDS) {

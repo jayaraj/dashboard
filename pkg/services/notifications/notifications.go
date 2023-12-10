@@ -66,6 +66,7 @@ func ProvideService(bus bus.Bus, cfg *setting.Cfg, mailer Mailer, store TempUser
 		templatePattern := filepath.Join(ns.Cfg.StaticRootPath, pattern)
 		_, err := mailTemplates.ParseGlob(templatePattern)
 		if err != nil {
+			ns.log.Warn("template Parse error: %s", err.Error())
 			invalidTemplates = append(invalidTemplates, templatePattern)
 		}
 	}

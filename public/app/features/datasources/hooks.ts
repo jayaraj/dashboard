@@ -16,7 +16,7 @@ export function useRecentlyUsedDataSources(): [string[], (ds: DataSourceInstance
   const pushRecentlyUsedDataSource = useCallback(
     (ds: DataSourceInstanceSettings) => {
       if (ds.meta.builtIn) {
-        // Prevent storing the built in datasources (-- Grafana --, -- Mixed --,  -- Dashboard --)
+        // Prevent storing the built in datasources (-- Datasource --, -- Mixed --,  -- Dashboard --)
         return;
       }
       if (value.includes(ds.uid)) {

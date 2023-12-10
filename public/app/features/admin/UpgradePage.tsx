@@ -21,10 +21,6 @@ export function UpgradePage({ navModel }: Props) {
     <Page navModel={navModel}>
       <Page.Contents>
         <ServerStats />
-        <UpgradeInfo
-          editionNotice="You are running the open-source version of Grafana.
-        You have to install the Enterprise edition in order enable Enterprise features."
-        />
       </Page.Contents>
     </Page>
   );
@@ -119,7 +115,7 @@ const ServiceInfo = () => {
       <div style={{ marginTop: '20px' }}>
         <strong>Also included:</strong>
         <br />
-        Indemnification, working with Grafana Labs on future prioritization, and training from the core Grafana team.
+        Indemnification, working with Dasboard on future prioritization, and training from the core team.
       </div>
 
       <GetEnterprise />

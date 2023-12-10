@@ -502,7 +502,7 @@ stubs['mixed'] = {
 };
 
 stubs['grafana'] = {
-  name: '-- Grafana --',
+  name: '-- Datasource --',
   meta: {
     id: 'grafana',
     info: { version: '1.2.1' },

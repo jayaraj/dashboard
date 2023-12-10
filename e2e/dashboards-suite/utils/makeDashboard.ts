@@ -5,7 +5,7 @@ export function makeNewDashboardRequestBody(dashboardName: string, folderUid?: s
         list: [
           {
             builtIn: 1,
-            datasource: { type: 'grafana', uid: '-- Grafana --' },
+            datasource: { type: 'grafana', uid: '-- Datasource --' },
             enable: true,
             hide: true,
             iconColor: 'rgba(0, 211, 255, 1)',

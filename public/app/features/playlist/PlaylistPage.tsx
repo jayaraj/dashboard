@@ -44,9 +44,6 @@ export const PlaylistPage = () => {
       buttonTitle={t('playlist-page.empty.button', 'Create Playlist')}
       buttonDisabled={!contextSrv.isEditor}
       proTip={t('playlist-page.empty.pro-tip', 'You can use playlists to cycle dashboards on TVs without user control')}
-      proTipLink="http://docs.grafana.org/reference/playlist/"
-      proTipLinkTitle={t('playlist-page.empty.pro-tip-link-title', 'Learn more')}
-      proTipTarget="_blank"
     />
   );
 

@@ -19,7 +19,6 @@ import {
   FeatureBadge,
   Select,
   ClipboardButton,
-  Icon,
   Stack,
 } from '@grafana/ui';
 import { contextSrv } from 'app/core/services/context_srv';
@@ -77,22 +76,14 @@ export function HelpWizard({ panel, plugin, onClose }: Props) {
         <Stack direction="column" gap={1}>
           <Stack direction="row" gap={1}>
             <FeatureBadge featureState={FeatureState.beta} />
-            <a
-              href="https://grafana.com/docs/grafana/latest/troubleshooting/"
-              target="blank"
-              className="external-link"
-              rel="noopener noreferrer"
-            >
-              Troubleshooting docs <Icon name="external-link-alt" />
-            </a>
           </Stack>
           <span className="muted">
-            To request troubleshooting help, send a snapshot of this panel to Grafana Labs Technical Support. The
+            To request troubleshooting help, send a snapshot of this panel to Technical Support. The
             snapshot contains query response data and panel settings.
           </span>
           {hasSupportBundleAccess && (
             <span className="muted">
-              You can also retrieve a support bundle containing information concerning your Grafana instance and
+              You can also retrieve a support bundle containing information concerning your instance and
               configured datasources in the <a href="/support-bundles">support bundles section</a>.
             </span>
           )}

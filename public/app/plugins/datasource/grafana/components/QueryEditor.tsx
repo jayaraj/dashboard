@@ -127,7 +127,7 @@ export class UnthemedQueryEditor extends PureComponent<Props, State> {
     } as any;
 
     getDataSourceSrv()
-      .get('-- Grafana --')
+      .get('-- Datasource --')
       .then((ds) => {
         const gds = ds as GrafanaDatasource;
         gds.query(query).subscribe({
@@ -322,8 +322,8 @@ export class UnthemedQueryEditor extends PureComponent<Props, State> {
           </div>
         )}
 
-        <Alert title="Grafana Live - Measurements" severity="info">
-          This supports real-time event streams in Grafana core. This feature is under heavy development. Expect the
+        <Alert title="Live - Measurements" severity="info">
+          This supports real-time event streams in core. This feature is under heavy development. Expect the
           interfaces and structures to change as this becomes more production ready.
         </Alert>
       </>
@@ -480,7 +480,7 @@ export class UnthemedQueryEditor extends PureComponent<Props, State> {
     return (
       <>
         {queryType === GrafanaQueryType.Search && (
-          <Alert title="Grafana Search" severity="info">
+          <Alert title="Search" severity="info">
             Using this datasource to call the new search system is experimental, and subject to change at any time
             without notice.
           </Alert>

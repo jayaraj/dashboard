@@ -214,16 +214,7 @@ function ShareLinkTabRenderer({ model }: SceneComponentProps<ShareLinkTab>) {
           bottomSpacing={0}
         >
           <Trans i18nKey="share-modal.link.render-instructions">
-            To render a panel image, you must install the
-            <a
-              href="https://grafana.com/grafana/plugins/grafana-image-renderer"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="external-link"
-            >
-              Grafana image renderer plugin
-            </a>
-            . Please contact your Grafana administrator to install the plugin.
+            To render a panel image, Please contact your administrator to install the plugin.
           </Trans>
         </Alert>
       )}

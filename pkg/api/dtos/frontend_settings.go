@@ -146,6 +146,9 @@ type FrontendSettingsDTO struct {
 	LiveEnabled                bool                             `json:"liveEnabled"`
 	AutoAssignOrg              bool                             `json:"autoAssignOrg"`
 
+	LoginTitle string `json:"loginTitle"`
+	AppTitle   string `json:"appTitle,omitempty"`
+
 	VerifyEmailEnabled  bool `json:"verifyEmailEnabled"`
 	SigV4AuthEnabled    bool `json:"sigV4AuthEnabled"`
 	AzureAuthEnabled    bool `json:"azureAuthEnabled"`

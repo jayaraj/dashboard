@@ -149,7 +149,7 @@ var (
 	usersWriterRole = RoleDTO{
 		Name:        "fixed:users:writer",
 		DisplayName: "User writer",
-		Description: "Read and update all attributes and settings for all users in Grafana: update user information, read user information, create or enable or disable a user, make a user a Grafana administrator, sign out a user, update a user’s authentication token, or update quotas for all users.",
+		Description: "Read and update all attributes and settings for all users: update user information, read user information, create or enable or disable a user, make a user an administrator, sign out a user, update a user’s authentication token, or update quotas for all users.",
 		Group:       "User administration (global)",
 		Permissions: ConcatPermissions(usersReaderRole.Permissions, []Permission{
 			{

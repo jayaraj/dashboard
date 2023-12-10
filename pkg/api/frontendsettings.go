@@ -53,7 +53,7 @@ func (hs *HTTPServer) getFrontendSettings(c *contextmodel.ReqContext) (*dtos.Fro
 		return nil, err
 	}
 
-	defaultDS := "-- Grafana --"
+	defaultDS := "-- Datasource --"
 	for n, ds := range dataSources {
 		if ds.IsDefault {
 			defaultDS = n
@@ -110,6 +110,8 @@ func (hs *HTTPServer) getFrontendSettings(c *contextmodel.ReqContext) (*dtos.Fro
 		Apps:                                apps,
 		AppUrl:                              hs.Cfg.AppURL,
 		AppSubUrl:                           hs.Cfg.AppSubURL,
+		AppTitle:                            hs.Cfg.AppTitle,
+		LoginTitle:                          hs.Cfg.LoginTitle,
 		AllowOrgCreate:                      (setting.AllowUserOrgCreate && c.IsSignedIn) || c.IsGrafanaAdmin,
 		AuthProxyEnabled:                    hs.Cfg.AuthProxyEnabled,
 		LdapEnabled:                         hs.Cfg.LDAPAuthEnabled,

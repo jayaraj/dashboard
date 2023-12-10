@@ -87,7 +87,7 @@ describe('AnnotationsSettings', () => {
     setup(dashboard);
 
     expect(screen.queryByRole('grid')).toBeInTheDocument();
-    expect(screen.getByRole('row', { name: /annotations & alerts \(built-in\) -- grafana --/i })).toBeInTheDocument();
+    expect(screen.getByRole('row', { name: /annotations & alerts \(built-in\) -- Datasource --/i })).toBeInTheDocument();
 
     expect(
       screen.getByTestId(selectors.components.CallToActionCard.buttonV2('Add annotation query'))

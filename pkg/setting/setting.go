@@ -55,6 +55,12 @@ const (
 const zoneInfo = "ZONEINFO"
 
 var (
+	// Grafo settings.
+	AppTitle     string
+	LoginTitle   string
+	NatsHost     string
+	NatsPassword string
+
 	// App settings.
 	Env              = Dev
 	AppUrl           string
@@ -150,6 +156,12 @@ type Cfg struct {
 	Target []string
 	Raw    *ini.File
 	Logger log.Logger
+
+	// Grafo settings.
+	AppTitle     string
+	LoginTitle   string
+	NatsHost     string
+	NatsPassword string
 
 	// HTTP Server Settings
 	CertFile         string
@@ -1065,6 +1077,14 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	//nolint:staticcheck
 	cfg.ForceMigration = iniFile.Section("").Key("force_migration").MustBool(false)
 	InstanceName = valueAsString(iniFile.Section(""), "instance_name", "unknown_instance_name")
+	AppTitle = valueAsString(iniFile.Section(""), "app_title", "Dashboard")
+	cfg.AppTitle = AppTitle
+	LoginTitle = valueAsString(iniFile.Section(""), "login_title", "Welcome to Dashboard")
+	cfg.LoginTitle = LoginTitle
+	NatsHost = valueAsString(iniFile.Section(""), "nats_host", "nats://localhost:4222")
+	cfg.NatsHost = NatsHost
+	NatsPassword = valueAsString(iniFile.Section(""), "nats_password", "test")
+	cfg.NatsPassword = NatsPassword
 	plugins := valueAsString(iniFile.Section("paths"), "plugins", "")
 	cfg.PluginsPath = makeAbsolute(plugins, HomePath)
 	cfg.BundledPluginsPath = makeAbsolute("plugins-bundled", HomePath)

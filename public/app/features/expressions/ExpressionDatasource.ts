@@ -74,13 +74,13 @@ export const instanceSettings: DataSourceInstanceSettings = {
     id: ExpressionDatasourceRef.type,
     info: {
       author: {
-        name: 'Grafana Labs',
+        name: 'Dashboard',
       },
       logos: {
         small: 'public/img/icn-datasource.svg',
         large: 'public/img/icn-datasource.svg',
       },
-      description: 'Adds expression support to Grafana',
+      description: 'Adds expression support',
       screenshots: [],
       links: [],
       updated: '',

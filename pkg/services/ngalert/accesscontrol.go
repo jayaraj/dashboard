@@ -60,7 +60,7 @@ var (
 		Role: accesscontrol.RoleDTO{
 			Name:        accesscontrol.FixedRolePrefix + "alerting.instances:reader",
 			DisplayName: "Instances and Silences Reader",
-			Description: "Read instances and silences of Grafana and external providers",
+			Description: "Read instances and silences of Dashboard and external providers",
 			Group:       AlertRolesGroup,
 			Permissions: []accesscontrol.Permission{
 				{
@@ -78,7 +78,7 @@ var (
 		Role: accesscontrol.RoleDTO{
 			Name:        accesscontrol.FixedRolePrefix + "alerting.instances:writer",
 			DisplayName: "Silences Writer",
-			Description: "Add and update silences in Grafana and external providers",
+			Description: "Add and update silences in Dashboard and external providers",
 			Group:       AlertRolesGroup,
 			Permissions: accesscontrol.ConcatPermissions(instancesReaderRole.Role.Permissions, []accesscontrol.Permission{
 				{
@@ -99,7 +99,7 @@ var (
 		Role: accesscontrol.RoleDTO{
 			Name:        accesscontrol.FixedRolePrefix + "alerting.notifications:reader",
 			DisplayName: "Notifications Reader",
-			Description: "Read notification policies and contact points in Grafana and external providers",
+			Description: "Read notification policies and contact points in dashboard & external providers",
 			Group:       AlertRolesGroup,
 			Permissions: []accesscontrol.Permission{
 				{
@@ -117,7 +117,7 @@ var (
 		Role: accesscontrol.RoleDTO{
 			Name:        accesscontrol.FixedRolePrefix + "alerting.notifications:writer",
 			DisplayName: "Notifications Writer",
-			Description: "Add, update, and delete contact points and notification policies in Grafana and external providers",
+			Description: "Add, update, and delete contact points and notification policies and external providers",
 			Group:       AlertRolesGroup,
 			Permissions: accesscontrol.ConcatPermissions(notificationsReaderRole.Role.Permissions, []accesscontrol.Permission{
 				{
@@ -135,7 +135,7 @@ var (
 		Role: accesscontrol.RoleDTO{
 			Name:        accesscontrol.FixedRolePrefix + "alerting:reader",
 			DisplayName: "Full read-only access",
-			Description: "Read alert rules, instances, silences, contact points, and notification policies in Grafana and all external providers",
+			Description: "Read alert rules, instances, silences, contact points, and notification policies and all external providers",
 			Group:       AlertRolesGroup,
 			Permissions: accesscontrol.ConcatPermissions(rulesReaderRole.Role.Permissions, instancesReaderRole.Role.Permissions, notificationsReaderRole.Role.Permissions),
 		},
@@ -146,7 +146,7 @@ var (
 		Role: accesscontrol.RoleDTO{
 			Name:        accesscontrol.FixedRolePrefix + "alerting:writer",
 			DisplayName: "Full access",
-			Description: "Add,update and delete alert rules, instances, silences, contact points, and notification policies in Grafana and all external providers",
+			Description: "Add,update and delete alert rules, instances, silences, contact points, and notification policies and all external providers",
 			Group:       AlertRolesGroup,
 			Permissions: accesscontrol.ConcatPermissions(rulesWriterRole.Role.Permissions, instancesWriterRole.Role.Permissions, notificationsWriterRole.Role.Permissions),
 		},

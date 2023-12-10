@@ -178,7 +178,7 @@ function buildTestScene(options: SceneOptions) {
             builtIn: 1,
             datasource: {
               type: 'grafana',
-              uid: '-- Grafana --',
+              uid: '-- Datasource --',
             },
             enable: options.builtInAnnotationsEnabled ?? false,
             hide: true,

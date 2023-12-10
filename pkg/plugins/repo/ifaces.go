@@ -93,5 +93,5 @@ func (co CompatOpts) String() string {
 		return co.system.OSAndArch()
 	}
 
-	return fmt.Sprintf("Grafana v%s %s", grafanaVersion, co.system.OSAndArch())
+	return fmt.Sprintf("Dashboard v%s %s", grafanaVersion, co.system.OSAndArch())
 }

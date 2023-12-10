@@ -72,12 +72,12 @@ export const WithRowExpansion: StoryFn<typeof InteractiveTable> = (args) => {
     {
       datasource: 'Loki',
       repo: 'https://github.com/grafana/loki',
-      description: 'Like Prometheus but for logs. OSS logging solution from Grafana Labs.',
+      description: 'Like Prometheus but for logs. OSS logging solution from Dashboard.',
     },
     {
       datasource: 'Tempo',
       repo: 'https://github.com/grafana/tempo',
-      description: 'High volume, minimal dependency trace storage. OSS tracing solution from Grafana Labs.',
+      description: 'High volume, minimal dependency trace storage. OSS tracing solution from Dashboard.',
     },
   ];
 

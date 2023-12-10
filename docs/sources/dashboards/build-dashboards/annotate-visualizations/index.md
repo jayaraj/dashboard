@@ -142,7 +142,7 @@ Following are some query options specific to the built-in annotation query.
 
 ### Filter queries by tag
 
-You can create new queries to fetch annotations from the built-in annotation query using the `-- Grafana --` data source by setting _Filter by_ to `Tags`.
+You can create new queries to fetch annotations from the built-in annotation query using the `-- Datasource --` data source by setting _Filter by_ to `Tags`.
 
 Grafana v8.1 and later versions also support typeahead of existing tags, provide at least one tag.
 

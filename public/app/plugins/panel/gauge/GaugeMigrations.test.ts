@@ -5,7 +5,7 @@ import { gaugePanelMigrationHandler, gaugePanelChangedHandler } from './GaugeMig
 describe('Gauge Panel Migrations', () => {
   it('from 6.1.1', () => {
     const panel = {
-      datasource: '-- Grafana --',
+      datasource: '-- Datasource --',
       gridPos: {
         h: 9,
         w: 12,

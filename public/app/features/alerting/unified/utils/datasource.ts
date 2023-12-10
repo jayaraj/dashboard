@@ -17,7 +17,7 @@ import { instancesPermissions, notificationsPermissions } from './access-control
 import { getAllDataSources } from './config';
 
 export const GRAFANA_RULES_SOURCE_NAME = 'grafana';
-export const GRAFANA_DATASOURCE_NAME = '-- Grafana --';
+export const GRAFANA_DATASOURCE_NAME = '-- Datasource --';
 
 export enum DataSourceType {
   Alertmanager = 'alertmanager',
@@ -63,7 +63,7 @@ export function getExternalDsAlertManagers() {
 
 const grafanaAlertManagerDataSource: AlertManagerDataSource = {
   name: GRAFANA_RULES_SOURCE_NAME,
-  imgUrl: 'public/img/grafana_icon.svg',
+  imgUrl: 'public/img/whitelabel/grafana_icon.svg',
   hasConfigurationAPI: true,
 };
 

@@ -16,10 +16,10 @@ func main() {
 	var nightly bool
 	var apiKey string
 
-	flag.StringVar(&version, "version", "", "Grafana version (ex: --version v5.2.0-beta1)")
+	flag.StringVar(&version, "version", "", " version (ex: --version v5.2.0-beta1)")
 	flag.StringVar(&whatsNewURL, "wn", "", "What's new url (ex: --wn http://docs.grafana.org/guides/whats-new-in-v5-2/)")
-	flag.StringVar(&releaseNotesURL, "rn", "", "Grafana version (ex: --rn https://community.grafana.com/t/release-notes-v5-2-x/7894)")
-	flag.StringVar(&apiKey, "apikey", "", "Grafana.com API key (ex: --apikey ABCDEF)")
+	flag.StringVar(&releaseNotesURL, "rn", "", " version (ex: --rn https://community.grafana.com/t/release-notes-v5-2-x/7894)")
+	flag.StringVar(&apiKey, "apikey", "", " API key (ex: --apikey ABCDEF)")
 	flag.BoolVar(&dryRun, "dry-run", false, "--dry-run")
 	flag.BoolVar(&enterprise, "enterprise", false, "--enterprise")
 	flag.BoolVar(&nightly, "nightly", false, "--nightly (default: false)")

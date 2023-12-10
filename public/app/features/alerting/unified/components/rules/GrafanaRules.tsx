@@ -48,7 +48,7 @@ export const GrafanaRules = ({ namespaces, expandAll }: Props) => {
   return (
     <section className={styles.wrapper}>
       <div className={styles.sectionHeader}>
-        <h5>Grafana</h5>
+        <h5>Dashboard</h5>
         {loading ? <LoadingPlaceholder className={styles.loader} text="Loading..." /> : <div />}
       </div>
 
