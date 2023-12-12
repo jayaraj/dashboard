@@ -29,6 +29,7 @@ func setDefaultTemplateData(cfg *setting.Cfg, data map[string]any, u *user.User)
 	data["BuildVersion"] = setting.BuildVersion
 	data["AppTitle"] = setting.AppTitle
 	data["LoginTitle"] = setting.LoginTitle
+	data["SignupText"] = setting.LoginTitle + ", please complete your sign up!"
 	data["BuildStamp"] = setting.BuildStamp
 	data["EmailCodeValidHours"] = cfg.EmailCodeValidMinutes / 60
 	data["Subject"] = map[string]any{}

@@ -6,7 +6,7 @@
   <mj-head>
     <!-- ⬇ Don't forget to specifify an email subject below! ⬇ -->
     <mj-title>
-      {{ Subject .Subject .TemplateData .LoginTitle ", please complete your sign up!" }}
+      {{ Subject .Subject .TemplateData .SignupText }}
     </mj-title>
     <mj-include path="./partials/layout/head.mjml" />
   </mj-head>

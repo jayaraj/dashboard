@@ -1,4 +1,4 @@
-{{HiddenSubject .Subject .LoginTitle ", please complete your sign up!"}}
+{{HiddenSubject .Subject .SignupText}}
 
 Complete the signup
 

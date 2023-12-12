@@ -24,9 +24,10 @@ import (
 )
 
 var skipPlugins = map[string]bool{
-	"influxdb": true, // plugin.json fails validation (defaultMatchFormat)
-	"mixed":    true, // plugin.json fails validation (mixed)
-	"opentsdb": true, // plugin.json fails validation (defaultMatchFormat)
+	"grafoservice": true,
+	"influxdb":     true, // plugin.json fails validation (defaultMatchFormat)
+	"mixed":        true, // plugin.json fails validation (mixed)
+	"opentsdb":     true, // plugin.json fails validation (defaultMatchFormat)
 }
 
 const sep = string(filepath.Separator)

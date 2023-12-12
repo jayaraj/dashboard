@@ -1,0 +1,46 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "datasource",
+  "name": "Grafoservice",
+  "id": "grafoservice",
+  "logs": true,
+  "metrics": true,
+  "info": {
+    "description": "Datasource for grafo apis",
+    "author": {
+      "name": "Grafo",
+      "url": "https://grafo.live"
+    },
+    "keywords": ["grafoservice", "datasource"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [],
+    "screenshots": [
+      {
+        "name": "Data source",
+        "path": "img/datasource.png"
+      }
+    ],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "routes": [
+    {
+      "method": "POST",
+      "path": "api",
+      "url": "{{ .JsonData.url }}/api",
+      "headers": [
+        {
+          "name": "token",
+          "content": "{{ .SecureJsonData.token }}"
+        }
+      ]
+    }
+  ],
+  "dependencies": {
+    "grafanaDependency": ">=10.0.3",
+    "plugins": []
+  }
+}
