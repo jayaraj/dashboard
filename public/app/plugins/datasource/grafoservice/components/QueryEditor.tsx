@@ -18,25 +18,7 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
   const [apis, setApis] = useState<API[]>();
   let [selectApis, setSelectApis] = useState(stringsToSelectableValues([] as string[]));
   let [selectApplications, setSelectApplications] = useState(stringsToSelectableValues([] as string[]));
-
-  useEffect(() => {
-    fetchOptions();
-  }, []);
-
-  const fetchOptions = async () => {
-    const response = await api.getOptions();
-    const applications = response.data.targets;
-    setApplications(applications);
-    const selectAppications = applications.map((a: Application) => stringToSelectableValue(a.application));
-    setSelectApplications(selectAppications);
-    const selectedApplication = applications!.find((target: Application) => target.application === queryApplication);
-    const apis = selectedApplication ? selectedApplication.apis : [];
-    setApis(apis);
-    const selectApis = selectedApplication
-      ? selectedApplication.apis.map((a: API) => stringToSelectableValue(a.name))
-      : [];
-    setSelectApis(selectApis);
-  };
+  
 
   const onQueryApplicationChange = (selectable: SelectableValue<string>) => {
     if (!selectable || !isString(selectable.value)) {
@@ -78,6 +60,24 @@ export function QueryEditor({ datasource, query, onChange, onRunQuery }: Props) 
     onChange({ ...query, queryArguments: arg });
     propagateOnRunQuery();
   };
+
+  useEffect(() => {
+    const fetchOptions =  async () => {
+      const response = await api.getOptions();
+      const applications = response.data.targets;
+      setApplications(applications);
+      const selectAppications = applications.map((a: Application) => stringToSelectableValue(a.application));
+      setSelectApplications(selectAppications);
+      const selectedApplication = applications!.find((target: Application) => target.application === queryApplication);
+      const apis = selectedApplication ? selectedApplication.apis : [];
+      setApis(apis);
+      const selectApis = selectedApplication
+        ? selectedApplication.apis.map((a: API) => stringToSelectableValue(a.name))
+        : [];
+      setSelectApis(selectApis);
+    };
+    fetchOptions();
+  }, [api, queryApplication]);
 
   return (
     <div>
