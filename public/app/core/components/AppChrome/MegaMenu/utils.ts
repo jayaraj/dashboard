@@ -4,7 +4,6 @@ import { t } from 'app/core/internationalization';
 
 import { ShowModalReactEvent } from '../../../../types/events';
 import appEvents from '../../../app_events';
-import { getFooterLinks } from '../../Footer/Footer';
 import { HelpModal } from '../../help/HelpModal';
 
 export const enrichHelpItem = (helpItem: NavModelItem) => {
@@ -16,8 +15,6 @@ export const enrichHelpItem = (helpItem: NavModelItem) => {
     };
     helpItem.children = [
       ...menuItems,
-      ...getFooterLinks(),
-      ...getEditionAndUpdateLinks(),
       {
         id: 'keyboard-shortcuts',
         text: t('nav.help/keyboard-shortcuts', 'Keyboard shortcuts'),

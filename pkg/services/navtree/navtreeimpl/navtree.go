@@ -22,7 +22,6 @@ import (
 	"github.com/grafana/grafana/pkg/services/pluginsintegration/pluginstore"
 	pref "github.com/grafana/grafana/pkg/services/preference"
 	"github.com/grafana/grafana/pkg/services/star"
-	"github.com/grafana/grafana/pkg/services/supportbundles/supportbundlesimpl"
 	"github.com/grafana/grafana/pkg/setting"
 )
 
@@ -187,22 +186,9 @@ func (s *ServiceImpl) getHomeNode(c *contextmodel.ReqContext, prefs *pref.Prefer
 	return homeNode
 }
 
-func isSupportBundlesEnabled(s *ServiceImpl) bool {
-	return s.cfg.SectionWithEnvOverrides("support_bundles").Key("enabled").MustBool(true)
-}
-
-// don't need to show the full commit hash in the UI
-// let's substring to 10 chars like local git does automatically
-func getShortCommitHash(commitHash string, maxLength int) string {
-	if len(commitHash) > maxLength {
-		return commitHash[:maxLength]
-	}
-	return commitHash
-}
-
 func (s *ServiceImpl) addHelpLinks(treeRoot *navtree.NavTreeRoot, c *contextmodel.ReqContext) {
 	if setting.HelpEnabled {
-		helpVersion := fmt.Sprintf(`%s v%s (%s)`, setting.ApplicationName, setting.BuildVersion, getShortCommitHash(setting.BuildCommit, 10))
+		helpVersion := fmt.Sprintf(`%s v%s`, setting.AppTitle, setting.BuildVersion)
 		if s.cfg.AnonymousHideVersion && !c.IsSignedIn {
 			helpVersion = setting.ApplicationName
 		}
@@ -219,23 +205,6 @@ func (s *ServiceImpl) addHelpLinks(treeRoot *navtree.NavTreeRoot, c *contextmode
 
 		treeRoot.AddSection(helpNode)
 
-		hasAccess := ac.HasAccess(s.accessControl, c)
-		supportBundleAccess := ac.EvalAny(
-			ac.EvalPermission(supportbundlesimpl.ActionRead),
-			ac.EvalPermission(supportbundlesimpl.ActionCreate),
-		)
-
-		if isSupportBundlesEnabled(s) && hasAccess(supportBundleAccess) {
-			supportBundleNode := &navtree.NavLink{
-				Text:       "Support bundles",
-				Id:         "support-bundles",
-				Url:        "/support-bundles",
-				Icon:       "wrench",
-				SortWeight: navtree.WeightHelp,
-			}
-
-			helpNode.Children = append(helpNode.Children, supportBundleNode)
-		}
 	}
 }
 

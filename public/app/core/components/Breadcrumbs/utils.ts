@@ -41,18 +41,11 @@ export function buildBreadcrumbs(sectionNav: NavModelItem, pageNav?: NavModelIte
     if (shouldAddCrumb) {
       crumbs.unshift({ text: node.text, href: node.url ?? '' });
     }
-
-    if (node.parentItem) {
-      addCrumbs(node.parentItem);
-    }
   }
 
   if (pageNav) {
     addCrumbs(pageNav);
   }
-
-  // shouldDedupe = true enables app plugins to control breadcrumbs of their root pages
-  addCrumbs(sectionNav, true);
 
   return crumbs;
 }

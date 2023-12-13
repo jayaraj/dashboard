@@ -1,0 +1,26 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "panel",
+  "id": "downlinkform",
+  "name": "Downlink Form",
+  "info": {
+    "author": {
+      "name": "Grafo",
+      "url": "https://grafo.live"
+    },
+    "description": "Form to send downlink messages to services",
+    "keywords": ["form", "downlink"],
+    "links": [],
+    "logos": {
+      "large": "img/logo.svg",
+      "small": "img/logo.svg"
+    },
+    "screenshots": [],
+    "updated": "%TODAY%",
+    "version": "%VERSION%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=10.0.3",
+    "plugins": []
+  }
+}

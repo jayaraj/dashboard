@@ -50,9 +50,11 @@ import * as annoListPanel from 'app/plugins/panel/annolist/module';
 import * as barChartPanel from 'app/plugins/panel/barchart/module';
 import * as barGaugePanel from 'app/plugins/panel/bargauge/module';
 import * as candlestickPanel from 'app/plugins/panel/candlestick/module';
+import * as csvButton from 'app/plugins/panel/csvbutton/module';
 import * as dashListPanel from 'app/plugins/panel/dashlist/module';
 import * as dataGridPanel from 'app/plugins/panel/datagrid/module';
 import * as debugPanel from 'app/plugins/panel/debug/module';
+import * as downlinkform from 'app/plugins/panel/downlinkform/module';
 import * as flamegraphPanel from 'app/plugins/panel/flamegraph/module';
 import * as gaugePanel from 'app/plugins/panel/gauge/module';
 import * as gettingStartedPanel from 'app/plugins/panel/gettingstarted/module';
@@ -142,6 +144,8 @@ const builtInPlugins: Record<string, System.Module | (() => Promise<System.Modul
   'core:plugin/nodeGraph': nodeGraph,
   'core:plugin/histogram': histogramPanel,
   'core:plugin/alertGroups': alertGroupsPanel,
+  'core:plugin/csvbutton': csvButton,
+  'core:plugin/downlinkform': downlinkform,
 };
 
 export default builtInPlugins;
