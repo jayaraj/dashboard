@@ -60,15 +60,15 @@ func (ss *SqlStore) GetDataSource(ctx context.Context, query *datasources.GetDat
 }
 
 func (ss *SqlStore) getDataSource(ctx context.Context, query *datasources.GetDataSourceQuery, sess *db.Session) (*datasources.DataSource, error) {
-	if query.OrgID == 0 || (query.ID == 0 && len(query.Name) == 0 && len(query.UID) == 0) {
+	if query.ID == 0 && len(query.Name) == 0 && len(query.UID) == 0 {
 		return nil, datasources.ErrDataSourceIdentifierNotSet
 	}
 
-	datasource := &datasources.DataSource{Name: query.Name, OrgID: query.OrgID, ID: query.ID, UID: query.UID}
+	datasource := &datasources.DataSource{Name: query.Name, ID: query.ID, UID: query.UID}
 	has, err := sess.Get(datasource)
 
 	if err != nil {
-		ss.logger.Error("Failed getting data source", "err", err, "uid", query.UID, "id", query.ID, "name", query.Name, "orgId", query.OrgID)
+		ss.logger.Error("Failed getting data source", "err", err, "uid", query.UID, "id", query.ID, "name", query.Name)
 		return nil, err
 	} else if !has {
 		return nil, datasources.ErrDataSourceNotFound
@@ -84,9 +84,9 @@ func (ss *SqlStore) GetDataSources(ctx context.Context, query *datasources.GetDa
 	)
 	return dataSources, ss.db.WithDbSession(ctx, func(dbSess *db.Session) error {
 		if query.DataSourceLimit <= 0 {
-			sess = dbSess.Where("org_id=?", query.OrgID).Asc("name")
+			sess = dbSess.Asc("name")
 		} else {
-			sess = dbSess.Limit(query.DataSourceLimit, 0).Where("org_id=?", query.OrgID).Asc("name")
+			sess = dbSess.Limit(query.DataSourceLimit, 0).Asc("name")
 		}
 
 		return sess.Find(&dataSources)
@@ -117,10 +117,6 @@ func (ss *SqlStore) GetDataSourcesByType(ctx context.Context, query *datasources
 
 	dataSources := make([]*datasources.DataSource, 0)
 	return dataSources, ss.db.WithDbSession(ctx, func(sess *db.Session) error {
-		if query.OrgID > 0 {
-			args = append([]interface{}{query.OrgID}, args...)
-			return sess.Where("org_id=? AND "+typeQuery, args...).Asc("id").Find(&dataSources)
-		}
 		return sess.Where(typeQuery, args...).Asc("id").Find(&dataSources)
 	})
 }
@@ -129,7 +125,7 @@ func (ss *SqlStore) GetDataSourcesByType(ctx context.Context, query *datasources
 func (ss *SqlStore) GetDefaultDataSource(ctx context.Context, query *datasources.GetDefaultDataSourceQuery) (*datasources.DataSource, error) {
 	dataSource := datasources.DataSource{}
 	return &dataSource, ss.db.WithDbSession(ctx, func(sess *db.Session) error {
-		exists, err := sess.Where("org_id=? AND is_default=?", query.OrgID, true).Get(&dataSource)
+		exists, err := sess.Where("is_default=?", true).Get(&dataSource)
 
 		if !exists {
 			return datasources.ErrDataSourceNotFound
@@ -143,7 +139,7 @@ func (ss *SqlStore) GetDefaultDataSource(ctx context.Context, query *datasources
 // and is added to the bus. It also removes permissions related to the datasource.
 func (ss *SqlStore) DeleteDataSource(ctx context.Context, cmd *datasources.DeleteDataSourceCommand) error {
 	return ss.db.WithTransactionalDbSession(ctx, func(sess *db.Session) error {
-		dsQuery := &datasources.GetDataSourceQuery{ID: cmd.ID, UID: cmd.UID, Name: cmd.Name, OrgID: cmd.OrgID}
+		dsQuery := &datasources.GetDataSourceQuery{ID: cmd.ID, UID: cmd.UID, Name: cmd.Name}
 		ds, errGettingDS := ss.getDataSource(ctx, dsQuery, sess)
 
 		if errGettingDS != nil && !errors.Is(errGettingDS, datasources.ErrDataSourceNotFound) {
@@ -152,7 +148,7 @@ func (ss *SqlStore) DeleteDataSource(ctx context.Context, cmd *datasources.Delet
 
 		if ds != nil {
 			// Delete the data source
-			result, err := sess.Exec("DELETE FROM data_source WHERE org_id=? AND id=?", ds.OrgID, ds.ID)
+			result, err := sess.Exec("DELETE FROM data_source WHERE id=?", ds.ID)
 			if err != nil {
 				return err
 			}
@@ -168,7 +164,7 @@ func (ss *SqlStore) DeleteDataSource(ctx context.Context, cmd *datasources.Delet
 
 		if cmd.UpdateSecretFn != nil {
 			if err := cmd.UpdateSecretFn(); err != nil {
-				ss.logger.Error("Failed to update datasource secrets -- rolling back update", "UID", cmd.UID, "name", cmd.Name, "orgId", cmd.OrgID)
+				ss.logger.Error("Failed to update datasource secrets -- rolling back update", "UID", cmd.UID, "name", cmd.Name)
 				return err
 			}
 		}
@@ -370,13 +366,9 @@ func (ss *SqlStore) UpdateDataSource(ctx context.Context, cmd *datasources.Updat
 			updateSession = sess.Where("id=? and org_id=?", ds.ID, ds.OrgID)
 		}
 
-		affected, err := updateSession.Update(ds)
+		_, err := updateSession.Update(ds)
 		if err != nil {
 			return err
-		}
-
-		if affected == 0 {
-			return datasources.ErrDataSourceUpdatingOldVersion
 		}
 
 		err = updateIsDefaultFlag(ds, sess)
@@ -400,7 +392,7 @@ func generateNewDatasourceUid(sess *db.Session, orgId int64) (string, error) {
 	for i := 0; i < 3; i++ {
 		uid := generateNewUid()
 
-		exists, err := sess.Where("org_id=? AND uid=?", orgId, uid).Get(&datasources.DataSource{})
+		exists, err := sess.Where("uid=?", uid).Get(&datasources.DataSource{})
 		if err != nil {
 			return "", err
 		}
