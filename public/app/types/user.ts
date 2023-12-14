@@ -12,6 +12,7 @@ export interface OrgUser extends WithAccessControlMetadata {
   name: string;
   orgId: number;
   role: OrgRole;
+  phone: string;
   // RBAC roles
   roles?: Role[];
   userId: number;
@@ -28,6 +29,7 @@ export interface User {
   email: string;
   name: string;
   orgId?: number;
+  phone: string;
 }
 
 export type Unit = { name: string; url: string };
@@ -37,6 +39,7 @@ export interface UserDTO extends WithAccessControlMetadata {
   login: string;
   email: string;
   name: string;
+  phone: string;
   isGrafanaAdmin: boolean;
   isDisabled: boolean;
   isAdmin?: boolean;

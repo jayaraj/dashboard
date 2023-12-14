@@ -38,6 +38,7 @@ func (ss *xormStore) CreateTempUser(ctx context.Context, cmd *tempuser.CreateTem
 		user := &tempuser.TempUser{
 			Email:           cmd.Email,
 			Name:            cmd.Name,
+			Phone:           cmd.Phone,
 			OrgID:           cmd.OrgID,
 			Code:            cmd.Code,
 			Role:            cmd.Role,
@@ -87,6 +88,7 @@ func (ss *xormStore) GetTempUsersQuery(ctx context.Context, query *tempuser.GetT
 									tu.role           as role,
 									tu.code           as code,
 									tu.status         as status,
+									tu.phone          as phone,
 									tu.email_sent     as email_sent,
 									tu.email_sent_on  as email_sent_on,
 									tu.created				as created,
@@ -132,6 +134,7 @@ func (ss *xormStore) GetTempUserByCode(ctx context.Context, query *tempuser.GetT
 	                tu.org_id         as org_id,
 	                tu.email          as email,
 									tu.name           as name,
+									tu.phone          as phone,
 									tu.role           as role,
 									tu.code           as code,
 									tu.status         as status,

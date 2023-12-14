@@ -99,6 +99,12 @@ export const OrgUsersTable = ({
         sortType: 'string',
       },
       {
+        id: 'phone',
+        header: 'Phone',
+        cell: ({ cell: { value } }: Cell<'phone'>) => value,
+        sortType: 'string',
+      },
+      {
         id: 'name',
         header: 'Name',
         cell: ({ cell: { value } }: Cell<'name'>) => value,

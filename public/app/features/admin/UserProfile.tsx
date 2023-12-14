@@ -55,6 +55,13 @@ export function UserProfile({
     });
   };
 
+  const onUserPhoneChange = (newValue: string) => {
+    onUserUpdate({
+      ...user,
+      phone: newValue,
+    });
+  };
+
   const onUserEmailChange = (newValue: string) => {
     onUserUpdate({
       ...user,
@@ -106,6 +113,13 @@ export function UserProfile({
                 locked={editLocked}
                 lockMessage={lockMessage}
                 onChange={onUserLoginChange}
+              />
+              <UserProfileRow
+                label="Phone"
+                value={user.phone}
+                locked={editLocked}
+                lockMessage={''}
+                onChange={onUserPhoneChange}
               />
               <UserProfileRow
                 label="Password"

@@ -71,6 +71,7 @@ func (ss *SQLStore) createUser(ctx context.Context, sess *DBSession, args user.C
 		Login:      args.Login,
 		IsAdmin:    args.IsAdmin,
 		OrgID:      orgID,
+		Phone:      args.Phone,
 		Created:    time.Now(),
 		Updated:    time.Now(),
 		LastSeenAt: time.Now().AddDate(-10, 0, 0),
@@ -107,6 +108,7 @@ func (ss *SQLStore) createUser(ctx context.Context, sess *DBSession, args user.C
 		Name:      usr.Name,
 		Login:     usr.Login,
 		Email:     usr.Email,
+		Phone:     usr.Phone,
 	})
 
 	orgUser := org.OrgUser{

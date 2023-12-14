@@ -57,6 +57,7 @@ func (hs *HTTPServer) SignUp(c *contextmodel.ReqContext) response.Response {
 	cmd := tempuser.CreateTempUserCommand{}
 	cmd.OrgID = -1
 	cmd.Email = form.Email
+	cmd.Phone = form.Phone
 	cmd.Status = tempuser.TmpUserSignUpStarted
 	cmd.InvitedByUserID = userID
 	cmd.Code, err = util.GetRandomString(20)
@@ -97,6 +98,7 @@ func (hs *HTTPServer) SignUpStep2(c *contextmodel.ReqContext) response.Response 
 		Email:    form.Email,
 		Login:    form.Username,
 		Name:     form.Name,
+		Phone:    form.Phone,
 		Password: form.Password,
 		OrgName:  form.OrgName,
 	}

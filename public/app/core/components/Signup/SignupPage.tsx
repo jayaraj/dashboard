@@ -18,6 +18,7 @@ interface SignupDTO {
   password: string;
   code: string;
   confirm?: string;
+  phone?: string;
 }
 
 interface QueryParams {
@@ -43,6 +44,7 @@ export const SignupPage = (props: Props) => {
         orgName: formData.orgName,
         password: formData.password,
         name: formData.name,
+        phone: formData.phone,
       })
       .catch((err) => {
         const msg = err.data?.message || err;
@@ -68,6 +70,14 @@ export const SignupPage = (props: Props) => {
             <>
               <Field label="Your name">
                 <Input id="user-name" {...register('name')} placeholder="(optional)" />
+              </Field>
+              <Field label="Your phone number">
+                <Input id="user-phone" {...register('phone', {
+                    pattern: {
+                      value: /^(\+[0-9]{1,3}|0[0-9]{1,3})[0-9]{10}$/,
+                      message: 'Phone is invalid',
+                    },
+                  })} placeholder="(optional) +(cc)(10 dig) / 0(cc)(10 dig)" />
               </Field>
               <Field label="Email" invalid={!!errors.email} error={errors.email?.message}>
                 <Input

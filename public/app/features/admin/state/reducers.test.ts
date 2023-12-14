@@ -59,6 +59,7 @@ const getTestUser = (): UserDTO => ({
   email: 'user@localhost',
   login: 'user',
   name: 'User',
+  phone: '',
   avatarUrl: '',
   isGrafanaAdmin: false,
   isDisabled: false,

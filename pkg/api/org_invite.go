@@ -274,6 +274,7 @@ func (hs *HTTPServer) CompleteInvite(c *contextmodel.ReqContext) response.Respon
 		Email:        completeInvite.Email,
 		Name:         completeInvite.Name,
 		Login:        completeInvite.Username,
+		Phone:        completeInvite.Phone,
 		Password:     completeInvite.Password,
 		SkipOrgSetup: true,
 	}

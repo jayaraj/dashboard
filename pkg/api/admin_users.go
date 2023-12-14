@@ -54,6 +54,7 @@ func (hs *HTTPServer) AdminCreateUser(c *contextmodel.ReqContext) response.Respo
 		Email:    form.Email,
 		Password: form.Password,
 		Name:     form.Name,
+		Phone:    form.Phone,
 		OrgID:    form.OrgId,
 	}
 

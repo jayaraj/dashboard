@@ -32,11 +32,11 @@ type TempUser struct {
 	Role            org.RoleType
 	InvitedByUserID int64 `xorm:"invited_by_user_id"`
 	Status          TempUserStatus
-
-	EmailSent   bool
-	EmailSentOn time.Time
-	Code        string
-	RemoteAddr  string
+	Phone           string
+	EmailSent       bool
+	EmailSentOn     time.Time
+	Code            string
+	RemoteAddr      string
 
 	Created int64
 	Updated int64
@@ -54,6 +54,7 @@ type CreateTempUserCommand struct {
 	Code            string
 	Role            org.RoleType
 	RemoteAddr      string
+	Phone           string
 }
 
 type UpdateTempUserStatusCommand struct {
@@ -86,6 +87,7 @@ type TempUserDTO struct {
 	OrgID          int64          `json:"orgId" xorm:"org_id"`
 	Name           string         `json:"name"`
 	Email          string         `json:"email"`
+	Phone          string         `json:"phone"`
 	Role           org.RoleType   `json:"role"`
 	InvitedByLogin string         `json:"invitedByLogin"`
 	InvitedByEmail string         `json:"invitedByEmail"`

@@ -50,6 +50,7 @@ type CurrentUser struct {
 	AuthenticatedBy            string             `json:"authenticatedBy"`
 	Permissions                UserPermissionsMap `json:"permissions,omitempty"`
 	Analytics                  AnalyticsSettings  `json:"analytics"`
+	Phone                      string             `json:"phone"`
 }
 
 type AnalyticsSettings struct {

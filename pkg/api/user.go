@@ -111,6 +111,7 @@ func (hs *HTTPServer) GetUserByLoginOrEmail(c *contextmodel.ReqContext) response
 		Email:          usr.Email,
 		Login:          usr.Login,
 		Theme:          usr.Theme,
+		Phone:          usr.Phone,
 		IsGrafanaAdmin: usr.IsAdmin,
 		OrgID:          usr.OrgID,
 		UpdatedAt:      usr.Updated,

@@ -42,7 +42,9 @@ export const TopSearchBar = React.memo(function TopSearchBar() {
         <OrganizationSwitcher />
       </TopSearchBarSection>
 
-      <TopSearchBarSection></TopSearchBarSection>
+      <TopSearchBarSection>
+        {}
+      </TopSearchBarSection>
 
       <TopSearchBarSection align="right">
         <QuickAdd />

@@ -71,7 +71,7 @@ export const CustomCodeEditor: React.FC<Props> = ({ value, item, onChange }) => 
       <CodeEditor
         language={language}
         showLineNumbers={true}
-        showMiniMap={value && value.length > 100}
+        showMiniMap={(value && value.length > 100)? true: false}
         value={value}
         height={`${CodeEditorHeight}px`}
         onBlur={(code) => {

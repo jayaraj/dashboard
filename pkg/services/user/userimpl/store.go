@@ -73,6 +73,7 @@ func (ss *sqlStore) Insert(ctx context.Context, cmd *user.User) (int64, error) {
 			Name:      cmd.Name,
 			Login:     cmd.Login,
 			Email:     cmd.Email,
+			Phone:     cmd.Phone,
 		})
 		return nil
 	})
@@ -330,6 +331,7 @@ func (ss *sqlStore) Update(ctx context.Context, cmd *user.UpdateUserCommand) err
 			Name:    cmd.Name,
 			Email:   cmd.Email,
 			Login:   cmd.Login,
+			Phone:   cmd.Phone,
 			Theme:   cmd.Theme,
 			Updated: time.Now(),
 		}
@@ -350,6 +352,7 @@ func (ss *sqlStore) Update(ctx context.Context, cmd *user.UpdateUserCommand) err
 			Name:      user.Name,
 			Login:     user.Login,
 			Email:     user.Email,
+			Phone:     user.Phone,
 		})
 
 		return nil
@@ -396,6 +399,7 @@ func (ss *sqlStore) GetSignedInUser(ctx context.Context, query *user.GetSignedIn
 		u.is_admin            as is_grafana_admin,
 		u.email               as email,
 		u.login               as login,
+		u.phone               as phone,
 		u.name                as name,
 		u.is_disabled         as is_disabled,
 		u.help_flags1         as help_flags1,
@@ -469,6 +473,7 @@ func (ss *sqlStore) GetProfile(ctx context.Context, query *user.GetUserProfileQu
 			Name:           usr.Name,
 			Email:          usr.Email,
 			Login:          usr.Login,
+			Phone:          usr.Phone,
 			Theme:          usr.Theme,
 			IsGrafanaAdmin: usr.IsAdmin,
 			IsDisabled:     usr.IsDisabled,
@@ -678,7 +683,7 @@ func (ss *sqlStore) Search(ctx context.Context, query *user.SearchUsersQuery) (*
 			sess.Limit(query.Limit, offset)
 		}
 
-		sess.Cols("u.id", "u.email", "u.name", "u.login", "u.is_admin", "u.is_disabled", "u.last_seen_at", "user_auth.auth_module")
+		sess.Cols("u.id", "u.email", "u.name", "u.phone", "u.login", "u.is_admin", "u.is_disabled", "u.last_seen_at", "user_auth.auth_module")
 
 		if len(query.SortOpts) > 0 {
 			for i := range query.SortOpts {

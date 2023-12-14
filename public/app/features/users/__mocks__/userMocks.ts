@@ -26,6 +26,7 @@ export const getMockUsers = (amount: number): OrgUser[] => {
       login: `user-${i}`,
       orgId: 1,
       role: 'Admin',
+      phone: '',
       userId: i,
       isDisabled: false,
       authLabels: [],

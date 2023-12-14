@@ -66,7 +66,7 @@ export const ForgottenPassword = () => {
             </LinkButton>
           </HorizontalGroup>
 
-          <p className={styles}>Did you forget your username or email? Contact your Grafana administrator.</p>
+          <p className={styles}>Did you forget your username or email? Contact your administrator.</p>
         </>
       )}
     </Form>

@@ -18,6 +18,7 @@ export class User implements Omit<CurrentUserInternal, 'lightTheme'> {
   login: string;
   email: string;
   name: string;
+  phone: string;
   externalUserId: string;
   theme: string;
   orgCount: number;
@@ -53,6 +54,7 @@ export class User implements Omit<CurrentUserInternal, 'lightTheme'> {
     this.theme = 'dark';
     this.hasEditPermissionInFolders = false;
     this.email = '';
+    this.phone = '';
     this.name = '';
     this.locale = '';
     this.language = '';

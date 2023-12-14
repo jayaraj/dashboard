@@ -26,6 +26,7 @@ type User struct {
 	Name          string
 	Login         string
 	Password      string
+	Phone         string
 	Salt          string
 	Rands         string
 	Company       string
@@ -48,6 +49,7 @@ type CreateUserCommand struct {
 	Login            string
 	Name             string
 	Company          string
+	Phone            string
 	OrgID            int64
 	OrgName          string
 	Password         string
@@ -72,6 +74,7 @@ type UpdateUserCommand struct {
 	Email string `json:"email"`
 	Login string `json:"login"`
 	Theme string `json:"theme"`
+	Phone string `json:"phone"`
 
 	UserID int64 `json:"-"`
 }
@@ -125,6 +128,7 @@ type UserSearchHitDTO struct {
 	LastSeenAtAge string               `json:"lastSeenAtAge"`
 	AuthLabels    []string             `json:"authLabels"`
 	AuthModule    AuthModuleConversion `json:"-"`
+	Phone         string               `json:"phone"`
 }
 
 type GetUserProfileQuery struct {
@@ -148,6 +152,7 @@ type UserProfileDTO struct {
 	CreatedAt                      time.Time       `json:"createdAt"`
 	AvatarURL                      string          `json:"avatarUrl"`
 	AccessControl                  map[string]bool `json:"accessControl,omitempty"`
+	Phone                          string          `json:"phone"`
 }
 
 // implement Conversion interface to define custom field mapping (xorm feature)

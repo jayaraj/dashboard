@@ -13,6 +13,7 @@ type InviteInfo struct {
 	Email     string `json:"email"`
 	Name      string `json:"name"`
 	Username  string `json:"username"`
+	Phone     string `json:"phone"`
 	InvitedBy string `json:"invitedBy"`
 }
 
@@ -22,5 +23,6 @@ type CompleteInviteForm struct {
 	Name            string `json:"name"`
 	Username        string `json:"username"`
 	Password        string `json:"password"`
+	Phone           string `json:"phone"`
 	ConfirmPassword string `json:"confirmPassword"`
 }

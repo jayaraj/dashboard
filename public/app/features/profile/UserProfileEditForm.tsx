@@ -72,6 +72,21 @@ export const UserProfileEditForm = ({ user, isSavingUser, updateProfile }: Props
                   suffix={<InputSuffix />}
                 />
               </Field>
+
+              <Field label={t('user-profile.fields.phone-label', 'Phone') + lockMessage} disabled={disabledEdit}>
+              <Input
+                {...register('phone', {
+                    pattern: {
+                      value: /^(\+[0-9]{1,3}|0[0-9]{1,3})[0-9]{10}$/,
+                      message: 'Phone is invalid',
+                    },
+                  })}
+                id="edit-user-profile-phone"
+                defaultValue={user?.phone ?? ''}
+                placeholder={'+(cc)(10 dig) / 0(cc)(10 dig)'}
+                suffix={<InputSuffix />}
+              />
+            </Field>
             </FieldSet>
             <Button
               variant="primary"
