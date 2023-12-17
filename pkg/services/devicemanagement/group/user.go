@@ -62,7 +62,7 @@ func (service *Service) AddGroupUser(c *contextmodel.ReqContext) response.Respon
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 	}
 	if err := web.Bind(c.Req, &orgUser); err != nil {

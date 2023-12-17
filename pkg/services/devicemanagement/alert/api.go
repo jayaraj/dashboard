@@ -1,0 +1,57 @@
+package alert
+
+import (
+	"github.com/grafana/grafana/pkg/api"
+	"github.com/grafana/grafana/pkg/api/routing"
+	"github.com/grafana/grafana/pkg/services/accesscontrol"
+)
+
+func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRegister routing.RouteRegister) {
+	authorize := accesscontrol.Middleware(service.accessControl)
+
+	ReadPageAccess := accesscontrol.EvalAll(
+		accesscontrol.EvalAny(
+			accesscontrol.EvalPermission(ActionDefinitionRead),
+			accesscontrol.EvalPermission(ActionDefinitionCreate),
+			accesscontrol.EvalPermission(ActionDefinitionDelete),
+			accesscontrol.EvalPermission(ActionDefinitionWrite),
+		),
+	)
+	NewPageAccess := accesscontrol.EvalAll(
+		accesscontrol.EvalPermission(ActionDefinitionDelete),
+		accesscontrol.EvalPermission(ActionDefinitionCreate),
+	)
+	EditPageAccess := accesscontrol.EvalAll(
+		accesscontrol.EvalPermission(ActionDefinitionRead),
+		accesscontrol.EvalPermission(ActionDefinitionWrite),
+	)
+
+	//UI
+	routeRegister.Get("/org/alertdefinitions", authorize(ReadPageAccess), httpServer.Index)
+	routeRegister.Get("/org/alertdefinitions/edit/*", authorize(EditPageAccess), httpServer.Index)
+	routeRegister.Get("/org/alertdefinitions/new", authorize(NewPageAccess), httpServer.Index)
+
+	//APIs
+	routeRegister.Group("api/alertdefinitions", func(alertdefinitionsRoute routing.RouteRegister) {
+		alertdefinitionsRoute.Put("/:alertDefinitionId", authorize(accesscontrol.EvalPermission(ActionDefinitionWrite)), routing.Wrap(service.UpdateAlertDefinition))
+		alertdefinitionsRoute.Get("/:alertDefinitionId", authorize(accesscontrol.EvalPermission(ActionDefinitionRead)), routing.Wrap(service.GetAlertDefinitionById))
+		alertdefinitionsRoute.Get("/search", authorize(accesscontrol.EvalPermission(ActionDefinitionRead)), routing.Wrap(service.SearchAlertDefinitions))
+	})
+
+	routeRegister.Group("api/grafoalerts", func(alertsRoute routing.RouteRegister) {
+		alertsRoute.Put("/configuration", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.ConfigureAlert))
+		alertsRoute.Put("/enabled", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.EnabledAlert))
+		alertsRoute.Get("/search", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.SearchAlerts))
+		alertsRoute.Get("/:name", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetGrafoAlert))
+	})
+
+	routeRegister.Group("api/alertnotifications", func(alertsRoute routing.RouteRegister) {
+		alertsRoute.Post("/", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.UpdateOrCreateAlertNotification))
+		alertsRoute.Get("/:name", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetAlertNotification))
+	})
+
+	routeRegister.Group("api/notifications", func(alertsRoute routing.RouteRegister) {
+		alertsRoute.Get("/whatsapp", authorize(accesscontrol.EvalPermission(ActionNotificationRead)), routing.Wrap(service.GetWhatsapp))
+	})
+
+}

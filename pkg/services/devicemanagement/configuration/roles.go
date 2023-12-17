@@ -36,7 +36,7 @@ func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {
 				{Action: ActionWrite, Scope: ScopeAll},
 			},
 		},
-		Grants: []string{string(accesscontrol.RoleGrafanaAdmin)},
+		Grants: []string{accesscontrol.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	configurationsWriterRole := accesscontrol.RoleRegistration{
@@ -51,7 +51,7 @@ func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {
 				{Action: ActionWrite, Scope: ScopeAll},
 			},
 		},
-		Grants: []string{string(accesscontrol.RoleGrafanaAdmin)},
+		Grants: []string{accesscontrol.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	orgConfigurationsWriterRole := accesscontrol.RoleRegistration{

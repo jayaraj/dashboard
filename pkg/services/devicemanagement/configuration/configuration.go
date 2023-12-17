@@ -24,7 +24,7 @@ func (service *Service) IsConfigurationAccessible(c *contextmodel.ReqContext, as
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 	}
 	//GetCache
@@ -60,7 +60,7 @@ func (service *Service) CreateConfigurationType(c *contextmodel.ReqContext) resp
 	if err := web.Bind(c.Req, &dto); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
 	}
-	dto.Role = devicemanagement.ConvertRoleToString(c)
+	dto.Role = devicemanagement.ConvertRoleToStringFromCtx(c)
 	body, err := json.Marshal(dto)
 	if err != nil {
 		return response.Error(500, "failed marshal create", err)
@@ -99,7 +99,7 @@ func (service *Service) UpdateConfigurationType(c *contextmodel.ReqContext) resp
 	if err := web.Bind(c.Req, &dto); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
 	}
-	dto.Role = devicemanagement.ConvertRoleToString(c)
+	dto.Role = devicemanagement.ConvertRoleToStringFromCtx(c)
 	body, err := json.Marshal(dto)
 	if err != nil {
 		return response.Error(500, "failed marshal update", err)
@@ -196,7 +196,7 @@ func (service *Service) SearchConfigurationType(c *contextmodel.ReqContext) resp
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 	}
 	body, err := json.Marshal(dto)
@@ -249,7 +249,7 @@ func (service *Service) GetConfigurationTypesWithAssociationTypes(c *contextmode
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 	}
 	body, err := json.Marshal(dto)

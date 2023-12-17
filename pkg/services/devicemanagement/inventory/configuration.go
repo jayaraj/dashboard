@@ -66,7 +66,7 @@ func (service *Service) GetInventoryConfiguration(c *contextmodel.ReqContext) re
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 	}
 	body, err := json.Marshal(dto)

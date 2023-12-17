@@ -27,7 +27,7 @@ func (service *Service) PostResourceHistoryData(c *contextmodel.ReqContext) resp
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 		UUID: uuid,
 	}

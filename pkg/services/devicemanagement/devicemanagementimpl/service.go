@@ -7,6 +7,7 @@ import (
 	"github.com/grafana/grafana/pkg/infra/remotecache"
 	"github.com/grafana/grafana/pkg/services/accesscontrol"
 	"github.com/grafana/grafana/pkg/services/devicemanagement"
+	"github.com/grafana/grafana/pkg/services/devicemanagement/alert"
 	"github.com/grafana/grafana/pkg/services/devicemanagement/configuration"
 	"github.com/grafana/grafana/pkg/services/devicemanagement/fileloader"
 	"github.com/grafana/grafana/pkg/services/devicemanagement/group"
@@ -67,6 +68,9 @@ func ProvideService(cfg *setting.Cfg, ac accesscontrol.AccessControl, acService 
 	}
 	if err = fileloader.ProvideService(cfg, service, ac, acService, hs, routeRegister); err != nil {
 		return nil, errors.Wrap(err, "failed to start file loader")
+	}
+	if err = alert.ProvideService(cfg, service, ac, acService, hs, routeRegister); err != nil {
+		return nil, errors.Wrap(err, "failed to start alerts")
 	}
 	return service, nil
 }

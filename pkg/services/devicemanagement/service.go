@@ -39,6 +39,8 @@ type DeviceManagementService interface {
 
 type GroupService interface {
 	IsGroupAccessible(c *contextmodel.ReqContext) (bool, int64)
+	IsGroupAccessibleById(c *contextmodel.ReqContext, id int64) bool
+	IsGroupPathAccessible(c *contextmodel.ReqContext, groupPath string) bool
 }
 
 type ResourceService interface {
@@ -47,16 +49,20 @@ type ResourceService interface {
 	GetResourceByUUID(ctx context.Context, uuid string) (resource.Resource, error)
 }
 
-func ConvertRoleToString(c *contextmodel.ReqContext) string {
+func ConvertRoleToStringFromCtx(c *contextmodel.ReqContext) string {
 	if c.IsGrafanaAdmin {
 		return "ROLE_SUPERADMIN"
 	}
+	return ConvertRoleToString(c.OrgRole)
+}
+
+func ConvertRoleToString(role roletype.RoleType) string {
 	return map[roletype.RoleType]string{
 		roletype.RoleViewer:     "ROLE_VIEWER",
 		roletype.RoleEditor:     "ROLE_EDITOR",
 		roletype.RoleAdmin:      "ROLE_ADMIN",
 		roletype.RoleSuperAdmin: "ROLE_SUPERADMIN",
-	}[c.OrgRole]
+	}[role]
 }
 
 func ConvertStringToRole(role string) roletype.RoleType {

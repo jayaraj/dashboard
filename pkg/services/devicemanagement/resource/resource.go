@@ -34,7 +34,7 @@ func (service *Service) IsResourceAccessibleById(c *contextmodel.ReqContext, id 
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 	}
 	//GetCache
@@ -140,7 +140,7 @@ func (service *Service) SearchResources(c *contextmodel.ReqContext) response.Res
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 	}
 	body, err := json.Marshal(dto)

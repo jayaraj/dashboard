@@ -20,10 +20,10 @@ func (service *Service) IsGroupAccessible(c *contextmodel.ReqContext) (bool, int
 	if err != nil {
 		return false, 0
 	}
-	return service.isGroupAccessible(c, id), id
+	return service.IsGroupAccessibleById(c, id), id
 }
 
-func (service *Service) isGroupAccessible(c *contextmodel.ReqContext, id int64) bool {
+func (service *Service) IsGroupAccessibleById(c *contextmodel.ReqContext, id int64) bool {
 	if c.IsGrafanaAdmin {
 		return true
 	}
@@ -32,7 +32,7 @@ func (service *Service) isGroupAccessible(c *contextmodel.ReqContext, id int64) 
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 	}
 	//GetCache
@@ -58,6 +58,46 @@ func (service *Service) isGroupAccessible(c *contextmodel.ReqContext, id int64) 
 		dto.Result = true
 	}
 
+	//SetCache
+	service.devMgmt.SetCache(c.Req.Context(), cacheKey, dto.Result)
+	return dto.Result
+}
+
+func (service *Service) IsGroupPathAccessible(c *contextmodel.ReqContext, groupPath string) bool {
+	if c.IsGrafanaAdmin {
+		return true
+	}
+	dto := resource.IsGroupPathAccessibleMsg{
+		GroupPath: groupPath,
+		User: resource.User{
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
+		},
+	}
+	//GetCache
+	cacheKey := fmt.Sprintf("isgrouppathaccessible-%s-%d", groupPath, c.UserID)
+	if err := service.devMgmt.GetCache(c.Req.Context(), cacheKey, &dto.Result); err == nil {
+		return dto.Result
+	}
+	body, err := json.Marshal(dto)
+	if err != nil {
+		return false
+	}
+	url := fmt.Sprintf("%sapi/groups/path/access", service.cfg.ResourceHost)
+	req := &devicemanagement.RestRequest{
+		Url:        url,
+		Request:    body,
+		HttpMethod: http.MethodPost,
+	}
+	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
+		service.log.Error(err.Error())
+		return false
+	}
+
+	if req.StatusCode == http.StatusOK {
+		dto.Result = true
+	}
 	//SetCache
 	service.devMgmt.SetCache(c.Req.Context(), cacheKey, dto.Result)
 	return dto.Result
@@ -113,7 +153,7 @@ func (service *Service) GetGroups(c *contextmodel.ReqContext) response.Response 
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 		Page:    int64(page),
 		PerPage: int64(perPage),
@@ -161,7 +201,7 @@ func (service *Service) GetGroupsByType(c *contextmodel.ReqContext) response.Res
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 		Page:    int64(page),
 		PerPage: int64(perPage),
@@ -220,7 +260,7 @@ func (service *Service) GetGroupById(c *contextmodel.ReqContext) response.Respon
 
 	//check parent group accessiblity
 	if *dto.Result.Parent != -1 {
-		if !service.isGroupAccessible(c, *dto.Result.Parent) {
+		if !service.IsGroupAccessibleById(c, *dto.Result.Parent) {
 			*dto.Result.Parent = -1
 		}
 	}
@@ -295,7 +335,7 @@ func (service *Service) GetGroupParent(c *contextmodel.ReqContext) response.Resp
 		User: resource.User{
 			UserId: c.UserID,
 			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToString(c),
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
 		},
 	}
 	body, err := json.Marshal(dto)
