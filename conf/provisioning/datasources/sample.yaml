@@ -5,12 +5,11 @@ datasources:
   - name: WaterAPIs
     type: grafoservice
     access: proxy
-    url: ${WATERAPIS_URL}
     withCredentials: false
     jsonData:
-      httpHeaderName1: "token"
+      url: ${WATERAPIS_URL}
     secureJsonData:
-      httpHeaderValue1: ${WATERAPIS_TOKEN}
+      token: ${WATERAPIS_TOKEN}
     version: 1
     editable: false
   - name: Influxservice
