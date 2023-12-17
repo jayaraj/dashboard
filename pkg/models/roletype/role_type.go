@@ -9,17 +9,19 @@ import (
 type RoleType string
 
 const (
-	RoleNone   RoleType = "None"
-	RoleViewer RoleType = "Viewer"
-	RoleEditor RoleType = "Editor"
-	RoleAdmin  RoleType = "Admin"
+	RoleNone       RoleType = "None"
+	RoleViewer     RoleType = "Viewer"
+	RoleEditor     RoleType = "Editor"
+	RoleAdmin      RoleType = "Admin"
+	RoleSuperAdmin RoleType = "SuperAdmin"
 )
 
 var rolePrecedence = map[RoleType]int{
-	RoleNone:   10,
-	RoleViewer: 20,
-	RoleEditor: 30,
-	RoleAdmin:  40,
+	RoleNone:       10,
+	RoleViewer:     20,
+	RoleEditor:     30,
+	RoleAdmin:      40,
+	RoleSuperAdmin: 50,
 }
 
 // Needed to keep stable order
@@ -28,6 +30,7 @@ var roleOrder = [...]RoleType{
 	RoleViewer,
 	RoleEditor,
 	RoleAdmin,
+	RoleSuperAdmin,
 }
 
 func (r RoleType) IsValid() bool {

@@ -477,7 +477,30 @@ require (
 
 require (
 	github.com/google/gnostic-models v0.6.8 // indirect
+	github.com/google/subcommands v1.0.1 // indirect
+	github.com/jayaraj/infra v0.0.0-20231127053519-889b80ef0122
 	github.com/matttproud/golang_protobuf_extensions/v2 v2.0.0 // indirect
+)
+
+require (
+	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/gin-gonic/gin v1.8.1 // indirect
+	github.com/go-playground/locales v0.14.0 // indirect
+	github.com/go-playground/universal-translator v0.18.0 // indirect
+	github.com/go-playground/validator/v10 v10.11.1 // indirect
+	github.com/jayaraj/messages v0.0.0-20231216190310-adc589d84658
+	github.com/leodido/go-urn v1.2.1 // indirect
+	github.com/nats-io/nats.go v1.14.0 // indirect
+	github.com/nats-io/nkeys v0.3.0 // indirect
+	github.com/nats-io/nuid v1.0.1 // indirect
+	github.com/pelletier/go-toml/v2 v2.0.5 // indirect
+	github.com/spf13/viper v1.14.0 // indirect
+	github.com/ugorji/go/codec v1.2.7 // indirect
+)
+
+require (
+	github.com/brocaar/chirpstack-api/go/v3 v3.12.5 // indirect
+	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 )
 
 // Use fork of crewjam/saml with fixes for some issues until changes get merged into upstream

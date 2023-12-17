@@ -56,10 +56,16 @@ const zoneInfo = "ZONEINFO"
 
 var (
 	// Grafo settings.
-	AppTitle     string
-	LoginTitle   string
-	NatsHost     string
-	NatsPassword string
+	AppTitle      string
+	LoginTitle    string
+	ServiceToken  string
+	NatsHost      string
+	NatsGroup     string
+	NatsPrefix    string
+	ResourceHost  string
+	AlertHost     string
+	ResourceTitle string
+	GroupTitle    string
 
 	// App settings.
 	Env              = Dev
@@ -158,10 +164,16 @@ type Cfg struct {
 	Logger log.Logger
 
 	// Grafo settings.
-	AppTitle     string
-	LoginTitle   string
-	NatsHost     string
-	NatsPassword string
+	AppTitle      string
+	LoginTitle    string
+	NatsHost      string
+	ServiceToken  string
+	NatsGroup     string
+	NatsPrefix    string
+	ResourceHost  string
+	AlertHost     string
+	ResourceTitle string
+	GroupTitle    string
 
 	// HTTP Server Settings
 	CertFile         string
@@ -1077,14 +1089,29 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	//nolint:staticcheck
 	cfg.ForceMigration = iniFile.Section("").Key("force_migration").MustBool(false)
 	InstanceName = valueAsString(iniFile.Section(""), "instance_name", "unknown_instance_name")
+
+	//Grafo settings
 	AppTitle = valueAsString(iniFile.Section(""), "app_title", "Dashboard")
 	cfg.AppTitle = AppTitle
 	LoginTitle = valueAsString(iniFile.Section(""), "login_title", "Welcome to Dashboard")
 	cfg.LoginTitle = LoginTitle
 	NatsHost = valueAsString(iniFile.Section(""), "nats_host", "nats://localhost:4222")
 	cfg.NatsHost = NatsHost
-	NatsPassword = valueAsString(iniFile.Section(""), "nats_password", "test")
-	cfg.NatsPassword = NatsPassword
+	ServiceToken = valueAsString(iniFile.Section(""), "service_token", "test")
+	cfg.ServiceToken = ServiceToken
+	NatsGroup = valueAsString(iniFile.Section(""), "nats_group", "users_group")
+	cfg.NatsGroup = NatsGroup
+	NatsPrefix = valueAsString(iniFile.Section(""), "nats_prefix", "users")
+	cfg.NatsPrefix = NatsPrefix
+	ResourceHost = valueAsString(iniFile.Section(""), "resource_host", "http://localhost:9002")
+	cfg.ResourceHost = ResourceHost
+	AlertHost = valueAsString(iniFile.Section(""), "alert_host", "http://localhost:9006")
+	cfg.AlertHost = AlertHost
+	ResourceTitle = valueAsString(iniFile.Section(""), "resource_title", "Asset")
+	cfg.ResourceTitle = ResourceTitle
+	GroupTitle = valueAsString(iniFile.Section(""), "group_title", "Group")
+	cfg.GroupTitle = GroupTitle
+
 	plugins := valueAsString(iniFile.Section("paths"), "plugins", "")
 	cfg.PluginsPath = makeAbsolute(plugins, HomePath)
 	cfg.BundledPluginsPath = makeAbsolute("plugins-bundled", HomePath)

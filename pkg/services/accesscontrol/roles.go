@@ -378,6 +378,17 @@ func (m *RegistrationList) Range(f func(registration RoleRegistration) bool) {
 
 func BuildBasicRoleDefinitions() map[string]*RoleDTO {
 	return map[string]*RoleDTO{
+		string(org.RoleSuperAdmin): {
+			Name:        BasicRolePrefix + "superadmin",
+			UID:         BasicRoleUIDPrefix + "super_admin",
+			OrgID:       GlobalOrgID,
+			Version:     1,
+			DisplayName: string(org.RoleSuperAdmin),
+			Description: "Super Admin role",
+			Group:       "Basic",
+			Permissions: []Permission{},
+			Hidden:      true,
+		},
 		string(org.RoleAdmin): {
 			Name:        BasicRolePrefix + "admin",
 			UID:         BasicRoleUIDPrefix + "admin",

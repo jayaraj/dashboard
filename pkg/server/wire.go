@@ -61,6 +61,7 @@ import (
 	"github.com/grafana/grafana/pkg/services/datasourceproxy"
 	"github.com/grafana/grafana/pkg/services/datasources"
 	datasourceservice "github.com/grafana/grafana/pkg/services/datasources/service"
+	"github.com/grafana/grafana/pkg/services/devicemanagement/devicemanagementimpl"
 	"github.com/grafana/grafana/pkg/services/encryption"
 	encryptionservice "github.com/grafana/grafana/pkg/services/encryption/service"
 	"github.com/grafana/grafana/pkg/services/extsvcauth"
@@ -383,6 +384,7 @@ var wireBasicSet = wire.NewSet(
 	wire.Bind(new(auth.IDService), new(*idimpl.Service)),
 	grafanaapiserver.WireSet,
 	apiregistry.WireSet,
+	devicemanagementimpl.ProvideService,
 )
 
 var wireSet = wire.NewSet(

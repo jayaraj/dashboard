@@ -22,6 +22,7 @@ import (
 	"github.com/grafana/grafana/pkg/infra/usagestats/statscollector"
 	"github.com/grafana/grafana/pkg/registry"
 	"github.com/grafana/grafana/pkg/services/accesscontrol"
+	"github.com/grafana/grafana/pkg/services/devicemanagement"
 	"github.com/grafana/grafana/pkg/services/provisioning"
 	"github.com/grafana/grafana/pkg/setting"
 )
@@ -40,7 +41,7 @@ type Options struct {
 func New(opts Options, cfg *setting.Cfg, httpServer *api.HTTPServer, roleRegistry accesscontrol.RoleRegistry,
 	provisioningService provisioning.ProvisioningService, backgroundServiceProvider registry.BackgroundServiceRegistry,
 	usageStatsProvidersRegistry registry.UsageStatsProvidersRegistry, statsCollectorService *statscollector.Service,
-	promReg prometheus.Registerer,
+	promReg prometheus.Registerer, devMgmt devicemanagement.DeviceManagementService,
 ) (*Server, error) {
 	statsCollectorService.RegisterProviders(usageStatsProvidersRegistry.GetServices())
 	s, err := newServer(opts, cfg, httpServer, roleRegistry, provisioningService, backgroundServiceProvider, promReg)
