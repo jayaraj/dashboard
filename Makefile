@@ -160,6 +160,13 @@ build-plugin-go: ## Build decoupled plugins
 build: build-go build-js ## Build backend and frontend.
 
 run: $(BRA) ## Build and run web server on filesystem changes.
+	@APP_TITLE="Grafo" LOGIN_TITLE="Welcome to Grafo" NATS_HOST="http://localhost:4222" NATS_GROUP="users_group" NATS_PREFIX="users" \
+	SERVICE_TOKEN=""  \
+	RESOURCE_HOST="http://localhost:9002/" ALERT_HOST="http://localhost:9006/" RESOURCE_TITLE="Asset" GROUP_TITLE="Group" PROTOCOL="http" PORT="3000" ROOT_URL="http://localhost:3000/" \
+	CERT_FILE="" CERT_KEY="" POSTGRES_HOST="localhost:5432" POSTGRES_DB="dashboard" POSTGRES_USER="postgres" POSTGRES_PASSWORD="" \
+	REDIS_HOST="localhost:6379" REDIS_PASSWORD="" ADMIN_USER="admin" ADMIN_PASSWORD="" SMTP_HOST="locahost:587" \
+	SMTP_USER="test@yahoo.com" SMTP_PWD="" SMTP_FROM="system@grafo.live" WATERAPIS_URL="http://localhost:9006/" \
+	WATERAPIS_TOKEN="" INFLUX_URL="localhost:8086" INFLUX_TOKEN="" INFLUX_ORG="grafo" \
 	$(BRA) run
 
 run-frontend: deps-js ## Fetch js dependencies and watch frontend for rebuild
