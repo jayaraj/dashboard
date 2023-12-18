@@ -5,6 +5,7 @@ export enum TeamPermissionLevel {
   Editor = 2,
   Member = 0,
   Viewer = 1,
+  SuperAdmin = 5,
 }
 
 export { OrgRole as OrgRole };
@@ -13,6 +14,7 @@ export enum PermissionLevelString {
   View = 'View',
   Edit = 'Edit',
   Admin = 'Admin',
+  SuperAdmin = 'SuperAdmin',
 }
 
 export enum SearchQueryType {

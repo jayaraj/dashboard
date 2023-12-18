@@ -43,12 +43,14 @@ func ProvideService(cfg *setting.Cfg, ac accesscontrol.AccessControl, acService 
 		log:   log.New("devicemanagement.service"),
 	}
 
+	//Sync Messages
 	var syncMessages = map[string]NATS.NatsHandler{}
 	for key, value := range syncMessages {
 		if err := n.RegisterNatsHandlers(key, value); err != nil {
 			return nil, errors.Wrap(err, "failed to register sync message handlers")
 		}
 	}
+
 	var err error
 	//Initialize services
 	if service.resource, err = resource.ProvideService(cfg, service, ac, acService, hs, routeRegister); err != nil {
@@ -71,6 +73,10 @@ func ProvideService(cfg *setting.Cfg, ac accesscontrol.AccessControl, acService 
 	}
 	if err = alert.ProvideService(cfg, service, ac, acService, hs, routeRegister); err != nil {
 		return nil, errors.Wrap(err, "failed to start alerts")
+	}
+	if err := n.Init(); err != nil {
+		service.log.Error("nats init failed: ", err.Error())
+		return service, err
 	}
 	return service, nil
 }

@@ -22,11 +22,8 @@ export function EntityNotFound({ entity = 'Page' }: Props) {
         We&apos;re looking but can&apos;t seem to find this {entity.toLowerCase()}. Try returning{' '}
         <a href="/" className="external-link">
           home
-        </a>{' '}
-        or seeking help on the{' '}
-        <a href="https://community.grafana.com" target="_blank" rel="noreferrer" className="external-link">
-          community site.
         </a>
+        .
       </div>
       <div className={styles.grot}>
         <img src={`public/img/grot-404-${theme.isDark ? 'dark' : 'light'}.svg`} width="100%" alt="grot" />

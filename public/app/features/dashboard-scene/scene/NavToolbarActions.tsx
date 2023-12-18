@@ -5,6 +5,7 @@ import { Button } from '@grafana/ui';
 import { AppChromeUpdate } from 'app/core/components/AppChrome/AppChromeUpdate';
 import { NavToolbarSeparator } from 'app/core/components/AppChrome/NavToolbar/NavToolbarSeparator';
 import { t } from 'app/core/internationalization';
+import { contextSrv } from 'app/core/services/context_srv';
 import { DashNavButton } from 'app/features/dashboard/components/DashNav/DashNavButton';
 
 import { ShareModal } from '../sharing/ShareModal';
@@ -20,7 +21,7 @@ export const NavToolbarActions = React.memo<Props>(({ dashboard }) => {
   const { actions = [], isEditing, viewPanelScene, isDirty, uid, meta, editview } = dashboard.useState();
   const toolbarActions = (actions ?? []).map((action) => <action.Component key={action.state.key} model={action} />);
 
-  if (uid && !editview) {
+  if (uid && !editview && contextSrv.isGrafanaAdmin) {
     if (meta.canStar) {
       let desc = meta.isStarred
         ? t('dashboard.toolbar.unmark-favorite', 'Unmark as favorite')

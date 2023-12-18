@@ -23,6 +23,7 @@ import { appEvents } from 'app/core/core';
 import { useBusEvent } from 'app/core/hooks/useBusEvent';
 import { t, Trans } from 'app/core/internationalization';
 import { setStarred } from 'app/core/reducers/navBarTree';
+import { contextSrv } from 'app/core/services/context_srv';
 import AddPanelButton from 'app/features/dashboard/components/AddPanelButton/AddPanelButton';
 import { SaveDashboardDrawer } from 'app/features/dashboard/components/SaveDashboard/SaveDashboardDrawer';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
@@ -173,7 +174,7 @@ export const DashNav = React.memo<Props>((props) => {
       return [];
     }
 
-    if (canStar) {
+    if (canStar && contextSrv.isGrafanaAdmin) {
       let desc = isStarred
         ? t('dashboard.toolbar.unmark-favorite', 'Unmark as favorite')
         : t('dashboard.toolbar.mark-favorite', 'Mark as favorite');
@@ -189,7 +190,7 @@ export const DashNav = React.memo<Props>((props) => {
       );
     }
 
-    if (canShare) {
+    if (canShare && contextSrv.isGrafanaAdmin) {
       buttons.push(<ShareButton key="button-share" dashboard={dashboard} />);
     }
 

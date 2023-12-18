@@ -1,0 +1,17 @@
+{
+  "type": "panel",
+  "name": "Group by Type Picker",
+  "id": "groupbytypepicker",
+
+  "info": {
+    "description": "Group type picker for resources",
+    "author": {
+      "name": "Group by Type Picker",
+      "url": "https://www.grafo.com"
+    },
+    "logos": {
+      "small": "img/icn-groupbytypepicker-panel.svg",
+      "large": "img/icn-groupbytypepicker-panel.svg"
+    }
+  }
+}

@@ -7,7 +7,6 @@ import { getAppEvents, getTemplateSrv, locationService, RefreshEvent, getBackend
 import { Alert, Button, ButtonGroup, ConfirmModal, FieldSet, useTheme2 } from '@grafana/ui';
 import { contextSrv } from 'app/core/services/context_srv';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
-import { AccessControlAction } from 'app/types';
 
 import { ButtonVariant, LayoutVariant, RequestMethod, FormElementType } from '../../constants';
 import { getStyles } from '../../styles';
@@ -38,7 +37,7 @@ export const FormPanel: React.FC<Props> = ({
   const [updateConfirmation, setUpdateConfirmation] = useState(false);
   const [updated, setUpdated] = useState(false);
 
-  const canWrite = contextSrv.hasPermission(AccessControlAction.ActionResourcesWrite);
+  const canWrite = contextSrv.hasPermission('resources:write');
   const dashboard = getDashboardSrv().getCurrent();
   const refresh = debounce(() => dashboard?.startRefresh(), 500);
 
