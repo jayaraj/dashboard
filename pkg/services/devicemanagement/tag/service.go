@@ -27,6 +27,6 @@ func ProvideService(cfg *setting.Cfg, devMgmt devicemanagement.DeviceManagementS
 		return err
 	}
 	service.registerAPIEndpoints(hs, routeRegister)
-	service.log.Info("Loaded tags......")
+	service.log.Info("Loaded tags")
 	return nil
 }

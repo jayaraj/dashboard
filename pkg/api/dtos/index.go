@@ -27,6 +27,8 @@ type IndexViewData struct {
 	AppleTouchIcon                      template.URL
 	AppTitle                            string
 	LoginTitle                          string
+	ResourceTitle                       string
+	GroupTitle                          string
 	ContentDeliveryURL                  string
 	LoadingLogo                         template.URL
 	CSPContent                          string

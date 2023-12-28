@@ -155,7 +155,7 @@ func (service *Service) SearchCsv(c *contextmodel.ReqContext) response.Response 
 }
 
 func (service *Service) GetCsvErrorsById(c *contextmodel.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":bulkId"], 10, 64)
+	id, err := strconv.ParseInt(web.Params(c.Req)[":id"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}

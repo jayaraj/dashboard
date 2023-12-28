@@ -9,27 +9,10 @@ import (
 func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRegister routing.RouteRegister) {
 	authorize := accesscontrol.Middleware(service.accessControl)
 
-	ReadPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalAny(
-			accesscontrol.EvalPermission(ActionRead),
-			accesscontrol.EvalPermission(ActionCreate),
-			accesscontrol.EvalPermission(ActionDelete),
-			accesscontrol.EvalPermission(ActionWrite),
-		),
-	)
-	NewPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalPermission(ActionDelete),
-		accesscontrol.EvalPermission(ActionCreate),
-	)
-	EditPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalPermission(ActionRead),
-		accesscontrol.EvalPermission(ActionWrite),
-	)
-
 	//UI
-	routeRegister.Get("/org/inventories", authorize(ReadPageAccess), httpServer.Index)
-	routeRegister.Get("/org/inventories/edit/*", authorize(EditPageAccess), httpServer.Index)
-	routeRegister.Get("/org/inventories/new", authorize(NewPageAccess), httpServer.Index)
+	routeRegister.Get("/inventories", authorize(ReadPageAccess), httpServer.Index)
+	routeRegister.Get("/inventories/edit/*", authorize(EditPageAccess), httpServer.Index)
+	routeRegister.Get("/inventories/new", authorize(NewPageAccess), httpServer.Index)
 
 	//APIs
 	routeRegister.Group("api/inventories", func(inventoriesRoute routing.RouteRegister) {

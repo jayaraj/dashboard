@@ -44,6 +44,8 @@ export class GrafanaBootConfig implements GrafanaConfig {
   minRefreshInterval = '';
   appTitle = '';
   loginTitle = '';
+  resourceTitle = '';
+  groupTitle = '';
   appUrl = '';
   appSubUrl = '';
   namespace = 'default';

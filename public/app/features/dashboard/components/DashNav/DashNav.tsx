@@ -194,13 +194,13 @@ export const DashNav = React.memo<Props>((props) => {
       buttons.push(<ShareButton key="button-share" dashboard={dashboard} />);
     }
 
-    if (dashboard.meta.publicDashboardEnabled) {
+    if (dashboard.meta.publicDashboardEnabled && contextSrv.isGrafanaAdmin) {
       buttons.push(
         <Tag key="public-dashboard" name="Public" colorIndex={5} data-testid={selectors.publicDashboardTag}></Tag>
       );
     }
 
-    if (config.featureToggles.scenes && !dashboard.isSnapshot()) {
+    if (config.featureToggles.scenes && !dashboard.isSnapshot() && contextSrv.isGrafanaAdmin) {
       buttons.push(
         <DashNavButton
           key="button-scenes"

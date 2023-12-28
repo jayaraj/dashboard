@@ -3,6 +3,8 @@ package devicemanagementimpl
 import (
 	"github.com/grafana/grafana/pkg/api"
 	"github.com/grafana/grafana/pkg/api/routing"
+	"github.com/grafana/grafana/pkg/bus"
+	"github.com/grafana/grafana/pkg/infra/db"
 	"github.com/grafana/grafana/pkg/infra/log"
 	"github.com/grafana/grafana/pkg/infra/remotecache"
 	"github.com/grafana/grafana/pkg/services/accesscontrol"
@@ -14,9 +16,11 @@ import (
 	"github.com/grafana/grafana/pkg/services/devicemanagement/inventory"
 	"github.com/grafana/grafana/pkg/services/devicemanagement/resource"
 	"github.com/grafana/grafana/pkg/services/devicemanagement/tag"
+	User "github.com/grafana/grafana/pkg/services/devicemanagement/user"
 	"github.com/grafana/grafana/pkg/services/user"
 	"github.com/grafana/grafana/pkg/setting"
 	NATS "github.com/jayaraj/infra/nats"
+	USER "github.com/jayaraj/messages/client/user"
 	"github.com/pkg/errors"
 )
 
@@ -27,9 +31,20 @@ type Service struct {
 	cache    *remotecache.RemoteCache
 	resource devicemanagement.ResourceService
 	group    devicemanagement.GroupService
+	user     devicemanagement.UserService
 }
 
-func ProvideService(cfg *setting.Cfg, ac accesscontrol.AccessControl, acService accesscontrol.Service, hs *api.HTTPServer, routeRegister routing.RouteRegister, remoteCache *remotecache.RemoteCache, userService user.Service) (devicemanagement.DeviceManagementService, error) {
+func ProvideService(
+	db db.DB,
+	cfg *setting.Cfg,
+	ac accesscontrol.AccessControl,
+	acService accesscontrol.Service,
+	hs *api.HTTPServer,
+	routeRegister routing.RouteRegister,
+	remoteCache *remotecache.RemoteCache,
+	userService user.Service,
+	bus bus.Bus) (devicemanagement.DeviceManagementService, error) {
+
 	config := NATS.Config{
 		URL:    cfg.NatsHost,
 		Group:  cfg.NatsGroup,
@@ -41,14 +56,6 @@ func ProvideService(cfg *setting.Cfg, ac accesscontrol.AccessControl, acService 
 		nats:  n,
 		cache: remoteCache,
 		log:   log.New("devicemanagement.service"),
-	}
-
-	//Sync Messages
-	var syncMessages = map[string]NATS.NatsHandler{}
-	for key, value := range syncMessages {
-		if err := n.RegisterNatsHandlers(key, value); err != nil {
-			return nil, errors.Wrap(err, "failed to register sync message handlers")
-		}
 	}
 
 	var err error
@@ -74,9 +81,24 @@ func ProvideService(cfg *setting.Cfg, ac accesscontrol.AccessControl, acService 
 	if err = alert.ProvideService(cfg, service, ac, acService, hs, routeRegister); err != nil {
 		return nil, errors.Wrap(err, "failed to start alerts")
 	}
+	if service.user, err = User.ProvideService(db, cfg, service, bus); err != nil {
+		return nil, errors.Wrap(err, "failed to start groups")
+	}
 	if err := n.Init(); err != nil {
 		service.log.Error("nats init failed: ", err.Error())
 		return service, err
+	}
+
+	//Sync Messages
+	var syncMessages = map[string]NATS.NatsHandler{
+		USER.GetOrgUser:            &getOrgUser{user: service.user},
+		USER.SearchOrgUsers:        &searchOrgUsers{user: service.user},
+		USER.SearchUsersByOrgUsers: &searchUsersByOrgUsers{user: service.user},
+	}
+	for key, value := range syncMessages {
+		if err := n.RegisterNatsHandlers(key, value); err != nil {
+			return nil, errors.Wrap(err, "failed to register sync message handlers")
+		}
 	}
 	return service, nil
 }
@@ -86,4 +108,8 @@ func (service *Service) GetResource() devicemanagement.ResourceService {
 }
 func (service *Service) GetGroup() devicemanagement.GroupService {
 	return service.group
+}
+
+func (service *Service) GetUser() devicemanagement.UserService {
+	return service.user
 }

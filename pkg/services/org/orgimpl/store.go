@@ -605,6 +605,7 @@ func (ss *sqlStore) SearchOrgUsers(ctx context.Context, query *org.SearchOrgUser
 			"org_user.user_id",
 			"u.email",
 			"u.name",
+			"u.phone",
 			"u.login",
 			"org_user.role",
 			"u.last_seen_at",

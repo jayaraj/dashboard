@@ -16,6 +16,7 @@ import (
 	"github.com/grafana/grafana/pkg/services/auth"
 	"github.com/grafana/grafana/pkg/services/auth/identity"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
+	"github.com/grafana/grafana/pkg/services/devicemanagement"
 	"github.com/grafana/grafana/pkg/services/login"
 	"github.com/grafana/grafana/pkg/services/org"
 	"github.com/grafana/grafana/pkg/services/user"
@@ -80,6 +81,21 @@ func (hs *HTTPServer) AdminCreateUser(c *contextmodel.ReqContext) response.Respo
 	result := user.AdminCreateUserResponse{
 		Message: "User created",
 		ID:      usr.ID,
+	}
+
+	if form.OrgId != 0 {
+		if err := hs.bus.Publish(c.Req.Context(), &devicemanagement.UpdateOrgUserEvent{
+			UserId: usr.ID,
+			OrgId:  form.OrgId,
+		}); err != nil {
+			return response.Error(500, "Failed to publish update org_user event", err)
+		}
+	} else {
+		if err := hs.bus.Publish(c.Req.Context(), &devicemanagement.UpdateUserEvent{
+			UserId: usr.ID,
+		}); err != nil {
+			return response.Error(500, "Failed to publish update user event", err)
+		}
 	}
 
 	return response.JSON(http.StatusOK, result)
@@ -260,6 +276,14 @@ func (hs *HTTPServer) AdminDeleteUser(c *contextmodel.ReqContext) response.Respo
 	})
 	g.Go(func() error {
 		if err := hs.accesscontrolService.DeleteUserPermissions(ctx, accesscontrol.GlobalOrgID, cmd.UserID); err != nil {
+			return err
+		}
+		return nil
+	})
+	g.Go(func() error {
+		if err := hs.bus.Publish(c.Req.Context(), &devicemanagement.DeleteUserEvent{
+			UserId: cmd.UserID,
+		}); err != nil {
 			return err
 		}
 		return nil

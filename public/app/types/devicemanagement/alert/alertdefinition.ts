@@ -70,3 +70,11 @@ export interface AlertDefinitionsState {
 export interface AlertDefinitionState {
   alertDefinition: AlertDefinition;
 }
+
+export interface AlertDefinitionDTO {
+  page: number;
+  association?: string;
+  associationReference?: string | number;
+  state?: string;
+  query?: string;
+}

@@ -12,6 +12,7 @@ export interface Group {
   child: boolean;
   tags: string;
   groups: Group[];
+  pathname?: string;
 }
 
 export interface CreateGroupDTO {
@@ -23,6 +24,7 @@ export interface CreateGroupDTO {
 
 export interface UpdateGroupDTO {
   name: string;
+  type?: string;
   tags: string[];
 }
 

@@ -4,9 +4,10 @@ import (
 	"context"
 	"io"
 
-	"github.com/grafana/grafana/pkg/models/roletype"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
+	USER "github.com/grafana/grafana/pkg/services/user"
 	"github.com/jayaraj/messages/client/resource"
+	"github.com/jayaraj/messages/client/user"
 )
 
 type RestRequest struct {
@@ -26,6 +27,28 @@ type FileRequest struct {
 	StatusCode int
 }
 
+type UpdateUserEvent struct {
+	UserId int64
+}
+
+type UpdateOrgUserEvent struct {
+	OrgId  int64
+	UserId int64
+}
+
+type DeleteUserEvent struct {
+	UserId int64
+}
+
+type DeleteOrgEvent struct {
+	OrgId int64
+}
+
+type DeleteOrgUserEvent struct {
+	UserId int64
+	OrgId  int64
+}
+
 type DeviceManagementService interface {
 	RestRequest(ctx context.Context, request *RestRequest) (err error)
 	FileRequest(ctx context.Context, request *FileRequest) (err error)
@@ -35,6 +58,7 @@ type DeviceManagementService interface {
 	GetCache(ctx context.Context, key string, value interface{}) (err error)
 	GetResource() ResourceService
 	GetGroup() GroupService
+	GetUser() UserService
 }
 
 type GroupService interface {
@@ -49,27 +73,9 @@ type ResourceService interface {
 	GetResourceByUUID(ctx context.Context, uuid string) (resource.Resource, error)
 }
 
-func ConvertRoleToStringFromCtx(c *contextmodel.ReqContext) string {
-	if c.IsGrafanaAdmin {
-		return "ROLE_SUPERADMIN"
-	}
-	return ConvertRoleToString(c.OrgRole)
-}
-
-func ConvertRoleToString(role roletype.RoleType) string {
-	return map[roletype.RoleType]string{
-		roletype.RoleViewer:     "ROLE_VIEWER",
-		roletype.RoleEditor:     "ROLE_EDITOR",
-		roletype.RoleAdmin:      "ROLE_ADMIN",
-		roletype.RoleSuperAdmin: "ROLE_SUPERADMIN",
-	}[role]
-}
-
-func ConvertStringToRole(role string) roletype.RoleType {
-	return map[string]roletype.RoleType{
-		"ROLE_VIEWER":     roletype.RoleViewer,
-		"ROLE_EDITOR":     roletype.RoleEditor,
-		"ROLE_ADMIN":      roletype.RoleAdmin,
-		"ROLE_SUPERADMIN": roletype.RoleSuperAdmin,
-	}[role]
+type UserService interface {
+	GetOrgUser(ctx context.Context, msg *user.GetOrgUserMsg) error
+	SearchOrgUsers(ctx context.Context, msg *user.SearchOrgUsersMsg) error
+	SearchUsersByOrgUsers(ctx context.Context, msg *user.SearchUsersByOrgUsersMsg) error
+	GetUser(ctx context.Context, userId int64) (USER.UserProfileDTO, error)
 }

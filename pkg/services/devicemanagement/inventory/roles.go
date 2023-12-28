@@ -16,6 +16,25 @@ const (
 var (
 	ScopeAll      = accesscontrol.GetResourceAllScope(ScopeRoot)
 	ScopeProvider = accesscontrol.NewScopeProvider(ScopeRoot)
+
+	ReadPageAccess = accesscontrol.EvalAll(
+		accesscontrol.EvalAny(
+			accesscontrol.EvalPermission(ActionRead),
+			accesscontrol.EvalPermission(ActionCreate),
+			accesscontrol.EvalPermission(ActionDelete),
+			accesscontrol.EvalPermission(ActionWrite),
+		),
+	)
+	NewPageAccess = accesscontrol.EvalAll(
+		accesscontrol.EvalPermission(ActionDelete),
+		accesscontrol.EvalPermission(ActionCreate),
+	)
+	EditPageAccess = accesscontrol.EvalAll(
+		accesscontrol.EvalAny(
+			accesscontrol.EvalPermission(ActionRead),
+			accesscontrol.EvalPermission(ActionWrite),
+		),
+	)
 )
 
 func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {
@@ -34,37 +53,8 @@ func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {
 				{Action: ActionWrite, Scope: ScopeAll},
 			},
 		},
-		Grants: []string{string(org.RoleEditor), string(org.RoleAdmin)},
+		Grants: []string{accesscontrol.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
-	inventoriesWriterRole := accesscontrol.RoleRegistration{
-		Role: accesscontrol.RoleDTO{
-			Name:        "fixed:inventories:writer",
-			DisplayName: "Inventory writer",
-			Description: "Read, write a inventory",
-			Group:       "Inventories",
-			Version:     2,
-			Permissions: []accesscontrol.Permission{
-				{Action: ActionRead, Scope: ScopeAll},
-				{Action: ActionWrite, Scope: ScopeAll},
-			},
-		},
-		Grants: []string{string(org.RoleEditor)},
-	}
-
-	inventoriesReaderRole := accesscontrol.RoleRegistration{
-		Role: accesscontrol.RoleDTO{
-			Name:        "fixed:inventories:reader",
-			DisplayName: "Inventory reader",
-			Description: "Read inventories",
-			Group:       "Inventories",
-			Version:     2,
-			Permissions: []accesscontrol.Permission{
-				{Action: ActionRead},
-			},
-		},
-		Grants: []string{string(org.RoleViewer)},
-	}
-
-	return ac.DeclareFixedRoles(inventoriesCreatorRole, inventoriesWriterRole, inventoriesReaderRole)
+	return ac.DeclareFixedRoles(inventoriesCreatorRole)
 }

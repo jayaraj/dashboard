@@ -197,7 +197,7 @@ func (s *ServiceImpl) addPluginToSection(c *contextmodel.ReqContext, treeRoot *n
 			treeRoot.AddSection(&navtree.NavLink{
 				Text:       "Apps",
 				Icon:       "layer-group",
-				SubTitle:   "App plugins that extend the Grafana experience",
+				SubTitle:   "App plugins that extend the experience",
 				Id:         navtree.NavIDApps,
 				Children:   []*navtree.NavLink{appLink},
 				SortWeight: navtree.WeightApps,
@@ -240,6 +240,12 @@ func (s *ServiceImpl) addPluginToSection(c *contextmodel.ReqContext, treeRoot *n
 				treeRoot.RemoveSection(alertingNode)
 			}
 			alertsAndIncidentsChildren = append(alertsAndIncidentsChildren, appLink)
+
+			if grafoAlertsNode := treeRoot.FindById(navtree.NavIDGrafoAlerting); grafoAlertsNode != nil {
+				alertsAndIncidentsChildren = append(alertsAndIncidentsChildren, grafoAlertsNode)
+				treeRoot.RemoveSection(grafoAlertsNode)
+			}
+
 			treeRoot.AddSection(&navtree.NavLink{
 				Text:       "Alerts & IRM",
 				Id:         navtree.NavIDAlertsAndIncidents,

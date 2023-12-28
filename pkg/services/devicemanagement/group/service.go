@@ -30,6 +30,6 @@ func ProvideService(cfg *setting.Cfg, devMgmt devicemanagement.DeviceManagementS
 		return service, err
 	}
 	service.registerAPIEndpoints(hs, routeRegister)
-	service.log.Info("Loaded groups......")
+	service.log.Info("Loaded groups")
 	return service, nil
 }

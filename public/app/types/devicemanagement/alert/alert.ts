@@ -2,7 +2,7 @@ import { OrgRole } from '@grafana/data';
 
 import { AlertStats } from './alertdefinition';
 
-export const alertPageLimit = 50;
+export const alertsPageLimit = 50;
 export const ALERT_POLL_INTERVAL_MS = 60000;
 
 export enum AlertingState {
@@ -29,6 +29,7 @@ export interface Alert {
   message: string;
   description: string;
   associated_with: string;
+  association_reference: string | number;
   role: OrgRole;
   severity: string;
   for: number;
@@ -53,4 +54,37 @@ export interface AlertsState {
 
 export interface AlertState {
   alert: Alert;
+}
+
+export interface AlertsByNameDTO {
+  name: string;
+  page: number;
+  association?: string;
+  associationReference?: string | number;
+  state?: string;
+  query?: string;
+}
+
+export interface AlertsByStateDTO {
+  state: string;
+  page: number;
+  association?: string;
+  associationReference?: string | number;
+  query?: string;
+}
+
+export interface ConfigureAlertDTO {
+  name: string;
+  configuration: any;
+  association: string;
+  associationReference?: string | number;
+  alert?: Alert;
+}
+
+export interface EnableAlertDTO {
+  name: string;
+  enabled: boolean;
+  association: string;
+  associationReference?: string | number;
+  alert?: Alert;
 }

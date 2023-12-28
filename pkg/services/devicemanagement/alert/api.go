@@ -9,23 +9,6 @@ import (
 func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRegister routing.RouteRegister) {
 	authorize := accesscontrol.Middleware(service.accessControl)
 
-	ReadPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalAny(
-			accesscontrol.EvalPermission(ActionDefinitionRead),
-			accesscontrol.EvalPermission(ActionDefinitionCreate),
-			accesscontrol.EvalPermission(ActionDefinitionDelete),
-			accesscontrol.EvalPermission(ActionDefinitionWrite),
-		),
-	)
-	NewPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalPermission(ActionDefinitionDelete),
-		accesscontrol.EvalPermission(ActionDefinitionCreate),
-	)
-	EditPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalPermission(ActionDefinitionRead),
-		accesscontrol.EvalPermission(ActionDefinitionWrite),
-	)
-
 	//UI
 	routeRegister.Get("/org/alertdefinitions", authorize(ReadPageAccess), httpServer.Index)
 	routeRegister.Get("/org/alertdefinitions/edit/*", authorize(EditPageAccess), httpServer.Index)

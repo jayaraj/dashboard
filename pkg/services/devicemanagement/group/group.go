@@ -147,6 +147,9 @@ func (service *Service) GetGroups(c *contextmodel.ReqContext) response.Response 
 	if page <= 0 {
 		page = 1
 	}
+	if parent > 0 && !service.IsGroupAccessibleById(c, int64(parent)) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
 	dto := resource.GetGroupsMsg{
 		Query:  query,
 		Parent: int64(parent),
@@ -369,6 +372,12 @@ func (service *Service) GetGroupPathName(c *contextmodel.ReqContext) response.Re
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
+	dto := resource.GetGroupPathNameMsg{}
+	//GetCache
+	cacheKey := fmt.Sprintf("grouppathname-%d", id)
+	if err := service.devMgmt.GetCache(c.Req.Context(), cacheKey, &dto.Result); err == nil {
+		return response.JSON(http.StatusOK, dto.Result)
+	}
 	url := fmt.Sprintf("%sapi/groups/%d/pathname", service.cfg.ResourceHost, id)
 	req := &devicemanagement.RestRequest{
 		Url:        url,
@@ -385,14 +394,10 @@ func (service *Service) GetGroupPathName(c *contextmodel.ReqContext) response.Re
 		}
 		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
-	dto := resource.GetGroupPathNameMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
-	resp := struct {
-		Pathname string `json:"pathname"`
-	}{
-		Pathname: dto.Result,
-	}
-	return response.JSON(http.StatusOK, resp)
+	//SetCache
+	service.devMgmt.SetCache(c.Req.Context(), cacheKey, dto.Result)
+	return response.JSON(http.StatusOK, dto.Result)
 }

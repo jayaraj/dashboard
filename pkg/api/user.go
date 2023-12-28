@@ -11,6 +11,7 @@ import (
 	"github.com/grafana/grafana/pkg/api/response"
 	"github.com/grafana/grafana/pkg/services/auth/identity"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
+	"github.com/grafana/grafana/pkg/services/devicemanagement"
 	"github.com/grafana/grafana/pkg/services/login"
 	"github.com/grafana/grafana/pkg/services/org"
 	"github.com/grafana/grafana/pkg/services/team"
@@ -237,7 +238,11 @@ func (hs *HTTPServer) handleUpdateUser(ctx context.Context, cmd user.UpdateUserC
 		}
 		return response.ErrOrFallback(http.StatusInternalServerError, "Failed to update user", err)
 	}
-
+	if err := hs.bus.Publish(ctx, &devicemanagement.UpdateUserEvent{
+		UserId: cmd.UserID,
+	}); err != nil {
+		return response.Error(500, "Failed to publish update user event", err)
+	}
 	return response.Success("User updated")
 }
 

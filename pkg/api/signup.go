@@ -12,6 +12,7 @@ import (
 	"github.com/grafana/grafana/pkg/infra/metrics"
 	"github.com/grafana/grafana/pkg/services/auth/identity"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
+	"github.com/grafana/grafana/pkg/services/devicemanagement"
 	tempuser "github.com/grafana/grafana/pkg/services/temp_user"
 	"github.com/grafana/grafana/pkg/services/user"
 	"github.com/grafana/grafana/pkg/setting"
@@ -118,6 +119,13 @@ func (hs *HTTPServer) SignUpStep2(c *contextmodel.ReqContext) response.Response 
 		}
 
 		return response.Error(500, "Failed to create user", err)
+	}
+
+	if err := hs.bus.Publish(c.Req.Context(), &devicemanagement.UpdateOrgUserEvent{
+		UserId: usr.ID,
+		OrgId:  usr.OrgID,
+	}); err != nil {
+		return response.Error(500, "Failed to publish update org_user event", err)
 	}
 
 	// publish signup event

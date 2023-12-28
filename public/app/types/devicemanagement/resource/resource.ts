@@ -27,6 +27,7 @@ export interface UpdateResourceDTO {
   latitude: number;
   longitude: number;
   tags: string[];
+  type: string;
 }
 
 export interface ResourcesState {

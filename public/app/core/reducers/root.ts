@@ -13,6 +13,12 @@ import { publicDashboardApi } from 'app/features/dashboard/api/publicDashboardAp
 import panelEditorReducers from 'app/features/dashboard/components/PanelEditor/state/reducers';
 import dashboardReducers from 'app/features/dashboard/state/reducers';
 import dataSourcesReducers from 'app/features/datasources/state/reducers';
+import alertsReducer from 'app/features/devicemanagement/alerts/state/reducers';
+import configurationTypesReducers from 'app/features/devicemanagement/configurations/state/reducers';
+import csvEntriesReducers from 'app/features/devicemanagement/fileloader/state/reducers';
+import groupsReducers from 'app/features/devicemanagement/groups/state/reducers';
+import inventoriesReducers from 'app/features/devicemanagement/inventories/state/reducers';
+import resourcesReducers from 'app/features/devicemanagement/resources/state/reducers';
 import exploreReducers from 'app/features/explore/state/main';
 import foldersReducers from 'app/features/folders/state/reducers';
 import invitesReducers from 'app/features/invites/state/reducers';
@@ -52,6 +58,14 @@ const rootReducers = {
   ...templatingReducers,
   ...supportBundlesReducer,
   ...authConfigReducers,
+
+  ...resourcesReducers,
+  ...alertsReducer,
+  ...groupsReducers,
+  ...inventoriesReducers,
+  ...csvEntriesReducers,
+  ...configurationTypesReducers,
+
   plugins: pluginsReducer,
   [alertingApi.reducerPath]: alertingApi.reducer,
   [publicDashboardApi.reducerPath]: publicDashboardApi.reducer,

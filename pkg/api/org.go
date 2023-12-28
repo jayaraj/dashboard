@@ -11,6 +11,7 @@ import (
 	"github.com/grafana/grafana/pkg/infra/metrics"
 	"github.com/grafana/grafana/pkg/services/auth/identity"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
+	"github.com/grafana/grafana/pkg/services/devicemanagement"
 	"github.com/grafana/grafana/pkg/services/org"
 	"github.com/grafana/grafana/pkg/util"
 	"github.com/grafana/grafana/pkg/web"
@@ -303,6 +304,11 @@ func (hs *HTTPServer) DeleteOrgByID(c *contextmodel.ReqContext) response.Respons
 			return response.Error(http.StatusNotFound, "Failed to delete organization. ID not found", nil)
 		}
 		return response.Error(http.StatusInternalServerError, "Failed to update organization", err)
+	}
+	if err := hs.bus.Publish(c.Req.Context(), &devicemanagement.DeleteOrgEvent{
+		OrgId: orgID,
+	}); err != nil {
+		return response.Error(500, "Failed to publish delete org event", err)
 	}
 	return response.Success("Organization deleted")
 }

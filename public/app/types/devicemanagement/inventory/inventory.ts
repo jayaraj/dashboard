@@ -16,6 +16,7 @@ export interface CreateInventoryDTO {
 
 export interface UpdateInventoryDTO {
   uuid: string;
+  type?: string;
 }
 
 export interface InventoriesState {

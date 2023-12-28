@@ -15,6 +15,8 @@ const (
 	WeightSavedItems
 	WeightDashboard
 	WeightExplore
+	WeightDevicemanagement
+	WeightGrafoAlerts
 	WeightAlerting
 	WeightAlertsAndIncidents
 	WeightMonitoring
@@ -33,8 +35,10 @@ const (
 	NavIDRoot               = "root"
 	NavIDDashboards         = "dashboards/browse"
 	NavIDExplore            = "explore"
+	NavIDDeviceManagement   = "devicemanagement"
 	NavIDCfg                = "cfg" // NavIDCfg is the id for org configuration navigation node
 	NavIDAlertsAndIncidents = "alerts-and-incidents"
+	NavIDGrafoAlerting      = "grafo-alerts"
 	NavIDAlerting           = "alerting"
 	NavIDAlertingLegacy     = "alerting-legacy"
 	NavIDMonitoring         = "monitoring"
@@ -72,7 +76,8 @@ func (node *NavLink) Sort() {
 }
 
 type NavTreeRoot struct {
-	Children []*NavLink
+	Children       []*NavLink
+	IsGrafanaAdmin bool
 }
 
 func (root *NavTreeRoot) AddSection(node *NavLink) {
@@ -141,7 +146,7 @@ func (root *NavTreeRoot) ApplyAdminIA() {
 
 		generalNode := &NavLink{
 			Text:     "General",
-			SubTitle: "Manage default preferences and settings across Grafana",
+			SubTitle: "Manage default preferences and settings across Dashboard",
 			Id:       NavIDCfgGeneral,
 			Url:      "/admin/general",
 			Icon:     "shield",
@@ -166,7 +171,9 @@ func (root *NavTreeRoot) ApplyAdminIA() {
 
 		accessNodeLinks := []*NavLink{}
 		accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("global-users"))
-		accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("teams"))
+		if root.IsGrafanaAdmin {
+			accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("teams"))
+		}
 		accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("standalone-plugin-page-/a/grafana-auth-app"))
 		accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("serviceaccounts"))
 		accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("apikeys"))
@@ -193,7 +200,7 @@ func (root *NavTreeRoot) ApplyAdminIA() {
 		}
 
 		authenticationNode := root.FindById("authentication")
-		if authenticationNode != nil {
+		if root.IsGrafanaAdmin && authenticationNode != nil {
 			authenticationNode.IsSection = true
 			adminNodeLinks = append(adminNodeLinks, authenticationNode)
 		}

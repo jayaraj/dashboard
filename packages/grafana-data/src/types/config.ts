@@ -156,6 +156,8 @@ export interface GrafanaConfig {
   appSubUrl: string;
   appTitle: string;
   loginTitle: string;
+  resourceTitle: string;
+  groupTitle: string;
   windowTitlePrefix: string;
   buildInfo: BuildInfo;
   newPanelTitle: string;

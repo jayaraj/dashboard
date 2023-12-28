@@ -10,7 +10,7 @@ export interface CsvEntry {
 
 export interface CsvEntriesState {
   csvEntries: CsvEntry[];
-  csvEntryCount: number;
+  csvEntriesCount: number;
   searchQuery: string;
   searchPage: number;
   hasFetched: boolean;

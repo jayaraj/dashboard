@@ -9,23 +9,6 @@ import (
 func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRegister routing.RouteRegister) {
 	authorize := accesscontrol.Middleware(service.accessControl)
 
-	ReadPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalAny(
-			accesscontrol.EvalPermission(ActionRead),
-			accesscontrol.EvalPermission(ActionCreate),
-			accesscontrol.EvalPermission(ActionDelete),
-			accesscontrol.EvalPermission(ActionWrite),
-		),
-	)
-	NewPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalPermission(ActionDelete),
-		accesscontrol.EvalPermission(ActionCreate),
-	)
-	EditPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalPermission(ActionRead),
-		accesscontrol.EvalPermission(ActionWrite),
-	)
-
 	//UI
 	routeRegister.Get("/org/groups", authorize(ReadPageAccess), httpServer.Index)
 	routeRegister.Get("/org/groups/new", authorize(NewPageAccess), httpServer.Index)

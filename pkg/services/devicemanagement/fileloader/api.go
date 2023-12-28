@@ -9,17 +9,9 @@ import (
 func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRegister routing.RouteRegister) {
 	authorize := accesscontrol.Middleware(service.accessControl)
 
-	ReadPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalAny(
-			accesscontrol.EvalPermission(ActionCsvRead),
-			accesscontrol.EvalPermission(ActionCsvCreate),
-			accesscontrol.EvalPermission(ActionCsvDelete),
-		),
-	)
-
 	//UI
-	routeRegister.Get("/org/csventries", authorize(ReadPageAccess), httpServer.Index)
-	routeRegister.Get("/org/csventries/:id/errors", authorize(ReadPageAccess), httpServer.Index)
+	routeRegister.Get("/csventries", authorize(ReadPageAccess), httpServer.Index)
+	routeRegister.Get("/csventries/:id/errors", authorize(ReadPageAccess), httpServer.Index)
 
 	//APIs
 	routeRegister.Group("api/csventries", func(csvloaderRoute routing.RouteRegister) {

@@ -11,6 +11,7 @@ import (
 	"github.com/grafana/grafana/pkg/api/response"
 	"github.com/grafana/grafana/pkg/services/accesscontrol"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
+	"github.com/grafana/grafana/pkg/services/devicemanagement"
 	"github.com/grafana/grafana/pkg/services/login"
 	"github.com/grafana/grafana/pkg/services/org"
 	"github.com/grafana/grafana/pkg/services/searchusers/sortopts"
@@ -94,6 +95,13 @@ func (hs *HTTPServer) addOrgUserHelper(c *contextmodel.ReqContext, cmd org.AddOr
 			})
 		}
 		return response.Error(http.StatusInternalServerError, "Could not add user to organization", err)
+	}
+
+	if err := hs.bus.Publish(c.Req.Context(), &devicemanagement.UpdateOrgUserEvent{
+		UserId: cmd.UserID,
+		OrgId:  cmd.OrgID,
+	}); err != nil {
+		return response.Error(500, "Failed to publish  update org_user event", err)
 	}
 
 	return response.JSON(http.StatusOK, util.DynMap{
@@ -436,7 +444,12 @@ func (hs *HTTPServer) updateOrgUserHelper(c *contextmodel.ReqContext, cmd org.Up
 		UserID: cmd.UserID,
 		OrgID:  cmd.OrgID,
 	})
-
+	if err := hs.bus.Publish(c.Req.Context(), &devicemanagement.UpdateOrgUserEvent{
+		UserId: cmd.UserID,
+		OrgId:  cmd.OrgID,
+	}); err != nil {
+		return response.Error(500, "Failed to publish update org_user event", err)
+	}
 	return response.Success("Organization user updated")
 }
 
@@ -514,7 +527,12 @@ func (hs *HTTPServer) removeOrgUserHelper(ctx context.Context, cmd *org.RemoveOr
 	if err := hs.accesscontrolService.DeleteUserPermissions(ctx, cmd.OrgID, cmd.UserID); err != nil {
 		hs.log.Warn("failed to delete permissions for user", "userID", cmd.UserID, "orgID", cmd.OrgID, "err", err)
 	}
-
+	if err := hs.bus.Publish(ctx, &devicemanagement.DeleteOrgUserEvent{
+		UserId: cmd.UserID,
+		OrgId:  cmd.OrgID,
+	}); err != nil {
+		return response.Error(500, "Failed to publish delete org_user event", err)
+	}
 	return response.Success("User removed from organization")
 }
 

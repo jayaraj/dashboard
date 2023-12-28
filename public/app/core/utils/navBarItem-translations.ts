@@ -1,3 +1,4 @@
+import config from 'app/core/config';
 import { t } from 'app/core/internationalization';
 
 // Maps the ID of the nav item to a translated phrase to later pass to <Trans />
@@ -171,7 +172,7 @@ export function getNavTitle(navId: string | undefined) {
     case 'plugin-page-grafana-detect-app':
       return t('nav.detect.title', 'Detect');
     case 'plugin-page-grafana-quaderno-app':
-      return t('nav.grafana-quaderno.title', 'Grafana Quaderno');
+      return t('nav.grafana-quaderno.title', '{{title}} Quaderno', { title: config.appTitle });
     default:
       return undefined;
   }
@@ -218,19 +219,29 @@ export function getNavSubTitle(navId: string | undefined) {
     case 'teams':
       return t('nav.teams.subtitle', 'Groups of users that have common dashboard and permission needs');
     case 'plugins':
-      return t('nav.plugins.subtitle', 'Extend the Grafana experience with plugins');
+      return t('nav.plugins.subtitle', 'Extend the {{title}} experience with plugins', { title: config.appTitle });
     case 'org-settings':
       return t('nav.org-settings.subtitle', 'Manage preferences across an organization');
     case 'apikeys':
-      return t('nav.api-keys.subtitle', 'Manage and create API keys that are used to interact with Grafana HTTP APIs');
+      return t(
+        'nav.api-keys.subtitle',
+        'Manage and create API keys that are used to interact with {{title}} HTTP APIs',
+        { title: config.appTitle }
+      );
     case 'serviceaccounts':
-      return t('nav.service-accounts.subtitle', 'Use service accounts to run automated workloads in Grafana');
+      return t('nav.service-accounts.subtitle', 'Use service accounts to run automated workloads in {{title}}', {
+        title: config.appTitle,
+      });
     case 'global-users':
-      return t('nav.global-users.subtitle', 'Manage users in Grafana');
+      return t('nav.global-users.subtitle', 'Manage users in {{title}}', { title: config.appTitle });
     case 'global-orgs':
-      return t('nav.global-orgs.subtitle', 'Isolated instances of Grafana running on the same server');
+      return t('nav.global-orgs.subtitle', 'Isolated instances of {{title}} running on the same server', {
+        title: config.appTitle,
+      });
     case 'server-settings':
-      return t('nav.server-settings.subtitle', 'View the settings defined in your Grafana config');
+      return t('nav.server-settings.subtitle', 'View the settings defined in your {{title}} config', {
+        title: config.appTitle,
+      });
     case 'storage':
       return t('nav.storage.subtitle', 'Manage file storage');
     case 'support-bundles':
@@ -241,13 +252,15 @@ export function getNavSubTitle(navId: string | undefined) {
         'Manage server-wide settings and access to resources such as organizations, users, and licenses'
       );
     case 'cfg/general':
-      return t('nav.config-general.subtitle', 'Manage default preferences and settings across Grafana');
+      return t('nav.config-general.subtitle', 'Manage default preferences and settings across {{title}}', {
+        title: config.appTitle,
+      });
     case 'cfg/plugins':
       return t('nav.config-plugins.subtitle', 'Install plugins and define the relationships between data');
     case 'cfg/access':
       return t('nav.config-access.subtitle', 'Configure access for individual users, teams, and service accounts');
     case 'apps':
-      return t('nav.apps.subtitle', 'App plugins that extend the Grafana experience');
+      return t('nav.apps.subtitle', 'App plugins that extend the {{title}} experience', { title: config.appTitle });
     case 'monitoring':
       return t('nav.monitoring.subtitle', 'Out-of-the-box observability solutions');
     case 'infrastructure':

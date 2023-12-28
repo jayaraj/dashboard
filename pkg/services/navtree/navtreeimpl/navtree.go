@@ -74,12 +74,13 @@ func ProvideService(cfg *setting.Cfg, accessControl ac.AccessControl, pluginStor
 
 //nolint:gocyclo
 func (s *ServiceImpl) GetNavTree(c *contextmodel.ReqContext, prefs *pref.Preference) (*navtree.NavTreeRoot, error) {
-	hasAccess := ac.HasAccess(s.accessControl, c)
-	treeRoot := &navtree.NavTreeRoot{}
+	treeRoot := &navtree.NavTreeRoot{
+		IsGrafanaAdmin: c.IsGrafanaAdmin,
+	}
 
 	treeRoot.AddSection(s.getHomeNode(c, prefs))
 
-	if hasAccess(ac.EvalPermission(dashboards.ActionDashboardsRead)) {
+	if c.IsGrafanaAdmin {
 		starredItemsLinks, err := s.buildStarredItemsNavLinks(c)
 		if err != nil {
 			return nil, err
@@ -96,10 +97,7 @@ func (s *ServiceImpl) GetNavTree(c *contextmodel.ReqContext, prefs *pref.Prefere
 		})
 	}
 
-	if c.IsPublicDashboardView() || hasAccess(ac.EvalAny(
-		ac.EvalPermission(dashboards.ActionFoldersRead), ac.EvalPermission(dashboards.ActionFoldersCreate),
-		ac.EvalPermission(dashboards.ActionDashboardsRead), ac.EvalPermission(dashboards.ActionDashboardsCreate)),
-	) {
+	if c.IsGrafanaAdmin {
 		dashboardChildLinks := s.buildDashboardNavLinks(c)
 
 		dashboardLink := &navtree.NavLink{
@@ -115,7 +113,7 @@ func (s *ServiceImpl) GetNavTree(c *contextmodel.ReqContext, prefs *pref.Prefere
 		treeRoot.AddSection(dashboardLink)
 	}
 
-	if setting.ExploreEnabled && hasAccess(ac.EvalPermission(ac.ActionDatasourcesExplore)) {
+	if c.IsGrafanaAdmin {
 		treeRoot.AddSection(&navtree.NavLink{
 			Text:       "Explore",
 			Id:         navtree.NavIDExplore,
@@ -126,14 +124,22 @@ func (s *ServiceImpl) GetNavTree(c *contextmodel.ReqContext, prefs *pref.Prefere
 		})
 	}
 
+	if devicemangentSection := s.buildDeviceManagementNavLinks(c); devicemangentSection != nil {
+		treeRoot.AddSection(devicemangentSection)
+	}
+
+	if grafoAlert := s.buildGrafoAlertNavLinks(c); grafoAlert != nil {
+		treeRoot.AddSection(grafoAlert)
+	}
+
 	if setting.ProfileEnabled && c.IsSignedIn {
 		treeRoot.AddSection(s.getProfileNode(c))
 	}
 
 	_, uaIsDisabledForOrg := s.cfg.UnifiedAlerting.DisabledOrgs[c.SignedInUser.GetOrgID()]
-	uaVisibleForOrg := s.cfg.UnifiedAlerting.IsEnabled() && !uaIsDisabledForOrg
+	uaVisibleForOrg := s.cfg.UnifiedAlerting.IsEnabled() && !uaIsDisabledForOrg && c.IsGrafanaAdmin
 
-	if setting.AlertingEnabled != nil && *setting.AlertingEnabled {
+	if setting.AlertingEnabled != nil && *setting.AlertingEnabled && c.IsGrafanaAdmin {
 		if legacyAlertSection := s.buildLegacyAlertNavLinks(c); legacyAlertSection != nil {
 			treeRoot.AddSection(legacyAlertSection)
 		}
@@ -143,8 +149,10 @@ func (s *ServiceImpl) GetNavTree(c *contextmodel.ReqContext, prefs *pref.Prefere
 		}
 	}
 
-	if connectionsSection := s.buildDataConnectionsNavLink(c); connectionsSection != nil {
-		treeRoot.AddSection(connectionsSection)
+	if c.IsGrafanaAdmin {
+		if connectionsSection := s.buildDataConnectionsNavLink(c); connectionsSection != nil {
+			treeRoot.AddSection(connectionsSection)
+		}
 	}
 
 	orgAdminNode, err := s.getAdminNode(c)

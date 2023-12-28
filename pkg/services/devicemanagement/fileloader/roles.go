@@ -17,6 +17,14 @@ const (
 var (
 	ScopeAll      = accesscontrol.GetResourceAllScope(ScopeRoot)
 	ScopeProvider = accesscontrol.NewScopeProvider(ScopeRoot)
+
+	ReadPageAccess = accesscontrol.EvalAll(
+		accesscontrol.EvalAny(
+			accesscontrol.EvalPermission(ActionCsvRead),
+			accesscontrol.EvalPermission(ActionCsvCreate),
+			accesscontrol.EvalPermission(ActionCsvDelete),
+		),
+	)
 )
 
 func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {

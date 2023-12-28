@@ -146,8 +146,10 @@ type FrontendSettingsDTO struct {
 	LiveEnabled                bool                             `json:"liveEnabled"`
 	AutoAssignOrg              bool                             `json:"autoAssignOrg"`
 
-	LoginTitle string `json:"loginTitle"`
-	AppTitle   string `json:"appTitle,omitempty"`
+	LoginTitle    string `json:"loginTitle"`
+	AppTitle      string `json:"appTitle"`
+	ResourceTitle string `json:"resourceTitle"`
+	GroupTitle    string `json:"groupTitle"`
 
 	VerifyEmailEnabled  bool `json:"verifyEmailEnabled"`
 	SigV4AuthEnabled    bool `json:"sigV4AuthEnabled"`

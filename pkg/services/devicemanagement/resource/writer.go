@@ -62,7 +62,7 @@ func (service *Service) SendResourceDownlink(c *contextmodel.ReqContext) respons
 	if err != nil {
 		return response.Error(500, "failed marshal create", err)
 	}
-	if err := service.devMgmt.Publish(c.Req.Context(), client.SubscriberTopic("downlink"), body); err != nil {
+	if err := service.devMgmt.Publish(c.Req.Context(), client.SubscriberTopic(client.Downlink), body); err != nil {
 		return response.Error(500, "failed to update", err)
 	}
 	return response.Success("updated")

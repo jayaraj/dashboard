@@ -19,6 +19,25 @@ const (
 var (
 	ScopeAll      = accesscontrol.GetResourceAllScope(ScopeRoot)
 	ScopeProvider = accesscontrol.NewScopeProvider(ScopeRoot)
+
+	ReadPageAccess = accesscontrol.EvalAll(
+		accesscontrol.EvalAny(
+			accesscontrol.EvalPermission(ActionDefinitionRead),
+			accesscontrol.EvalPermission(ActionDefinitionCreate),
+			accesscontrol.EvalPermission(ActionDefinitionDelete),
+			accesscontrol.EvalPermission(ActionDefinitionWrite),
+		),
+	)
+	NewPageAccess = accesscontrol.EvalAll(
+		accesscontrol.EvalPermission(ActionDefinitionDelete),
+		accesscontrol.EvalPermission(ActionDefinitionCreate),
+	)
+	EditPageAccess = accesscontrol.EvalAll(
+		accesscontrol.EvalAny(
+			accesscontrol.EvalPermission(ActionDefinitionRead),
+			accesscontrol.EvalPermission(ActionDefinitionWrite),
+		),
+	)
 )
 
 func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {

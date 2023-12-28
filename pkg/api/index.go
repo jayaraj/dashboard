@@ -147,6 +147,8 @@ func (hs *HTTPServer) setIndexViewData(c *contextmodel.ReqContext) (*dtos.IndexV
 		AppleTouchIcon:                      "public/img/whitelabel/apple-touch-icon.png",
 		AppTitle:                            setting.AppTitle,
 		LoginTitle:                          setting.LoginTitle,
+		ResourceTitle:                       setting.ResourceTitle,
+		GroupTitle:                          setting.GroupTitle,
 		NavTree:                             navTree,
 		Nonce:                               c.RequestNonce,
 		ContentDeliveryURL:                  cdnURL,

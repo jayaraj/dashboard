@@ -112,6 +112,8 @@ func (hs *HTTPServer) getFrontendSettings(c *contextmodel.ReqContext) (*dtos.Fro
 		AppSubUrl:                           hs.Cfg.AppSubURL,
 		AppTitle:                            hs.Cfg.AppTitle,
 		LoginTitle:                          hs.Cfg.LoginTitle,
+		ResourceTitle:                       hs.Cfg.ResourceTitle,
+		GroupTitle:                          hs.Cfg.GroupTitle,
 		AllowOrgCreate:                      (setting.AllowUserOrgCreate && c.IsSignedIn) || c.IsGrafanaAdmin,
 		AuthProxyEnabled:                    hs.Cfg.AuthProxyEnabled,
 		LdapEnabled:                         hs.Cfg.LDAPAuthEnabled,

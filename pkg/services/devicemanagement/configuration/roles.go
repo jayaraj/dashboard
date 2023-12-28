@@ -18,6 +18,27 @@ const (
 var (
 	ScopeAll      = accesscontrol.GetResourceAllScope(ScopeRoot)
 	ScopeProvider = accesscontrol.NewScopeProvider(ScopeRoot)
+
+	ReadPageAccess = accesscontrol.EvalAll(
+		accesscontrol.EvalAny(
+			accesscontrol.EvalPermission(ActionOrgRead),
+			accesscontrol.EvalPermission(ActionOrgWrite),
+			accesscontrol.EvalPermission(ActionRead),
+			accesscontrol.EvalPermission(ActionCreate),
+			accesscontrol.EvalPermission(ActionDelete),
+			accesscontrol.EvalPermission(ActionWrite),
+		),
+	)
+	NewPageAccess = accesscontrol.EvalAll(
+		accesscontrol.EvalPermission(ActionDelete),
+		accesscontrol.EvalPermission(ActionCreate),
+	)
+	EditPageAccess = accesscontrol.EvalAll(
+		accesscontrol.EvalAny(
+			accesscontrol.EvalPermission(ActionRead),
+			accesscontrol.EvalPermission(ActionWrite),
+		),
+	)
 )
 
 func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {
@@ -71,13 +92,12 @@ func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {
 
 	configurationsReaderRole := accesscontrol.RoleRegistration{
 		Role: accesscontrol.RoleDTO{
-			Name:        "fixed:configurations:reader",
-			DisplayName: "Configuration reader",
-			Description: "Read configurations",
+			Name:        "fixed:configurations.org:reader",
+			DisplayName: "Configuration org reader",
+			Description: "Read org configurations",
 			Group:       "Configurations",
 			Version:     2,
 			Permissions: []accesscontrol.Permission{
-				{Action: ActionRead},
 				{Action: ActionOrgRead},
 			},
 		},

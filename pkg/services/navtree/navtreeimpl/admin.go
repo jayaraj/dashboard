@@ -24,7 +24,7 @@ func (s *ServiceImpl) getAdminNode(c *contextmodel.ReqContext) (*navtree.NavLink
 		configNodes = append(configNodes, &navtree.NavLink{
 			Text:     "Plugins",
 			Id:       "plugins",
-			SubTitle: "Extend the Grafana experience with plugins",
+			SubTitle: "Extend the experience with plugins",
 			Icon:     "plug",
 			Url:      s.cfg.AppSubURL + "/plugins",
 		})
@@ -32,7 +32,7 @@ func (s *ServiceImpl) getAdminNode(c *contextmodel.ReqContext) (*navtree.NavLink
 
 	if hasAccess(ac.EvalAny(ac.EvalPermission(ac.ActionOrgUsersRead), ac.EvalPermission(ac.ActionUsersRead, ac.ScopeGlobalUsersAll))) {
 		configNodes = append(configNodes, &navtree.NavLink{
-			Text: "Users", SubTitle: "Manage users in Grafana", Id: "global-users", Url: s.cfg.AppSubURL + "/admin/users", Icon: "user",
+			Text: "Users", SubTitle: "Manage users in" + s.cfg.AppTitle, Id: "global-users", Url: s.cfg.AppSubURL + "/admin/users", Icon: "user",
 		})
 	}
 
@@ -50,7 +50,7 @@ func (s *ServiceImpl) getAdminNode(c *contextmodel.ReqContext) (*navtree.NavLink
 		configNodes = append(configNodes, &navtree.NavLink{
 			Text:     "Service accounts",
 			Id:       "serviceaccounts",
-			SubTitle: "Use service accounts to run automated workloads in Grafana",
+			SubTitle: "Use service accounts to run automated workloads",
 			Icon:     "gf-service-account",
 			Url:      s.cfg.AppSubURL + "/org/serviceaccounts",
 		})
@@ -80,7 +80,7 @@ func (s *ServiceImpl) getAdminNode(c *contextmodel.ReqContext) (*navtree.NavLink
 		})
 	}
 
-	if (authConfigUIAvailable && hasAccess(evalAuthenticationSettings())) || s.features.IsEnabled(ctx, featuremgmt.FlagSsoSettingsApi) {
+	if (c.IsGrafanaAdmin) && (authConfigUIAvailable && hasAccess(evalAuthenticationSettings())) || s.features.IsEnabled(ctx, featuremgmt.FlagSsoSettingsApi) {
 		configNodes = append(configNodes, &navtree.NavLink{
 			Text:     "Authentication",
 			Id:       "authentication",

@@ -9,27 +9,10 @@ import (
 func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRegister routing.RouteRegister) {
 	authorize := accesscontrol.Middleware(service.accessControl)
 
-	ReadPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalAny(
-			accesscontrol.EvalPermission(ActionRead),
-			accesscontrol.EvalPermission(ActionCreate),
-			accesscontrol.EvalPermission(ActionDelete),
-			accesscontrol.EvalPermission(ActionWrite),
-		),
-	)
-	NewPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalPermission(ActionDelete),
-		accesscontrol.EvalPermission(ActionCreate),
-	)
-	EditPageAccess := accesscontrol.EvalAll(
-		accesscontrol.EvalPermission(ActionRead),
-		accesscontrol.EvalPermission(ActionWrite),
-	)
-
 	//UI
-	routeRegister.Get("/org/configurationtypes", authorize(ReadPageAccess), httpServer.Index)
-	routeRegister.Get("/org/configurationtypes/edit/*", authorize(EditPageAccess), httpServer.Index)
-	routeRegister.Get("/org/configurationtypes/new", authorize(NewPageAccess), httpServer.Index)
+	routeRegister.Get("/configurationtypes", authorize(ReadPageAccess), httpServer.Index)
+	routeRegister.Get("/configurationtypes/edit/*", authorize(EditPageAccess), httpServer.Index)
+	routeRegister.Get("/configurationtypes/new", authorize(NewPageAccess), httpServer.Index)
 
 	//APIs
 	routeRegister.Group("api/configurationtypes", func(configurationsRoute routing.RouteRegister) {
@@ -38,8 +21,8 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 		configurationsRoute.Delete("/:id", authorize(accesscontrol.EvalPermission(ActionDelete)), routing.Wrap(service.DeleteConfigurationType))
 		configurationsRoute.Get("/:id", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetConfigurationTypeById))
 		configurationsRoute.Get("/search", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.SearchConfigurationType))
-		configurationsRoute.Get("/association/:association", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetConfigurationTypesWithAssociationTypes))
-		configurationsRoute.Get("/association/:association/type/:type", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetConfigurationTypeByType))
+		configurationsRoute.Get("/association/:association", authorize(accesscontrol.EvalPermission(ActionOrgRead)), routing.Wrap(service.GetConfigurationTypesWithAssociationTypes))
+		configurationsRoute.Get("/association/:association/type/:type", authorize(accesscontrol.EvalPermission(ActionOrgRead)), routing.Wrap(service.GetConfigurationTypeByType))
 	})
 
 	routeRegister.Group("api/orgs", func(configurationRoute routing.RouteRegister) {
