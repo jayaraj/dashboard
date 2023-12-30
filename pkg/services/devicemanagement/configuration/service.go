@@ -16,7 +16,7 @@ type Service struct {
 	log           log.Logger
 }
 
-func ProvideService(cfg *setting.Cfg, devMgmt devicemanagement.DeviceManagementService, ac accesscontrol.AccessControl, acService accesscontrol.Service, hs *api.HTTPServer, routeRegister routing.RouteRegister) error {
+func ProvideService(cfg *setting.Cfg, devMgmt devicemanagement.DeviceManagementService, ac accesscontrol.AccessControl, acService accesscontrol.Service, hs *api.HTTPServer, routeRegister routing.RouteRegister) (devicemanagement.ConfigurationService, error) {
 	service := &Service{
 		accessControl: ac,
 		devMgmt:       devMgmt,
@@ -24,9 +24,9 @@ func ProvideService(cfg *setting.Cfg, devMgmt devicemanagement.DeviceManagementS
 		log:           log.New("configuration.service"),
 	}
 	if err := service.declareFixedRoles(acService); err != nil {
-		return err
+		return service, err
 	}
 	service.registerAPIEndpoints(hs, routeRegister)
 	service.log.Info("Loaded configurations")
-	return nil
+	return service, nil
 }

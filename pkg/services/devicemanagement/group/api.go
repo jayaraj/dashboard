@@ -41,10 +41,12 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 
 	routeRegister.Group("api/groupusers", func(groupsRoute routing.RouteRegister) {
 		groupsRoute.Post("/", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.AddGroupUser))
+		//TODO Change the interface
 		groupsRoute.Delete("/:id", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.DeleteGroupUser))
 	})
 
 	routeRegister.Group("api/groupresources", func(groupsRoute routing.RouteRegister) {
+		//TODO Change the interface
 		groupsRoute.Delete("/:id", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.DeleteGroupResource))
 	})
 }

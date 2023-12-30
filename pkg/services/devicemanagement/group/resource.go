@@ -107,11 +107,6 @@ func (service *Service) AddGroupResources(c *contextmodel.ReqContext) response.R
 	dto := resource.AddGroupResourceMsg{
 		GroupId:    groupId,
 		ResourceId: r.Id,
-		User: resource.User{
-			UserId: c.UserID,
-			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
-		},
 	}
 	body, err := json.Marshal(dto)
 	if err != nil {
@@ -137,6 +132,7 @@ func (service *Service) AddGroupResources(c *contextmodel.ReqContext) response.R
 }
 
 func (service *Service) DeleteGroupResource(c *contextmodel.ReqContext) response.Response {
+	//TODO Change the interface to validate group access
 	id, err := strconv.ParseInt(web.Params(c.Req)[":id"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)

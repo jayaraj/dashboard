@@ -2,18 +2,18 @@ package group
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/grafana/grafana/pkg/api/response"
+	"github.com/grafana/grafana/pkg/models/roletype"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/devicemanagement"
-	"github.com/grafana/grafana/pkg/services/user"
 	"github.com/grafana/grafana/pkg/web"
 	"github.com/jayaraj/messages/client"
 	"github.com/jayaraj/messages/client/resource"
+	"github.com/jayaraj/messages/client/user"
 )
 
 func (service *Service) GetGroupUsers(c *contextmodel.ReqContext) response.Response {
@@ -57,42 +57,31 @@ func (service *Service) GetGroupUsers(c *contextmodel.ReqContext) response.Respo
 }
 
 func (service *Service) AddGroupUser(c *contextmodel.ReqContext) response.Response {
+	access, _ := service.IsGroupAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
 	orgUser := resource.AddGroupUserMsg{
 		OrgId: c.OrgID,
-		User: resource.User{
-			UserId: c.UserID,
-			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
-		},
 	}
 	if err := web.Bind(c.Req, &orgUser); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
 	}
 
-	query := user.GetUserProfileQuery{UserID: orgUser.UserId}
-	u, err := service.userService.GetProfile(c.Req.Context(), &query)
-	if err != nil {
-		if errors.Is(err, user.ErrUserNotFound) {
-			return response.Error(404, user.ErrUserNotFound.Error(), nil)
-		}
-		return response.Error(500, "Failed to get user", err)
+	userService := service.devMgmt.GetUser()
+	usrCmd := &user.GetOrgUserMsg{
+		UserId: c.UserID,
+		OrgId:  c.OrgID,
+	}
+	if err := userService.GetOrgUser(c.Req.Context(), usrCmd); err != nil {
+		return response.Error(500, "get user failed", err)
 	}
 
-	//TODO Moving user information to dashboard from resources
-	// roleMsg := contextmodel.GetOrgUserRoleMsg{UserId: c.UserID, OrgId: c.OrgID}
-
-	// if err := hs.SQLStore.GetOrgUserRole(c.Req.Context(), &roleMsg); err != nil {
-	// 	if errors.Is(err, contextmodel.ErrOrgUserNotFound) {
-	// 		return response.Error(404, contextmodel.ErrOrgUserNotFound.Error(), nil)
-	// 	}
-	// 	return response.Error(500, "Failed to get org user", err)
-	// }
-
-	orgUser.Email = u.Email
-	orgUser.Phone = u.Phone
-	orgUser.Login = u.Login
-	orgUser.Name = u.Name
-	orgUser.Role = "ROLE_VIEWER" //TODO MOVE
+	orgUser.Email = usrCmd.Result.Email
+	orgUser.Phone = usrCmd.Result.Phone
+	orgUser.Login = usrCmd.Result.Login
+	orgUser.Name = usrCmd.Result.Name
+	orgUser.Role = devicemanagement.ConvertRoleToString(roletype.RoleType(usrCmd.Result.Role))
 	body, err := json.Marshal(&orgUser)
 	if err != nil {
 		return response.Error(500, "failed marshal create group", err)
@@ -118,6 +107,7 @@ func (service *Service) AddGroupUser(c *contextmodel.ReqContext) response.Respon
 }
 
 func (service *Service) DeleteGroupUser(c *contextmodel.ReqContext) response.Response {
+	//TODO Change the inter face to validate group access
 	id, err := strconv.ParseInt(web.Params(c.Req)[":id"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)

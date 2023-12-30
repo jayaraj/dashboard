@@ -63,14 +63,14 @@ func (service *Service) GetResourceConfiguration(c *contextmodel.ReqContext) res
 	}
 	config := web.Params(c.Req)[":config"]
 
+	configService := service.devMgmt.GetConfiguration()
+	if !configService.IsConfigurationAccessible(c, client.ConvertAssociationToString(client.TYPE_RESOURCE), config) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+
 	dto := &resource.GetResourceConfigurationMsg{
 		ResourceId: id,
 		Type:       config,
-		User: resource.User{
-			UserId: c.UserID,
-			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
-		},
 	}
 	body, err := json.Marshal(dto)
 	if err != nil {

@@ -47,15 +47,14 @@ func (service *Service) UpdateOrgConfiguration(c *contextmodel.ReqContext) respo
 }
 
 func (service *Service) GetOrgConfiguration(c *contextmodel.ReqContext) response.Response {
+
 	config := web.Params(c.Req)[":config"]
+	if !service.IsConfigurationAccessible(c, client.ConvertAssociationToString(client.TYPE_ORG), config) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
 	dto := &resource.GetOrgConfigurationMsg{
 		OrgId: c.OrgID,
 		Type:  config,
-		User: resource.User{
-			UserId: c.UserID,
-			OrgId:  c.OrgID,
-			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
-		},
 	}
 	body, err := json.Marshal(dto)
 	if err != nil {

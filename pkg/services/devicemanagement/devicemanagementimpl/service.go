@@ -25,13 +25,14 @@ import (
 )
 
 type Service struct {
-	cfg      *setting.Cfg
-	nats     NATS.Nats
-	log      log.Logger
-	cache    *remotecache.RemoteCache
-	resource devicemanagement.ResourceService
-	group    devicemanagement.GroupService
-	user     devicemanagement.UserService
+	cfg           *setting.Cfg
+	nats          NATS.Nats
+	log           log.Logger
+	cache         *remotecache.RemoteCache
+	resource      devicemanagement.ResourceService
+	group         devicemanagement.GroupService
+	user          devicemanagement.UserService
+	configuration devicemanagement.ConfigurationService
 }
 
 func ProvideService(
@@ -69,7 +70,7 @@ func ProvideService(
 	if err = tag.ProvideService(cfg, service, ac, acService, hs, routeRegister); err != nil {
 		return nil, errors.Wrap(err, "failed to start tags")
 	}
-	if err = configuration.ProvideService(cfg, service, ac, acService, hs, routeRegister); err != nil {
+	if service.configuration, err = configuration.ProvideService(cfg, service, ac, acService, hs, routeRegister); err != nil {
 		return nil, errors.Wrap(err, "failed to start configurations")
 	}
 	if err = inventory.ProvideService(cfg, service, ac, acService, hs, routeRegister); err != nil {
@@ -112,4 +113,8 @@ func (service *Service) GetGroup() devicemanagement.GroupService {
 
 func (service *Service) GetUser() devicemanagement.UserService {
 	return service.user
+}
+
+func (service *Service) GetConfiguration() devicemanagement.ConfigurationService {
+	return service.configuration
 }

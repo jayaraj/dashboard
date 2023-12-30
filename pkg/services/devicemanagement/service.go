@@ -19,6 +19,7 @@ type DeviceManagementService interface {
 	GetResource() ResourceService
 	GetGroup() GroupService
 	GetUser() UserService
+	GetConfiguration() ConfigurationService
 }
 
 type GroupService interface {
@@ -38,4 +39,8 @@ type UserService interface {
 	SearchOrgUsers(ctx context.Context, msg *user.SearchOrgUsersMsg) error
 	SearchUsersByOrgUsers(ctx context.Context, msg *user.SearchUsersByOrgUsersMsg) error
 	GetUser(ctx context.Context, userId int64) (USER.UserProfileDTO, error)
+}
+
+type ConfigurationService interface {
+	IsConfigurationAccessible(c *contextmodel.ReqContext, association string, config string) bool
 }
