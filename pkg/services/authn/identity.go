@@ -53,6 +53,7 @@ type Identity struct {
 	Name string
 	// Email is the email address of the entity. Should be unique.
 	Email string
+	Phone string
 	// IsGrafanaAdmin is true if the entity is a Grafana admin.
 	IsGrafanaAdmin *bool
 	// AuthenticatedBy is the name of the authentication client that was used to authenticate the current Identity.
@@ -213,6 +214,7 @@ func (i *Identity) SignedInUser() *user.SignedInUser {
 		Login:           i.Login,
 		Name:            i.Name,
 		Email:           i.Email,
+		Phone:           i.Phone,
 		AuthenticatedBy: i.AuthenticatedBy,
 		IsGrafanaAdmin:  i.GetIsGrafanaAdmin(),
 		IsAnonymous:     namespace == NamespaceAnonymous,
@@ -252,6 +254,7 @@ func (i *Identity) ExternalUserInfo() login.ExternalUserInfo {
 		AuthId:         i.AuthID,
 		UserId:         intIdentifier(id),
 		Email:          i.Email,
+		Phone:          i.Phone,
 		Login:          i.Login,
 		Name:           i.Name,
 		Groups:         i.Groups,
@@ -271,6 +274,7 @@ func IdentityFromSignedInUser(id string, usr *user.SignedInUser, params ClientPa
 		Login:           usr.Login,
 		Name:            usr.Name,
 		Email:           usr.Email,
+		Phone:           usr.Phone,
 		AuthenticatedBy: authenticatedBy,
 		IsGrafanaAdmin:  &usr.IsGrafanaAdmin,
 		IsDisabled:      usr.IsDisabled,

@@ -110,6 +110,7 @@ func (hs *HTTPServer) setIndexViewData(c *contextmodel.ReqContext) (*dtos.IndexV
 			IsSignedIn:                 c.IsSignedIn,
 			Login:                      c.Login,
 			Email:                      c.SignedInUser.GetEmail(),
+			Phone:                      c.SignedInUser.GetPhone(),
 			Name:                       c.Name,
 			OrgId:                      c.SignedInUser.GetOrgID(),
 			OrgName:                    c.OrgName,

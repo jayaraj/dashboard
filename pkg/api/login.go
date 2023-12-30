@@ -132,7 +132,7 @@ func (hs *HTTPServer) LoginView(c *contextmodel.ReqContext) {
 		if hs.Cfg.AuthProxyEnabled &&
 			hs.Cfg.AuthProxyEnableLoginToken &&
 			c.SignedInUser.AuthenticatedBy == loginservice.AuthProxyAuthModule {
-			user := &user.User{ID: c.SignedInUser.UserID, Email: c.SignedInUser.Email, Login: c.SignedInUser.Login}
+			user := &user.User{ID: c.SignedInUser.UserID, Email: c.SignedInUser.Email, Phone: c.SignedInUser.Phone, Login: c.SignedInUser.Login}
 			err := hs.loginUserWithUser(user, c)
 			if err != nil {
 				c.Handle(hs.Cfg, http.StatusInternalServerError, "Failed to sign in user", err)

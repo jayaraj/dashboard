@@ -31,6 +31,7 @@ type ExternalUserInfo struct {
 	AuthId         string
 	UserId         int64
 	Email          string
+	Phone          string
 	Login          string
 	Name           string
 	Groups         []string
