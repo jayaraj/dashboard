@@ -14,25 +14,25 @@ type Bulk struct {
 }
 
 type Bulks struct {
-	Count   int64  `json:"count"`
-	Bulks   []Bulk `json:"bulks"`
-	Page    int64  `json:"page"`
-	PerPage int64  `json:"perPage"`
+	Count      int64  `json:"count"`
+	CsvEntries []Bulk `json:"csv_entries"`
+	Page       int64  `json:"page"`
+	PerPage    int64  `json:"perPage"`
 }
 
 type BulkError struct {
 	Id            int64                  `json:"id"`
 	UpdatedAt     time.Time              `json:"updated_at"`
-	BulkId        int64                  `json:"bulk_id"`
+	CsvEntryId    int64                  `json:"csv_entry_id"`
 	Configuration map[string]interface{} `json:"configuration,omitempty"`
 	Error         string                 `json:"error"`
 }
 
 type BulkErrors struct {
-	Count      int64       `json:"count"`
-	BulkErrors []BulkError `json:"bulk_errors"`
-	Page       int64       `json:"page"`
-	PerPage    int64       `json:"perPage"`
+	Count     int64       `json:"count"`
+	CsvErrors []BulkError `json:"csv_errors"`
+	Page      int64       `json:"page"`
+	PerPage   int64       `json:"perPage"`
 }
 
 type SearchBulkMsg struct {
@@ -50,7 +50,7 @@ type GetBulkByIdMsg struct {
 }
 
 type GetBulkErrorsByBulkIdMsg struct {
-	BulkId  int64 `json:"bulk_id"`
+	Id      int64 `json:"id"`
 	Page    int64 `json:"page"`
 	PerPage int64 `json:"perPage"`
 	// swagger:ignore

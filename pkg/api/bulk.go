@@ -30,7 +30,7 @@ func (hs *HTTPServer) UploadBulk(c *models.ReqContext) response.Response {
 		"operation":    c.Req.PostFormValue("operation"),
 		"content-type": contentType,
 	}
-	url := fmt.Sprintf("%sapi/upload", hs.ResourceService.GetConfig().ResourceUrl)
+	url := fmt.Sprintf("%sapi/csventries", hs.ResourceService.GetConfig().ResourceUrl)
 	req := &resources.FileRequest{
 		Url:      url,
 		Filename: csvFileHeader.Filename,
@@ -55,7 +55,7 @@ func (hs *HTTPServer) DeleteBulk(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
-	url := fmt.Sprintf("%sapi/bulks/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
+	url := fmt.Sprintf("%sapi/csventries/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,
@@ -79,7 +79,7 @@ func (hs *HTTPServer) GetBulkById(c *models.ReqContext) response.Response {
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
-	url := fmt.Sprintf("%sapi/bulks/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
+	url := fmt.Sprintf("%sapi/csventries/%d", hs.ResourceService.GetConfig().ResourceUrl, id)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,
@@ -118,7 +118,7 @@ func (hs *HTTPServer) SearchBulk(c *models.ReqContext) response.Response {
 		Page:    int64(page),
 		PerPage: int64(perPage),
 	}
-	url := fmt.Sprintf("%sapi/bulks?query=%s&page=%d&perPage=%d", hs.ResourceService.GetConfig().ResourceUrl, query, page, perPage)
+	url := fmt.Sprintf("%sapi/csventries?query=%s&page=%d&perPage=%d", hs.ResourceService.GetConfig().ResourceUrl, query, page, perPage)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,
@@ -155,11 +155,11 @@ func (hs *HTTPServer) GetBulkErrorsByBulkId(c *models.ReqContext) response.Respo
 	}
 
 	cmd := &dtos.GetBulkErrorsByBulkIdMsg{
-		BulkId:  id,
+		Id:      id,
 		Page:    int64(page),
 		PerPage: int64(perPage),
 	}
-	url := fmt.Sprintf("%sapi/bulks/%d/errors?page=%d&perPage=%d", hs.ResourceService.GetConfig().ResourceUrl, id, page, perPage)
+	url := fmt.Sprintf("%sapi/csventries/%d/errors?page=%d&perPage=%d", hs.ResourceService.GetConfig().ResourceUrl, id, page, perPage)
 	req := &resources.RestRequest{
 		Url:        url,
 		Request:    nil,

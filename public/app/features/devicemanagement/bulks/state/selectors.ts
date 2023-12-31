@@ -1,23 +1,23 @@
-import { BulksState, BulkState, Bulk, BulkErrorsState } from 'app/types';
+import { CsvEntriesState, CsvEntryState, CsvEntry, CsvErrorsState } from 'app/types';
 
-export const getBulksSearchQuery = (state: BulksState) => state.searchQuery;
-export const getBulksSearchPage = (state: BulksState) => state.searchPage;
-export const getBulksCount = (state: BulksState) => state.bulksCount;
-export const getBulkErrorsSearchPage = (state: BulkErrorsState) => state.searchPage;
-export const getBulkErrorsCount = (state: BulkErrorsState) => state.bulkErrorsCount;
-export const getBulkErrors = (state: BulkErrorsState) => state.bulkErrors? state.bulkErrors: [];
+export const getBulksSearchQuery = (state: CsvEntriesState) => state.searchQuery;
+export const getBulksSearchPage = (state: CsvEntriesState) => state.searchPage;
+export const getBulksCount = (state: CsvEntriesState) => state.csvEntriesCount;
+export const getBulkErrorsSearchPage = (state: CsvErrorsState) => state.searchPage;
+export const getBulkErrorsCount = (state: CsvErrorsState) => state.csvErrorsCount;
+export const getBulkErrors = (state: CsvErrorsState) => state.csvErrors? state.csvErrors: [];
 
-export const getBulk = (state: BulkState, currentBulkId: any): Bulk | null => {
-  if (state.bulk.id === parseInt(currentBulkId, 10)) {
-    return state.bulk;
+export const getBulk = (state: CsvEntryState, currentBulkId: any): CsvEntry | null => {
+  if (state.csvEntry.id === parseInt(currentBulkId, 10)) {
+    return state.csvEntry;
   }
   return null;
 };
 
-export const getBulks = (state: BulksState) => {
+export const getBulks = (state: CsvEntriesState) => {
   const regex = RegExp(state.searchQuery, 'i');
 
-  return state.bulks.filter((bulk) => {
+  return state.csvEntries.filter((bulk) => {
     return regex.test(bulk.filename);
   });
 };

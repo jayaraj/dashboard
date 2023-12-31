@@ -27,7 +27,7 @@ func (hs *HTTPServer) UploadImage(c *models.ReqContext) response.Response {
 		"content-type": contentType,
 		"folder":       c.Req.PostFormValue("folder"),
 	}
-	url := fmt.Sprintf("%sapi/image", hs.ResourceService.GetConfig().ResourceUrl)
+	url := fmt.Sprintf("%sapi/storage", hs.ResourceService.GetConfig().ResourceUrl)
 	req := &resources.FileRequest{
 		Url:      url,
 		Filename: header.Filename,

@@ -1,10 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { Bulk, BulksState, BulkState, BulkError, BulkErrorsState } from 'app/types';
+import { CsvEntry, CsvEntriesState, CsvEntryState, CsvError, CsvErrorsState } from 'app/types';
 
-export const initialBulksState: BulksState = {
-  bulks: [],
-  bulksCount: 0,
+export const initialBulksState: CsvEntriesState = {
+  csvEntries: [],
+  csvEntriesCount: 0,
   searchPage: 1,
   searchQuery: '',
   hasFetched: false,
@@ -13,17 +13,17 @@ const bulksSlice = createSlice({
   name: 'bulks',
   initialState: initialBulksState,
   reducers: {
-    bulksLoaded: (state, action: PayloadAction<Bulk[]>): BulksState => {
-      return { ...state, hasFetched: true, bulks: action.payload };
+    bulksLoaded: (state, action: PayloadAction<CsvEntry[]>): CsvEntriesState => {
+      return { ...state, hasFetched: true, csvEntries: action.payload };
     },
-    setBulksSearchQuery: (state, action: PayloadAction<string>): BulksState => {
+    setBulksSearchQuery: (state, action: PayloadAction<string>): CsvEntriesState => {
       return { ...state, searchQuery: action.payload };
     },
-    setBulksSearchPage: (state, action: PayloadAction<number>): BulksState => {
+    setBulksSearchPage: (state, action: PayloadAction<number>): CsvEntriesState => {
       return { ...state, searchPage: action.payload };
     },
-    setBulksCount: (state, action: PayloadAction<number>): BulksState => {
-      return { ...state, bulksCount: action.payload };
+    setBulksCount: (state, action: PayloadAction<number>): CsvEntriesState => {
+      return { ...state, csvEntriesCount: action.payload };
     },
   },
 });
@@ -31,24 +31,24 @@ export const { bulksLoaded, setBulksSearchQuery, setBulksSearchPage, setBulksCou
 bulksSlice.actions;
 export const bulksReducer = bulksSlice.reducer;
 
-export const initialBulkState: BulkState = {
-  bulk: {} as Bulk,
+export const initialBulkState: CsvEntryState = {
+  csvEntry: {} as CsvEntry,
 };
 const bulkSlice = createSlice({
   name: 'bulk',
   initialState: initialBulkState,
   reducers: {
-    bulkLoaded: (state, action: PayloadAction<Bulk>): BulkState => {
-      return { ...state, bulk: action.payload };
+    bulkLoaded: (state, action: PayloadAction<CsvEntry>): CsvEntryState => {
+      return { ...state, csvEntry: action.payload };
     },
   },
 });
 export const { bulkLoaded } = bulkSlice.actions;
 export const bulkReducer = bulkSlice.reducer;
 
-export const initialBulkErrorsState: BulkErrorsState = {
-  bulkErrors: [],
-  bulkErrorsCount: 0,
+export const initialBulkErrorsState: CsvErrorsState = {
+  csvErrors: [],
+  csvErrorsCount: 0,
   searchPage: 1,
   hasFetched: false,
 };
@@ -56,14 +56,14 @@ const bulkErrorsSlice = createSlice({
   name: 'bulkErrors',
   initialState: initialBulkErrorsState,
   reducers: {
-    bulkErrorsLoaded: (state, action: PayloadAction<BulkError[]>): BulkErrorsState => {
-      return { ...state, hasFetched: true, bulkErrors: action.payload };
+    bulkErrorsLoaded: (state, action: PayloadAction<CsvError[]>): CsvErrorsState => {
+      return { ...state, hasFetched: true, csvErrors: action.payload };
     },
-    setBulkErrorsSearchPage: (state, action: PayloadAction<number>): BulkErrorsState => {
+    setBulkErrorsSearchPage: (state, action: PayloadAction<number>): CsvErrorsState => {
       return { ...state, searchPage: action.payload };
     },
-    setBulkErrorsCount: (state, action: PayloadAction<number>): BulkErrorsState => {
-      return { ...state, bulkErrorsCount: action.payload };
+    setBulkErrorsCount: (state, action: PayloadAction<number>): CsvErrorsState => {
+      return { ...state, csvErrorsCount: action.payload };
     },
   },
 });

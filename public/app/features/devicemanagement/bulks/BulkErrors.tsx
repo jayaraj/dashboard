@@ -4,7 +4,7 @@ import { connect, ConnectedProps } from 'react-redux';
 import { Themeable2, withTheme2, VerticalGroup, HorizontalGroup, Pagination, LinkButton } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
-import { BulkError, bulkErrorPageLimit, StoreState } from 'app/types';
+import { CsvError, csvErrorsPageLimit, StoreState } from 'app/types';
 
 import { loadBulkErrors } from './state/actions';
 import { getBulkErrors, getBulkErrorsCount, getBulkErrorsSearchPage } from './state/selectors';
@@ -62,7 +62,7 @@ export class BulkErrors extends PureComponent<Props, State> {
     await this.fetchBulkErrors(bulkId, page)
   };
 
-  renderError(error: BulkError) {
+  renderError(error: CsvError) {
     const records = Object.keys(error.configuration).filter((key) => !key.includes('__'));
     return (
       <tr key={error.id}> 
@@ -84,7 +84,7 @@ export class BulkErrors extends PureComponent<Props, State> {
 
   renderList() {
     const { bulkErrors, searchPage, bulkErrorsCount } = this.props;
-    const totalPages = Math.ceil(bulkErrorsCount / bulkErrorPageLimit);
+    const totalPages = Math.ceil(bulkErrorsCount / csvErrorsPageLimit);
     
     return (
       <>

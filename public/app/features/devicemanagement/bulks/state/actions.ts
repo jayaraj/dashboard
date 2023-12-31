@@ -1,5 +1,5 @@
 import { getBackendSrv } from '@grafana/runtime';
-import { ThunkResult, bulkErrorPageLimit, bulkPageLimit } from 'app/types';
+import { ThunkResult, csvErrorsPageLimit, csvEntriesPageLimit } from 'app/types';
 
 import { 
   bulksLoaded,
@@ -16,9 +16,9 @@ export function loadBulks(query: string, page: number): ThunkResult<void> {
     const response = await getBackendSrv().get('/api/bulks/search', {
       query: query,
       page: page,
-      perPage: bulkPageLimit,
+      perPage: csvEntriesPageLimit,
     });
-    dispatch(bulksLoaded(response.bulks));
+    dispatch(bulksLoaded(response.csv_entries));
     dispatch(setBulksSearchPage(response.page));
     dispatch(setBulksCount(response.count));
   };
@@ -43,9 +43,9 @@ export function loadBulkErrors(id: number, page: number): ThunkResult<void> {
   return async (dispatch) => {
     const response = await getBackendSrv().get(`/api/bulks/${id}/errors`, {
       page: page,
-      perPage: bulkErrorPageLimit,
+      perPage: csvErrorsPageLimit,
     });
-    dispatch(bulkErrorsLoaded(response.bulk_errors));
+    dispatch(bulkErrorsLoaded(response.csv_errors));
     dispatch(setBulkErrorsSearchPage(response.page));
     dispatch(setBulkErrorsCount(response.count));
   };

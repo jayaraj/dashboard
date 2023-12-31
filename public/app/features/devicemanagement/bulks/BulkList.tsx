@@ -3,7 +3,7 @@ import React, { PureComponent } from 'react';
 import { DeleteButton, Button, FilterInput, VerticalGroup, HorizontalGroup, Pagination } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { contextSrv} from 'app/core/services/context_srv';
-import { StoreState, AccessControlAction, Bulk, bulkPageLimit } from 'app/types';
+import { StoreState, AccessControlAction, CsvEntry, csvEntriesPageLimit } from 'app/types';
 
 import { connectWithCleanUp } from '../../../core/components/connectWithCleanUp';
 
@@ -13,7 +13,7 @@ import { setBulksSearchQuery } from './state/reducers';
 import { getBulksSearchQuery, getBulks, getBulksCount, getBulksSearchPage } from './state/selectors';
 
 export interface Props {
-  bulks: Bulk[];
+  bulks: CsvEntry[];
   searchQuery: string;
   searchPage: number;
   bulksCount: number;
@@ -45,7 +45,7 @@ export class BulkList extends PureComponent<Props, State> {
     this.setState({ isUploadOpen: open });
   }
 
-  deleteBulk = (bulk: Bulk) => {
+  deleteBulk = (bulk: CsvEntry) => {
     this.props.deleteBulk(bulk.id);
   };
 
@@ -58,7 +58,7 @@ export class BulkList extends PureComponent<Props, State> {
     this.fetchBulks(searchQuery, page);
   };
 
-  renderBulk(bulk: Bulk) {
+  renderBulk(bulk: CsvEntry) {
     const bulkUrl = (bulk.errors > 0) ? `org/bulks/${bulk.id}/errors`: `#`;
     const fallback = contextSrv.hasRole('ServerAdmin');
     const canCreate = contextSrv.hasAccess(AccessControlAction.ActionBulksCreate, fallback);
@@ -81,7 +81,7 @@ export class BulkList extends PureComponent<Props, State> {
     const { bulks, searchQuery, searchPage, bulksCount } = this.props;
     const fallback = contextSrv.hasRole('ServerAdmin');
     const canCreate = contextSrv.hasAccess(AccessControlAction.ActionBulksCreate, fallback);
-    const totalPages = Math.ceil(bulksCount / bulkPageLimit);
+    const totalPages = Math.ceil(bulksCount / csvEntriesPageLimit);
     const { isUploadOpen } = this.state;
 
     return (
