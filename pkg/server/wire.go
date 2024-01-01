@@ -47,6 +47,7 @@ import (
 	"github.com/grafana/grafana/pkg/services/auth/idimpl"
 	"github.com/grafana/grafana/pkg/services/auth/jwt"
 	"github.com/grafana/grafana/pkg/services/authn/authnimpl"
+	"github.com/grafana/grafana/pkg/services/billing/billingimpl"
 	"github.com/grafana/grafana/pkg/services/cleanup"
 	"github.com/grafana/grafana/pkg/services/contexthandler"
 	"github.com/grafana/grafana/pkg/services/correlations"
@@ -385,6 +386,7 @@ var wireBasicSet = wire.NewSet(
 	grafanaapiserver.WireSet,
 	apiregistry.WireSet,
 	devicemanagementimpl.ProvideService,
+	billingimpl.ProvideService,
 )
 
 var wireSet = wire.NewSet(

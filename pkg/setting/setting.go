@@ -66,6 +66,7 @@ var (
 	AlertHost     string
 	ResourceTitle string
 	GroupTitle    string
+	BillingHost   string
 
 	// App settings.
 	Env              = Dev
@@ -174,6 +175,7 @@ type Cfg struct {
 	AlertHost     string
 	ResourceTitle string
 	GroupTitle    string
+	BillingHost   string
 
 	// HTTP Server Settings
 	CertFile         string
@@ -1111,6 +1113,8 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	cfg.ResourceTitle = ResourceTitle
 	GroupTitle = valueAsString(iniFile.Section(""), "group_title", "Group")
 	cfg.GroupTitle = GroupTitle
+	BillingHost = valueAsString(iniFile.Section(""), "billing_host", "http://localhost:9007")
+	cfg.BillingHost = BillingHost
 
 	plugins := valueAsString(iniFile.Section("paths"), "plugins", "")
 	cfg.PluginsPath = makeAbsolute(plugins, HomePath)
