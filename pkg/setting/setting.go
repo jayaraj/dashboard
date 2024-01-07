@@ -1103,9 +1103,9 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	cfg.NatsGroup = NatsGroup
 	NatsPrefix = valueAsString(iniFile.Section(""), "nats_prefix", "users")
 	cfg.NatsPrefix = NatsPrefix
-	ResourceHost = valueAsString(iniFile.Section(""), "resource_host", "http://localhost:9002")
+	ResourceHost = valueAsString(iniFile.Section(""), "resource_host", "http://localhost:9002/")
 	cfg.ResourceHost = ResourceHost
-	AlertHost = valueAsString(iniFile.Section(""), "alert_host", "http://localhost:9006")
+	AlertHost = valueAsString(iniFile.Section(""), "alert_host", "http://localhost:9006/")
 	cfg.AlertHost = AlertHost
 	ResourceTitle = valueAsString(iniFile.Section(""), "resource_title", "Asset")
 	cfg.ResourceTitle = ResourceTitle
