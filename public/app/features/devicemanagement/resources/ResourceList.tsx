@@ -96,7 +96,6 @@ export const ResourceList = ({
       {
         id: 'type',
         header: 'Type',
-        disableGrow: true,
         cell: ({ cell: { value } }: Cell<'type'>) => {
           if (!hasFetched) {
             return <Skeleton width={40} />;

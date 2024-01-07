@@ -69,7 +69,6 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition, ass
   const stats = useSelector((state: StoreState) => {
     return getAlertsByNameStats(state.alerts, alertDefinition.name);
   });
-  const totalPages = Math.ceil(stats.count / alertsPageLimit);
   const onEdit = useCallback(() => {
     const dto: AlertsByNameDTO = {
       name: alertDefinition.name,
@@ -129,7 +128,7 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition, ass
   const pagination: DynamicTablePagination = {
     page: page,
     onPageChange: load,
-    total: totalPages,
+    total: stats.count,
     itemsPerPage: alertsPageLimit,
   };
   const interval = useRef<any>(null);

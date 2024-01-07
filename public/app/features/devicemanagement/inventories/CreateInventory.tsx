@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { NavModelItem } from '@grafana/data';
 import { getBackendSrv, locationService } from '@grafana/runtime';
-import { Button, Select, Form, Field, Input, FieldSet, InputControl } from '@grafana/ui';
+import { Button, Select, Form, Field, Input, FieldSet, InputControl, LinkButton, Stack } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { stringToSelectableValue, stringsToSelectableValues } from 'app/features/alerting/unified/utils/amroutes';
 import { ConfigurationType } from 'app/types/devicemanagement/configuration';
@@ -47,7 +47,9 @@ export const CreateInventory = (): JSX.Element => {
   };
 
   return (
-    <Page navId="inventories" pageNav={pageNav}>
+    <Page navId="inventories" pageNav={pageNav} actions={
+      <LinkButton href={`/org/inventories`} >Back</LinkButton>
+    }>
       <Page.Contents>
         <Form onSubmit={(dto: CreateInventoryDTO) => create(dto)}>
           {({ register, control, errors }) => (
@@ -67,9 +69,10 @@ export const CreateInventory = (): JSX.Element => {
                   />
                 </Field>
               </FieldSet>
-              <Button type="submit" variant="primary">
-                Create
-              </Button>
+              <Stack gap={1} direction="row">
+                <Button type="submit" variant="primary">Create</Button>
+                <LinkButton href={`/org/inventories`} >Back</LinkButton>
+              </Stack>
             </>
           )}
         </Form>

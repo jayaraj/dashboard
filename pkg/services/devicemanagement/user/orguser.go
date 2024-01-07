@@ -131,6 +131,12 @@ func (service *Service) DeleteOrgUser(ctx context.Context, msg *devicemanagement
 	if err := service.devMgmt.Publish(ctx, client.ResourcesTopic(user.DeleteOrgUser), body); err != nil {
 		return errors.Wrap(err, "publish delete org_user failed for resources")
 	}
+	if err := service.devMgmt.Publish(ctx, client.ReaderTopic(user.DeleteOrgUser), body); err != nil {
+		return errors.Wrap(err, "publish delete user failed for reader")
+	}
+	if err := service.devMgmt.Publish(ctx, client.WriterTopic(user.DeleteOrgUser), body); err != nil {
+		return errors.Wrap(err, "publish delete user failed for writer")
+	}
 	return nil
 }
 
@@ -178,7 +184,7 @@ func (service *Service) GetOrgUser(ctx context.Context, msg *user.GetOrgUserMsg)
 			return err
 		}
 		if !has {
-			return serviceerrors.NewServiceError(serviceerrors.ErrNotFound, err)
+			return serviceerrors.NewServiceError(serviceerrors.ErrNotFound, errors.New("user not found"))
 		}
 		msg.Result.AvatarURL = dtos.GetGravatarUrl(msg.Result.Email)
 		return nil

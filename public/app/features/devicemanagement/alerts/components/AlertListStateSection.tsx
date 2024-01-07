@@ -57,7 +57,6 @@ export const AlertListStateSection = ({
   const stats = useSelector((s: StoreState) => {
     return getAlertsByStateStats(s.alerts, state);
   });
-  const totalPages = Math.ceil(stats.count / alertsPageLimit);
   const onEdit = useCallback(() => {
     const dto: AlertsByStateDTO = {
       state: state,
@@ -85,7 +84,7 @@ export const AlertListStateSection = ({
   const pagination: DynamicTablePagination = {
     page: page,
     onPageChange: load,
-    total: totalPages,
+    total: stats.count,
     itemsPerPage: alertsPageLimit,
   };
   const interval = useRef<any>(null);
