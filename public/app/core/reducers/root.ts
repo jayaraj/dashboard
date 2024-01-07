@@ -7,6 +7,9 @@ import ldapReducers from 'app/features/admin/state/reducers';
 import alertingReducers from 'app/features/alerting/state/reducers';
 import apiKeysReducers from 'app/features/api-keys/state/reducers';
 import authConfigReducers from 'app/features/auth-config/state/reducers';
+import connectionReducers from 'app/features/billing/connections/state/reducers';
+import fixedChargesReducers from 'app/features/billing/fixedcharges/state/reducers';
+import profilesReducers from 'app/features/billing/profiles/state/reducers';
 import { browseDashboardsAPI } from 'app/features/browse-dashboards/api/browseDashboardsAPI';
 import browseDashboardsReducers from 'app/features/browse-dashboards/state/slice';
 import { publicDashboardApi } from 'app/features/dashboard/api/publicDashboardApi';
@@ -65,6 +68,10 @@ const rootReducers = {
   ...inventoriesReducers,
   ...csvEntriesReducers,
   ...configurationTypesReducers,
+
+  ...fixedChargesReducers,
+  ...profilesReducers,
+  ...connectionReducers,
 
   plugins: pluginsReducer,
   [alertingApi.reducerPath]: alertingApi.reducer,

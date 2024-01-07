@@ -54,11 +54,7 @@ func (service *Service) GetInvoices(c *contextmodel.ReqContext) response.Respons
 }
 
 func (service *Service) CreateInvoice(c *contextmodel.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
-	}
-	connection, access := service.IsConnectionAccessibleById(c, id)
+	connection, access := service.IsConnectionAccessible(c)
 	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
@@ -98,7 +94,8 @@ func (service *Service) CreateInvoice(c *contextmodel.ReqContext) response.Respo
 }
 
 func (service *Service) CreateTransaction(c *contextmodel.ReqContext) response.Response {
-	if !service.IsConnectionAccessible(c) {
+	_, access := service.IsConnectionAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
@@ -139,7 +136,8 @@ func (service *Service) CreateTransaction(c *contextmodel.ReqContext) response.R
 }
 
 func (service *Service) GetConnectionTransactions(c *contextmodel.ReqContext) response.Response {
-	if !service.IsConnectionAccessible(c) {
+	_, access := service.IsConnectionAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
@@ -201,11 +199,13 @@ func (service *Service) GetInvoice(c *contextmodel.ReqContext) response.Response
 		}
 		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
+
 	dto := billing.GetInvoiceByIdMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
-	if _, access := service.IsConnectionAccessibleById(c, dto.Id); !access {
+
+	if _, access := service.IsConnectionAccessibleById(c, dto.Result.ConnectionId); !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	return response.JSON(http.StatusOK, dto.Result)

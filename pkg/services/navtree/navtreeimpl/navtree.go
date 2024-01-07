@@ -128,6 +128,10 @@ func (s *ServiceImpl) GetNavTree(c *contextmodel.ReqContext, prefs *pref.Prefere
 		treeRoot.AddSection(devicemangentSection)
 	}
 
+	if billingSection := s.buildBillingNavLinks(c); billingSection != nil {
+		treeRoot.AddSection(billingSection)
+	}
+
 	if grafoAlert := s.buildGrafoAlertNavLinks(c); grafoAlert != nil {
 		treeRoot.AddSection(grafoAlert)
 	}

@@ -35,7 +35,9 @@ func ProvideService(
 		accessControl: ac,
 		devMgmt:       devMgmt,
 		cfg:           cfg,
+		orgService:    orgService,
 		acService:     acService,
+		bus:           bus,
 		log:           log.New("connection.service"),
 	}
 	if err := service.declareFixedRoles(acService); err != nil {

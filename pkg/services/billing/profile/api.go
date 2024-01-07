@@ -25,10 +25,13 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 		profilesRoute.Delete("/:profileId", authorize(accesscontrol.EvalPermission(ActionDelete)), routing.Wrap(service.DeleteProfile))
 
 		profilesRoute.Get("/:profileId/slabs", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetSlabsByProfile))
-		profilesRoute.Post("/:profileId/slabs", authorize(accesscontrol.EvalPermission(ActionCreate)), routing.Wrap(service.CreateSlab))
-		profilesRoute.Put("/:profileId/slabs/:slabId", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.UpdateSlab))
-		profilesRoute.Get("/:profileId/slabs/:slabId", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetSlabById))
-		profilesRoute.Delete("/:profileId/slabs/:slabId", authorize(accesscontrol.EvalPermission(ActionDelete)), routing.Wrap(service.DeleteSlab))
+	})
+
+	routeRegister.Group("api/slabs", func(slabsRoute routing.RouteRegister) {
+		slabsRoute.Post("/", authorize(accesscontrol.EvalPermission(ActionCreate)), routing.Wrap(service.CreateSlab))
+		slabsRoute.Put("/:slabId", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.UpdateSlab))
+		slabsRoute.Get("/:slabId", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetSlabById))
+		slabsRoute.Delete("/:slabId", authorize(accesscontrol.EvalPermission(ActionDelete)), routing.Wrap(service.DeleteSlab))
 	})
 
 }

@@ -26,7 +26,8 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 
 		connectionsRoute.Get("/:connectionId/users", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetConnectionUsers))
 		connectionsRoute.Delete("/:connectionId/users/:userId", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.RemoveUserConnection))
-		connectionsRoute.Post("/number/:number/users", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.AddUserConnection))
+		connectionsRoute.Post("/:connectionId/users/:userId", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.AddUserConnection))
+		connectionsRoute.Post("/number/:number/users", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.AddUserConnectionByNumber))
 		connectionsRoute.Post("/number/:number/otp", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.SendConnectionUserOtp))
 
 		connectionsRoute.Get("/:connectionId/invoices", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetInvoices))
@@ -39,7 +40,7 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 		connectionsRoute.Delete("/:connectionId/resources/:resourceId", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.RemoveConnectionResource))
 	})
 
-	routeRegister.Group("/invoices", func(invoicesRoute routing.RouteRegister) {
+	routeRegister.Group("api/invoices", func(invoicesRoute routing.RouteRegister) {
 		invoicesRoute.Get("/:invoiceId", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetInvoice))
 		invoicesRoute.Get("/:invoiceId/transactions", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetInvoiceTransactions))
 	})

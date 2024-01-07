@@ -135,7 +135,17 @@ func (service *Service) GetFixedChargeById(c *contextmodel.ReqContext) response.
 }
 
 func (service *Service) GetFixedCharges(c *contextmodel.ReqContext) response.Response {
-	url := fmt.Sprintf("%sapi/orgs/%d/fixedcharges", service.cfg.BillingHost, c.OrgID)
+	query := c.Query("query")
+	perPage := c.QueryInt("perPage")
+	if perPage <= 0 {
+		perPage = 20
+	}
+	page := c.QueryInt("page")
+	if page <= 0 {
+		page = 1
+	}
+
+	url := fmt.Sprintf("%sapi/orgs/%d/fixedcharges?query=%s&page=%d&perPage=%d", service.cfg.BillingHost, c.OrgID, query, page, perPage)
 	req := &devicemanagement.RestRequest{
 		Url:        url,
 		Request:    nil,

@@ -21,11 +21,7 @@ import (
 )
 
 func (service *Service) GetConnectionUsers(c *contextmodel.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
-	}
-	connection, access := service.IsConnectionAccessibleById(c, id)
+	connection, access := service.IsConnectionAccessible(c)
 	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
@@ -101,6 +97,66 @@ func (service *Service) removeUserFromOrg(ctx context.Context, orgId int64, user
 }
 
 func (service *Service) AddUserConnection(c *contextmodel.ReqContext) response.Response {
+	connection, access := service.IsConnectionAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	userId, err := strconv.ParseInt(web.Params(c.Req)[":userId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "userId is invalid", err)
+	}
+	dto := billing.AddConnectionUserMsg{
+		ConnectionId: connection.Id,
+		UserId:       userId,
+		Login:        c.Login,
+		Email:        c.Email,
+		Phone:        c.Phone,
+		Name:         c.NameOrFallback(),
+		Role:         devicemanagement.ConvertRoleToString(org.RoleViewer),
+		CreatedBy:    c.Login,
+	}
+	if err := web.Bind(c.Req, &dto); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+	body, err := json.Marshal(dto)
+	if err != nil {
+		return response.Error(500, "failed marshal create", err)
+	}
+	url := fmt.Sprintf("%sapi/connections/%d/users", service.cfg.BillingHost, connection.Id)
+	req := &devicemanagement.RestRequest{
+		Url:        url,
+		Request:    body,
+		HttpMethod: http.MethodPost,
+	}
+	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to create", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse client.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+
+	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
+		return response.Error(500, "failed unmarshal error ", err)
+	}
+
+	//Adding user to org
+	if err := service.addUserToOrg(c.Req.Context(), dto.Result.OrgId, userId); err != nil {
+		return response.Error(req.StatusCode, "failed to add user to org ", err)
+	}
+
+	//Removing user from org 1
+	if err := service.removeUserFromOrg(c.Req.Context(), 1, userId); err != nil {
+		return response.Error(req.StatusCode, "failed to add user to org ", err)
+	}
+
+	return response.Success("added")
+}
+
+func (service *Service) AddUserConnectionByNumber(c *contextmodel.ReqContext) response.Response {
 	number, err := strconv.ParseInt(web.Params(c.Req)[":number"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "number is invalid", err)
@@ -149,11 +205,8 @@ func (service *Service) AddUserConnection(c *contextmodel.ReqContext) response.R
 		return response.Error(req.StatusCode, "failed to add user to org ", err)
 	}
 
-	//Removing user from org 1
-	if c.OrgID == 1 {
-		if err := service.removeUserFromOrg(c.Req.Context(), dto.Result.OrgId, c.UserID); err != nil {
-			return response.Error(req.StatusCode, "failed to add user to org ", err)
-		}
+	if err := service.removeUserFromOrg(c.Req.Context(), 1, c.UserID); err != nil {
+		return response.Error(req.StatusCode, "failed to add user to org ", err)
 	}
 
 	var redirectOrg struct {
@@ -167,12 +220,9 @@ func (service *Service) AddUserConnection(c *contextmodel.ReqContext) response.R
 }
 
 func (service *Service) RemoveUserConnection(c *contextmodel.ReqContext) response.Response {
-	if !service.IsConnectionAccessible(c) {
+	connection, access := service.IsConnectionAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
 	userId, err := strconv.ParseInt(web.Params(c.Req)[":userId"], 10, 64)
 	if err != nil {
@@ -188,13 +238,13 @@ func (service *Service) RemoveUserConnection(c *contextmodel.ReqContext) respons
 		return response.Error(500, "get org_user profile failed", nil)
 	}
 
-	if c.OrgRole <= roletype.RoleType(orgUserCmd.Result.Role) {
+	if !c.OrgRole.Includes(roletype.RoleType(orgUserCmd.Result.Role)) {
 		if userId != c.UserID {
 			return response.Error(403, "cannot remove others", nil)
 		}
 	}
 
-	url := fmt.Sprintf("%sapi/connections/%d/users/%d?deleted_by=%s", service.cfg.BillingHost, id, userId, c.Login)
+	url := fmt.Sprintf("%sapi/connections/%d/users/%d?deleted_by=%s", service.cfg.BillingHost, connection.Id, userId, c.Login)
 	req := &devicemanagement.RestRequest{
 		Url:        url,
 		Request:    nil,
@@ -242,10 +292,13 @@ func (service *Service) RemoveUserConnection(c *contextmodel.ReqContext) respons
 	if c.OrgID == userConnections.Result.OrgId {
 		return response.JSON(http.StatusOK, redirectOrg)
 	}
-	//remove user from current org
-	service.removeUserFromOrg(c.Req.Context(), c.OrgID, userId)
 
-	//add user to org 1 when connections found in any org
+	//remove user from current org
+	if err := service.removeUserFromOrg(c.Req.Context(), c.OrgID, userId); err != nil {
+		return response.Error(500, "failed to remove user from org ", err)
+	}
+
+	//add user to org 1 when connections not found in any org
 	if userConnections.Result.OrgId == 0 {
 		service.addUserToOrg(c.Req.Context(), 1, userId)
 		redirectOrg.OrgId = 1

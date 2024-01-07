@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -13,51 +14,88 @@ import (
 	"github.com/jayaraj/messages/client"
 	"github.com/jayaraj/messages/client/billing"
 	"github.com/jayaraj/messages/client/resource"
+	"github.com/pkg/errors"
 )
 
-func (service *Service) IsConnectionAccessible(c *contextmodel.ReqContext) bool {
-	if c.IsGrafanaAdmin {
-		return true
-	}
+func (service *Service) IsConnectionAccessible(c *contextmodel.ReqContext) (billing.Connection, bool) {
+	var connection billing.Connection
 	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
 	if err != nil {
-		return false
+		return connection, false
 	}
-
-	_, access := service.IsConnectionAccessibleById(c, id)
-	return access
+	return service.IsConnectionAccessibleById(c, id)
 }
 
 func (service *Service) IsConnectionAccessibleById(c *contextmodel.ReqContext, id int64) (billing.Connection, bool) {
+	var connection billing.Connection
+	// GetCache
+	cacheKey := fmt.Sprintf("connection-%d", id)
+	if err := service.devMgmt.GetCache(c.Req.Context(), cacheKey, &connection); err != nil {
+		connection, err = service.GetConnection(c.Req.Context(), id)
+		if err != nil {
+			return connection, false
+		}
+		// SetCache
+		service.devMgmt.SetCache(c.Req.Context(), cacheKey, connection)
+	}
+	if c.IsGrafanaAdmin {
+		return connection, true
+	}
+
+	var access bool
+	// GetCache
+	cacheKey = fmt.Sprintf("isconnectionaccessible-%d-%d", id, c.UserID)
+	if err := service.devMgmt.GetCache(c.Req.Context(), cacheKey, &access); err == nil {
+		return connection, access
+	}
+	access = service.IsConnectionGroupAccessible(c, connection)
+	// SetCache
+	service.devMgmt.SetCache(c.Req.Context(), cacheKey, access)
+	return connection, access
+}
+
+func (service *Service) GetConnection(ctx context.Context, id int64) (billing.Connection, error) {
 	dto := billing.GetConnectionByIdMsg{
 		Id:     id,
 		Result: billing.Connection{},
 	}
-	var access bool
-	//GetCache
-	cacheKey := fmt.Sprintf("isconnectionaccessible-%d-%d", id, c.UserID)
-	if err := service.devMgmt.GetCache(c.Req.Context(), cacheKey, &access); err == nil {
-		return dto.Result, access
-	}
-	body, err := json.Marshal(dto)
-	if err != nil {
-		return dto.Result, false
-	}
 	url := fmt.Sprintf("%sapi/connections/%d", service.cfg.BillingHost, id)
 	req := &devicemanagement.RestRequest{
 		Url:        url,
-		Request:    body,
+		Request:    nil,
 		HttpMethod: http.MethodGet,
 	}
-	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
-		service.log.Error(err.Error())
-		return dto.Result, false
+	if err := service.devMgmt.RestRequest(ctx, req); err != nil {
+		return dto.Result, err
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse client.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return dto.Result, err
+		}
+		return dto.Result, errors.New(errResponse.Message)
+	}
+	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
+		return dto.Result, err
+	}
+	return dto.Result, nil
+}
+
+func (service *Service) IsConnectionGroupAccessible(c *contextmodel.ReqContext, connection billing.Connection) bool {
+	if c.IsGrafanaAdmin {
+		return true
+	}
+	var access bool
+	//GetCache
+	cacheKey := fmt.Sprintf("isconnectionaccessible-%d-%d", connection.Id, c.UserID)
+	if err := service.devMgmt.GetCache(c.Req.Context(), cacheKey, &access); err == nil {
+		return access
 	}
 	groupService := service.devMgmt.GetGroup()
-	access = groupService.IsGroupAccessibleById(c, dto.Result.GroupId)
+	access = groupService.IsGroupAccessibleById(c, connection.GroupId)
 	//SetCache
 	service.devMgmt.SetCache(c.Req.Context(), cacheKey, access)
-	return dto.Result, access
+	return access
 }
 
 func (service *Service) CreateConnection(c *contextmodel.ReqContext) response.Response {
@@ -148,7 +186,8 @@ func (service *Service) SearchConnections(c *contextmodel.ReqContext) response.R
 }
 
 func (service *Service) UpdateConnection(c *contextmodel.ReqContext) response.Response {
-	if !service.IsConnectionAccessible(c) {
+	_, access := service.IsConnectionAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
@@ -191,7 +230,11 @@ func (service *Service) GetConnectionById(c *contextmodel.ReqContext) response.R
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
-	connection, access := service.IsConnectionAccessibleById(c, id)
+	connection, err := service.GetConnection(c.Req.Context(), id)
+	if err != nil {
+		return response.Error(http.StatusInternalServerError, "failed to get", err)
+	}
+	access := service.IsConnectionGroupAccessible(c, connection)
 	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
@@ -199,7 +242,8 @@ func (service *Service) GetConnectionById(c *contextmodel.ReqContext) response.R
 }
 
 func (service *Service) DeleteConnection(c *contextmodel.ReqContext) response.Response {
-	if !service.IsConnectionAccessible(c) {
+	_, access := service.IsConnectionAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
@@ -226,7 +270,8 @@ func (service *Service) DeleteConnection(c *contextmodel.ReqContext) response.Re
 }
 
 func (service *Service) GetConnectionLogs(c *contextmodel.ReqContext) response.Response {
-	if !service.IsConnectionAccessible(c) {
+	_, access := service.IsConnectionAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)

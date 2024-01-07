@@ -16,11 +16,7 @@ import (
 )
 
 func (service *Service) GetConnectionResources(c *contextmodel.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
-	}
-	connection, access := service.IsConnectionAccessibleById(c, id)
+	connection, access := service.IsConnectionAccessible(c)
 	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
@@ -57,11 +53,7 @@ func (service *Service) GetConnectionResources(c *contextmodel.ReqContext) respo
 }
 
 func (service *Service) CreateConnectionResource(c *contextmodel.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
-	}
-	connection, access := service.IsConnectionAccessibleById(c, id)
+	connection, access := service.IsConnectionAccessible(c)
 	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
@@ -99,12 +91,9 @@ func (service *Service) CreateConnectionResource(c *contextmodel.ReqContext) res
 }
 
 func (service *Service) RemoveConnectionResource(c *contextmodel.ReqContext) response.Response {
-	if !service.IsConnectionAccessible(c) {
+	connection, access := service.IsConnectionAccessible(c)
+	if !access {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
-	if err != nil {
-		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
 	resourceId, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
 	if err != nil {
@@ -112,7 +101,7 @@ func (service *Service) RemoveConnectionResource(c *contextmodel.ReqContext) res
 	}
 	uuid := c.Query("uuid")
 
-	url := fmt.Sprintf("%sapi/connections/%d/resources/%d?uuid=%s&deleted_by=%s", service.cfg.BillingHost, id, resourceId, uuid, c.Login)
+	url := fmt.Sprintf("%sapi/connections/%d/resources/%d?uuid=%s&deleted_by=%s", service.cfg.BillingHost, connection.Id, resourceId, uuid, c.Login)
 	req := &devicemanagement.RestRequest{
 		Url:        url,
 		Request:    nil,

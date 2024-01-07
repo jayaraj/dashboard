@@ -10,6 +10,7 @@ import { contextSrv } from 'app/core/services/context_srv';
 import UserAdminPage from 'app/features/admin/UserAdminPage';
 import LdapPage from 'app/features/admin/ldap/LdapPage';
 import { getAlertingRoutes } from 'app/features/alerting/routes';
+import { getBillingRoutes } from 'app/features/billing/routes';
 import { ConnectionsRedirectNotice } from 'app/features/connections/components/ConnectionsRedirectNotice';
 import { ROUTES as CONNECTIONS_ROUTES } from 'app/features/connections/constants';
 import { getRoutes as getDataConnectionsRoutes } from 'app/features/connections/routes';
@@ -484,6 +485,7 @@ export function getAppRoutes(): RouteDescriptor[] {
     ...getPublicDashboardRoutes(),
     ...getDataConnectionsRoutes(),
     ...getDevicemanagementRoutes(),
+    ...getBillingRoutes(),
     {
       path: '/*',
       component: PageNotFound,

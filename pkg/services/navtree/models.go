@@ -16,6 +16,7 @@ const (
 	WeightDashboard
 	WeightExplore
 	WeightDevicemanagement
+	WeightBilling
 	WeightGrafoAlerts
 	WeightAlerting
 	WeightAlertsAndIncidents
@@ -36,6 +37,7 @@ const (
 	NavIDDashboards         = "dashboards/browse"
 	NavIDExplore            = "explore"
 	NavIDDeviceManagement   = "devicemanagement"
+	NavIDBilling            = "billing"
 	NavIDCfg                = "cfg" // NavIDCfg is the id for org configuration navigation node
 	NavIDAlertsAndIncidents = "alerts-and-incidents"
 	NavIDGrafoAlerting      = "grafo-alerts"
