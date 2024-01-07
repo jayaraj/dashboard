@@ -15,6 +15,8 @@ import {
   Select,
   RadioButtonGroup,
   HorizontalGroup,
+  Stack,
+  LinkButton,
 } from '@grafana/ui';
 import { FormElementsEditor, LayoutSectionsEditor } from 'app/core/components/CustomForm/components';
 import { Configuration, FormElement, LayoutSection } from 'app/core/components/CustomForm/types';
@@ -68,7 +70,9 @@ export const CreateConfigurationType = (): JSX.Element => {
   };
 
   return (
-    <Page navId="configurationtypes" pageNav={pageNav}>
+    <Page navId="configurationtypes" pageNav={pageNav} actions={
+      <LinkButton href={`/configurationtypes`} >Back</LinkButton>
+    }>
       <Page.Contents>
         <Form onSubmit={(dto: CreateConfigurationTypeDTO) => create(dto)} disabled={!canWrite}>
           {({ register, control }) => (
@@ -131,9 +135,10 @@ export const CreateConfigurationType = (): JSX.Element => {
                   </Field>
                 </VerticalGroup>
               </HorizontalGroup>
-              <Button type="submit" disabled={!canWrite}>
-                Create
-              </Button>
+              <Stack gap={1} direction="row">
+                <Button type="submit" variant="primary">Create</Button>
+                <LinkButton href={`/configurationtypes`} >Back</LinkButton>
+              </Stack>
             </FieldSet>
           )}
         </Form>

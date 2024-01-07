@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { NavModelItem } from '@grafana/data';
 import { getBackendSrv, locationService } from '@grafana/runtime';
-import { Button, Select, Form, Field, Input, FieldSet, InputControl } from '@grafana/ui';
+import { Button, Select, Form, Field, Input, FieldSet, InputControl, LinkButton, Stack } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 import config from 'app/core/config';
@@ -66,7 +66,9 @@ export const CreateGroupResource = ({ match }: Props): JSX.Element => {
   };
 
   return (
-    <Page navId="devicemanagement-groups" pageNav={pageNav}>
+    <Page navId="devicemanagement-groups" pageNav={pageNav} actions={
+      <LinkButton href={`/org/groups/edit/${groupId}/resources`} >Back</LinkButton>
+    }>
       <Page.Contents>
         <Form
           onSubmit={(dto: CreateResourceDTO) => create(dto)}
@@ -119,9 +121,10 @@ export const CreateGroupResource = ({ match }: Props): JSX.Element => {
                   <Input {...register('longitude')} type="number" id="resource-longitude" width={40} />
                 </Field>
               </FieldSet>
-              <Button type="submit" variant="primary">
-                Create
-              </Button>
+              <Stack gap={1} direction="row">
+                <Button type="submit" variant="primary">Create</Button>
+                <LinkButton href={`/org/groups/edit/${groupId}/resources`} >Back</LinkButton>
+              </Stack>
             </>
           )}
         </Form>

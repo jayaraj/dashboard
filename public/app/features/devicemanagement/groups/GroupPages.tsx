@@ -129,6 +129,11 @@ export class GroupPages extends PureComponent<Props, State> {
         actions={
           <span>
             Path:&nbsp;&nbsp;
+            <span key={`root`}>
+              <a href={`org/groups`} style={{ textDecoration: 'underline' }}>
+                Root
+              </a>
+            </span>
             {grpNames.map((name, i) => {
               return (
                 <span key={i}>

@@ -248,7 +248,7 @@ export const GroupResourceList = ({
       <div className="page-action-bar">
         <InlineField grow>
           <FilterInput
-            placeholder={`Search ${config.groupTitle.toLowerCase()}`}
+            placeholder={`Search ${config.resourceTitle.toLowerCase()}`}
             value={searchQuery}
             onChange={changeQuery}
           />

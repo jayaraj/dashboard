@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { NavModelItem } from '@grafana/data';
 import { getBackendSrv, locationService } from '@grafana/runtime';
-import { Button, Form, Field, Input, FieldSet, InputControl, Select } from '@grafana/ui';
+import { Button, Form, Field, Input, FieldSet, InputControl, Select, LinkButton, Stack } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { TagFilter } from 'app/core/components/TagFilter/TagFilter';
 import config from 'app/core/config';
@@ -12,7 +12,7 @@ import { ConfigurationType } from 'app/types/devicemanagement/configuration';
 import { CreateGroupDTO } from 'app/types/devicemanagement/group';
 
 const pageNav: NavModelItem = {
-  icon: 'resource',
+  icon: 'layer-group',
   id: 'group-new',
   text: `New ${config.groupTitle.toLowerCase()}`,
   subTitle: '',
@@ -24,6 +24,7 @@ interface Props extends GrafanaRouteComponentProps<{ id: string }> {}
 export const CreateGroup = ({ match }: Props): JSX.Element => {
   const parent = parseInt(match.params.id, 10);
   let [types, setTypes] = useState(stringsToSelectableValues([] as string[]));
+  const backUrl = (parent > 0)? `/org/groups/edit/${parent}/groups`: `/org/groups`;
 
   useEffect(() => {
     typesRequest();
@@ -67,7 +68,9 @@ export const CreateGroup = ({ match }: Props): JSX.Element => {
   };
 
   return (
-    <Page navId="devicemanagement-groups" pageNav={pageNav}>
+    <Page navId="devicemanagement-groups" pageNav={pageNav} actions={
+      <LinkButton href={backUrl} >Back</LinkButton>
+    }>
       <Page.Contents>
         <Form
           onSubmit={(dto: CreateGroupDTO) => create(dto)}
@@ -108,9 +111,10 @@ export const CreateGroup = ({ match }: Props): JSX.Element => {
                   />
                 </Field>
               </FieldSet>
-              <Button type="submit" variant="primary">
-                Create
-              </Button>
+              <Stack gap={1} direction="row">
+                <Button type="submit" variant="primary">Create</Button>
+                <LinkButton href={backUrl} >Back</LinkButton>
+              </Stack>
             </>
           )}
         </Form>
