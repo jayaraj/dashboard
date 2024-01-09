@@ -7,9 +7,11 @@ import { NavToolbarSeparator } from 'app/core/components/AppChrome/NavToolbar/Na
 import { t } from 'app/core/internationalization';
 import { contextSrv } from 'app/core/services/context_srv';
 import { DashNavButton } from 'app/features/dashboard/components/DashNav/DashNavButton';
+import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 
 import { ShareModal } from '../sharing/ShareModal';
 import { DashboardInteractions } from '../utils/interactions';
+import { dynamicDashNavActions } from '../utils/registerDynamicDashNavAction';
 
 import { DashboardScene } from './DashboardScene';
 
@@ -20,6 +22,8 @@ interface Props {
 export const NavToolbarActions = React.memo<Props>(({ dashboard }) => {
   const { actions = [], isEditing, viewPanelScene, isDirty, uid, meta, editview } = dashboard.useState();
   const toolbarActions = (actions ?? []).map((action) => <action.Component key={action.state.key} model={action} />);
+  const rightToolbarActions: JSX.Element[] = [];
+  const _legacyDashboardModel = getDashboardSrv().getCurrent();
 
   if (uid && !editview && contextSrv.isGrafanaAdmin) {
     if (meta.canStar) {
@@ -62,9 +66,30 @@ export const NavToolbarActions = React.memo<Props>(({ dashboard }) => {
         onClick={() => locationService.push(`/d/${uid}`)}
       />
     );
+    if (dynamicDashNavActions.left.length > 0) {
+      dynamicDashNavActions.left.map((action, index) => {
+        const Component = action.component;
+        const element = <Component dashboard={_legacyDashboardModel} />;
+        typeof action.index === 'number'
+          ? toolbarActions.splice(action.index, 0, element)
+          : toolbarActions.push(element);
+      });
+    }
   }
 
   toolbarActions.push(<NavToolbarSeparator leftActionsSeparator key="separator" />);
+
+  if (dynamicDashNavActions.right.length > 0) {
+    dynamicDashNavActions.right.map((action, index) => {
+      const Component = action.component;
+      const element = <Component dashboard={_legacyDashboardModel} key={`button-custom-${index}`} />;
+      typeof action.index === 'number'
+        ? rightToolbarActions.splice(action.index, 0, element)
+        : rightToolbarActions.push(element);
+    });
+
+    toolbarActions.push(...rightToolbarActions);
+  }
 
   if (viewPanelScene) {
     toolbarActions.push(

@@ -19,6 +19,7 @@ const (
 	WeightGrafoAlerts
 	WeightAlerting
 	WeightAlertsAndIncidents
+	WeightTestingAndSynthetics
 	WeightMonitoring
 	WeightInfrastructure
 	WeightApplication
@@ -32,23 +33,24 @@ const (
 )
 
 const (
-	NavIDRoot               = "root"
-	NavIDDashboards         = "dashboards/browse"
-	NavIDExplore            = "explore"
-	NavIDDeviceManagement   = "devicemanagement"
-	NavIDCfg                = "cfg" // NavIDCfg is the id for org configuration navigation node
-	NavIDAlertsAndIncidents = "alerts-and-incidents"
-	NavIDGrafoAlerting      = "grafo-alerts"
-	NavIDAlerting           = "alerting"
-	NavIDAlertingLegacy     = "alerting-legacy"
-	NavIDMonitoring         = "monitoring"
-	NavIDInfrastructure     = "infrastructure"
-	NavIDFrontend           = "frontend"
-	NavIDReporting          = "reports"
-	NavIDApps               = "apps"
-	NavIDCfgGeneral         = "cfg/general"
-	NavIDCfgPlugins         = "cfg/plugins"
-	NavIDCfgAccess          = "cfg/access"
+	NavIDRoot                 = "root"
+	NavIDDashboards           = "dashboards/browse"
+	NavIDExplore              = "explore"
+	NavIDDeviceManagement     = "devicemanagement"
+	NavIDCfg                  = "cfg" // NavIDCfg is the id for org configuration navigation node
+	NavIDAlertsAndIncidents   = "alerts-and-incidents"
+	NavIDGrafoAlerting        = "grafo-alerts"
+	NavIDTestingAndSynthetics = "testing-and-synthetics"
+	NavIDAlerting             = "alerting"
+	NavIDAlertingLegacy       = "alerting-legacy"
+	NavIDMonitoring           = "monitoring"
+	NavIDInfrastructure       = "infrastructure"
+	NavIDFrontend             = "frontend"
+	NavIDReporting            = "reports"
+	NavIDApps                 = "apps"
+	NavIDCfgGeneral           = "cfg/general"
+	NavIDCfgPlugins           = "cfg/plugins"
+	NavIDCfgAccess            = "cfg/access"
 )
 
 type NavLink struct {
