@@ -8,7 +8,6 @@ import { Select, RadioButtonGroup, useStyles2, Tooltip, Field } from '@grafana/u
 import { Page } from 'app/core/components/Page/Page';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { getNavModel } from 'app/core/selectors/navModel';
-import { ROUTES as CONNECTIONS_ROUTES } from 'app/features/connections/constants';
 import { useSelector } from 'app/types';
 
 import { HorizontalGroup } from '../components/HorizontalGroup';
@@ -66,15 +65,7 @@ export default function Browse({ route }: GrafanaRouteComponentProps): ReactElem
     return null;
   }
 
-  const subTitle = (
-    <div>
-      Extend the experience with panel plugins and apps. To find more data sources go to{' '}
-      <a className="external-link" href={`${CONNECTIONS_ROUTES.AddNewConnection}?cat=data-source`}>
-        Connections
-      </a>
-      .
-    </div>
-  );
+  const subTitle = <div>Extend the experience with panel plugins and apps.</div>;
 
   return (
     <Page navModel={navModel} subTitle={subTitle}>

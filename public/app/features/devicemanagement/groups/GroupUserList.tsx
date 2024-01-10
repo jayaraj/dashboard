@@ -20,6 +20,7 @@ import {
 } from '@grafana/ui';
 import { SlideDown } from 'app/core/components/Animations/SlideDown';
 import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
+import PageLoader from 'app/core/components/PageLoader/PageLoader';
 import { UserPicker } from 'app/core/components/Select/UserPicker';
 import { contextSrv } from 'app/core/services/context_srv';
 import { StoreState, OrgUser } from 'app/types';
@@ -181,7 +182,9 @@ export const GroupUserList = ({
     ],
     [hasFetched, deleteGroupUser, styles]
   );
-
+  if (!hasFetched) {
+    return <PageLoader />;
+  }
   if (noGroupUsers) {
     return (
       <>

@@ -10,7 +10,7 @@ export default function FeatureTogglePage() {
         <h1>
           <Trans i18nKey="correlations.page-heading">Correlations are disabled</Trans>
         </h1>
-        <Trans i18nKey="correlations.page-content">To enable Correlations, add it in the Grafana config:</Trans>
+        <Trans i18nKey="correlations.page-content">To enable Correlations, add it in the config:</Trans>
         <div>
           <pre>
             {`[feature_toggles]

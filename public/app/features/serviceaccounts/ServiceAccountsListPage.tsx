@@ -171,22 +171,7 @@ export const ServiceAccountsListPageUnconnected = ({
     setCurrentServiceAccount(null);
   };
 
-  const docsLink = (
-    <a
-      className="external-link"
-      href="https://grafana.com/docs/grafana/latest/administration/service-accounts/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      documentation.
-    </a>
-  );
-  const subTitle = (
-    <span>
-      Service accounts and their tokens can be used to authenticate against the Grafana API. Find out more in our{' '}
-      {docsLink}
-    </span>
-  );
+  const subTitle = <span>Service accounts and their tokens can be used to authenticate against the API.</span>;
 
   return (
     <Page

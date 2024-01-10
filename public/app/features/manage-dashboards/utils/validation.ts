@@ -30,7 +30,7 @@ export const validateGcomDashboard = (gcomDashboard: string) => {
 
   return match && (match[1] || match[2])
     ? true
-    : t('dashboard.validation.invalid-dashboard-id', 'Could not find a valid Grafana.com ID');
+    : t('dashboard.validation.invalid-dashboard-id', 'Could not find a valid ID');
 };
 
 export const validateTitle = (newTitle: string, folderUid: string) => {

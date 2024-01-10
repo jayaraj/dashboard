@@ -169,13 +169,10 @@ class UnthemedDashboardImport extends PureComponent<Props> {
               >
                 <Input
                   id="url-input"
-                  placeholder={t('dashboard-import.gcom-field.placeholder', 'Grafana.com dashboard URL or ID')}
+                  placeholder={t('dashboard-import.gcom-field.placeholder', 'Dashboard URL or ID')}
                   type="text"
                   {...register('gcomDashboard', {
-                    required: t(
-                      'dashboard-import.gcom-field.validation-required',
-                      'A Grafana dashboard URL or ID is required'
-                    ),
+                    required: t('dashboard-import.gcom-field.validation-required', 'A Dashboard URL or ID is required'),
                     validate: validateGcomDashboard,
                   })}
                   addonAfter={

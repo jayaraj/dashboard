@@ -333,7 +333,7 @@
     "gcom-field": {
       "label": "Dashboards für gängige Anwendungen finden und importieren unter <1></1>",
       "load-button": "Laden",
-      "placeholder": "Grafana.com Dashboard URL oder ID",
+      "placeholder": "Dashboard URL oder ID",
       "validation-required": "Eine Grafana Dashboard URL oder ID ist erforderlich"
     },
     "json-field": {

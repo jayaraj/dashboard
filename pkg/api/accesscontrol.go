@@ -67,7 +67,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				},
 			},
 		},
-		Grants: []string{string(org.RoleEditor)},
+		Grants: []string{ac.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	if hs.Cfg.ViewersCanEdit {
@@ -132,7 +132,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				},
 			},
 		},
-		Grants: []string{},
+		Grants: []string{ac.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	datasourcesWriterRole := ac.RoleRegistration{
@@ -155,7 +155,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				},
 			}),
 		},
-		Grants: []string{string(org.RoleAdmin)},
+		Grants: []string{ac.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	datasourcesIdReaderRole := ac.RoleRegistration{
@@ -397,7 +397,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: dashboards.ActionDashboardsCreate, Scope: dashboards.ScopeFoldersProvider.GetResourceScopeUID(ac.GeneralFolderUID)},
 			},
 		},
-		Grants: []string{"Editor"},
+		Grants: []string{ac.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	dashboardsReaderRole := ac.RoleRegistration{
@@ -410,7 +410,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: dashboards.ActionDashboardsRead, Scope: dashboards.ScopeDashboardsAll},
 			},
 		},
-		Grants: []string{"Admin"},
+		Grants: []string{ac.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	dashboardsWriterRole := ac.RoleRegistration{
@@ -427,7 +427,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: dashboards.ActionDashboardsPermissionsWrite, Scope: dashboards.ScopeDashboardsAll},
 			}),
 		},
-		Grants: []string{"Admin"},
+		Grants: []string{ac.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	foldersCreatorRole := ac.RoleRegistration{
@@ -440,7 +440,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: dashboards.ActionFoldersCreate},
 			},
 		},
-		Grants: []string{"Editor"},
+		Grants: []string{ac.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	foldersReaderRole := ac.RoleRegistration{
@@ -476,7 +476,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 					{Action: dashboards.ActionDashboardsPermissionsWrite, Scope: dashboards.ScopeFoldersAll},
 				}),
 		},
-		Grants: []string{"Admin"},
+		Grants: []string{ac.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	libraryPanelsCreatorRole := ac.RoleRegistration{
@@ -559,7 +559,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: dashboards.ActionDashboardsPublicWrite, Scope: dashboards.ScopeDashboardsAll},
 			},
 		},
-		Grants: []string{"Admin"},
+		Grants: []string{ac.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	featuremgmtReaderRole := ac.RoleRegistration{
@@ -572,7 +572,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionFeatureManagementRead},
 			},
 		},
-		Grants: []string{"Admin"},
+		Grants: []string{ac.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	featuremgmtWriterRole := ac.RoleRegistration{
@@ -585,7 +585,7 @@ func (hs *HTTPServer) declareFixedRoles() error {
 				{Action: ac.ActionFeatureManagementWrite},
 			},
 		},
-		Grants: []string{"Admin"},
+		Grants: []string{ac.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	roles := []ac.RoleRegistration{provisioningWriterRole, datasourcesReaderRole, builtInDatasourceReader, datasourcesWriterRole,

@@ -26,10 +26,14 @@ import {
   setGroupsCount,
   setGroupsSearchPage,
   setGroupsSearchQuery,
+  setHasGroupResourcesFetched,
+  setHasGroupUsersFetched,
+  setHasGroupsFetched,
 } from './reducers';
 
 export function loadGroups(parent: number): ThunkResult<void> {
   return async (dispatch, getStore) => {
+    dispatch(setHasGroupsFetched(false));
     const { searchPage, searchQuery } = getStore().groups;
     const response = await getBackendSrv().get('/api/groups', {
       parent: parent,
@@ -88,6 +92,7 @@ export function deleteGroup(id: number, parent: number): ThunkResult<void> {
 
 export function loadGroupResources(): ThunkResult<void> {
   return async (dispatch, getStore) => {
+    dispatch(setHasGroupResourcesFetched(false));
     const group = getStore().group.group;
     const { searchPage, searchQuery } = getStore().groupResources;
     const response = await getBackendSrv().get(`/api/groups/${group.id}/resources`, {
@@ -125,6 +130,7 @@ export function deleteGroupResource(id: number): ThunkResult<void> {
 
 export function loadGroupUsers(): ThunkResult<void> {
   return async (dispatch, getStore) => {
+    dispatch(setHasGroupUsersFetched(false));
     const group = getStore().group.group;
     const { searchPage, searchQuery } = getStore().groupUsers;
     const response = await getBackendSrv().get(`/api/groups/${group.id}/users`, {

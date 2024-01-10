@@ -26,6 +26,7 @@ import {
 } from '@grafana/ui';
 import { SlideDown } from 'app/core/components/Animations/SlideDown';
 import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
+import PageLoader from 'app/core/components/PageLoader/PageLoader';
 import config from 'app/core/config';
 import { contextSrv } from 'app/core/services/context_srv';
 import { StoreState } from 'app/types';
@@ -194,7 +195,9 @@ export const GroupResourceList = ({
     ],
     [hasFetched, deleteGroupResource, styles]
   );
-
+  if (!hasFetched) {
+    return <PageLoader />;
+  }
   if (noGroupResources) {
     return (
       <>
