@@ -26,6 +26,7 @@ import {
   setGroupsCount,
   setGroupsSearchPage,
   setGroupsSearchQuery,
+  setHasFetched,
 } from './reducers';
 
 export function loadGroups(parent: number): ThunkResult<void> {
@@ -60,6 +61,7 @@ export function changeGroupsPage(page: number, parent: number): ThunkResult<void
 
 export function loadGroup(id: number): ThunkResult<void> {
   return async (dispatch) => {
+    setHasFetched(false);
     let response = await getBackendSrv().get(`/api/groups/${id}`);
     const groupPathName = await getBackendSrv().get(`/api/groups/${id}/pathname`);
     response = { ...response, pathname: groupPathName.pathname };

@@ -389,7 +389,7 @@ func (s *ServiceImpl) buildLegacyAlertNavLinks(c *contextmodel.ReqContext) *navt
 	if s.features.IsEnabled(c.Req.Context(), featuremgmt.FlagAlertingPreviewUpgrade) && c.HasRole(org.RoleAdmin) {
 		alertChildNavs = append(alertChildNavs, &navtree.NavLink{
 			Text: "Upgrade Alerting", Id: "alerting-upgrade", Url: s.cfg.AppSubURL + "/alerting-legacy/upgrade",
-			SubTitle: "Upgrade your existing legacy alerts and notification channels to the new Grafana Alerting",
+			SubTitle: "Upgrade your existing legacy alerts and notification channels to the new Alerting",
 			Icon:     "cog",
 		})
 	}

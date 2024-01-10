@@ -163,7 +163,7 @@
       "next-button": "Next",
       "save-button": "Save"
     },
-    "page-content": "To enable Correlations, add it in the Grafana config:",
+    "page-content": "To enable Correlations, add it in the config:",
     "page-heading": "Correlations are disabled",
     "query-editor": {
       "control-rules": "The selected target data source must export a query editor.",
@@ -243,7 +243,7 @@
       "add-widget-body": "Create lists, markdowns and other widgets",
       "add-widget-button": "Add widget",
       "add-widget-header": "Add a widget",
-      "import-a-dashboard-body": "Import dashboard from file or <1>grafana.com</1>.",
+      "import-a-dashboard-body": "Import dashboard from file.",
       "import-a-dashboard-header": "Import a dashboard",
       "import-dashboard-button": "Import dashboard"
     },
@@ -315,7 +315,7 @@
       "unmark-favorite": "Unmark as favorite"
     },
     "validation": {
-      "invalid-dashboard-id": "Could not find a valid Grafana.com ID",
+      "invalid-dashboard-id": "Could not find a valid ID",
       "invalid-json": "Not valid JSON",
       "tags-expected-array": "tags expected array",
       "tags-expected-strings": "tags expected array of strings"
@@ -333,8 +333,8 @@
     "gcom-field": {
       "label": "Find and import dashboards for common applications at <1></1>",
       "load-button": "Load",
-      "placeholder": "Grafana.com dashboard URL or ID",
-      "validation-required": "A Grafana dashboard URL or ID is required"
+      "placeholder": "Dashboard URL or ID",
+      "validation-required": "A Dashboard URL or ID is required"
     },
     "json-field": {
       "label": "Import via dashboard JSON model",
@@ -476,7 +476,7 @@
       "sort-placeholder": "Sort queries by"
     },
     "rich-history-settings-tab": {
-      "alert-info": "Grafana will keep entries up to {{optionLabel}}.Starred entries won't be deleted.",
+      "alert-info": "Will keep entries up to {{optionLabel}}.Starred entries won't be deleted.",
       "change-default-tab": "Change the default active tab from “Query history” to “Starred”",
       "clear-history-info": "Delete all of your query history, permanently.",
       "clear-query-history": "Clear query history",
@@ -485,7 +485,7 @@
       "delete-confirm-text": "Are you sure you want to permanently delete your query history?",
       "delete-title": "Delete",
       "history-time-span": "History time span",
-      "history-time-span-description": "Select the period of time for which Grafana will save your query history. Up to {{MAX_HISTORY_ITEMS}} entries will be stored.",
+      "history-time-span-description": "Select the period of time to save your query history. Up to {{MAX_HISTORY_ITEMS}} entries will be stored.",
       "only-show-active-datasource": "Only show queries for data source currently active in Explore",
       "query-history-deleted": "Query history deleted",
       "retention-period": {
@@ -620,7 +620,7 @@
     "query": {
       "collapse-all": "Collapse all",
       "copy-to-clipboard": "Copy to clipboard",
-      "description": "Query inspector allows you to view raw request and response. To collect this data Grafana needs to issue a new query. Click refresh button below to trigger a new query.",
+      "description": "Query inspector allows you to view raw request and response. To collect this data dashboard needs to issue a new query. Click refresh button below to trigger a new query.",
       "expand-all": "Expand all",
       "no-data": "No request and response collected yet. Hit refresh button",
       "refresh": "Refresh"
@@ -712,7 +712,7 @@
       "title": "Silences"
     },
     "alerting-upgrade": {
-      "subtitle": "Upgrade your existing legacy alerts and notification channels to the new Grafana Alerting",
+      "subtitle": "Upgrade your existing legacy alerts and notification channels to the new Alerting",
       "title": "Alerting upgrade"
     },
     "alerts-and-incidents": {
@@ -720,14 +720,14 @@
       "title": "Alerts & IRM"
     },
     "api-keys": {
-      "subtitle": "Manage and create API keys that are used to interact with Grafana HTTP APIs",
+      "subtitle": "Manage and create API keys that are used to interact with {{title}} HTTP APIs",
       "title": "API keys"
     },
     "application": {
       "title": "Application"
     },
     "apps": {
-      "subtitle": "App plugins that extend the Grafana experience",
+      "subtitle": "App plugins that extend the {{title}} experience",
       "title": "Apps"
     },
     "authentication": {
@@ -741,7 +741,7 @@
       "title": "Users and access"
     },
     "config-general": {
-      "subtitle": "Manage default preferences and settings across Grafana",
+      "subtitle": "Manage default preferences and settings across {{title}}",
       "title": "General"
     },
     "config-plugins": {
@@ -800,11 +800,11 @@
       "title": "Frontend"
     },
     "global-orgs": {
-      "subtitle": "Isolated instances of Grafana running on the same server",
+      "subtitle": "Isolated instances of {{title}} running on the same server",
       "title": "Organizations"
     },
     "global-users": {
-      "subtitle": "Manage users in Grafana",
+      "subtitle": "Manage users in {{title}}",
       "title": "Users"
     },
     "grafana-quaderno": {
@@ -877,7 +877,7 @@
       "title": "Playlists"
     },
     "plugins": {
-      "subtitle": "Extend the Grafana experience with plugins",
+      "subtitle": "Extend the {{title}} experience with plugins",
       "title": "Plugins"
     },
     "profile/notifications": {
@@ -911,11 +911,11 @@
       "title": "Search dashboards"
     },
     "server-settings": {
-      "subtitle": "View the settings defined in your Grafana config",
+      "subtitle": "View the settings defined in your {{title}} config",
       "title": "Settings"
     },
     "service-accounts": {
-      "subtitle": "Use service accounts to run automated workloads in Grafana",
+      "subtitle": "Use service accounts to run automated workloads in {{title}}",
       "title": "Service accounts"
     },
     "sign-out": {
@@ -1257,7 +1257,7 @@
     "embed": {
       "copy": "Copy to clipboard",
       "html": "Embed HTML",
-      "html-description": "The HTML code below can be pasted and included in another web page. Unless anonymous access is enabled, the user viewing that page need to be signed into Grafana for the graph to load.",
+      "html-description": "The HTML code below can be pasted and included in another web page. Unless anonymous access is enabled, the user viewing that page need to be signed into Dashboard for the graph to load.",
       "info": "Generate HTML for embedding an iframe with this panel.",
       "time-range": "Current time range",
       "time-range-description": "Transforms the current relative time range to an absolute time range"
@@ -1278,7 +1278,7 @@
       "info-text": "Create a direct link to this dashboard or panel, customized with the options below.",
       "link-url": "Link URL",
       "render-alert": "Image renderer plugin not installed",
-      "render-instructions": "To render a panel image, you must install the <1>Grafana image renderer plugin</1>. Please contact your Grafana administrator to install the plugin.",
+      "render-instructions": "To render a panel image, you must install the Dashboard image renderer plugin. Please contact your administrator to install the plugin.",
       "rendered-image": "Direct link rendered image",
       "save-alert": "Dashboard is not saved",
       "save-dashboard": "To render a panel image, you must save the dashboard first.",

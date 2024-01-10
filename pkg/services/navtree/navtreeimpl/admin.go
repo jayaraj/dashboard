@@ -64,7 +64,7 @@ func (s *ServiceImpl) getAdminNode(c *contextmodel.ReqContext) (*navtree.NavLink
 		configNodes = append(configNodes, &navtree.NavLink{
 			Text:     "API keys",
 			Id:       "apikeys",
-			SubTitle: "Manage and create API keys that are used to interact with Grafana HTTP APIs",
+			SubTitle: "Manage and create API keys that are used to interact with HTTP APIs",
 			Icon:     "key-skeleton-alt",
 			Url:      s.cfg.AppSubURL + "/org/apikeys",
 		})
@@ -98,7 +98,7 @@ func (s *ServiceImpl) getAdminNode(c *contextmodel.ReqContext) (*navtree.NavLink
 
 	if hasGlobalAccess(orgsAccessEvaluator) {
 		configNodes = append(configNodes, &navtree.NavLink{
-			Text: "Organizations", SubTitle: "Isolated instances of Grafana running on the same server", Id: "global-orgs", Url: s.cfg.AppSubURL + "/admin/orgs", Icon: "building",
+			Text: "Organizations", SubTitle: "Isolated instances of " + s.cfg.AppTitle + " running on the same server", Id: "global-orgs", Url: s.cfg.AppSubURL + "/admin/orgs", Icon: "building",
 		})
 	}
 

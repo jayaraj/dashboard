@@ -14,16 +14,6 @@ export const MigrateToServiceAccountsCard = ({ onMigrate, apikeysCount, disabled
   const [isModalOpen, setIsModalOpen] = useState(false);
   const styles = useStyles2(getStyles);
 
-  const docsLink = (
-    <a
-      className="external-link"
-      href="https://grafana.com/docs/grafana/latest/administration/api-keys/#migrate-api-keys-to-grafana-service-accounts"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      Find out more about the migration here.
-    </a>
-  );
   const migrationBoxDesc = (
     <span>
       Migrating all API keys will hide the API keys tab.
@@ -40,7 +30,7 @@ export const MigrateToServiceAccountsCard = ({ onMigrate, apikeysCount, disabled
         <Alert title="Switch from API keys to service accounts" severity="warning">
           <div className={styles.text}>
             We will soon deprecate API keys. Each API key will be migrated into a service account with a token and will
-            continue to work as they were. We encourage you to migrate your API keys to service accounts now. {docsLink}
+            continue to work as they were. We encourage you to migrate your API keys to service accounts now.
           </div>
           <div className={styles.actionRow}>
             <Button className={styles.actionButton} onClick={() => setIsModalOpen(true)}>
