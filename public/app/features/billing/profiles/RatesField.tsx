@@ -95,7 +95,7 @@ const RatesField = ({ className }: Props) => {
             icon="plus"
             variant="secondary"
             onClick={() => {
-              const newRate = { from: Number(0), to: Number(0), final: false, amount: Number(0), description: '' };
+              const newRate = { id: '', from: Number(0), to: Number(0), final: false, amount: Number(0), description: '' };
               append(newRate);
             }}
           >

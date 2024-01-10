@@ -96,6 +96,20 @@
    "title": "AlertManagersResult contains the result from querying the alertmanagers endpoint.",
    "type": "object"
   },
+  "AlertPair": {
+   "properties": {
+    "alertRule": {
+     "$ref": "#/definitions/AlertRuleUpgrade"
+    },
+    "error": {
+     "type": "string"
+    },
+    "legacyAlert": {
+     "$ref": "#/definitions/LegacyAlert"
+    }
+   },
+   "type": "object"
+  },
   "AlertQuery": {
    "properties": {
     "datasourceUid": {
@@ -280,6 +294,23 @@
    },
    "type": "object"
   },
+  "AlertRuleUpgrade": {
+   "properties": {
+    "sendsTo": {
+     "items": {
+      "type": "string"
+     },
+     "type": "array"
+    },
+    "title": {
+     "type": "string"
+    },
+    "uid": {
+     "type": "string"
+    }
+   },
+   "type": "object"
+  },
   "AlertingFileExport": {
    "properties": {
     "apiVersion": {
@@ -295,6 +326,12 @@
     "groups": {
      "items": {
       "$ref": "#/definitions/AlertRuleGroupExport"
+     },
+     "type": "array"
+    },
+    "muteTimes": {
+     "items": {
+      "$ref": "#/definitions/MuteTimeIntervalExport"
      },
      "type": "array"
     },
@@ -555,6 +592,20 @@
    "title": "Config is the top-level configuration for Alertmanager's config files.",
    "type": "object"
   },
+  "ContactPair": {
+   "properties": {
+    "contactPoint": {
+     "$ref": "#/definitions/ContactPointUpgrade"
+    },
+    "error": {
+     "type": "string"
+    },
+    "legacyChannel": {
+     "$ref": "#/definitions/LegacyChannel"
+    }
+   },
+   "type": "object"
+  },
   "ContactPointExport": {
    "properties": {
     "name": {
@@ -574,6 +625,20 @@
    "title": "ContactPointExport is the provisioned file export of alerting.ContactPointV1.",
    "type": "object"
   },
+  "ContactPointUpgrade": {
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "routeMatchers": {
+     "$ref": "#/definitions/ObjectMatchers"
+    },
+    "type": {
+     "type": "string"
+    }
+   },
+   "type": "object"
+  },
   "ContactPoints": {
    "items": {
     "$ref": "#/definitions/EmbeddedContactPoint"
@@ -585,6 +650,48 @@
    "format": "uint8",
    "title": "CounterResetHint contains the known information about a counter reset,",
    "type": "integer"
+  },
+  "DashboardUpgrade": {
+   "properties": {
+    "dashboardId": {
+     "format": "int64",
+     "type": "integer"
+    },
+    "dashboardName": {
+     "type": "string"
+    },
+    "dashboardUid": {
+     "type": "string"
+    },
+    "error": {
+     "type": "string"
+    },
+    "folderName": {
+     "type": "string"
+    },
+    "folderUid": {
+     "type": "string"
+    },
+    "migratedAlerts": {
+     "items": {
+      "$ref": "#/definitions/AlertPair"
+     },
+     "type": "array"
+    },
+    "newFolderName": {
+     "type": "string"
+    },
+    "newFolderUid": {
+     "type": "string"
+    },
+    "provisioned": {
+     "type": "boolean"
+    },
+    "warning": {
+     "type": "string"
+    }
+   },
+   "type": "object"
   },
   "DataLink": {
    "description": "DataLink define what",
@@ -1425,10 +1532,6 @@
     "is_paused": {
      "type": "boolean"
     },
-    "namespace_id": {
-     "format": "int64",
-     "type": "integer"
-    },
     "namespace_uid": {
      "type": "string"
     },
@@ -1831,6 +1934,41 @@
    },
    "type": "array"
   },
+  "LegacyAlert": {
+   "properties": {
+    "dashboardId": {
+     "format": "int64",
+     "type": "integer"
+    },
+    "id": {
+     "format": "int64",
+     "type": "integer"
+    },
+    "name": {
+     "type": "string"
+    },
+    "panelId": {
+     "format": "int64",
+     "type": "integer"
+    }
+   },
+   "type": "object"
+  },
+  "LegacyChannel": {
+   "properties": {
+    "id": {
+     "format": "int64",
+     "type": "integer"
+    },
+    "name": {
+     "type": "string"
+    },
+    "type": {
+     "type": "string"
+    }
+   },
+   "type": "object"
+  },
   "LinkTransformationConfig": {
    "properties": {
     "expression": {
@@ -1918,6 +2056,24 @@
     }
    },
    "title": "MuteTimeInterval represents a named set of time intervals for which a route should be muted.",
+   "type": "object"
+  },
+  "MuteTimeIntervalExport": {
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "orgId": {
+     "format": "int64",
+     "type": "integer"
+    },
+    "time_intervals": {
+     "items": {
+      "$ref": "#/definitions/TimeInterval"
+     },
+     "type": "array"
+    }
+   },
    "type": "object"
   },
   "MuteTimings": {
@@ -2185,6 +2341,50 @@
     },
     "username": {
      "type": "string"
+    }
+   },
+   "type": "object"
+  },
+  "OrgMigrationState": {
+   "properties": {
+    "migratedChannels": {
+     "items": {
+      "$ref": "#/definitions/ContactPair"
+     },
+     "type": "array"
+    },
+    "migratedDashboards": {
+     "items": {
+      "$ref": "#/definitions/DashboardUpgrade"
+     },
+     "type": "array"
+    },
+    "orgId": {
+     "format": "int64",
+     "type": "integer"
+    }
+   },
+   "type": "object"
+  },
+  "OrgMigrationSummary": {
+   "properties": {
+    "hasErrors": {
+     "type": "boolean"
+    },
+    "newAlerts": {
+     "format": "int64",
+     "type": "integer"
+    },
+    "newChannels": {
+     "format": "int64",
+     "type": "integer"
+    },
+    "newDashboards": {
+     "format": "int64",
+     "type": "integer"
+    },
+    "removed": {
+     "type": "boolean"
     }
    },
    "type": "object"
@@ -4205,6 +4405,7 @@
    "type": "object"
   },
   "alertGroup": {
+   "description": "AlertGroup alert group",
    "properties": {
     "alerts": {
      "description": "alerts",
@@ -4389,13 +4590,13 @@
    "type": "object"
   },
   "gettableAlerts": {
-   "description": "GettableAlerts gettable alerts",
    "items": {
     "$ref": "#/definitions/gettableAlert"
    },
    "type": "array"
   },
   "gettableSilence": {
+   "description": "GettableSilence gettable silence",
    "properties": {
     "comment": {
      "description": "comment",
@@ -6853,6 +7054,11 @@
       "name": "UID",
       "required": true,
       "type": "string"
+     },
+     {
+      "in": "header",
+      "name": "X-Disable-Provenance",
+      "type": "string"
      }
     ],
     "responses": {
@@ -7022,6 +7228,11 @@
       "schema": {
        "$ref": "#/definitions/EmbeddedContactPoint"
       }
+     },
+     {
+      "in": "header",
+      "name": "X-Disable-Provenance",
+      "type": "string"
      }
     ],
     "responses": {
@@ -7112,7 +7323,7 @@
      }
     ],
     "responses": {
-     "204": {
+     "202": {
       "description": " The contact point was deleted successfully."
      }
     },
@@ -7140,6 +7351,11 @@
       "schema": {
        "$ref": "#/definitions/EmbeddedContactPoint"
       }
+     },
+     {
+      "in": "header",
+      "name": "X-Disable-Provenance",
+      "type": "string"
      }
     ],
     "responses": {
@@ -7201,6 +7417,11 @@
     ],
     "operationId": "RoutePutAlertRuleGroup",
     "parameters": [
+     {
+      "in": "header",
+      "name": "X-Disable-Provenance",
+      "type": "string"
+     },
      {
       "in": "path",
       "name": "FolderUID",
@@ -7322,6 +7543,11 @@
       "schema": {
        "$ref": "#/definitions/MuteTimeInterval"
       }
+     },
+     {
+      "in": "header",
+      "name": "X-Disable-Provenance",
+      "type": "string"
      }
     ],
     "responses": {
@@ -7339,6 +7565,45 @@
      }
     },
     "summary": "Create a new mute timing.",
+    "tags": [
+     "provisioning"
+    ]
+   }
+  },
+  "/api/v1/provisioning/mute-timings/export": {
+   "get": {
+    "operationId": "RouteExportMuteTimings",
+    "parameters": [
+     {
+      "default": false,
+      "description": "Whether to initiate a download of the file or not.",
+      "in": "query",
+      "name": "download",
+      "type": "boolean"
+     },
+     {
+      "default": "yaml",
+      "description": "Format of the downloaded file, either yaml or json. Accept header can also be used, but the query parameter will take precedence.",
+      "in": "query",
+      "name": "format",
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "AlertingFileExport",
+      "schema": {
+       "$ref": "#/definitions/AlertingFileExport"
+      }
+     },
+     "403": {
+      "description": "PermissionDenied",
+      "schema": {
+       "$ref": "#/definitions/PermissionDenied"
+      }
+     }
+    },
+    "summary": "Export all mute timings in provisioning format.",
     "tags": [
      "provisioning"
     ]
@@ -7412,6 +7677,11 @@
       "schema": {
        "$ref": "#/definitions/MuteTimeInterval"
       }
+     },
+     {
+      "in": "header",
+      "name": "X-Disable-Provenance",
+      "type": "string"
      }
     ],
     "responses": {
@@ -7429,6 +7699,52 @@
      }
     },
     "summary": "Replace an existing mute timing.",
+    "tags": [
+     "provisioning"
+    ]
+   }
+  },
+  "/api/v1/provisioning/mute-timings/{name}/export": {
+   "get": {
+    "operationId": "RouteExportMuteTiming",
+    "parameters": [
+     {
+      "default": false,
+      "description": "Whether to initiate a download of the file or not.",
+      "in": "query",
+      "name": "download",
+      "type": "boolean"
+     },
+     {
+      "default": "yaml",
+      "description": "Format of the downloaded file, either yaml or json. Accept header can also be used, but the query parameter will take precedence.",
+      "in": "query",
+      "name": "format",
+      "type": "string"
+     },
+     {
+      "description": "Mute timing name",
+      "in": "path",
+      "name": "name",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "AlertingFileExport",
+      "schema": {
+       "$ref": "#/definitions/AlertingFileExport"
+      }
+     },
+     "403": {
+      "description": "PermissionDenied",
+      "schema": {
+       "$ref": "#/definitions/PermissionDenied"
+      }
+     }
+    },
+    "summary": "Export a mute timing in provisioning format.",
     "tags": [
      "provisioning"
     ]
@@ -7481,6 +7797,11 @@
       "schema": {
        "$ref": "#/definitions/Route"
       }
+     },
+     {
+      "in": "header",
+      "name": "X-Disable-Provenance",
+      "type": "string"
      }
     ],
     "responses": {
@@ -7614,6 +7935,11 @@
       "schema": {
        "$ref": "#/definitions/NotificationTemplateContent"
       }
+     },
+     {
+      "in": "header",
+      "name": "X-Disable-Provenance",
+      "type": "string"
      }
     ],
     "responses": {
@@ -7768,6 +8094,221 @@
     "summary": "Query state history.",
     "tags": [
      "history"
+    ]
+   }
+  },
+  "/api/v1/upgrade/channels": {
+   "post": {
+    "operationId": "RoutePostUpgradeAllChannels",
+    "parameters": [
+     {
+      "default": false,
+      "description": "If true, legacy alert and notification channel upgrades from previous runs will be skipped. Otherwise, they will be replaced.",
+      "in": "query",
+      "name": "SkipExisting",
+      "type": "boolean"
+     }
+    ],
+    "produces": [
+     "application/json"
+    ],
+    "responses": {
+     "200": {
+      "description": "OrgMigrationSummary",
+      "schema": {
+       "$ref": "#/definitions/OrgMigrationSummary"
+      }
+     }
+    },
+    "summary": "Upgrade all legacy notification channels for the current organization.",
+    "tags": [
+     "upgrade"
+    ]
+   }
+  },
+  "/api/v1/upgrade/channels/{ChannelID}": {
+   "post": {
+    "operationId": "RoutePostUpgradeChannel",
+    "parameters": [
+     {
+      "description": "Channel ID of legacy notification channel.",
+      "in": "path",
+      "name": "ChannelID",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "produces": [
+     "application/json"
+    ],
+    "responses": {
+     "200": {
+      "description": "OrgMigrationSummary",
+      "schema": {
+       "$ref": "#/definitions/OrgMigrationSummary"
+      }
+     }
+    },
+    "summary": "Upgrade a single legacy notification channel for the current organization.",
+    "tags": [
+     "upgrade"
+    ]
+   }
+  },
+  "/api/v1/upgrade/dashboards": {
+   "post": {
+    "operationId": "RoutePostUpgradeAllDashboards",
+    "produces": [
+     "application/json"
+    ],
+    "responses": {
+     "200": {
+      "description": "OrgMigrationSummary",
+      "schema": {
+       "$ref": "#/definitions/OrgMigrationSummary"
+      }
+     }
+    },
+    "summary": "Upgrade all legacy dashboard alerts for the current organization.",
+    "tags": [
+     "upgrade"
+    ]
+   }
+  },
+  "/api/v1/upgrade/dashboards/{DashboardID}": {
+   "post": {
+    "operationId": "RoutePostUpgradeDashboard",
+    "parameters": [
+     {
+      "default": false,
+      "description": "If true, legacy alert and notification channel upgrades from previous runs will be skipped. Otherwise, they will be replaced.",
+      "in": "query",
+      "name": "SkipExisting",
+      "type": "boolean"
+     },
+     {
+      "description": "Dashboard ID of dashboard alert.",
+      "in": "path",
+      "name": "DashboardID",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "produces": [
+     "application/json"
+    ],
+    "responses": {
+     "200": {
+      "description": "OrgMigrationSummary",
+      "schema": {
+       "$ref": "#/definitions/OrgMigrationSummary"
+      }
+     }
+    },
+    "summary": "Upgrade all legacy dashboard alerts on a dashboard for the current organization.",
+    "tags": [
+     "upgrade"
+    ]
+   }
+  },
+  "/api/v1/upgrade/dashboards/{DashboardID}/panels/{PanelID}": {
+   "post": {
+    "operationId": "RoutePostUpgradeAlert",
+    "parameters": [
+     {
+      "description": "Dashboard ID of dashboard alert.",
+      "in": "path",
+      "name": "DashboardID",
+      "required": true,
+      "type": "string"
+     },
+     {
+      "description": "Panel ID of dashboard alert.",
+      "in": "path",
+      "name": "PanelID",
+      "required": true,
+      "type": "string"
+     }
+    ],
+    "produces": [
+     "application/json"
+    ],
+    "responses": {
+     "200": {
+      "description": "OrgMigrationSummary",
+      "schema": {
+       "$ref": "#/definitions/OrgMigrationSummary"
+      }
+     }
+    },
+    "summary": "Upgrade single legacy dashboard alert for the current organization.",
+    "tags": [
+     "upgrade"
+    ]
+   }
+  },
+  "/api/v1/upgrade/org": {
+   "delete": {
+    "operationId": "RouteDeleteOrgUpgrade",
+    "produces": [
+     "application/json"
+    ],
+    "responses": {
+     "200": {
+      "description": "Ack",
+      "schema": {
+       "$ref": "#/definitions/Ack"
+      }
+     }
+    },
+    "summary": "Delete existing alerting upgrade for the current organization.",
+    "tags": [
+     "upgrade"
+    ]
+   },
+   "get": {
+    "operationId": "RouteGetOrgUpgrade",
+    "produces": [
+     "application/json"
+    ],
+    "responses": {
+     "200": {
+      "description": "OrgMigrationState",
+      "schema": {
+       "$ref": "#/definitions/OrgMigrationState"
+      }
+     }
+    },
+    "summary": "Get existing alerting upgrade for the current organization.",
+    "tags": [
+     "upgrade"
+    ]
+   },
+   "post": {
+    "operationId": "RoutePostUpgradeOrg",
+    "parameters": [
+     {
+      "default": false,
+      "description": "If true, legacy alert and notification channel upgrades from previous runs will be skipped. Otherwise, they will be replaced.",
+      "in": "query",
+      "name": "SkipExisting",
+      "type": "boolean"
+     }
+    ],
+    "produces": [
+     "application/json"
+    ],
+    "responses": {
+     "200": {
+      "description": "OrgMigrationSummary",
+      "schema": {
+       "$ref": "#/definitions/OrgMigrationSummary"
+      }
+     }
+    },
+    "summary": "Upgrade all legacy alerts for the current organization.",
+    "tags": [
+     "upgrade"
     ]
    }
   }
