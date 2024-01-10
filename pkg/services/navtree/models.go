@@ -177,8 +177,10 @@ func (root *NavTreeRoot) ApplyAdminIA() {
 			accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("teams"))
 		}
 		accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("standalone-plugin-page-/a/grafana-auth-app"))
-		accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("serviceaccounts"))
-		accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("apikeys"))
+		if root.IsGrafanaAdmin {
+			accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("serviceaccounts"))
+			accessNodeLinks = AppendIfNotNil(accessNodeLinks, root.FindById("apikeys"))
+		}
 
 		usersNode := &NavLink{
 			Text:     "Users and access",
@@ -193,7 +195,7 @@ func (root *NavTreeRoot) ApplyAdminIA() {
 			adminNodeLinks = append(adminNodeLinks, generalNode)
 		}
 
-		if len(pluginsNode.Children) > 0 {
+		if len(pluginsNode.Children) > 0 && root.IsGrafanaAdmin {
 			adminNodeLinks = append(adminNodeLinks, pluginsNode)
 		}
 

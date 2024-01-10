@@ -22,7 +22,7 @@ const groupsSlice = createSlice({
   name: 'groups',
   initialState: initialGroupsState,
   reducers: {
-    setHasFetched: (state, action: PayloadAction<boolean>): GroupsState => {
+    setHasGroupsFetched: (state, action: PayloadAction<boolean>): GroupsState => {
       return { ...state, hasFetched: action.payload };
     },
     groupsLoaded: (state, action: PayloadAction<Group[]>): GroupsState => {
@@ -39,7 +39,7 @@ const groupsSlice = createSlice({
     },
   },
 });
-export const { setHasFetched, groupsLoaded, setGroupsSearchQuery, setGroupsSearchPage, setGroupsCount } =
+export const { setHasGroupsFetched, groupsLoaded, setGroupsSearchQuery, setGroupsSearchPage, setGroupsCount } =
   groupsSlice.actions;
 export const groupsReducer = groupsSlice.reducer;
 
@@ -69,6 +69,9 @@ const groupResourcesSlice = createSlice({
   name: 'groupResources',
   initialState: initialGroupResourcesState,
   reducers: {
+    setHasGroupResourcesFetched: (state, action: PayloadAction<boolean>): GroupResourcesState => {
+      return { ...state, hasFetched: action.payload };
+    },
     groupResourcesLoaded: (state, action: PayloadAction<GroupResource[]>): GroupResourcesState => {
       return { ...state, hasFetched: true, groupResources: action.payload };
     },
@@ -88,6 +91,7 @@ export const {
   setGroupResourcesSearchQuery,
   setGroupResourcesSearchPage,
   setGroupResourcesCount,
+  setHasGroupResourcesFetched,
 } = groupResourcesSlice.actions;
 export const groupResourcesReducer = groupResourcesSlice.reducer;
 
@@ -102,6 +106,9 @@ const groupUsersSlice = createSlice({
   name: 'groupUsers',
   initialState: initialGroupUsersState,
   reducers: {
+    setHasGroupUsersFetched: (state, action: PayloadAction<boolean>): GroupUsersState => {
+      return { ...state, hasFetched: action.payload };
+    },
     groupUsersLoaded: (state, action: PayloadAction<GroupUser[]>): GroupUsersState => {
       return { ...state, hasFetched: true, groupUsers: action.payload };
     },
@@ -116,7 +123,7 @@ const groupUsersSlice = createSlice({
     },
   },
 });
-export const { groupUsersLoaded, setGroupUsersSearchQuery, setGroupUsersSearchPage, setGroupUsersCount } =
+export const { groupUsersLoaded, setHasGroupUsersFetched, setGroupUsersSearchQuery, setGroupUsersSearchPage, setGroupUsersCount } =
   groupUsersSlice.actions;
 export const groupUsersReducer = groupUsersSlice.reducer;
 

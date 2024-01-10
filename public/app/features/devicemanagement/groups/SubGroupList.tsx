@@ -20,6 +20,7 @@ import {
   InteractiveTable,
 } from '@grafana/ui';
 import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
+import PageLoader from 'app/core/components/PageLoader/PageLoader';
 import config from 'app/core/config';
 import { contextSrv } from 'app/core/services/context_srv';
 import { StoreState } from 'app/types';
@@ -172,6 +173,9 @@ export const SubGroupList = ({
     ],
     [hasFetched, deleteGroup, styles]
   );
+  if (!hasFetched) {
+    return <PageLoader />;
+  }
   if (noGroups) {
     return (
       <EmptyListCTA
