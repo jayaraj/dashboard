@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW X7 -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="210mm" height="210mm" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 21000 21000"
+ xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil0 {fill:none}
+    .fil1 {fill:#008DD1}
+    .fil3 {fill:#33A353}
+    .fil4 {fill:#E54334}
+    .fil2 {fill:#F6B817}
+   ]]>
+  </style>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <path class="fil0" d="M5276 6482l5202 -5249 2222 2238 -5069 5181m1 0c-774,766 -1254,1829 -1254,3004 0,2336 1893,4229 4228,4229 2335,0 4228,-1893 4228,-4229 0,-549 -96,-1082 -287,-1564l-2263 2261 -1784 -1791 4634 -4632c91,73 210,176 298,254 1501,1348 2445,3304 2445,5481 0,4068 -3298,7366 -7366,7366 -4069,0 -7367,-3298 -7367,-7366 0,-2021 814,-3852 2132,-5183m6495 -2076c4,1 8,2 12,2m-7509 3336l2573 1975m-1248 7436l2161 -2372m5836 -137l2124 2228"/>
+  <path class="fil1" d="M15134 5930l-4634 4632 1784 1791 2263 -2261c191,482 287,1015 287,1564 0,1168 -473,2225 -1238,2990l2124 2228c1333,-1333 2157,-3175 2157,-5209 0,-2177 -944,-4133 -2445,-5481 -88,-78 -207,-181 -298,-254z"/>
+  <path class="fil2" d="M13596 14646c-765,765 -1822,1239 -2990,1239 -1096,0 -2095,-418 -2846,-1102l-2161 2372c1303,1167 3025,1876 4912,1876 2034,0 3876,-824 5209,-2157l-2124 -2228z"/>
+  <path class="fil3" d="M7760 14783c-849,-773 -1382,-1888 -1382,-3127 0,-698 169,-1356 469,-1937l-2573 -1975c-716,1135 -1130,2480 -1130,3921 0,2181 948,4141 2455,5490l2161 -2372z"/>
+  <path class="fil4" d="M6847 9719c205,-396 470,-756 784,-1067l4152 -4244 917 -937 -2222 -2238 -5202 5249c-378,382 -715,805 -1002,1262l2573 1975z"/>
+  <rect class="fil0" x="-20" y="-118" width="21061" height="21061"/>
+ </g>
+</svg>
