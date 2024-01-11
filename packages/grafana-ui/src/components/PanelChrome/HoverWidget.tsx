@@ -36,29 +36,35 @@ export function HoverWidget({ menu, title, dragClass, children, offset = -32, on
   }
 
   return (
-    <div className={cx(styles.container, 'show-on-hover')} style={{ top: offset }} data-testid={selectors.container}>
-      {dragClass && (
+    <>
+      {menu && (
         <div
-          className={cx(styles.square, styles.draggable, dragClass)}
-          onPointerDown={onPointerDown}
-          onPointerUp={onPointerUp}
-          ref={draggableRef}
-          data-testid={selectors.dragIcon}
+          className={cx(styles.container, 'show-on-hover')}
+          style={{ top: offset }}
+          data-testid={selectors.container}
         >
-          <Icon name="expand-arrows" className={styles.draggableIcon} />
+          {dragClass && (
+            <div
+              className={cx(styles.square, styles.draggable, dragClass)}
+              onPointerDown={onPointerDown}
+              onPointerUp={onPointerUp}
+              ref={draggableRef}
+              data-testid={selectors.dragIcon}
+            >
+              <Icon name="expand-arrows" className={styles.draggableIcon} />
+            </div>
+          )}
+          {children}
+          <PanelMenu
+            menu={menu}
+            title={title}
+            placement="bottom"
+            menuButtonClass={styles.menuButton}
+            onOpenMenu={onOpenMenu}
+          />
         </div>
       )}
-      {children}
-      {menu && (
-        <PanelMenu
-          menu={menu}
-          title={title}
-          placement="bottom"
-          menuButtonClass={styles.menuButton}
-          onOpenMenu={onOpenMenu}
-        />
-      )}
-    </div>
+    </>
   );
 }
 
