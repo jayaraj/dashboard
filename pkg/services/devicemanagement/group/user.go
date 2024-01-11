@@ -57,32 +57,31 @@ func (service *Service) GetGroupUsers(c *contextmodel.ReqContext) response.Respo
 }
 
 func (service *Service) AddGroupUser(c *contextmodel.ReqContext) response.Response {
-	access, _ := service.IsGroupAccessible(c)
-	if !access {
-		return response.Error(http.StatusForbidden, "cannot access", nil)
-	}
-	orgUser := resource.AddGroupUserMsg{
+	grpUser := resource.AddGroupUserMsg{
 		OrgId: c.OrgID,
 	}
-	if err := web.Bind(c.Req, &orgUser); err != nil {
+	if err := web.Bind(c.Req, &grpUser); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+	if !service.IsGroupAccessibleById(c, grpUser.GroupId) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 
 	userService := service.devMgmt.GetUser()
 	usrCmd := &user.GetOrgUserMsg{
-		UserId: c.UserID,
+		UserId: grpUser.UserId,
 		OrgId:  c.OrgID,
 	}
 	if err := userService.GetOrgUser(c.Req.Context(), usrCmd); err != nil {
 		return response.Error(500, "get user failed", err)
 	}
 
-	orgUser.Email = usrCmd.Result.Email
-	orgUser.Phone = usrCmd.Result.Phone
-	orgUser.Login = usrCmd.Result.Login
-	orgUser.Name = usrCmd.Result.Name
-	orgUser.Role = devicemanagement.ConvertRoleToString(roletype.RoleType(usrCmd.Result.Role))
-	body, err := json.Marshal(&orgUser)
+	grpUser.Email = usrCmd.Result.Email
+	grpUser.Phone = usrCmd.Result.Phone
+	grpUser.Login = usrCmd.Result.Login
+	grpUser.Name = usrCmd.Result.Name
+	grpUser.Role = devicemanagement.ConvertRoleToString(roletype.RoleType(usrCmd.Result.Role))
+	body, err := json.Marshal(&grpUser)
 	if err != nil {
 		return response.Error(500, "failed marshal create group", err)
 	}
