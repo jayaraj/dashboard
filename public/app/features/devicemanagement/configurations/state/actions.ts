@@ -11,7 +11,7 @@ import {
   configurationTypesLoaded,
   setConfigurationTypesSearchPage,
   setConfigurationTypesCount,
-  orgConfigurationsLoaded,
+  orgConfigurationLoaded,
   setConfigurationTypesSearchQuery,
 } from './reducers';
 
@@ -76,7 +76,7 @@ export function deleteConfigurationType(id: number): ThunkResult<void> {
 export function loadOrgConfiguration(config: string): ThunkResult<void> {
   return async (dispatch) => {
     const response = await getBackendSrv().get(`/api/orgs/configurations/${config}`);
-    dispatch(orgConfigurationsLoaded(response));
+    dispatch(orgConfigurationLoaded(response));
   };
 }
 

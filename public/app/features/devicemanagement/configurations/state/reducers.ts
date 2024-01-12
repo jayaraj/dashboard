@@ -63,12 +63,12 @@ const orgConfigurationSlice = createSlice({
   name: 'orgConfiguration',
   initialState: initialOrgConfigurationState,
   reducers: {
-    orgConfigurationsLoaded: (state, action: PayloadAction<OrgConfiguration>): OrgConfigurationState => {
+    orgConfigurationLoaded: (state, action: PayloadAction<OrgConfiguration>): OrgConfigurationState => {
       return { ...state, configuration: action.payload };
     },
   },
 });
-export const { orgConfigurationsLoaded } = orgConfigurationSlice.actions;
+export const { orgConfigurationLoaded } = orgConfigurationSlice.actions;
 export const orgConfigurationReducer = orgConfigurationSlice.reducer;
 
 export default {
