@@ -215,7 +215,10 @@ func (service *Service) GetUser(ctx context.Context, userId int64) (USER.UserPro
 		}
 		return nil
 	})
-	return response, serviceerrors.NewServiceError(serviceerrors.ErrExternalError, errors.Wrap(err, "failed getting user"))
+	if err != nil {
+		return response, serviceerrors.NewServiceError(serviceerrors.ErrExternalError, errors.Wrap(err, "failed getting user"))
+	}
+	return response, nil
 }
 
 func (service *Service) SearchOrgUsers(ctx context.Context, msg *user.SearchOrgUsersMsg) error {
