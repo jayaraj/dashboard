@@ -42,7 +42,7 @@ func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {
 				{Action: ActionCsvRead, Scope: ScopeAll},
 			},
 		},
-		Grants: []string{string(org.RoleAdmin)},
+		Grants: []string{accesscontrol.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	csvFileloaderReaderRole := accesscontrol.RoleRegistration{
@@ -56,7 +56,7 @@ func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {
 				{Action: ActionCsvRead},
 			},
 		},
-		Grants: []string{string(org.RoleAdmin)},
+		Grants: []string{accesscontrol.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
 	}
 
 	fileFileloaderCreatorRole := accesscontrol.RoleRegistration{
