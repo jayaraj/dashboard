@@ -2,7 +2,7 @@
 
 Hi [[.Name]],
 
-Welcome! Ready to start building some beautiful metric and analytic dashboards?
+Welcome! Ready to experience some beautiful metric and analytic dashboards?
 
 Thank you for joining.
 

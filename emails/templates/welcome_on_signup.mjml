@@ -20,7 +20,7 @@
           <h2>Hi {{ .Name }},</h2>
         </mj-text>
         <mj-text>
-          Welcome! Ready to start building some beautiful metric and analytic dashboards?
+          Welcome! Ready to experience some beautiful metric and analytic dashboards?
         </mj-text>
         <mj-text>
           Thank you for joining.

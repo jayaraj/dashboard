@@ -100,7 +100,11 @@ export const OrgConfigurations = ({ orgConfiguration, loadOrgConfiguration, upda
   return (
     <Page.Contents isLoading={isLoading}>
       <VerticalGroup>
-        <Form onSubmit={() => updateOrgConfiguration(type, updatedOrgConfiguration)} disabled={!canWrite}>
+        <Form
+          defaultValues={{ ...orgConfiguration }}
+          onSubmit={() => updateOrgConfiguration(type, updatedOrgConfiguration)}
+          disabled={!canWrite}
+        >
           {({}) => (
             <FieldSet>
               <Field label="Configuration Type">
