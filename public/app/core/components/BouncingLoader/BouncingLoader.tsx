@@ -16,9 +16,7 @@ export function BouncingLoader() {
       role="status"
       aria-label={t('bouncing-loader.label', 'Loading')}
     >
-      <div className={styles.bounce}>
-        <img alt="" src="public/img/grafana_icon.svg" className={styles.logo} />
-      </div>
+      <img alt="" src="public/img/whitelabel/loading.svg" className={styles.logo} />
     </div>
   );
 }
@@ -44,29 +42,6 @@ const bounce = keyframes({
   },
 });
 
-const squash = keyframes({
-  '0%': {
-    transform: 'scaleX(1.3) scaleY(0.8)',
-    animationTimingFunction: 'cubic-bezier(0.3, 0, 0.1, 1)',
-  },
-  '15%': {
-    transform: 'scaleX(0.75) scaleY(1.25)',
-    animationTimingFunction: 'cubic-bezier(0, 0, 0.7, 0.75)',
-  },
-  '55%': {
-    transform: 'scaleX(1.05) scaleY(0.95)',
-    animationTimingFunction: 'cubic-bezier(0.9, 0, 1, 1)',
-  },
-  '95%': {
-    transform: 'scaleX(0.75) scaleY(1.25)',
-    animationTimingFunction: 'cubic-bezier(0, 0, 0, 1)',
-  },
-  '100%': {
-    transform: 'scaleX(1.3) scaleY(0.8)',
-    animationTimingFunction: 'cubic-bezier(0, 0, 0.7, 1)',
-  },
-});
-
 const getStyles = (theme: GrafanaTheme2) => ({
   container: css({
     opacity: 0,
@@ -86,9 +61,6 @@ const getStyles = (theme: GrafanaTheme2) => ({
 
   logo: css({
     display: 'inline-block',
-    animationName: squash,
-    animationDuration: '0.9s',
-    animationIterationCount: 'infinite',
     width: '60px',
     height: '60px',
   }),
