@@ -140,8 +140,9 @@ const getStyles = (theme: GrafanaTheme2) => {
 };
 
 function mapStateToProps(state: StoreState) {
+  const orgConfiguration = getOrgConfiguration(state.orgConfiguration);
   return {
-    orgConfiguration: getOrgConfiguration(state.orgConfiguration).configuration,
+    orgConfiguration: orgConfiguration ? orgConfiguration.configuration : ({} as { [key: string]: string }),
   };
 }
 const mapDispatchToProps = {

@@ -57,7 +57,7 @@ export const { configurationTypeLoaded } = configurationTypeSlice.actions;
 export const configurationTypeReducer = configurationTypeSlice.reducer;
 
 export const initialOrgConfigurationState: OrgConfigurationState = {
-  configuration: {} as any,
+  configuration: {} as OrgConfiguration,
 };
 const orgConfigurationSlice = createSlice({
   name: 'orgConfiguration',
