@@ -101,7 +101,6 @@ export const OrgConfigurations = ({ orgConfiguration, loadOrgConfiguration, upda
     <Page.Contents isLoading={isLoading}>
       <VerticalGroup>
         <Form
-          defaultValues={{ ...orgConfiguration }}
           onSubmit={() => updateOrgConfiguration(type, updatedOrgConfiguration)}
           disabled={!canWrite}
         >
@@ -142,7 +141,7 @@ const getStyles = (theme: GrafanaTheme2) => {
 function mapStateToProps(state: StoreState) {
   const orgConfiguration = getOrgConfiguration(state.orgConfiguration);
   return {
-    orgConfiguration: orgConfiguration ? orgConfiguration.configuration : ({} as { [key: string]: string }),
+    orgConfiguration: orgConfiguration? orgConfiguration.configuration: {},
   };
 }
 const mapDispatchToProps = {
