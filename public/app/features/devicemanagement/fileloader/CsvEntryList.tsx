@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { connect, ConnectedProps } from 'react-redux';
 
@@ -22,7 +22,7 @@ import EmptyListCTA from 'app/core/components/EmptyListCTA/EmptyListCTA';
 import { Page } from 'app/core/components/Page/Page';
 import { contextSrv } from 'app/core/services/context_srv';
 import { StoreState } from 'app/types';
-import { CsvEntry, csvEntriesPageLimit } from 'app/types/devicemanagement/fileloader';
+import { CSV_ENTRY_POLL_INTERVAL_MS, CsvEntry, csvEntriesPageLimit } from 'app/types/devicemanagement/fileloader';
 
 import Upload from './Upload';
 import { changeCsvEntriesPage, changeCsvEntriesQuery, deleteCsvEntry, loadCsvEntries } from './state/actions';
@@ -59,9 +59,16 @@ export const CsvEntryList = ({
   const totalPages = Math.ceil(csvEntriesCount / csvEntriesPageLimit);
   const [noCsvEntries, setNoCsvEntries] = useState<boolean>(true);
   const [upload, setUpload] = useState<boolean>(false);
+  const interval = useRef<any>(null);
 
   useEffect(() => {
     loadCsvEntries();
+    if (interval.current == null) {
+      interval.current = setInterval(() => loadCsvEntries(), CSV_ENTRY_POLL_INTERVAL_MS);
+    }
+    return () => {
+      clearInterval(interval.current!);
+    };
   }, [loadCsvEntries]);
 
   useEffect(() => {
@@ -138,7 +145,7 @@ export const CsvEntryList = ({
           return (
             <Stack direction="row" justifyContent="flex-end">
               <Tooltip content={`Errors`}>
-                {original.initiated > original.processed ? (
+                {original.initiated === 0 || original.initiated > original.processed ? (
                   <Badge key="errors" color="blue" icon="hourglass" text="processing" />
                 ) : original.errors > 0 ? (
                   <a href={errorsUrl} aria-label={`Errors`}>

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { connect, ConnectedProps } from 'react-redux';
 
-import { Column, CellProps, LinkButton, Pagination, Stack, InteractiveTable } from '@grafana/ui';
+import { Column, CellProps, LinkButton, Pagination, Stack, InteractiveTable, TagList } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { GrafanaRouteComponentProps } from 'app/core/navigation/types';
 import { StoreState } from 'app/types';
@@ -48,6 +48,17 @@ export const CsvErrorList = ({
           return value;
         },
         sortType: 'string',
+      },
+      {
+        id: 'configuration',
+        header: 'References',
+        cell: ({ cell: { value } }: Cell<'configuration'>) => {
+          if (!hasFetched) {
+            return <Skeleton width={100} />;
+          }
+          const pairs = Object.entries(value);
+          return <TagList tags={Object.values(pairs).map(([label, value]) => `${label}=${value}`)} />;
+        },
       },
     ],
     [hasFetched]

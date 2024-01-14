@@ -65,10 +65,12 @@ export const Upload = ({ isOpen, onCancel, loadCsvEntries }: Props) => {
         if (res.status >= 400) {
           res.json().then((data) => setError(data));
           loadCsvEntries();
+          onCancel(false);
           return;
         }
         res.json().then((data) => setUploaded(data));
         loadCsvEntries();
+        onCancel(false);
         return res.json();
       })
       .catch((err) => console.error(err));

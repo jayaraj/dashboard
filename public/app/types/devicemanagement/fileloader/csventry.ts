@@ -1,4 +1,5 @@
 export const csvEntriesPageLimit = 50;
+export const CSV_ENTRY_POLL_INTERVAL_MS = 5000;
 export interface CsvEntry {
   id: number;
   updated_at: string;
