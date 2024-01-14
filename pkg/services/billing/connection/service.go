@@ -1,6 +1,9 @@
 package connection
 
 import (
+	"context"
+	"encoding/json"
+
 	"github.com/grafana/grafana/pkg/api"
 	"github.com/grafana/grafana/pkg/api/routing"
 	"github.com/grafana/grafana/pkg/bus"
@@ -9,6 +12,11 @@ import (
 	"github.com/grafana/grafana/pkg/services/devicemanagement"
 	"github.com/grafana/grafana/pkg/services/org"
 	"github.com/grafana/grafana/pkg/setting"
+	"github.com/jayaraj/infra/serviceerrors"
+	"github.com/jayaraj/messages/client"
+	"github.com/jayaraj/messages/client/billing"
+	"github.com/jayaraj/messages/client/resource"
+	"github.com/pkg/errors"
 )
 
 type Service struct {
@@ -44,6 +52,30 @@ func ProvideService(
 		return err
 	}
 	service.registerAPIEndpoints(hs, routeRegister)
+	bus.AddEventListener(service.ProcessObjectFromRecord)
 	service.log.Info("Loaded connection")
+	return nil
+}
+
+func (service *Service) ProcessObjectFromRecord(ctx context.Context, msg *devicemanagement.ProcessObjectFromRecordEvent) error {
+	switch msg.Topic {
+	case billing.CreateConnections:
+
+		request := resource.ProcessFromCsvRecordMsg{
+			CsvEntryId:   msg.CsvEntryId,
+			OrgId:        msg.OrgId,
+			RecordNumber: msg.RecordNumber,
+			Record:       msg.Record,
+		}
+		body, err := json.Marshal(request)
+		if err != nil {
+			return serviceerrors.NewServiceError(serviceerrors.ErrExternalError, errors.Wrap(err, "marshal process csv record failed"))
+		}
+		if err := service.devMgmt.Publish(ctx, client.BillingTopic(msg.Topic), body); err != nil {
+			return serviceerrors.NewServiceError(serviceerrors.ErrExternalError, errors.Wrapf(err, "publish %s for processing csv record failed", msg.Topic))
+		}
+	default:
+		return nil
+	}
 	return nil
 }
