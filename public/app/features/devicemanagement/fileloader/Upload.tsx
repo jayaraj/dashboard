@@ -27,10 +27,6 @@ const ObjectTypes: Array<SelectableValue<string>> = [
     label: 'Groups',
     value: 'Groups',
   },
-  {
-    label: 'Connections',
-    value: 'Connections',
-  },
 ];
 
 const FunctionTypes: Array<SelectableValue<string>> = [
