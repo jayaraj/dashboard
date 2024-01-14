@@ -59,7 +59,7 @@ func ProvideService(
 
 func (service *Service) ProcessObjectFromRecord(ctx context.Context, msg *devicemanagement.ProcessObjectFromRecordEvent) error {
 	switch msg.Topic {
-	case billing.CreateConnections:
+	case billing.CreateConnections, billing.CreateConnectionResources:
 
 		request := resource.ProcessFromCsvRecordMsg{
 			CsvEntryId:   msg.CsvEntryId,

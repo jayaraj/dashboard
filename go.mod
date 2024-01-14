@@ -486,7 +486,7 @@ require (
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.11.1 // indirect
-	github.com/jayaraj/messages v0.0.0-20240113052925-5a36feb5774c
+	github.com/jayaraj/messages v0.0.0-20240114101145-641448a6a22c
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/nats-io/nats.go v1.14.0 // indirect
 	github.com/nats-io/nkeys v0.3.0 // indirect
