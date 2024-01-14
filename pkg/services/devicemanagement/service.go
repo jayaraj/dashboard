@@ -3,6 +3,7 @@ package devicemanagement
 import (
 	"context"
 
+	"github.com/grafana/grafana/pkg/registry"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	USER "github.com/grafana/grafana/pkg/services/user"
 	"github.com/jayaraj/messages/client/resource"
@@ -20,6 +21,8 @@ type DeviceManagementService interface {
 	GetGroup() GroupService
 	GetUser() UserService
 	GetConfiguration() ConfigurationService
+	Run(ctx context.Context) (err error)
+	RegisterBackgroundService(svc registry.BackgroundService) error
 }
 
 type GroupService interface {

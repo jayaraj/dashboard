@@ -3,9 +3,7 @@ package fileloader
 import (
 	"encoding/json"
 	"fmt"
-	"mime"
 	"net/http"
-	"path"
 	"strconv"
 	"strings"
 
@@ -22,37 +20,20 @@ func (service *Service) UploadCsv(c *contextmodel.ReqContext) response.Response 
 	if err != nil {
 		return response.Error(500, "failed to get form file", err)
 	}
-	defer csvPartFile.Close()
-
-	extension := strings.ToLower(path.Ext(csvFileHeader.Filename))
-	contentType := mime.TypeByExtension(extension)
-
-	data := map[string]string{
-		"org":          fmt.Sprintf("%d", c.OrgID),
-		"object":       c.Req.PostFormValue("object"),
-		"operation":    c.Req.PostFormValue("operation"),
-		"content-type": contentType,
+	object := c.Req.PostFormValue("object")
+	operation := c.Req.PostFormValue("operation")
+	if object == "" || operation == "" {
+		return response.Error(http.StatusBadRequest, "object or operation is not found", nil)
 	}
 
-	url := fmt.Sprintf("%sapi/csventries", service.cfg.ResourceHost)
-	req := &devicemanagement.FileRequest{
-		Url:      url,
-		Filename: csvFileHeader.Filename,
-		FormData: data,
-		Content:  csvPartFile,
+	request := devicemanagement.TriggerCsvProcessMsg{
+		FileName: csvFileHeader.Filename,
+		OrgId:    c.OrgID,
+		Topic:    fmt.Sprintf("%s%s", strings.ToLower(operation), object),
+		PartFile: csvPartFile,
 	}
+	service.fileChan <- request
 
-	if err := service.devMgmt.FileRequest(c.Req.Context(), req); err != nil {
-		return response.Error(500, "failed to upload", err)
-	}
-
-	if req.StatusCode != http.StatusOK {
-		var errResponse client.ErrorResponse
-		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			return response.Error(req.StatusCode, "failed unmarshal error ", err)
-		}
-		return response.Error(req.StatusCode, errResponse.Message, nil)
-	}
 	return response.Success("uploaded")
 }
 

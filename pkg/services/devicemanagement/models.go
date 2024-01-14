@@ -2,6 +2,7 @@ package devicemanagement
 
 import (
 	"io"
+	"mime/multipart"
 	"time"
 )
 
@@ -34,6 +35,21 @@ type FileRequest struct {
 	Content    io.Reader
 	Response   []byte
 	StatusCode int
+}
+
+type TriggerCsvProcessMsg struct {
+	FileName string
+	OrgId    int64
+	Topic    string
+	PartFile multipart.File
+}
+
+type ProcessObjectFromRecordEvent struct {
+	CsvEntryId   int64
+	OrgId        int64
+	Topic        string
+	RecordNumber int64
+	Record       map[string]string
 }
 
 type UpdateUserEvent struct {
