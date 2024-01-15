@@ -137,7 +137,7 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition, ass
   useEffect(() => {
     if (!isCollapsed && association) {
       if (prevAlertState !== alertState || prevQueryString !== queryString) {
-        debouncedLoad(page, alertState, queryString);
+        debouncedLoad(1, alertState, queryString);
       } else {
         dispatch(setAlertsByNameFetched({ name: alertDefinition.name, fetched: false }));
         debouncedLoad(page);

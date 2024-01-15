@@ -263,3 +263,19 @@ func (service *Service) DeleteResource(c *contextmodel.ReqContext) response.Resp
 	}
 	return response.Success("deleted")
 }
+
+func (service *Service) CleanResourceData(c *contextmodel.ReqContext) response.Response {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	resourceId := uint64(id)
+	dto := &client.CleanDataMsg{
+		OrgId:      uint64(c.OrgID),
+		ResourceId: &resourceId,
+	}
+	if err := service.devMgmt.RequestTopic(c.Req.Context(), client.WriterTopic(client.CleanResourceData), dto); err != nil {
+		return response.Error(500, "failed to clean data", err)
+	}
+	return response.Success("success")
+}
