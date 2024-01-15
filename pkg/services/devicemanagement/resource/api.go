@@ -20,7 +20,7 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 		resourcesRoute.Get("/search", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.SearchResources))
 		resourcesRoute.Get("/:resourceId", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetResourceById))
 		resourcesRoute.Put("/:resourceId", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.UpdateResource))
-		resourcesRoute.Post("/:resourceId", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.CleanResourceData))
+		resourcesRoute.Post("/:resourceId/cleandata", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.CleanResourceData))
 		resourcesRoute.Delete("/:resourceId", authorize(accesscontrol.EvalPermission(ActionDelete)), routing.Wrap(service.DeleteResource))
 		resourcesRoute.Get("/:resourceId/groups", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetResourceGroups))
 		resourcesRoute.Post("/uuid/:uuid/history/:dataType", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.PostResourceHistoryData))
