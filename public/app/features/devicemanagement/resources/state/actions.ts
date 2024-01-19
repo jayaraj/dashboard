@@ -114,6 +114,12 @@ export function deleteResourceGroup(id: number): ThunkResult<void> {
   };
 }
 
+export function cleanResourceData(id: number): ThunkResult<void> {
+  return async () => {
+    await getBackendSrv().post(`/api/resources/${id}/cleandata`);
+  };
+}
+
 export function loadResourceConfiguration(type: string): ThunkResult<void> {
   return async (dispatch, getStore) => {
     const resource = getStore().resource.resource;

@@ -127,7 +127,7 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition, ass
   } as const;
   const pagination: DynamicTablePagination = {
     page: page,
-    onPageChange: load,
+    onPageChange: (page) => load(page, alertState, queryString),
     total: stats.count,
     itemsPerPage: alertsPageLimit,
   };
@@ -140,7 +140,7 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition, ass
         debouncedLoad(1, alertState, queryString);
       } else {
         dispatch(setAlertsByNameFetched({ name: alertDefinition.name, fetched: false }));
-        debouncedLoad(page);
+        debouncedLoad(page, alertState, queryString);
         const dto: AlertsByNameDTO = {
           name: alertDefinition.name,
           page: page,
