@@ -229,6 +229,12 @@ export function deleteConnectionResource(resourceId: number, resourceUUID: strin
   };
 }
 
+export function cleanResourceData(id: number): ThunkResult<void> {
+  return async () => {
+    await getBackendSrv().post(`/api/resources/${id}/cleandata`);
+  };
+}
+
 export function loadInvoices(): ThunkResult<void> {
   return async (dispatch, getStore) => {
     const connection = getStore().connection.connection;

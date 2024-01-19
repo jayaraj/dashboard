@@ -19,6 +19,7 @@ import {
   Button,
   Input,
   CallToActionCard,
+  ConfirmButton,
   TagList,
   useStyles2,
 } from '@grafana/ui';
@@ -33,6 +34,7 @@ import { Connection, ConnectionResource, connectionResourcesPageLimit } from 'ap
 import {
   changeConnectionResourcesPage,
   changeConnectionResourcesQuery,
+  cleanResourceData,
   deleteConnectionResource,
   loadConnectionResources,
 } from './state/actions';
@@ -68,6 +70,7 @@ export const ConnectionResourceList = ({
   hasFetched,
   loadConnectionResources,
   deleteConnectionResource,
+  cleanResourceData,
   changeQuery,
   changePage,
 }: Props) => {
@@ -169,9 +172,26 @@ export const ConnectionResourceList = ({
             );
           }
           const canDelete = contextSrv.hasPermission('connections:write');
+          const canCleanData = contextSrv.hasPermission('resources.data:delete');
 
           return (
             <Stack direction="row" justifyContent="flex-end">
+              {canCleanData && (
+                <ConfirmButton
+                  confirmText="Clean data"
+                  confirmVariant="primary"
+                  size={'sm'}
+                  disabled={!canCleanData}
+                  onConfirm={() => cleanResourceData(original.resource_id)}
+                >
+                  <Button
+                    aria-label={`Clean data of ${original.resource_name}`}
+                    variant="primary"
+                    icon="trash-alt"
+                    size={'sm'}
+                  />
+                </ConfirmButton>
+              )}
               <DeleteButton
                 aria-label={`Delete ${original.resource_name}`}
                 size="sm"
@@ -311,6 +331,7 @@ function mapStateToProps(state: StoreState) {
 const mapDispatchToProps = {
   loadConnectionResources: loadConnectionResources,
   deleteConnectionResource: deleteConnectionResource,
+  cleanResourceData: cleanResourceData,
   changeQuery: changeConnectionResourcesQuery,
   changePage: changeConnectionResourcesPage,
 };
