@@ -14,6 +14,8 @@ import {
   Pagination,
   TagList,
   useStyles2,
+  ConfirmButton,
+  Button,
   Stack,
   Tooltip,
   Icon,
@@ -26,7 +28,13 @@ import { contextSrv } from 'app/core/services/context_srv';
 import { StoreState } from 'app/types';
 import { Resource, resourcesPageLimit } from 'app/types/devicemanagement/resource';
 
-import { changeResourcesPage, changeResourcesQuery, deleteResource, loadResources } from './state/actions';
+import {
+  changeResourcesPage,
+  changeResourcesQuery,
+  cleanResourceData,
+  deleteResource,
+  loadResources,
+} from './state/actions';
 import { getResources, getResourcesCount, getResourcesSearchPage, getResourcesSearchQuery } from './state/selectors';
 
 type Cell<T extends keyof Resource = keyof Resource> = CellProps<Resource, Resource[T]>;
@@ -51,11 +59,13 @@ export const ResourceList = ({
   hasFetched,
   loadResources,
   deleteResource,
+  cleanResourceData,
   changeQuery,
   changePage,
 }: Props) => {
   const styles = useStyles2(getStyles);
   const canCreate = contextSrv.hasPermission('resources:create');
+  const canCleanData = contextSrv.hasPermission('resources.data:delete');
   const totalPages = Math.ceil(resourcesCount / resourcesPageLimit);
   const [noResources, setNoResources] = useState<boolean>(true);
 
@@ -155,6 +165,22 @@ export const ResourceList = ({
                   </a>
                 </Tooltip>
               )}
+              {canCleanData && (
+                <ConfirmButton
+                  confirmText="Clean data"
+                  confirmVariant="primary"
+                  size={'sm'}
+                  disabled={!canCleanData}
+                  onConfirm={() => cleanResourceData(original.id)}
+                >
+                  <Button
+                    aria-label={`Clean data of ${original.name}`}
+                    variant="primary"
+                    icon="trash-alt"
+                    size={'sm'}
+                  />
+                </ConfirmButton>
+              )}
               <DeleteButton
                 aria-label={`Delete ${original.name}`}
                 size="sm"
@@ -233,6 +259,7 @@ function mapStateToProps(state: StoreState) {
 const mapDispatchToProps = {
   loadResources: loadResources,
   deleteResource: deleteResource,
+  cleanResourceData: cleanResourceData,
   changeQuery: changeResourcesQuery,
   changePage: changeResourcesPage,
 };

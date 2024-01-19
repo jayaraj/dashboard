@@ -6,11 +6,12 @@ import (
 )
 
 const (
-	ActionCreate = "resources:create"
-	ActionDelete = "resources:delete"
-	ActionRead   = "resources:read"
-	ActionWrite  = "resources:write"
-	ScopeRoot    = "resources"
+	ActionCreate     = "resources:create"
+	ActionDelete     = "resources:delete"
+	ActionRead       = "resources:read"
+	ActionWrite      = "resources:write"
+	ActionDeleteData = "resources.data:delete"
+	ScopeRoot        = "resources"
 )
 
 var (
@@ -38,6 +39,19 @@ var (
 )
 
 func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {
+	resourcesDataRole := accesscontrol.RoleRegistration{
+		Role: accesscontrol.RoleDTO{
+			Name:        "fixed:resources.data:writer",
+			DisplayName: "Resource data writer",
+			Description: "Write or delete resources data",
+			Group:       "Resources",
+			Version:     2,
+			Permissions: []accesscontrol.Permission{
+				{Action: ActionDeleteData, Scope: ScopeAll},
+			},
+		},
+		Grants: []string{accesscontrol.RoleGrafanaAdmin, string(org.RoleSuperAdmin)},
+	}
 
 	resourcesCreatorRole := accesscontrol.RoleRegistration{
 		Role: accesscontrol.RoleDTO{
@@ -85,5 +99,5 @@ func (service *Service) declareFixedRoles(ac accesscontrol.Service) error {
 		Grants: []string{string(org.RoleViewer)},
 	}
 
-	return ac.DeclareFixedRoles(resourcesCreatorRole, resourcesWriterRole, resourcesReaderRole)
+	return ac.DeclareFixedRoles(resourcesCreatorRole, resourcesWriterRole, resourcesReaderRole, resourcesDataRole)
 }
