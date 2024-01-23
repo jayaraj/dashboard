@@ -5,7 +5,8 @@ import React, { FC, useState, useEffect, useCallback, useRef } from 'react';
 import { usePrevious } from 'react-use';
 
 import { GrafanaTheme2, IconName } from '@grafana/data';
-import { Icon, useStyles2, LoadingPlaceholder } from '@grafana/ui';
+import { Icon, useStyles2, LoadingPlaceholder, DeleteButton } from '@grafana/ui';
+import { contextSrv } from 'app/core/services/context_srv';
 import { OrgRolePicker } from 'app/features/admin/OrgRolePicker';
 import { StoreState, useSelector, useDispatch } from 'app/types';
 import {
@@ -15,9 +16,10 @@ import {
   AlertingState,
   alertsPageLimit,
   AlertsByNameDTO,
+  AlertDefinitionDTO,
 } from 'app/types/devicemanagement/alert';
 
-import { loadAlertsByName } from '../state/actions';
+import { deleteAlertDefinition, loadAlertsByName } from '../state/actions';
 import { setAlertsByNameFetched } from '../state/reducers';
 import {
   getAlertsByName,
@@ -51,6 +53,7 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition, ass
   let [isConfiguring, setIsConfiguring] = useState<boolean>(false);
   let [isConfiguringNotification, setIsConfiguringNotification] = useState<boolean>(false);
   const url = `org/alertdefinitions/edit/${alertDefinition.id}`;
+  const canDelete = contextSrv.hasPermission('alerts.definition:delete') && !alertDefinition.builtin;
   const [filterKey] = useState<number>(Math.floor(Math.random() * 100));
   const queryStringKey = `queryString-${filterKey}`;
   const [queryString, setQueryString] = useState<string>();
@@ -80,6 +83,20 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition, ass
     };
     dispatch(loadAlertsByName(dto));
   }, [dispatch]);
+
+  const onDelete = useCallback(
+    (id: number) => {
+      const dto: AlertDefinitionDTO = {
+        page: page,
+        association: association,
+        associationReference: associationReference,
+        state: alertState,
+        query: queryString,
+      };
+      dispatch(deleteAlertDefinition(id, dto));
+    },
+    [dispatch]
+  );
   const alert: Alert = {
     id: 0,
     org_id: 0,
@@ -268,6 +285,15 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition, ass
               </div>
             )}
             <div className={styles.actionIcons}>{actionIcons}</div>
+
+            {canDelete && association === 'org' && (
+              <DeleteButton
+                aria-label={`Delete ${alertDefinition.name}`}
+                size="sm"
+                disabled={!canDelete}
+                onConfirm={() => onDelete(alertDefinition.id)}
+              />
+            )}
           </>
         )}
       </div>

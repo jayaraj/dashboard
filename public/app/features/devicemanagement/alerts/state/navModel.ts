@@ -45,6 +45,8 @@ export function getPageNav(pageName: string): NavModel {
     alerting: 0,
     pending: 0,
     normal: 0,
+    code: '{}',
+    builtin: false,
   });
 
   let node: NavModelItem;

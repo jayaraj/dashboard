@@ -109,6 +109,13 @@ export function loadAlertDefinition(id: number): ThunkResult<void> {
   };
 }
 
+export function deleteAlertDefinition(id: number, dto: AlertDefinitionDTO): ThunkResult<void> {
+  return async (dispatch) => {
+    await getBackendSrv().delete(`/api/alertdefinitions/${id}`);
+    dispatch(loadAlertDefinitions(dto));
+  };
+}
+
 export function updateAlertDefinition(dto: UpdateAlertDefinitionDTO): ThunkResult<void> {
   return async (dispatch, getStore) => {
     const alertDefinition = getStore().alertDefinition.alertDefinition;
@@ -124,6 +131,7 @@ export function updateAlertDefinition(dto: UpdateAlertDefinitionDTO): ThunkResul
       for: dto.for,
       ticket_enabled: dto.ticket_enabled,
       configuration: dto.configuration,
+      code: dto.code,
     });
     dispatch(loadAlertDefinition(alertDefinition.id));
   };

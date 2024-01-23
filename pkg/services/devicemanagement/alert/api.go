@@ -16,9 +16,12 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 
 	//APIs
 	routeRegister.Group("api/alertdefinitions", func(alertdefinitionsRoute routing.RouteRegister) {
+		alertdefinitionsRoute.Post("/", authorize(accesscontrol.EvalPermission(ActionDefinitionCreate)), routing.Wrap(service.CreateAlertDefinition))
 		alertdefinitionsRoute.Put("/:alertDefinitionId", authorize(accesscontrol.EvalPermission(ActionDefinitionWrite)), routing.Wrap(service.UpdateAlertDefinition))
 		alertdefinitionsRoute.Get("/:alertDefinitionId", authorize(accesscontrol.EvalPermission(ActionDefinitionRead)), routing.Wrap(service.GetAlertDefinitionById))
+		alertdefinitionsRoute.Post("/:alertDefinitionId/test", authorize(accesscontrol.EvalPermission(ActionDefinitionWrite)), routing.Wrap(service.TestAlertDefinition))
 		alertdefinitionsRoute.Get("/search", authorize(accesscontrol.EvalPermission(ActionDefinitionRead)), routing.Wrap(service.SearchAlertDefinitions))
+		alertdefinitionsRoute.Delete("/:alertDefinitionId", authorize(accesscontrol.EvalPermission(ActionDefinitionDelete)), routing.Wrap(service.DeleteAlertDefinition))
 	})
 
 	routeRegister.Group("api/grafoalerts", func(alertsRoute routing.RouteRegister) {

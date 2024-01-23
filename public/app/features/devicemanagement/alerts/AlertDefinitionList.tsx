@@ -2,9 +2,10 @@ import { css } from '@emotion/css';
 import React from 'react';
 
 import { GrafanaTheme2 } from '@grafana/data';
-import { useStyles2, withErrorBoundary } from '@grafana/ui';
+import { useStyles2, withErrorBoundary, LinkButton } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
+import { contextSrv } from 'app/core/services/context_srv';
 
 import { AlertDefinitionsView } from './components/AlertDefinitionsView';
 import AlertsFilter from './components/AlertsFilter';
@@ -23,9 +24,17 @@ const AlertDefinitionList = withErrorBoundary(
       ? (queryParams['view'] as keyof typeof VIEWS)
       : 'groups';
     const ViewComponent = VIEWS[view];
+    const canCreate = contextSrv.hasPermission('alerts.definition:create');
 
     return (
-      <Page navId="alerts">
+      <Page
+        navId="alerts"
+        actions={
+          <LinkButton href={canCreate ? 'org/alertdefinitions/new' : '#'} disabled={!canCreate}>
+            {`New Alert`}
+          </LinkButton>
+        }
+      >
         <Page.Contents>
           <>
             <AlertsFilter />
