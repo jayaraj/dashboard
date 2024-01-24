@@ -150,6 +150,15 @@ const routes: RouteDescriptor[] = [
         )
     ),
   },
+  {
+    path: '/org/alertdefinitions/new',
+    component: SafeDynamicImport(
+      () =>
+        import(
+          /* webpackChunkName: "CreateAlertDefinition" */ 'app/features/devicemanagement/alerts/CreateAlertDefinition'
+        )
+    ),
+  },
 ];
 
 export function getDevicemanagementRoutes(): RouteDescriptor[] {
