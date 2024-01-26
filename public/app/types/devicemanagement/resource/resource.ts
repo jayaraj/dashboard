@@ -8,6 +8,8 @@ export interface Resource {
   latitude: number;
   longitude: number;
   tags: string;
+  online_status: boolean;
+  last_seen: string;
 }
 
 export interface CreateResourceDTO {
