@@ -49,6 +49,7 @@ export function getPageNav(pageName: string): NavModel {
     tags: '',
     online_status: false,
     last_seen: '',
+    last_seen_age: '',
   });
 
   let node: NavModelItem;

@@ -10,6 +10,7 @@ export interface Resource {
   tags: string;
   online_status: boolean;
   last_seen: string;
+  last_seen_age: string;
 }
 
 export interface CreateResourceDTO {
