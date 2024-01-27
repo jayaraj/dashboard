@@ -187,6 +187,7 @@ export const GroupResourceList = ({
             <div className={styles.text}>{value.startsWith('0001') ? '-' : value.slice(0, 19).replace('T', ' ')}</div>
           );
         },
+        sortType: (a, b) => new Date(a.original.resource_last_seen!).getTime() - new Date(b.original.resource_last_seen!).getTime(),
       },
       {
         id: 'actions',
