@@ -47,6 +47,8 @@ export function getPageNav(pageName: string): NavModel {
     longitude: 0,
     latitude: 0,
     tags: '',
+    online_status: false,
+    last_seen: '',
   });
 
   let node: NavModelItem;
