@@ -9,6 +9,7 @@ import (
 	"github.com/grafana/grafana/pkg/api/response"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/devicemanagement"
+	"github.com/grafana/grafana/pkg/util"
 	"github.com/grafana/grafana/pkg/web"
 	"github.com/jayaraj/messages/client"
 	"github.com/jayaraj/messages/client/billing"
@@ -48,6 +49,9 @@ func (service *Service) GetConnectionResources(c *contextmodel.ReqContext) respo
 	dto := resource.GetGroupResourcesMsg{}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+	for i := range dto.Result.GroupResources {
+		dto.Result.GroupResources[i].ResourceLastSeenAge = util.GetAgeString(dto.Result.GroupResources[i].ResourceLastSeen)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
