@@ -21,6 +21,7 @@ import {
   CallToActionCard,
   ConfirmButton,
   TagList,
+  Icon,
   useStyles2,
 } from '@grafana/ui';
 import { SlideDown } from 'app/core/components/Animations/SlideDown';
@@ -59,6 +60,8 @@ const skeletonData: ConnectionResource[] = new Array(3).fill(null).map((_, index
   resource_name: '',
   resource_type: '',
   resource_tags: '',
+  resource_online_status: false,
+  resource_last_seen: '',
 }));
 
 export const ConnectionResourceList = ({
@@ -156,6 +159,36 @@ export const ConnectionResourceList = ({
                 justify-content: flex-start;
               `}
             />
+          );
+        },
+      },
+      {
+        id: 'resource_online_status',
+        header: 'Status',
+        cell: ({ cell: { value } }: Cell<'resource_online_status'>) => {
+          if (!hasFetched) {
+            return <Skeleton width={40} />;
+          }
+          return (
+            <div className={styles.online}>
+              {value ? (
+                <Icon name={'rss'} style={{ color: 'green' }} />
+              ) : (
+                <Icon name={'rss'} style={{ color: 'red' }} />
+              )}
+            </div>
+          );
+        },
+      },
+      {
+        id: 'resource_last_seen',
+        header: 'Last Seen',
+        cell: ({ cell: { value } }: Cell<'resource_last_seen'>) => {
+          if (!hasFetched) {
+            return <Skeleton width={40} />;
+          }
+          return (
+            <div className={styles.text}>{value.startsWith('0001') ? '-' : value.slice(0, 19).replace('T', ' ')}</div>
           );
         },
       },
@@ -345,4 +378,18 @@ const getStyles = (theme: GrafanaTheme2) => ({
     // needed for things to align properly in the table
     display: 'flex',
   }),
+  text: css`
+  position: relative;
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  gap: 6px;
+  color: ${theme.colors.text.secondary};
+  font-size: ${theme.typography.size.sm};
+`,
+online: css`
+  margin-left: 10px;
+`,
 });

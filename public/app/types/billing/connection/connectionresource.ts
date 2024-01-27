@@ -6,6 +6,8 @@ export interface ConnectionResource {
   resource_name: string;
   resource_type: string;
   resource_tags: string;
+  resource_online_status: boolean;
+  resource_last_seen: string;
 }
 
 export interface ConnectionResourcesState {
