@@ -191,6 +191,8 @@ export const ConnectionResourceList = ({
             <div className={styles.text}>{value.startsWith('0001') ? '-' : value.slice(0, 19).replace('T', ' ')}</div>
           );
         },
+        sortType: (a, b) =>
+          new Date(a.original.resource_last_seen!).getTime() - new Date(b.original.resource_last_seen!).getTime(),
       },
       {
         id: 'actions',
@@ -379,17 +381,17 @@ const getStyles = (theme: GrafanaTheme2) => ({
     display: 'flex',
   }),
   text: css`
-  position: relative;
-  align-items: center;
-  display: flex;
-  flex: 1 1 auto;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-  gap: 6px;
-  color: ${theme.colors.text.secondary};
-  font-size: ${theme.typography.size.sm};
-`,
-online: css`
-  margin-left: 10px;
-`,
+    position: relative;
+    align-items: center;
+    display: flex;
+    flex: 1 1 auto;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+    gap: 6px;
+    color: ${theme.colors.text.secondary};
+    font-size: ${theme.typography.size.sm};
+  `,
+  online: css`
+    margin-left: 10px;
+  `,
 });
