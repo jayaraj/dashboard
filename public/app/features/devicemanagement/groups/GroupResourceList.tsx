@@ -59,6 +59,7 @@ const skeletonData: GroupResource[] = new Array(3).fill(null).map((_, index) => 
   resource_tags: '',
   resource_online_status: false,
   resource_last_seen: '',
+  resource_last_seen_age: '',
 }));
 
 export const GroupResourceList = ({
@@ -177,17 +178,16 @@ export const GroupResourceList = ({
         },
       },
       {
-        id: 'resource_last_seen',
+        id: 'resource_last_seen_age',
         header: 'Last Seen',
-        cell: ({ cell: { value } }: Cell<'resource_last_seen'>) => {
+        cell: ({ cell: { value } }: Cell<'resource_last_seen_age'>) => {
           if (!hasFetched) {
             return <Skeleton width={40} />;
           }
-          return (
-            <div className={styles.text}>{value.startsWith('0001') ? '-' : value.slice(0, 19).replace('T', ' ')}</div>
-          );
+          return <div className={styles.text}>{value}</div>;
         },
-        sortType: (a, b) => new Date(a.original.resource_last_seen!).getTime() - new Date(b.original.resource_last_seen!).getTime(),
+        sortType: (a, b) =>
+          new Date(a.original.resource_last_seen!).getTime() - new Date(b.original.resource_last_seen!).getTime(),
       },
       {
         id: 'actions',

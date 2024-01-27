@@ -8,6 +8,7 @@ export interface GroupResource {
   resource_tags: string;
   resource_online_status: boolean;
   resource_last_seen: string;
+  resource_last_seen_age: string;
 }
 
 export interface GroupResourcesState {

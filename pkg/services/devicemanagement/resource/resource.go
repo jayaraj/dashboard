@@ -11,6 +11,7 @@ import (
 	"github.com/grafana/grafana/pkg/api/response"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/devicemanagement"
+	"github.com/grafana/grafana/pkg/util"
 	"github.com/grafana/grafana/pkg/web"
 
 	"github.com/jayaraj/messages/client"
@@ -165,6 +166,9 @@ func (service *Service) SearchResources(c *contextmodel.ReqContext) response.Res
 	}
 	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+	for i := range dto.Result.Resources {
+		dto.Result.Resources[i].LastSeenAge = util.GetAgeString(dto.Result.Resources[i].LastSeen)
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
