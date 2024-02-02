@@ -73,6 +73,7 @@ export const ResourceList = ({
   const [noResources, setNoResources] = useState<boolean>(true);
 
   useEffect(() => {
+    changePage(1);
     loadResources();
   }, [loadResources]);
 

@@ -65,12 +65,12 @@ export const AlertDefinitionsView = ({ association, associationReference }: Prop
 
   useEffect(() => {
     if (association) {
-      debouncedLoad(page, queryString, alertState);
+      debouncedLoad(1, queryString, alertState);
       if (!interval.current) {
         dispatch(setAlertDefinitionsFetched(false));
         const dto: AlertDefinitionDTO = {
           state: alertState,
-          page: page,
+          page: 1,
           association: association,
           associationReference: associationReference,
           query: queryString,

@@ -87,7 +87,7 @@ export const AlertDefinitionItem: FC<Props> = React.memo(({ alertDefinition, ass
   const onDelete = useCallback(
     (id: number) => {
       const dto: AlertDefinitionDTO = {
-        page: page,
+        page: 1,
         association: association,
         associationReference: associationReference,
         state: alertState,

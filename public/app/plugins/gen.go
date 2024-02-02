@@ -28,6 +28,7 @@ var skipPlugins = map[string]bool{
 	"csvbutton":         true,
 	"downlinkform":      true,
 	"grouppicker":       true,
+	"grafoalerts":       true,
 	"groupbytypepicker": true,
 	"influxdb":          true, // plugin.json fails validation (defaultMatchFormat)
 	"mixed":             true, // plugin.json fails validation (mixed)

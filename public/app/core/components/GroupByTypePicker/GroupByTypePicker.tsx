@@ -23,7 +23,9 @@ export const GroupByTypePicker = ({ groupId, groupType, onChange, filterFunction
         `/api/groups/searchbytype?type=${groupType}&query=${query}&parent=${parent}&perPage=${1000}&page=${1}`
       );
       const filteredGroups = response.groups.filter((g: Group) => filterFunction(g));
-      setDefaultGroup(filteredGroups[0]);
+      if (filteredGroups.length > 0) {
+        setDefaultGroup(filteredGroups[0]);
+      }
       return filteredGroups.map((g: Group) => ({ value: g, label: g.name }));
     },
     [filterFunction, groupType]

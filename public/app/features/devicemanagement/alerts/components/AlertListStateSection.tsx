@@ -92,12 +92,12 @@ export const AlertListStateSection = ({
   useEffect(() => {
     if (!collapsed && association) {
       if (prevQueryString !== queryString) {
-        debouncedLoad(page, queryString);
+        debouncedLoad(1, queryString);
       } else {
-        debouncedLoad(page);
+        debouncedLoad(1);
         const dto: AlertsByStateDTO = {
           state: state,
-          page: page,
+          page: 1,
           association: association,
           associationReference: associationReference,
           query: queryString,
