@@ -9,6 +9,7 @@ export enum AlertingState {
   Alerting = 'alerting',
   Normal = 'normal',
   Pending = 'pending',
+  Unknown = '',
 }
 
 export interface FilterState {

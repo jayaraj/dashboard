@@ -57,6 +57,7 @@ import * as downlinkform from 'app/plugins/panel/downlinkform/module';
 import * as flamegraphPanel from 'app/plugins/panel/flamegraph/module';
 import * as gaugePanel from 'app/plugins/panel/gauge/module';
 import * as gettingStartedPanel from 'app/plugins/panel/gettingstarted/module';
+import * as grafoalerts from 'app/plugins/panel/grafoalerts/module';
 import * as groupbytypepicker from 'app/plugins/panel/groupbytypepicker/module';
 import * as grouppicker from 'app/plugins/panel/grouppicker/module';
 import * as histogramPanel from 'app/plugins/panel/histogram/module';
@@ -148,6 +149,7 @@ const builtInPlugins: Record<string, System.Module | (() => Promise<System.Modul
   'core:plugin/csvbutton': csvButton,
   'core:plugin/downlinkform': downlinkform,
   'core:plugin/grouppicker': grouppicker,
+  'core:plugin/grafoalerts': grafoalerts,
   'core:plugin/groupbytypepicker': groupbytypepicker,
 };
 

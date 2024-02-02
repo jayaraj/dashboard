@@ -20,6 +20,7 @@ export const initialAlertsState: AlertsState = {
     [AlertingState.Alerting]: [] as Alert[],
     [AlertingState.Pending]: [] as Alert[],
     [AlertingState.Normal]: [] as Alert[],
+    [AlertingState.Unknown]: [] as Alert[],
   },
   alertsByNameStats: {},
   alertsByNameHasFetched: {},
@@ -27,14 +28,21 @@ export const initialAlertsState: AlertsState = {
     [AlertingState.Alerting]: initialAlertStats,
     [AlertingState.Pending]: initialAlertStats,
     [AlertingState.Normal]: initialAlertStats,
+    [AlertingState.Unknown]: initialAlertStats,
   },
   alertsByStateHasFetched: {
     [AlertingState.Alerting]: false,
     [AlertingState.Pending]: false,
     [AlertingState.Normal]: false,
+    [AlertingState.Unknown]: false,
   },
   alertsByNamePage: {},
-  alertsByStatePage: { [AlertingState.Alerting]: 1, [AlertingState.Pending]: 1, [AlertingState.Normal]: 1 },
+  alertsByStatePage: {
+    [AlertingState.Alerting]: 1,
+    [AlertingState.Pending]: 1,
+    [AlertingState.Normal]: 1,
+    [AlertingState.Unknown]: 1,
+  },
 };
 
 const alertsSlice = createSlice({
