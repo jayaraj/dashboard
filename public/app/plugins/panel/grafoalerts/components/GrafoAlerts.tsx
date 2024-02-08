@@ -29,7 +29,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
   alertVar = alertVar === '${alert}' ? undefined : alertVar;
   const [queryParams] = useQueryParams();
   const { name, state } = getFiltersFromUrl(queryParams);
-  const [alertName, setAlertName] = useState<SelectableValue<string>>();
+  const [alertName, setAlertName] = useState<SelectableValue<string>>({ value: '', label: '' });
   const [searchQuery, setSearchQuery] = useState('');
   const [alertState, setAlertState] = useState<AlertingState>();
   const [alertCounts, setAlertCounts] = useState<Record<string, number>>();
@@ -109,15 +109,15 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
   }, []);
 
   useEffect(() => {
-    if (state !== undefined) {
+    if (state !== undefined && state !== alertState) {
       setPage(1);
       setAlertState(state);
     }
-    if (name !== undefined) {
+    if (name !== undefined && name !== alertName!.value) {
       setPage(1);
       setAlertName({ value: name, label: name });
     }
-    if (alertVar !== undefined) {
+    if (alertVar !== undefined && Number(alertVar) !== selectedAlert) {
       setSelectedAlert(Number(alertVar));
     }
   }, [name, state, alertVar]);
@@ -141,8 +141,13 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
               defaultOptions={true}
               loadOptions={(query: string) => debouncedLoadOptions(query)}
               onChange={(value: SelectableValue<string>) => {
+                let query: { [`name`]: string | undefined; [`state`]: string | undefined } = {
+                  [`name`]: undefined,
+                  [`state`]: undefined,
+                };
                 setPage(1);
                 setAlertName(value);
+                updateLocation(query);
               }}
               placeholder="Start typing to search"
               noOptionsMessage="No alerts found"
