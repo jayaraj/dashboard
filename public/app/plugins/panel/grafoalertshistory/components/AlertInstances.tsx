@@ -1,94 +1,67 @@
 import { css, cx } from '@emotion/css';
 import React from 'react';
 
-import { GrafanaTheme2 } from '@grafana/data';
+import { GrafanaTheme2, dateTimeFormatISO } from '@grafana/data';
 import { useStyles2 } from '@grafana/ui';
-import { Alert, AlertingState } from 'app/types/devicemanagement/alert';
+import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
+import { AlertHistory, AlertingState } from 'app/types/devicemanagement/alert';
 
-import { DynamicTablePagination, DynamicTableColumnProps, DynamicTableItemProps } from '../types';
+import { DynamicTablePagination, DynamicTableColumnProps } from '../types';
 
 import { AlertLabels } from './AlertLabels';
 import { AlertStateTag } from './AlertStateTag';
 import { DynamicTable } from './DynamicTable';
 
 interface Props {
-  alerts: Alert[];
-  history: boolean;
-  selected: number;
-  onSelected: (id: number) => void;
+  alerts: AlertHistory[];
   className?: string;
   pagination: DynamicTablePagination;
 }
 
-type AlertTableColumnProps = DynamicTableColumnProps<Alert>;
+type AlertTableColumnProps = DynamicTableColumnProps<AlertHistory>;
 
 const columns: AlertTableColumnProps[] = [
   {
     id: 'state',
     label: 'Name',
     // eslint-disable-next-line react/display-name
-    renderCell: ({ data: { state, name, message } }) => (
-      <AlertStateTag state={state as AlertingState} name={name} message={message} />
-    ),
+    renderCell: ({ data: { state, name } }) => <AlertStateTag state={state as AlertingState} name={name} />,
     size: '150px',
   },
   {
     id: 'labels',
     label: 'Labels',
     // eslint-disable-next-line react/display-name
-    renderCell: ({ data: { data } }) => {
+    renderCell: ({ data: { context } }) => {
       const styles = useStyles2(getStyles);
-      return <AlertLabels className={styles.start} labels={data} />;
+      return <AlertLabels className={styles.start} labels={context} />;
     },
   },
   {
     id: 'created',
     label: 'Created',
     // eslint-disable-next-line react/display-name
-    renderCell: ({ data: { age } }) => {
+    renderCell: ({ data: { time } }) => {
       const styles = useStyles2(getStyles);
-      return <div className={styles.text}>{age} ago</div>;
+      const timezone = getDashboardSrv().dashboard?.getTimezone();
+      const created = dateTimeFormatISO(new Date(time), { timeZone: timezone });
+      return (
+        <div className={styles.text}>{created.startsWith('0001') ? '-' : created.slice(0, 19).replace('T', ' ')}</div>
+      );
     },
     size: '150px',
   },
 ];
 
-const columnsWithHistory = [
-  ...columns,
-  {
-    id: 'history',
-    label: 'History',
-    // eslint-disable-next-line react/display-name
-    renderCell: ({ data, onChange, selected }: DynamicTableItemProps<Alert>) => {
-      const styles = useStyles2(getStyles);
-      const checked = selected === data.id;
-      return (
-        <div className={styles.center}>
-          <input
-            id={`${data.id}`}
-            type="radio"
-            checked={checked}
-            className={styles.radio}
-            onChange={() => onChange && onChange(data.id)}
-          />
-        </div>
-      );
-    },
-    size: '70px',
-  },
-];
-
 export function AlertInstances(props: Props): JSX.Element | null {
-  const { alerts, pagination, className, history, onSelected, selected } = props;
+  const { alerts, pagination, className } = props;
   const styles = useStyles2(getStyles);
   const wrapperClass = cx(styles.wrapper, className);
 
-  const items = alerts.map((instance) => {
+  const items = alerts.map((instance, index) => {
     return {
       data: instance,
-      id: instance.id,
-      onChange: (id: number) => onSelected(id),
-      selected: selected,
+      id: index,
     };
   });
 
@@ -98,12 +71,7 @@ export function AlertInstances(props: Props): JSX.Element | null {
 
   return (
     <div className={wrapperClass} data-testid="rules-table">
-      <DynamicTable
-        cols={history ? columnsWithHistory : columns}
-        items={items}
-        pagination={pagination}
-        paginationStyles={styles.pagination}
-      />
+      <DynamicTable cols={columns} items={items} pagination={pagination} paginationStyles={styles.pagination} />
     </div>
   );
 }

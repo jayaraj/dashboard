@@ -3,10 +3,12 @@ import { ReactNode } from 'react';
 import { UrlQueryMap } from '@grafana/data';
 import { AlertingState } from 'app/types/devicemanagement/alert';
 
-export const alertsPageLimit = 50;
+export const alertsPageLimit = 20;
 export const ALERT_POLL_INTERVAL_MS = 60000;
 
-export interface GrafoAlertsOptions {}
+export interface GrafoAlertsOptions {
+  history: boolean;
+}
 
 export interface FilterState {
   name?: string;
@@ -36,36 +38,16 @@ export interface DynamicTableColumnProps<T = unknown> {
 export interface DynamicTableItemProps<T = unknown> {
   id: string | number;
   data: T;
-  renderExpandedContent?: () => ReactNode;
+  onChange: (id: number) => void;
+  selected: number;
 }
 
 export interface DynamicTableProps<T = unknown> {
   cols: Array<DynamicTableColumnProps<T>>;
   items: Array<DynamicTableItemProps<T>>;
 
-  isExpandable?: boolean;
   pagination: DynamicTablePagination;
   paginationStyles?: string;
-
-  // provide these to manually control expanded status
-  onCollapse?: (item: DynamicTableItemProps<T>) => void;
-  onExpand?: (item: DynamicTableItemProps<T>) => void;
-  isExpanded?: (item: DynamicTableItemProps<T>) => boolean;
-
-  renderExpandedContent?: (
-    item: DynamicTableItemProps<T>,
-    index: number,
-    items: Array<DynamicTableItemProps<T>>
-  ) => ReactNode;
-  testIdGenerator?: (item: DynamicTableItemProps<T>, index: number) => string;
-  renderPrefixHeader?: () => ReactNode;
-  renderPrefixCell?: (
-    item: DynamicTableItemProps<T>,
-    index: number,
-    items: Array<DynamicTableItemProps<T>>
-  ) => ReactNode;
-
-  footerRow?: JSX.Element;
 }
 
 export const getFiltersFromUrl = (queryParams: UrlQueryMap): FilterState => {

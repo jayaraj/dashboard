@@ -28,7 +28,8 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 		alertsRoute.Put("/configuration", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.ConfigureAlert))
 		alertsRoute.Put("/enabled", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.EnabledAlert))
 		alertsRoute.Get("/search", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.SearchAlerts))
-		alertsRoute.Get("/:name", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetGrafoAlert))
+		alertsRoute.Get("/name/:name", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetGrafoAlert))
+		alertsRoute.Get("/:alertId/history", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetAlertHistory))
 	})
 
 	routeRegister.Group("api/alertnotifications", func(alertsRoute routing.RouteRegister) {

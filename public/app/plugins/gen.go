@@ -24,15 +24,16 @@ import (
 )
 
 var skipPlugins = map[string]bool{
-	"grafoservice":      true,
-	"csvbutton":         true,
-	"downlinkform":      true,
-	"grouppicker":       true,
-	"grafoalerts":       true,
-	"groupbytypepicker": true,
-	"influxdb":          true, // plugin.json fails validation (defaultMatchFormat)
-	"mixed":             true, // plugin.json fails validation (mixed)
-	"opentsdb":          true, // plugin.json fails validation (defaultMatchFormat)
+	"grafoservice":       true,
+	"csvbutton":          true,
+	"downlinkform":       true,
+	"grouppicker":        true,
+	"grafoalerts":        true,
+	"grafoalertshistory": true,
+	"groupbytypepicker":  true,
+	"influxdb":           true, // plugin.json fails validation (defaultMatchFormat)
+	"mixed":              true, // plugin.json fails validation (mixed)
+	"opentsdb":           true, // plugin.json fails validation (defaultMatchFormat)
 }
 
 const sep = string(filepath.Separator)

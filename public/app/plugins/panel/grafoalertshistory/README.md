@@ -1,0 +1,3 @@
+# GrafoAlertsHistory
+
+Alert History list

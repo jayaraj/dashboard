@@ -4,12 +4,13 @@ import { debounce } from 'lodash';
 import React, { useEffect, useState, useCallback } from 'react';
 
 import { PanelProps, SelectableValue, GrafanaTheme2 } from '@grafana/data';
+import { locationService } from '@grafana/runtime';
 import { useStyles2, CustomScrollbar, LoadingPlaceholder, AsyncSelect, CallToActionCard } from '@grafana/ui';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 import { getBackendSrv } from 'app/core/services/backend_srv';
 import { Alert, AlertDefinition, AlertingState } from 'app/types/devicemanagement/alert';
 
-import { DynamicTablePagination, GrafoAlertsOptions, getFiltersFromUrl } from '../types';
+import { DynamicTablePagination, GrafoAlertsOptions, alertsPageLimit, getFiltersFromUrl } from '../types';
 
 import { AlertInstances } from './AlertInstances';
 import { MatcherFilter } from './MatcherFilter';
@@ -17,14 +18,15 @@ import { StateFilter } from './StateFilter';
 
 interface Props extends PanelProps<GrafoAlertsOptions> {}
 
-export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, height }) => {
+export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
   const styles = useStyles2(getStyles);
   const [loading, setLoading] = useState(true);
-  const alertsPageLimit = 10;
   let resource: string | undefined = replaceVariables('${resource}');
   resource = resource === '${resource}' ? undefined : resource;
   let group: string | undefined = replaceVariables('${grouppath}');
   group = group === '${grouppath}' ? undefined : group;
+  let alert: string | undefined = replaceVariables('${alert}');
+  alert = alert === '${alert}' ? undefined : alert;
   const [queryParams] = useQueryParams();
   const { name, state } = getFiltersFromUrl(queryParams);
   const [alertName, setAlertName] = useState<SelectableValue<string>>();
@@ -33,6 +35,8 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, height }) => {
   const [alertCounts, setAlertCounts] = useState<Record<string, number>>();
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [page, setPage] = useState<number>(1);
+  const updateLocation = debounce((query) => locationService.partial(query, true), 10);
+  const [selectedAlert, setSelectedAlert] = useState<number>(0);
   const [pagination, setPagination] = useState<DynamicTablePagination>({
     page: 1,
     onPageChange: (page: number) => {
@@ -43,6 +47,8 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, height }) => {
   });
   const loadAlerts = useCallback(async () => {
     setLoading(true);
+    const query = { [`var-alert`]: undefined };
+    updateLocation(query);
     const association: string = resource !== undefined ? 'resource' : group !== undefined ? 'group' : 'org';
     const associationRef: number | string = resource !== undefined ? resource : group !== undefined ? group : 0;
 
@@ -66,7 +72,17 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, height }) => {
     setPagination({ ...pagination, page: response.page, total: response.count });
     setLoading(false);
   }, [page, alertState, alertName, searchQuery, alertsPageLimit, resource, group]);
-  const refresh = debounce(() => loadAlerts(), 500);
+  const refresh = debounce(() => loadAlerts(), 1000);
+  const onSelected = useCallback(
+    (value: number) => {
+      let query: { [`var-alert`]: number | undefined } = { [`var-alert`]: undefined };
+      if (value > 0 && value !== selectedAlert) {
+        query = { [`var-alert`]: value };
+      }
+      updateLocation(query);
+    },
+    [selectedAlert]
+  );
 
   const loadOptions = useCallback(async (query?: string) => {
     const association: string = resource !== undefined ? 'resource' : group !== undefined ? 'group' : 'org';
@@ -94,12 +110,17 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, height }) => {
 
   useEffect(() => {
     if (state !== undefined) {
+      setPage(1);
       setAlertState(state);
     }
     if (name !== undefined) {
+      setPage(1);
       setAlertName({ value: name, label: name });
     }
-  }, [name, state]);
+    if (alert !== undefined) {
+      setSelectedAlert(Number(alert));
+    }
+  }, [name, state, alert]);
 
   useEffect(() => {
     if (alertName) {
@@ -109,7 +130,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, height }) => {
 
   return (
     <CustomScrollbar autoHeightMax="100%" autoHeightMin="100%">
-      <section>
+      <section className={styles.container}>
         <div className={cx(styles.flexRow, styles.spaceBetween)}>
           <div className={styles.flexRow}>
             <AsyncSelect
@@ -139,7 +160,10 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, height }) => {
             <StateFilter
               className={styles.rowChild}
               stateFilter={alertState}
-              onStateFilterChange={setAlertState}
+              onStateFilterChange={(state) => {
+                setPage(1);
+                setAlertState(state);
+              }}
               itemPerStateStats={alertCounts}
             />
           </div>
@@ -154,7 +178,14 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, height }) => {
           </div>
         ) : (
           <div className={styles.wrapper} data-testid="rules-table">
-            <AlertInstances className={styles.rulesTable} alerts={alerts} pagination={pagination} />
+            <AlertInstances
+              className={styles.rulesTable}
+              alerts={alerts}
+              history={options.history}
+              onSelected={onSelected}
+              selected={selectedAlert}
+              pagination={pagination}
+            />
           </div>
         )}
       </section>
@@ -187,12 +218,15 @@ export const getStyles = (theme: GrafanaTheme2) => {
     loader: css`
       margin-bottom: 0;
     `,
+    container: css`
+      margin: 10px;
+    `,
     wrapper: css`
       width: auto;
       border-radius: ${theme.shape.borderRadius()};
     `,
     emptyMessage: css`
-      padding: ${theme.spacing(1)};
+      padding-top: ${theme.spacing(2.5)};
     `,
     pagination: css`
       display: flex;
