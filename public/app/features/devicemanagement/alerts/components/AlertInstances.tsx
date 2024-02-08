@@ -1,7 +1,7 @@
 import { css, cx } from '@emotion/css';
 import React, { useMemo, useState, useEffect } from 'react';
 
-import { GrafanaTheme2 } from '@grafana/data';
+import { GrafanaTheme2, dateTimeFormatISO } from '@grafana/data';
 import { useStyles2, Checkbox } from '@grafana/ui';
 import { OrgRole } from 'app/types';
 import { Alert, AlertingState } from 'app/types/devicemanagement/alert';
@@ -52,10 +52,9 @@ const columns: AlertTableColumnProps[] = [
     // eslint-disable-next-line react/display-name
     renderCell: ({ data: { updated_at } }) => {
       const styles = useStyles2(getStyles);
+      const created = dateTimeFormatISO(new Date(updated_at));
       return (
-        <div className={styles.text}>
-          {updated_at.startsWith('0001') ? '-' : updated_at.slice(0, 19).replace('T', ' ')}
-        </div>
+        <div className={styles.text}>{created.startsWith('0001') ? '-' : created.slice(0, 19).replace('T', ' ')}</div>
       );
     },
     size: '150px',

@@ -9,6 +9,7 @@ import (
 	"github.com/grafana/grafana/pkg/api/response"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/devicemanagement"
+	"github.com/grafana/grafana/pkg/util"
 	"github.com/grafana/grafana/pkg/web"
 	"github.com/jayaraj/messages/client"
 	"github.com/jayaraj/messages/client/alerts"
@@ -123,6 +124,9 @@ func (service *Service) SearchAlerts(c *contextmodel.ReqContext) response.Respon
 	}
 	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+	for i := range cmd.Result.Alerts {
+		cmd.Result.Alerts[i].Age = util.GetAgeString(cmd.Result.Alerts[i].UpdatedAt)
 	}
 	return response.JSON(http.StatusOK, cmd.Result)
 }
@@ -287,5 +291,45 @@ func (service *Service) GetGrafoAlert(c *contextmodel.ReqContext) response.Respo
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 	cmd.Result.Role = string(devicemanagement.ConvertStringToRole(cmd.Result.Role))
+	return response.JSON(http.StatusOK, cmd.Result)
+}
+
+func (service *Service) GetAlertHistory(c *contextmodel.ReqContext) response.Response {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":alertId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "alert id missing", nil)
+	}
+	perPage := c.QueryInt("perPage")
+	if perPage <= 0 {
+		perPage = 20
+	}
+	page := c.QueryInt("page")
+	if page <= 0 {
+		page = 1
+	}
+	cmd := &alerts.GetAlertHistoryMsg{
+		Id:      id,
+		Page:    int64(page),
+		PerPage: int64(perPage),
+	}
+	url := fmt.Sprintf("%sapi/alert/%d/history?page=%d&perPage=%d", service.cfg.AlertHost, id, page, perPage)
+	req := &devicemanagement.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to search", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse client.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	if err := json.Unmarshal(req.Response, &cmd.Result); err != nil {
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
 	return response.JSON(http.StatusOK, cmd.Result)
 }

@@ -38,8 +38,16 @@ export interface Alert {
   enabled: boolean;
   data: any;
   configuration: any;
+  age?: string;
   onEdit?: () => void;
   setConfiguringAlert: (alert: Alert) => void;
+}
+
+export interface AlertHistory {
+  name: string;
+  state: string;
+  time: string;
+  context: any;
 }
 
 export interface AlertsState {
