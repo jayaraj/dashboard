@@ -8,7 +8,6 @@ import { locationService } from '@grafana/runtime';
 import { useStyles2, CustomScrollbar, LoadingPlaceholder, AsyncSelect, CallToActionCard } from '@grafana/ui';
 import { useQueryParams } from 'app/core/hooks/useQueryParams';
 import { getBackendSrv } from 'app/core/services/backend_srv';
-import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { Alert, AlertDefinition, AlertingState } from 'app/types/devicemanagement/alert';
 
 import { DynamicTablePagination, GrafoAlertsOptions, alertsPageLimit, getFiltersFromUrl } from '../types';
@@ -36,7 +35,6 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
   const [alertCounts, setAlertCounts] = useState<Record<string, number>>();
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [page, setPage] = useState<number>(1);
-  const dashboard = getDashboardSrv().getCurrent();
   const updateLocation = debounce((query) => locationService.partial(query, true), 10);
   const [selectedAlert, setSelectedAlert] = useState<number>(0);
   const [pagination, setPagination] = useState<DynamicTablePagination>({
@@ -75,7 +73,6 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
     setLoading(false);
   }, [page, alertState, alertName, searchQuery, alertsPageLimit, resource, group]);
   const debouncedLoadAlerts = debounce(() => loadAlerts(), 500);
-  const refresh = debounce(() => dashboard?.startRefresh(), 100);
   const onSelected = useCallback(
     (value: number) => {
       let query: { [`var-alert`]: number | undefined } = { [`var-alert`]: undefined };
@@ -83,7 +80,6 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
         query = { [`var-alert`]: value };
       }
       updateLocation(query);
-      refresh();
     },
     [selectedAlert]
   );
