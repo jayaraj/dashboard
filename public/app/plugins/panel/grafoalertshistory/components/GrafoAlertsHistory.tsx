@@ -14,11 +14,11 @@ import { AlertLabels } from './AlertLabels';
 
 interface Props extends PanelProps<GrafoAlertsHistoryOptions> {}
 
-export const GrafoAlerts: React.FC<Props> = ({ replaceVariables }) => {
+export const GrafoAlertsHistory: React.FC<Props> = ({ replaceVariables }) => {
   const styles = useStyles2(getStyles);
   const [loading, setLoading] = useState(true);
-  let alert: string | undefined = replaceVariables('${alert}');
-  alert = alert === '${alert}' ? undefined : alert;
+  let alertVar: string | undefined = replaceVariables('${alert}');
+  alertVar = alertVar === '${alert}' ? undefined : alertVar;
   const [alerts, setAlerts] = useState<AlertHistory[]>([]);
   const [page, setPage] = useState<number>(1);
   const [context, setContext] = useState<any>({});
@@ -32,7 +32,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables }) => {
   });
   const loadAlerts = useCallback(async () => {
     setLoading(true);
-    const alertId: number = alert !== undefined ? Number(alert) : 0;
+    const alertId: number = alertVar !== undefined ? Number(alertVar) : 0;
     const args: any = { page: page, perPage: alertsPageLimit };
     const response = await getBackendSrv().get(`/api/grafoalerts/${alertId}/history`, args);
     const sortedAlerts = response.alerts.sort(
@@ -42,18 +42,18 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables }) => {
     setAlerts(sortedAlerts);
     setPagination({ ...pagination, page: response.page, total: response.count });
     setLoading(false);
-  }, [page, alertsPageLimit, alert]);
+  }, [page, alertsPageLimit, alertVar]);
   const refresh = debounce(() => loadAlerts(), 100);
 
   useEffect(() => {
     setAlerts([]);
     setContext({});
-    if (alert !== undefined && alert !== '0') {
+    if (alertVar !== undefined && alertVar !== '0') {
       refresh();
     } else {
       setLoading(false);
     }
-  }, [alert]);
+  }, [alertVar]);
 
   return (
     <CustomScrollbar autoHeightMax="100%" autoHeightMin="100%">

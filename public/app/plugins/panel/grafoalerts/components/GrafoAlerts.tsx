@@ -26,8 +26,8 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
   resource = resource === '${resource}' ? undefined : resource;
   let group: string | undefined = replaceVariables('${grouppath}');
   group = group === '${grouppath}' ? undefined : group;
-  let alert: string | undefined = replaceVariables('${alert}');
-  alert = alert === '${alert}' ? undefined : alert;
+  let alertVar: string | undefined = replaceVariables('${alert}');
+  alertVar = alertVar === '${alert}' ? undefined : alertVar;
   const [queryParams] = useQueryParams();
   const { name, state } = getFiltersFromUrl(queryParams);
   const [alertName, setAlertName] = useState<SelectableValue<string>>();
@@ -120,10 +120,10 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
       setPage(1);
       setAlertName({ value: name, label: name });
     }
-    if (alert !== undefined) {
-      setSelectedAlert(Number(alert));
+    if (alertVar !== undefined) {
+      setSelectedAlert(Number(alertVar));
     }
-  }, [name, state, alert]);
+  }, [name, state, alertVar]);
 
   useEffect(() => {
     if (alertName) {
