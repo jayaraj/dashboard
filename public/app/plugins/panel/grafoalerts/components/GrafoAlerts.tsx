@@ -166,8 +166,13 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
               className={styles.rowChild}
               stateFilter={alertState}
               onStateFilterChange={(state) => {
+                let query: { [`name`]: string | undefined; [`state`]: string | undefined } = {
+                  [`name`]: undefined,
+                  [`state`]: undefined,
+                };
                 setPage(1);
                 setAlertState(state);
+                updateLocation(query);
               }}
               itemPerStateStats={alertCounts}
             />
