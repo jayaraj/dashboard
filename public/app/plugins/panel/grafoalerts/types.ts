@@ -3,8 +3,7 @@ import { ReactNode } from 'react';
 import { UrlQueryMap } from '@grafana/data';
 import { AlertingState } from 'app/types/devicemanagement/alert';
 
-export const alertsPageLimit = 20;
-export const ALERT_POLL_INTERVAL_MS = 60000;
+export const alertsPageLimit = 15;
 
 export interface GrafoAlertsOptions {
   history: boolean;

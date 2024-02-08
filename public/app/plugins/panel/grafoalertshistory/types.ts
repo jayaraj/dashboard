@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export const alertsPageLimit = 20;
+export const alertsPageLimit = 15;
 export interface GrafoAlertsHistoryOptions {}
 
 export interface DynamicTablePagination {
