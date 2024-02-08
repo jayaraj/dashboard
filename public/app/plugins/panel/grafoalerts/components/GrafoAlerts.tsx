@@ -123,7 +123,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
   }, [name, state, alertVar]);
 
   useEffect(() => {
-    if (alertName) {
+    if (alertName && alertName.value !== "") {
       debouncedLoadAlerts();
     }
   }, [alertName, alertState, page, searchQuery]);
