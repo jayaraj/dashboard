@@ -75,7 +75,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
     setLoading(false);
   }, [page, alertState, alertName, searchQuery, alertsPageLimit, resource, group]);
   const debouncedLoadAlerts = debounce(() => loadAlerts(), 500);
-  const refresh = debounce(() => dashboard?.startRefresh(), 1000);
+  const refresh = debounce(() => dashboard?.startRefresh(), 100);
   const onSelected = useCallback(
     (value: number) => {
       let query: { [`var-alert`]: number | undefined } = { [`var-alert`]: undefined };
@@ -83,6 +83,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
         query = { [`var-alert`]: value };
       }
       updateLocation(query);
+      refresh();
     },
     [selectedAlert]
   );
@@ -128,7 +129,6 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
   useEffect(() => {
     if (alertName) {
       debouncedLoadAlerts();
-      refresh();
     }
   }, [alertName, alertState, page, searchQuery]);
 
