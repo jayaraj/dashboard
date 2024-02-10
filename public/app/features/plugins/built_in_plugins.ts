@@ -71,6 +71,7 @@ import * as statPanel from 'app/plugins/panel/stat/module';
 import * as stateTimelinePanel from 'app/plugins/panel/state-timeline/module';
 import * as statusHistoryPanel from 'app/plugins/panel/status-history/module';
 import * as tablePanel from 'app/plugins/panel/table/module';
+import * as tablevariables from 'app/plugins/panel/tablevariables/module';
 import * as textPanel from 'app/plugins/panel/text/module';
 import * as timeseriesPanel from 'app/plugins/panel/timeseries/module';
 import * as tracesPanel from 'app/plugins/panel/traces/module';
@@ -153,6 +154,7 @@ const builtInPlugins: Record<string, System.Module | (() => Promise<System.Modul
   'core:plugin/grafoalerts': grafoalerts,
   'core:plugin/grafoalertshistory': grafoalertshistory,
   'core:plugin/groupbytypepicker': groupbytypepicker,
+  'core:plugin/tablevariables': tablevariables,
 };
 
 export default builtInPlugins;

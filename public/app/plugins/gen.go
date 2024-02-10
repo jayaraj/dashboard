@@ -31,6 +31,7 @@ var skipPlugins = map[string]bool{
 	"grafoalerts":        true,
 	"grafoalertshistory": true,
 	"groupbytypepicker":  true,
+	"tablevariables":     true,
 	"influxdb":           true, // plugin.json fails validation (defaultMatchFormat)
 	"mixed":              true, // plugin.json fails validation (mixed)
 	"opentsdb":           true, // plugin.json fails validation (defaultMatchFormat)
