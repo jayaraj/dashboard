@@ -62,7 +62,7 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, option
   return (
     <CustomScrollbar autoHeightMax="100%" autoHeightMin="100%">
       <section className={styles.container}>
-        <div className="page-action-bar">
+        <div className={styles.actionBar}>
           <InlineField grow>
             <FilterInput placeholder={`Search`} value={searchQuery} onChange={setSearchQuery} />
           </InlineField>
@@ -80,5 +80,10 @@ export const getStyles = (theme: GrafanaTheme2) => {
     container: css`
       margin: 10px;
     `,
+    actionBar: css({
+      display: 'flex',
+      alignItems: 'flex-start',
+      gap: theme.spacing(2),
+    }),
   };
 };
