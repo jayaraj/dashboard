@@ -53,11 +53,7 @@ export const GrafoAlertsHistory: React.FC<Props> = ({ replaceVariables }) => {
     } else {
       setLoading(false);
     }
-  }, [alertVar]);
-
-  useEffect(() => {
-    refresh();
-  }, [page]);
+  }, [alertVar, page]);
 
   return (
     <CustomScrollbar autoHeightMax="100%" autoHeightMin="100%">
