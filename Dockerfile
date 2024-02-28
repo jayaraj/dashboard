@@ -3,7 +3,7 @@
 ARG BASE_IMAGE=alpine:3.18.3
 ARG JS_IMAGE=node:20-alpine3.18
 ARG JS_PLATFORM=linux/amd64
-ARG GO_IMAGE=golang:1.21.5-alpine3.18
+ARG GO_IMAGE=golang:1.21.5
 
 ARG GO_SRC=go-builder
 ARG JS_SRC=js-builder
@@ -37,6 +37,8 @@ ARG BUILD_BRANCH=""
 ARG GO_BUILD_TAGS="oss"
 ARG WIRE_TAGS="oss"
 ARG BINGO="true"
+ARG TOKEN
+RUN git config --global url."https://${TOKEN}:@github.com/".insteadOf "https://github.com/"
 
 # Install build dependencies
 RUN if grep -i -q alpine /etc/issue; then \
@@ -171,6 +173,8 @@ RUN if [ ! $(getent group "$GF_GID") ]; then \
 COPY --from=go-src /tmp/grafana/bin/grafana* /tmp/grafana/bin/*/grafana* ./bin/
 COPY --from=js-src /tmp/grafana/public ./public
 COPY --from=go-src /tmp/grafana/LICENSE ./
+COPY conf/defaults.ini /etc/grafana/default.ini
+COPY conf/provisioning /etc/grafana/provisioning
 
 EXPOSE 3000
 
