@@ -46,7 +46,7 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, option
   }, [selectedPage]);
 
   useEffect(() => {
-    const query = { [`var-${options.search}`]: searchQuery };
+    const query = { [`var-${options.search}`]: searchQuery, [`var-${options.page}`]: 1 };
     updateLocation(query);
   }, [searchQuery]);
 
