@@ -16,7 +16,7 @@ export function buildNavModel(configurationType: ConfigurationType): NavModelIte
         icon: 'sliders-v-alt' as IconName,
         id: `configurationtype-settings-${configurationType.id}`,
         text: 'Settings',
-        url: `/org/configurationtypes/edit/${configurationType.id}/settings`,
+        url: `/configurationtypes/edit/${configurationType.id}/settings`,
       },
     ],
   };
