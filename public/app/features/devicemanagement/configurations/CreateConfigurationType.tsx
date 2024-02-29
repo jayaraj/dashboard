@@ -51,7 +51,7 @@ export const CreateConfigurationType = (): JSX.Element => {
       configuration: configuration,
     });
     if (result.id) {
-      locationService.push(`/org/configurationtypes/edit/${result.id}`);
+      locationService.push(`/configurationtypes/edit/${result.id}`);
     }
   };
 
@@ -70,9 +70,11 @@ export const CreateConfigurationType = (): JSX.Element => {
   };
 
   return (
-    <Page navId="configurationtypes" pageNav={pageNav} actions={
-      <LinkButton href={`/configurationtypes`} >Back</LinkButton>
-    }>
+    <Page
+      navId="configurationtypes"
+      pageNav={pageNav}
+      actions={<LinkButton href={`/configurationtypes`}>Back</LinkButton>}
+    >
       <Page.Contents>
         <Form onSubmit={(dto: CreateConfigurationTypeDTO) => create(dto)} disabled={!canWrite}>
           {({ register, control }) => (
@@ -136,8 +138,10 @@ export const CreateConfigurationType = (): JSX.Element => {
                 </VerticalGroup>
               </HorizontalGroup>
               <Stack gap={1} direction="row">
-                <Button type="submit" variant="primary">Create</Button>
-                <LinkButton href={`/configurationtypes`} >Back</LinkButton>
+                <Button type="submit" variant="primary">
+                  Create
+                </Button>
+                <LinkButton href={`/configurationtypes`}>Back</LinkButton>
               </Stack>
             </FieldSet>
           )}
