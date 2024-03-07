@@ -7,6 +7,12 @@ export interface Query extends DataQuery {
   queryArguments?: Data[];
 }
 
+export interface VariableQuery {
+  application: string;
+  api: string;
+  arguments: Data[];
+}
+
 export interface GrafoQuery {
   user_id: number;
   org_id: number;
@@ -42,6 +48,12 @@ export const DEFAULT_QUERY: Partial<Query> = {
   queryApplication: '',
   queryAPI: '',
   queryArguments: [] as Data[],
+};
+
+export const DEFAULT_VARIABLEQUERY: Partial<VariableQuery> = {
+  application: '',
+  api: '',
+  arguments: [] as Data[],
 };
 
 export interface Target {

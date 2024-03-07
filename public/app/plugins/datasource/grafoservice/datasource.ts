@@ -10,7 +10,15 @@ import { getTemplateSrv } from '@grafana/runtime';
 import { contextSrv } from 'app/core/services/context_srv';
 
 import { Api } from './api';
-import { Query, DataSourceOptions, DEFAULT_QUERY, DataSourceTestStatus, GrafoQuery, Data } from './types';
+import {
+  Query,
+  DataSourceOptions,
+  DEFAULT_QUERY,
+  DataSourceTestStatus,
+  GrafoQuery,
+  Data,
+  VariableQuery,
+} from './types';
 
 export class DataSource extends DataSourceApi<Query, DataSourceOptions> {
   api: Api;
@@ -82,6 +90,55 @@ export class DataSource extends DataSourceApi<Query, DataSourceOptions> {
       status: isStatusOk ? DataSourceTestStatus.SUCCESS : DataSourceTestStatus.ERROR,
       message: isStatusOk ? `Connected.` : "Error. Can't connect.",
     };
+  }
+
+  async metricFindQuery(query: VariableQuery, options?: any) {
+    const { range, timezone, scopedVars } = options;
+    const templateSrv = getTemplateSrv();
+    const group = templateSrv.replace('${group}', scopedVars, 'regex');
+    let groupPath = templateSrv.replace('${grouppath}', scopedVars, 'regex');
+    const resource = templateSrv.replace('${resource}', scopedVars, 'regex');
+    let queryArguments = [] as Data[];
+    if (query.arguments !== undefined) {
+      queryArguments = query.arguments.map((pair) => {
+        return { ...pair, value: templateSrv.replace(pair.value, scopedVars, 'regex') };
+      });
+    }
+    const args: GrafoQuery = {
+      user_id: contextSrv.user.id,
+      org_id: contextSrv.user.orgId,
+      group_id: group ? Number(group) : 0,
+      group_path: groupPath ? groupPath : '0,',
+      resource_id: resource ? Number(resource) : 0,
+      role: contextSrv.user.isGrafanaAdmin ? this.convertRole('SuperAdmin') : this.convertRole(contextSrv.user.orgRole),
+      utc_offset: range.from.utcOffset(),
+      range: {
+        from: dateMath.parse(range!.from, false, timezone)!.format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+        to: dateMath.parse(range!.to, false, timezone)!.format('YYYY-MM-DDTHH:mm:ss.SSSZ'),
+        raw: {
+          from: range.from.valueOf(),
+          to: range.to.valueOf(),
+        },
+      },
+      targets: [
+        {
+          application: query.application!,
+          apis: [{ name: query.api!, data: queryArguments }],
+          refId: 'A',
+        },
+      ],
+    };
+    const response = await this.api.getData(args);
+    if (response.length === 0) {
+      return [];
+    }
+    const values = response[0].fields.map((field) => {
+      if (field.values.length > 0) {
+        return { text: field.name, value: field.values[0] };
+      }
+      return { text: field.name };
+    });
+    return values;
   }
 
   getDefaultQuery(_: CoreApp): Partial<Query> {
