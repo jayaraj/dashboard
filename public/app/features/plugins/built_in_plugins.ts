@@ -67,6 +67,7 @@ import * as logsPanel from 'app/plugins/panel/logs/module';
 import * as newsPanel from 'app/plugins/panel/news/module';
 import * as nodeGraph from 'app/plugins/panel/nodeGraph/module';
 import * as pieChartPanel from 'app/plugins/panel/piechart/module';
+import * as resourcebytypepicker from 'app/plugins/panel/resourcebytypepicker/module';
 import * as statPanel from 'app/plugins/panel/stat/module';
 import * as stateTimelinePanel from 'app/plugins/panel/state-timeline/module';
 import * as statusHistoryPanel from 'app/plugins/panel/status-history/module';
@@ -154,6 +155,7 @@ const builtInPlugins: Record<string, System.Module | (() => Promise<System.Modul
   'core:plugin/grafoalerts': grafoalerts,
   'core:plugin/grafoalertshistory': grafoalertshistory,
   'core:plugin/groupbytypepicker': groupbytypepicker,
+  'core:plugin/resourcebytypepicker': resourcebytypepicker,
   'core:plugin/tablevariables': tablevariables,
 };
 
