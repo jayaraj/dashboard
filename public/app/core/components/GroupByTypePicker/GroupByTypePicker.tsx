@@ -20,7 +20,7 @@ export const GroupByTypePicker = ({ groupId, groupType, onChange, filterFunction
   const loadOptions = useCallback(
     async (query: string) => {
       const response = await getBackendSrv().get(
-        `/api/groups/searchbytype?type=${groupType}&query=${query}&parent=${parent}&perPage=${1000}&page=${1}`
+        `/api/groups/searchbytype?type=${groupType}&query=${query}&perPage=${1000}&page=${1}`
       );
       const filteredGroups = response.groups.filter((g: Group) => filterFunction(g));
       if (filteredGroups.length > 0) {

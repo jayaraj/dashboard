@@ -1,0 +1,17 @@
+{
+  "type": "panel",
+  "name": "Resource by Type Picker",
+  "id": "resourcebytypepicker",
+
+  "info": {
+    "description": "Resource type picker for resources",
+    "author": {
+      "name": "Resource by Type Picker",
+      "url": "https://www.grafo.com"
+    },
+    "logos": {
+      "small": "img/icn-resourcebytypepicker-panel.svg",
+      "large": "img/icn-resourcebytypepicker-panel.svg"
+    }
+  }
+}
