@@ -1,5 +1,5 @@
 import { debounce } from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { PanelProps } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
@@ -14,7 +14,7 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
   const styles = getStyles();
   const updateLocation = debounce((query) => locationService.partial(query, true), 100);
   let resource: string | undefined = replaceVariables('${resource}');
-  const resourceId = resource === '${resource}' ? 0 : Number(resource);
+  const [resourceId, setResourceId] = useState<Number>(resource === '${resource}' ? 0 : Number(resource));
   let grpPath: string | undefined = replaceVariables('${grouppath}');
   grpPath = grpPath === '${grouppath}' ? '0,' : grpPath;
 
@@ -38,6 +38,7 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
   useEffect(() => {
     const query = { [`var-resource`]: undefined };
     updateLocation(query);
+    setResourceId(0);
   }, [grpPath]);
 
   return (
