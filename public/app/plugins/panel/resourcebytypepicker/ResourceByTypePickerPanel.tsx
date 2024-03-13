@@ -5,6 +5,7 @@ import { PanelProps } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
 import { Label } from '@grafana/ui';
 import { ResourceByTypePicker } from 'app/core/components/ResourceByTypePicker/ResourceByTypePicker';
+import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { Resource } from 'app/types/devicemanagement/resource';
 
 import { getStyles, ResourceByTypePickerOptions } from './types';
@@ -13,6 +14,8 @@ interface Props extends PanelProps<ResourceByTypePickerOptions> {}
 export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVariables }) => {
   const styles = getStyles();
   const updateLocation = debounce((query) => locationService.partial(query, true), 100);
+  const dashboard = getDashboardSrv().getCurrent();
+  const refresh = debounce(() => dashboard?.startRefresh(), 1000);
   let resource: string | undefined = replaceVariables('${resource}');
   const [resourceId, setResourceId] = useState<Number>(resource === '${resource}' ? 0 : Number(resource));
   let grpPath: string | undefined = replaceVariables('${grouppath}');
@@ -26,6 +29,7 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
       query = { ...query, [`var-resource`]: undefined };
     }
     updateLocation(query);
+    refresh();
   };
 
   const filterFunction = (r: Resource) => {
@@ -39,6 +43,7 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
     const query = { [`var-resource`]: undefined };
     updateLocation(query);
     setResourceId(0);
+    refresh();
   }, [grpPath]);
 
   return (
