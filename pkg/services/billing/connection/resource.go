@@ -123,3 +123,46 @@ func (service *Service) RemoveConnectionResource(c *contextmodel.ReqContext) res
 	}
 	return response.Success("removed user from connection")
 }
+
+func (service *Service) AddConnectionResource(c *contextmodel.ReqContext) response.Response {
+	connection, access := service.IsConnectionAccessible(c)
+	if !access {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	uuid := web.Params(c.Req)[":uuid"]
+	resourceService := service.devMgmt.GetResource()
+	r, err := resourceService.GetResourceByUUID(c.Req.Context(), uuid)
+	if err != nil {
+		return response.Error(http.StatusNotFound, "uuid is not found", err)
+	}
+	if !resourceService.IsResourceAccessibleById(c, r.Id) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	dto := billing.AddConnectionResourceMsg{
+		ResourceId:   r.Id,
+		UUID:         uuid,
+		AddedBy:      c.Login,
+		ConnectionId: connection.Id,
+	}
+	body, err := json.Marshal(dto)
+	if err != nil {
+		return response.Error(500, "failed marshal add", err)
+	}
+	url := fmt.Sprintf("%sapi/connections/%d/resources", service.cfg.BillingHost, connection.Id)
+	req := &devicemanagement.RestRequest{
+		Url:        url,
+		Request:    body,
+		HttpMethod: http.MethodPut,
+	}
+	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to add", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse client.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	return response.Success("added")
+}

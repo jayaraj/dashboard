@@ -23,6 +23,7 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 		connectionsRoute.Get("/:connectionId", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetConnectionById))
 		connectionsRoute.Delete("/:connectionId", authorize(accesscontrol.EvalPermission(ActionDelete)), routing.Wrap(service.DeleteConnection))
 		connectionsRoute.Get("/:connectionId/logs", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetConnectionLogs))
+		connectionsRoute.Put("/:connectionId/resources", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.AddConnectionResource))
 
 		connectionsRoute.Get("/:connectionId/users", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetConnectionUsers))
 		connectionsRoute.Delete("/:connectionId/users/:userId", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.RemoveUserConnection))
