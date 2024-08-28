@@ -1,5 +1,4 @@
 import { css } from '@emotion/css';
-import debouncePromise from 'debounce-promise';
 import React, { useEffect, useState, useCallback } from 'react';
 
 import { SelectableValue } from '@grafana/data';
@@ -8,55 +7,76 @@ import { getBackendSrv } from 'app/core/services/backend_srv';
 import { Group } from 'app/types/devicemanagement/group';
 
 export interface Props {
+  groupPath?: string;
   onChange: (group?: Group) => void;
   filterFunction: (group: Group) => boolean;
-  groupPath?: string;
 }
 export const GroupPicker = ({ groupPath, onChange, filterFunction }: Props): JSX.Element | null => {
   const [loading, setLoading] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState<SelectableValue<Group>>({});
-  const [parents, setParents] = useState<Array<{ id: number; selectedId: number }>>([]);
+  const [parents, setParents] = useState<Array<{ parentId: number; selectedId: number }>>([]);
   const loadOptions = useCallback(
-    async (query: string, parent: number) => {
+    async (query: string, parents: Array<{ parentId: number; selectedId: number }>, parent: number, index: number) => {
       const response = await getBackendSrv().get(
         `/api/groups?query=${query}&parent=${parent}&perPage=${1000}&page=${1}`
       );
       const filteredGroups = response.groups.filter((g: Group) => filterFunction(g));
+      if (filteredGroups.length > 0) {
+        if (index < parents.length && parents[index].parentId === parent) {
+          if (parents[index].selectedId !== 0) {
+            const grp = filteredGroups.find((g: Group) => g.id === parents[index].selectedId);
+            setSelectedGroups((prevItems) => ({ ...prevItems, [`${parent}`]: { value: grp, label: grp!.name } }));
+            if (grp!.child && index + 1 >= parents.length) {
+              setParents([...parents.slice(0, index + 1), { parentId: grp.id, selectedId: 0 }]);
+            }
+          } else {
+            setSelectedGroups((prevItems) => ({
+              ...prevItems,
+              [`${parent}`]: { value: filteredGroups[0], label: filteredGroups[0].name },
+            }));
+            if (filteredGroups[0].child && index + 1 >= parents.length) {
+              setParents([...parents.slice(0, index + 1), { parentId: filteredGroups[0].id, selectedId: 0 }]);
+            }
+          }
+        }
+      }
       return filteredGroups.map((g: Group) => ({ value: g, label: g.name }));
     },
     [filterFunction]
   );
-  const debouncedLoadOptions = debouncePromise(loadOptions, 300, { leading: true });
-  const loadGroup = async (parent: number, id: number) => {
-    const response = await getBackendSrv().get(`/api/groups/${id}`);
-    setSelectedGroups((prevItems) => ({ ...prevItems, [`${parent}`]: { value: response, label: response.name } }));
-    return { value: response, label: response.name };
-  };
 
   useEffect(() => {
-    if (groupPath && groupPath !== '' && groupPath.includes(',')) {
-      setLoading(true);
-      const groupsIds = groupPath.split(',');
-      let paths: Array<{ id: number; selectedId: number }> = [];
-      groupsIds.forEach((id, index) => {
-        if (id === '0') {
-          paths = [{ id: -1, selectedId: Number(groupsIds[index + 1]) }];
-          loadGroup(-1, Number(groupsIds[index + 1]));
-        } else {
-          if (index + 1 < groupsIds.length - 1) {
-            paths.push({ id: Number(id), selectedId: Number(groupsIds[index + 1]) });
-            loadGroup(Number(id), Number(groupsIds[index + 1]));
+    if (groupPath && groupPath !== '') {
+      let parents: Array<{ parentId: number; selectedId: number }> = [{ parentId: -1, selectedId: 0 }];
+      if (groupPath.includes(',')) {
+        setLoading(true);
+        const groupsIds = groupPath.split(',');
+        groupsIds.forEach((id, index) => {
+          if (index >= groupsIds.length - 2) {
+            return;
           }
-        }
-        setParents([...paths]);
-      });
-      setLoading(false);
-    } else {
-      if (parents.length === 0) {
-        setParents((prevItems) => [...prevItems, { id: -1, selectedId: 0 }]);
+          if (id !== '') {
+            if (id === '0') {
+              parents = [{ parentId: Number(-1), selectedId: Number(groupsIds[index + 1]) }];
+              return;
+            }
+            parents.push({ parentId: Number(id), selectedId: Number(groupsIds[index + 1]) });
+          }
+        });
+        setLoading(false);
+      }
+      setParents([...parents]);
+    }
+  }, [groupPath]);
+
+  useEffect(() => {
+    if (onChange && parents.length > 0) {
+      const grp = selectedGroups[parents[parents.length - 1].parentId];
+      if (grp) {
+        onChange(grp.value);
       }
     }
-  }, [groupPath, parents.length]);
+  }, [selectedGroups]);
 
   const onSelected = (value: SelectableValue<Group>, index: number) => {
     setParents([...parents.slice(0, index + 1)]);
@@ -65,31 +85,10 @@ export const GroupPicker = ({ groupPath, onChange, filterFunction }: Props): JSX
         setParents([
           ...parents.slice(0, index),
           { ...parents[index], selectedId: value.value.id },
-          { id: value.value.id, selectedId: 0 },
+          { parentId: value.value.id, selectedId: 0 },
         ]);
       }
-      setSelectedGroups((prevItems) => ({ ...prevItems, [`${parents[index].id}`]: value }));
-      if (onChange) {
-        onChange(value.value);
-      }
-    } else {
-      if (index !== 0) {
-        onChange(selectedGroups[parents[index - 1].id].value);
-        setParents([...parents.slice(0, index), { id: selectedGroups[parents[index - 1].id].value.id, selectedId: 0 }]);
-      } else {
-        onChange();
-        setParents([{ id: -1, selectedId: 0 }]);
-      }
-      let filteredGroups: any = {};
-      Object.values(selectedGroups).map((p: SelectableValue<Group>) => {
-        for (let i = 0; i < index; i++) {
-          if (parents[i].id === p.value!.parent) {
-            filteredGroups[p.value!.parent] = p;
-          }
-        }
-        return p;
-      });
-      setSelectedGroups({ ...filteredGroups });
+      setSelectedGroups((prevItems) => ({ ...prevItems, [`${parents[index].parentId}`]: value }));
     }
   };
 
@@ -110,14 +109,13 @@ export const GroupPicker = ({ groupPath, onChange, filterFunction }: Props): JSX
           {parents.map((parent, index) => {
             return (
               <AsyncSelect
-                key={`${parent.id}`}
+                key={`${parent.parentId}`}
                 loadingMessage="Loading ..."
                 width={25}
                 cacheOptions={false}
-                isClearable
-                value={selectedGroups[`${parent.id}`]}
+                value={selectedGroups[`${parent.parentId}`]}
                 defaultOptions={true}
-                loadOptions={(query: string) => debouncedLoadOptions(query, parent.id)}
+                loadOptions={(query: string) => loadOptions(query, parents, parent.parentId, index)}
                 onChange={(value: SelectableValue<Group>) => onSelected(value, index)}
                 placeholder="Start typing to search"
                 noOptionsMessage="No groups found"
