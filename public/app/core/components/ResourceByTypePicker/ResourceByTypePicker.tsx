@@ -1,5 +1,4 @@
 import { css } from '@emotion/css';
-import debouncePromise from 'debounce-promise';
 import React, { useEffect, useState, useCallback } from 'react';
 
 import { SelectableValue } from '@grafana/data';
@@ -34,13 +33,15 @@ export const ResourceByTypePicker = ({
       const filteredResources = response.resources.filter((r: Resource) => filterFunction(r));
       if (filteredResources.length > 0) {
         setDefaultResource(filteredResources[0]);
+      } else {
+        setDefaultResource(undefined);
+        setSelectedResource({ value: undefined, label: '' });
       }
       const resources = filteredResources.map((r: Resource) => ({ value: r, label: r.name }));
       return resources;
     },
     [filterFunction, resourceType]
   );
-  const debouncedLoadOptions = debouncePromise(loadOptions, 300, { leading: true });
   const loadResource = useCallback(
     async (id: number) => {
       const response = await getBackendSrv().get(`/api/resources/${id}`);
@@ -76,18 +77,6 @@ export const ResourceByTypePicker = ({
       if (onChange) {
         onChange(value.value);
       }
-    } else {
-      if (defaultResource) {
-        setSelectedResource({ value: defaultResource, label: defaultResource.name });
-        if (onChange) {
-          onChange(defaultResource);
-        }
-      } else {
-        if (onChange) {
-          onChange();
-        }
-        setSelectedResource(undefined);
-      }
     }
   };
 
@@ -112,10 +101,9 @@ export const ResourceByTypePicker = ({
             loadingMessage="Loading ..."
             width={25}
             cacheOptions={false}
-            isClearable
             value={selectedResource}
             defaultOptions={true}
-            loadOptions={(query: string) => debouncedLoadOptions(query)}
+            loadOptions={(query: string) => loadOptions(query)}
             onChange={(value: SelectableValue<Resource>) => onSelected(value)}
             placeholder="Start typing to search"
             noOptionsMessage="No resources found"

@@ -1,5 +1,4 @@
 import { css } from '@emotion/css';
-import debouncePromise from 'debounce-promise';
 import React, { useEffect, useState, useCallback } from 'react';
 
 import { SelectableValue } from '@grafana/data';
@@ -25,12 +24,14 @@ export const GroupByTypePicker = ({ groupId, groupType, onChange, filterFunction
       const filteredGroups = response.groups.filter((g: Group) => filterFunction(g));
       if (filteredGroups.length > 0) {
         setDefaultGroup(filteredGroups[0]);
+      } else {
+        setDefaultGroup(undefined);
+        setSelectedGroup({ value: undefined, label: '' });
       }
       return filteredGroups.map((g: Group) => ({ value: g, label: g.name }));
     },
     [filterFunction, groupType]
   );
-  const debouncedLoadOptions = debouncePromise(loadOptions, 300, { leading: true });
   const loadGroup = useCallback(
     async (id: number) => {
       const response = await getBackendSrv().get(`/api/groups/${id}`);
@@ -63,18 +64,6 @@ export const GroupByTypePicker = ({ groupId, groupType, onChange, filterFunction
       if (onChange) {
         onChange(value.value);
       }
-    } else {
-      if (defaultGroup) {
-        setSelectedGroup({ value: defaultGroup, label: defaultGroup.name });
-        if (onChange) {
-          onChange(defaultGroup);
-        }
-      } else {
-        if (onChange) {
-          onChange();
-        }
-        setSelectedGroup(undefined);
-      }
     }
   };
 
@@ -98,10 +87,9 @@ export const GroupByTypePicker = ({ groupId, groupType, onChange, filterFunction
             loadingMessage="Loading ..."
             width={25}
             cacheOptions={false}
-            isClearable
             value={selectedGroup}
             defaultOptions={true}
-            loadOptions={(query: string) => debouncedLoadOptions(query)}
+            loadOptions={(query: string) => loadOptions(query)}
             onChange={(value: SelectableValue<Group>) => onSelected(value)}
             placeholder="Start typing to search"
             noOptionsMessage="No groups found"
