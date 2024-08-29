@@ -17,7 +17,7 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
   const dashboard = getDashboardSrv().getCurrent();
   const refresh = debounce(() => dashboard?.startRefresh(), 1000);
   let resource: string | undefined = replaceVariables('${resource}');
-  const [resourceId, setResourceId] = useState<Number>(resource === '${resource}' ? 0 : Number(resource));
+  const [resourceId, setResourceId] = useState<number>(resource === '${resource}' ? 0 : Number(resource));
   let grpPath: string | undefined = replaceVariables('${grouppath}');
   grpPath = grpPath === '${grouppath}' ? '0,' : grpPath;
 

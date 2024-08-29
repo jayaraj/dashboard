@@ -29,7 +29,6 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, option
       return acc;
     }, undefined);
     if (field) {
-      // eslint-disable-next-line deprecation/deprecation
       const values = field.values.toArray ? field.values.toArray() : field.values;
       if (values.length > 0) {
         return values[0];
