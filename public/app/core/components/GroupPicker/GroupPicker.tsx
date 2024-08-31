@@ -39,6 +39,8 @@ export const GroupPicker = ({ groupPath, onChange, filterFunction }: Props): JSX
             }
           }
         }
+      } else {
+        setParents([...parents.slice(0, index)]);
       }
       return filteredGroups.map((g: Group) => ({ value: g, label: g.name }));
     },
