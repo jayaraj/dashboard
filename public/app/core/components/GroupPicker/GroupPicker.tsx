@@ -66,6 +66,8 @@ export const GroupPicker = ({ groupPath, onChange, filterFunction }: Props): JSX
         setLoading(false);
       }
       setParents([...parents]);
+    } else {
+      setParents([{ parentId: -1, selectedId: 0 }]);
     }
   }, [groupPath]);
 
