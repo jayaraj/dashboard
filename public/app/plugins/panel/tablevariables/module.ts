@@ -1,10 +1,58 @@
 import { PanelPlugin } from '@grafana/data';
+import { defaultTableFieldOptions } from '@grafana/schema';
 
 import { HeadersEditor } from './components/HeadersEditor';
 import { TableVariables } from './components/TableVariable';
 import { TableVariablesOptions, defaults } from './types';
 
 export const plugin = new PanelPlugin<TableVariablesOptions>(TableVariables)
+.useFieldConfig({
+  useCustomConfig: (builder) => {
+    builder
+      .addNumberInput({
+        path: 'minWidth',
+        name: 'Minimum column width',
+        description: 'The minimum width for column auto resizing',
+        settings: {
+          placeholder: '150',
+          min: 50,
+          max: 500,
+        },
+        shouldApply: () => true,
+        defaultValue: defaultTableFieldOptions.minWidth,
+      })
+      .addNumberInput({
+        path: 'width',
+        name: 'Column width',
+        settings: {
+          placeholder: 'auto',
+          min: 20,
+          max: 300,
+        },
+        shouldApply: () => true,
+        defaultValue: defaultTableFieldOptions.width,
+      })
+      .addRadio({
+        path: 'align',
+        name: 'Column alignment',
+        settings: {
+          options: [
+            { label: 'auto', value: 'auto' },
+            { label: 'left', value: 'left' },
+            { label: 'center', value: 'center' },
+            { label: 'right', value: 'right' },
+          ],
+        },
+        defaultValue: defaultTableFieldOptions.align,
+      })
+      .addBooleanSwitch({
+        path: 'hidden',
+        name: 'Hide in table',
+        defaultValue: undefined,
+        hideFromDefaults: true,
+      });
+  },
+})
 .setPanelOptions((builder) => {
   return builder
     .addTextInput({
@@ -38,9 +86,9 @@ export const plugin = new PanelPlugin<TableVariablesOptions>(TableVariables)
     .addTextInput({
       description: 'Sort By Variable',
       name: 'Sort Variable',
-      path: 'sortBy',
+      path: 'sort',
       category: ['Search Options'],
-      defaultValue: defaults.sortBy,
+      defaultValue: defaults.sort,
     })
     .addTextInput({
       description: 'Desc Variable',
