@@ -1,12 +1,15 @@
+import { TableSortByFieldState } from '@grafana/ui/src/components/Table/types';
+
 export interface TableVariablesOptions {
   search: string;
   page: string;
   perPage: string;
   perPageLimit: number;
-  sortBy: string;
+  sort: string;
   desc: string;
   showHeaders: boolean;
   headers: Header[];
+  sortBy?: TableSortByFieldState[];
 }
 
 export interface Header {
@@ -20,10 +23,11 @@ export const defaults: TableVariablesOptions = {
   page: 'page',
   perPage: 'perPage',
   perPageLimit: 20,
-  sortBy: 'sortBy',
+  sort: 'sort',
   desc: 'desc',
   showHeaders: false,
-  headers: []
+  headers: [],
+  sortBy: []
 };
 
 export const HeaderDefault: Header = {

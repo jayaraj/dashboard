@@ -4,14 +4,16 @@ import React, { useEffect, useState } from 'react';
 
 import { PanelProps, GrafanaTheme2, DataFrame, Field, FieldType } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
-import { useStyles2, CustomScrollbar, InlineField, Stack, FilterInput, Pagination, Table } from '@grafana/ui';
+import { useStyles2, CustomScrollbar, InlineField, Stack, FilterInput, Pagination } from '@grafana/ui';
 import { TableSortByFieldState } from '@grafana/ui/src/components/Table/types';
 
 import { Header, TableVariablesOptions } from '../types';
 
+import { TableHeader } from './TableHeader';
+
 interface Props extends PanelProps<TableVariablesOptions> {}
 
-export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width, options, onOptionsChange }) => {
+export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width, options, fieldConfig, onOptionsChange }) => {
   const styles = useStyles2(getStyles);
   let search: string | undefined = replaceVariables(`${options.search}`);
   search = search === `${options.search}` ? '' : search;
@@ -20,16 +22,14 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
   page = page === `${options.page}` ? '1' : page;
   const [selectedPage, setSelectedPage] = useState<number>(Number(page));
   const updateLocation = debounce((query) => locationService.partial(query, true), 500);
-  
-  
   const getHeaders = (headers: Header[]): DataFrame => {
     const df: DataFrame = { fields: [], length: 0};
     if (headers) {
       for (const header of headers) {
-        let config = { displayName: header.title, custom: {}};
+        let config = { displayName: header.title, custom: fieldConfig.defaults.custom};
         
         if (header.width > 0) {
-          config.custom = { width: header.width };
+          config.custom = { ...config.custom, width: header.width };
         }
         df.fields.push(
           { 
@@ -42,7 +42,6 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
     }
     return  df;
   };
-
   const getCount = (frames: DataFrame[]) => {
     const field = frames.reduce((acc: Field | undefined, { fields }) => {
       const field = fields?.find((field: Field) => field.name === 'Count');
@@ -77,21 +76,27 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
       [`var-${options.search}`]: '',
       [`var-${options.page}`]: 1,
       [`var-${options.perPage}`]: options.perPageLimit,
+      [`var-${options.sort}`]: undefined,
+      [`var-${options.desc}`]: undefined, 
     };
     locationService.partial(query, true);
   }, []);
 
   function onSortByChange(sortBy: TableSortByFieldState[]) {
     if (sortBy.length === 0) {
-      const query = { [`var-${options.sortBy}`]: undefined, [`var-${options.desc}`]: undefined, [`var-${options.page}`]: 1 };
+      const query = { [`var-${options.sort}`]: undefined, [`var-${options.desc}`]: undefined, [`var-${options.page}`]: 1 };
       updateLocation(query);
       return;
     }
     const header = options.headers.find((o) => o.title === sortBy[0].displayName);
     if (header) {
-      const query = { [`var-${options.sortBy}`]: header.id, [`var-${options.desc}`]: (sortBy[0].desc)? "true": "false", [`var-${options.page}`]: 1 };
+      const query = { [`var-${options.sort}`]: header.id, [`var-${options.desc}`]: (sortBy[0].desc)? "true": "false", [`var-${options.page}`]: 1 };
       updateLocation(query);
     }
+    onOptionsChange({
+      ...options,
+      sortBy,
+    });
   }
 
   function onColumnResize(fieldDisplayName: string, width: number) {
@@ -103,7 +108,7 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
     });
     onOptionsChange({
       ...options,
-      headers: headers,
+      headers,
     });
   }
 
@@ -120,12 +125,13 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
         </div>
         {(options.showHeaders) && (
           <div className={styles.table}>
-            <Table
+            <TableHeader
               height={30}
               width={width}
               data={getHeaders(options.headers)}
               noHeader={!options.showHeaders}
               resizable={true}
+              initialSortBy={options.sortBy}
               onSortByChange={(sortBy) => onSortByChange(sortBy)}
               onColumnResize={(displayName, resizedWidth) => onColumnResize(displayName, resizedWidth)}
             />
