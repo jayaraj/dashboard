@@ -86,6 +86,10 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
     if (sortBy.length === 0) {
       const query = { [`var-${options.sort}`]: undefined, [`var-${options.desc}`]: undefined, [`var-${options.page}`]: 1 };
       updateLocation(query);
+      onOptionsChange({
+        ...options,
+        sortBy: [],
+      });
       return;
     }
     const header = options.headers.find((o) => o.title === sortBy[0].displayName);
