@@ -1,5 +1,3 @@
-import { TableSortByFieldState } from '@grafana/ui/src/components/Table/types';
-
 export interface TableVariablesOptions {
   search: string;
   page: string;
@@ -9,7 +7,6 @@ export interface TableVariablesOptions {
   desc: string;
   showHeaders: boolean;
   headers: Header[];
-  sortBy?: TableSortByFieldState[];
 }
 
 export interface Header {
@@ -26,8 +23,7 @@ export const defaults: TableVariablesOptions = {
   sort: 'sort',
   desc: 'desc',
   showHeaders: false,
-  headers: [],
-  sortBy: []
+  headers: []
 };
 
 export const HeaderDefault: Header = {

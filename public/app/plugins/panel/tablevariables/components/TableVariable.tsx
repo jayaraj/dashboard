@@ -21,6 +21,7 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
   let page: string | undefined = replaceVariables(`${options.page}`);
   page = page === `${options.page}` ? '1' : page;
   const [selectedPage, setSelectedPage] = useState<number>(Number(page));
+  const [sortBy, setSortBy] =  useState<TableSortByFieldState[]>([]);
   const updateLocation = debounce((query) => locationService.partial(query, true), 500);
   const getHeaders = (headers: Header[]): DataFrame => {
     const df: DataFrame = { fields: [], length: 0};
@@ -79,10 +80,6 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
       [`var-${options.sort}`]: undefined,
       [`var-${options.desc}`]: undefined, 
     };
-    onOptionsChange({
-      ...options,
-      sortBy: [],
-    });
     locationService.partial(query, true);
   }, []);
 
@@ -90,10 +87,7 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
     if (sortBy.length === 0) {
       const query = { [`var-${options.sort}`]: undefined, [`var-${options.desc}`]: undefined, [`var-${options.page}`]: 1 };
       updateLocation(query);
-      onOptionsChange({
-        ...options,
-        sortBy: [],
-      });
+      setSortBy([]);
       return;
     }
     const header = options.headers.find((o) => o.title === sortBy[0].displayName);
@@ -101,10 +95,7 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
       const query = { [`var-${options.sort}`]: header.id, [`var-${options.desc}`]: (sortBy[0].desc)? "true": "false", [`var-${options.page}`]: 1 };
       updateLocation(query);
     }
-    onOptionsChange({
-      ...options,
-      sortBy,
-    });
+    setSortBy(sortBy);
   }
 
   function onColumnResize(fieldDisplayName: string, width: number) {
@@ -139,7 +130,7 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
               data={getHeaders(options.headers)}
               noHeader={!options.showHeaders}
               resizable={true}
-              initialSortBy={options.sortBy}
+              initialSortBy={sortBy}
               onSortByChange={(sortBy) => onSortByChange(sortBy)}
               onColumnResize={(displayName, resizedWidth) => onColumnResize(displayName, resizedWidth)}
             />
