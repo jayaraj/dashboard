@@ -79,6 +79,10 @@ export const TableVariables: React.FC<Props> = ({ replaceVariables, data, width,
       [`var-${options.sort}`]: undefined,
       [`var-${options.desc}`]: undefined, 
     };
+    onOptionsChange({
+      ...options,
+      sortBy: [],
+    });
     locationService.partial(query, true);
   }, []);
 
