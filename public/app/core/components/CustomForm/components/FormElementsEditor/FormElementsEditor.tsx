@@ -413,6 +413,7 @@ export const FormElementsEditor: React.FC<Props> = ({ elements, onChange, sectio
                           option.value = Number(event.target.value);
                           onChange(elements);
                         }}
+                        step="0.000000001"
                         value={option.value}
                         width={12}
                       />
