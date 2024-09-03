@@ -63,6 +63,7 @@ export const FormElements: React.FC<Props> = ({ configuration, onChange, section
                     onChange(elements);
                   }}
                   type="number"
+                  step="0.000000001"
                   width={element.width}
                   min={element.min !== null ? element.min : ''}
                   max={element.max !== null ? element.max : ''}
