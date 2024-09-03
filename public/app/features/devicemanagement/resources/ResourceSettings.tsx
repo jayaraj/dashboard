@@ -199,10 +199,10 @@ export const ResourceSettings = ({ resource, updateResource, updateResourceConfi
                   </HorizontalGroup>
                 </Field>
                 <Field label="Latitude" disabled={!canWrite}>
-                  <Input {...register('latitude')} type="number" id="resource-latitude" width={40} />
+                  <Input {...register('latitude')} type="number" step="0.000000001"  id="resource-latitude" width={40} />
                 </Field>
                 <Field label="Longitude" disabled={!canWrite}>
-                  <Input {...register('longitude')} type="number" id="resource-longitude" width={40} />
+                  <Input {...register('longitude')} type="number" step="0.000000001"  id="resource-longitude" width={40} />
                 </Field>
               </VerticalGroup>
               <div style={{ padding: '0 50px' }} />
