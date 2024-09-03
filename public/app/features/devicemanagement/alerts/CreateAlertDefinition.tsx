@@ -150,7 +150,7 @@ export const CreateAlertDefinition = (): JSX.Element => {
                       />
                     </Field>
                     <Field label="For" description="Alert wait for" disabled={!canCreate}>
-                      <Input {...register('for')} id="for-input" type="number" width={40} />
+                      <Input {...register('for')} id="for-input" type="number" step="0.000000001" width={40} />
                     </Field>
                     <Field label="Ticketable">
                       <Switch id="ticket_enabled" {...register('ticket_enabled')} />

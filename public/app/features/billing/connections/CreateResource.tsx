@@ -114,10 +114,10 @@ export const CreateResource = ({ match }: Props): JSX.Element => {
                   <Input {...register('image_url')} type="string" id="resource-image-url" width={40} />
                 </Field>
                 <Field label="Latitude" invalid={!!errors.latitude} error="latitude is invalid">
-                  <Input {...register('latitude')} type="number" id="resource-latitude" width={40} />
+                  <Input {...register('latitude')} type="number" step="0.000000001" id="resource-latitude" width={40} />
                 </Field>
                 <Field label="Longitude" invalid={!!errors.longitude} error="longitude is invalid">
-                  <Input {...register('longitude')} type="number" id="resource-longitude" width={40} />
+                  <Input {...register('longitude')} type="number" step="0.000000001" id="resource-longitude" width={40} />
                 </Field>
               </FieldSet>
               <Stack gap={1} direction="row">
