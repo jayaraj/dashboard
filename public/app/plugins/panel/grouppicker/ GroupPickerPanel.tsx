@@ -1,8 +1,8 @@
 import { debounce } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { PanelProps } from '@grafana/data';
-import { locationService, getTemplateSrv } from '@grafana/runtime';
+import { locationService } from '@grafana/runtime';
 import { Label } from '@grafana/ui';
 import { GroupPicker } from 'app/core/components/GroupPicker/GroupPicker';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
@@ -11,12 +11,13 @@ import { Group } from 'app/types/devicemanagement/group';
 import { getStyles, GroupPickerOptions } from './types';
 
 interface Props extends PanelProps<GroupPickerOptions> {}
-export const GroupPickerPanel: React.FC<Props> = ({ id, options }) => {
+export const GroupPickerPanel: React.FC<Props> = ({ options, replaceVariables }) => {
   const styles = getStyles();
   const dashboard = getDashboardSrv().getCurrent();
   const refresh = debounce(() => dashboard?.startRefresh(), 1000);
   const updateLocation = debounce((query) => locationService.partial(query, true), 100);
-  const [groupPath, setGroupPath] = useState('');
+  let grouppath: string | undefined = replaceVariables('${grouppath}');
+  grouppath = grouppath === '${grouppath}' ? '0,' : grouppath;
 
   const onSelect = async (group?: Group) => {
     let query = {};
@@ -38,16 +39,10 @@ export const GroupPickerPanel: React.FC<Props> = ({ id, options }) => {
     return true;
   };
 
-  useEffect(() => {
-    const panel = getDashboardSrv().getCurrent()?.getPanelById(id)!;
-    const grouppath = getTemplateSrv().replace('${grouppath}', panel.scopedVars, 'regex');
-    setGroupPath(grouppath !== '${grouppath}' ? grouppath : '');
-  }, [id]);
-
   return (
     <div className={styles.wrapper}>
       {options.label !== '' && <Label>{options.label}</Label>}
-      <GroupPicker onChange={onSelect} filterFunction={filterFunction} groupPath={groupPath}></GroupPicker>
+      <GroupPicker onChange={onSelect} filterFunction={filterFunction} groupPath={grouppath}></GroupPicker>
     </div>
   );
 };
