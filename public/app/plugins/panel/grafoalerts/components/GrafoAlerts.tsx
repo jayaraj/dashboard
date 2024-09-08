@@ -35,7 +35,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
   const [alertCounts, setAlertCounts] = useState<Record<string, number>>();
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [page, setPage] = useState<number>(1);
-  const updateLocation = debounce((query) => locationService.partial(query, true), 10);
+  const updateAlertVariable = debounce((query) => locationService.partial(query, true), 10);
   const [selectedAlert, setSelectedAlert] = useState<number>(0);
   const [pagination, setPagination] = useState<DynamicTablePagination>({
     page: 1,
@@ -48,7 +48,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
   const loadAlerts = useCallback(async () => {
     setLoading(true);
     const query = { [`var-alert`]: undefined };
-    updateLocation(query);
+    updateAlertVariable(query);
     const association: string = resource !== undefined ? 'resource' : group !== undefined ? 'group' : 'org';
     const associationRef: number | string = resource !== undefined ? resource : group !== undefined ? group : 0;
 
@@ -79,7 +79,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
       if (value > 0 && value !== selectedAlert) {
         query = { [`var-alert`]: value };
       }
-      updateLocation(query);
+      updateAlertVariable(query);
     },
     [selectedAlert]
   );
@@ -126,7 +126,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
     if (alertName && alertName.value !== "") {
       debouncedLoadAlerts();
     }
-  }, [alertName, alertState, page, searchQuery]);
+  }, [alertName, alertState, page, searchQuery, resource, group]);
 
   return (
     <CustomScrollbar autoHeightMax="100%" autoHeightMin="100%">
@@ -147,7 +147,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
                 };
                 setPage(1);
                 setAlertName(value);
-                updateLocation(query);
+                updateAlertVariable(query);
               }}
               placeholder="Start typing to search"
               noOptionsMessage="No alerts found"
@@ -172,7 +172,7 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
                 };
                 setPage(1);
                 setAlertState(state);
-                updateLocation(query);
+                updateAlertVariable(query);
               }}
               itemPerStateStats={alertCounts}
             />
@@ -195,6 +195,9 @@ export const GrafoAlerts: React.FC<Props> = ({ replaceVariables, options }) => {
               onSelected={onSelected}
               selected={selectedAlert}
               pagination={pagination}
+              baseUrl={(options.linkOption) ? options.link: ""}
+              groupTitle={options.groupTitle}
+              resourceTitle={options.resourceTitle}
             />
           </div>
         )}

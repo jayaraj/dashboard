@@ -18,17 +18,48 @@ interface Props {
   onSelected: (id: number) => void;
   className?: string;
   pagination: DynamicTablePagination;
+  baseUrl: string;
+  groupTitle: string;
+  resourceTitle: string;
 }
 
 type AlertTableColumnProps = DynamicTableColumnProps<Alert>;
+
+const getAlertUrl = (baseUrl: string, org: number, grouppath?: string, resource?: number, ) => {
+  let variableStr = '';
+  if (grouppath && grouppath.includes(',')) {
+    const groups = grouppath.split(',');
+    if (groups.length > 2) {
+      variableStr = `&var-group=${groups[groups.length - 2]}&var-grouppath=${grouppath}`;
+    }
+  }
+  if (resource || resource !== 0) {
+    variableStr = variableStr + `&var-resource=${resource}`;
+  }
+  if (baseUrl !== '') {
+    return `${baseUrl}?orgId=${org}` + variableStr;
+  }
+  return '#';
+};
+
+const renameKeys = (keysMap: Record<string, string>, obj: Record<string, any>) =>
+  Object.keys(obj).reduce(
+    (acc, key) => ({
+      ...acc,
+      ...{ [keysMap[key] || key]: obj[key] },
+    }),
+    {}
+  );
 
 const columns: AlertTableColumnProps[] = [
   {
     id: 'state',
     label: 'Name',
     // eslint-disable-next-line react/display-name
-    renderCell: ({ data: { state, name, message } }) => (
-      <AlertStateTag state={state as AlertingState} name={name} message={message} />
+    renderCell: ({ data: { state, name, message, org_id, group_path, resource_id }, baseUrl }: DynamicTableItemProps<Alert>) => (
+      <a href={getAlertUrl(baseUrl, org_id, group_path, resource_id)}>
+        <AlertStateTag state={state as AlertingState} name={name} message={message} />
+      </a>
     ),
     size: '150px',
   },
@@ -36,18 +67,22 @@ const columns: AlertTableColumnProps[] = [
     id: 'labels',
     label: 'Labels',
     // eslint-disable-next-line react/display-name
-    renderCell: ({ data: { data } }) => {
+    renderCell: ({ data: { data, org_id, group_path, resource_id }, baseUrl, groupTitle, resourceTitle }: DynamicTableItemProps<Alert>) => {
       const styles = useStyles2(getStyles);
-      return <AlertLabels className={styles.start} labels={data} />;
+      return <a href={getAlertUrl(baseUrl, org_id, group_path, resource_id)}>
+              <AlertLabels className={styles.start} labels={renameKeys({ resource: resourceTitle, group: groupTitle }, data)} />
+            </a>;
     },
   },
   {
     id: 'created',
     label: 'Created',
     // eslint-disable-next-line react/display-name
-    renderCell: ({ data: { age } }) => {
+    renderCell: ({ data: { age, org_id, group_path, resource_id }, baseUrl }: DynamicTableItemProps<Alert>) => {
       const styles = useStyles2(getStyles);
-      return <div className={styles.text}>{age} ago</div>;
+      return <a href={getAlertUrl(baseUrl, org_id, group_path, resource_id)}>
+              <div className={styles.text}>{age} ago</div>
+            </a>;
     },
     size: '150px',
   },
@@ -89,6 +124,9 @@ export function AlertInstances(props: Props): JSX.Element | null {
       id: instance.id,
       onChange: (id: number) => onSelected(id),
       selected: selected,
+      baseUrl: props.baseUrl,
+      groupTitle: props.groupTitle,
+      resourceTitle: props.resourceTitle
     };
   });
 
