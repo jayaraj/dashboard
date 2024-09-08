@@ -7,6 +7,10 @@ export const alertsPageLimit = 15;
 
 export interface GrafoAlertsOptions {
   history: boolean;
+  linkOption: boolean;
+  link: string;
+  groupTitle: string;
+  resourceTitle: string;
 }
 
 export interface FilterState {
@@ -39,6 +43,9 @@ export interface DynamicTableItemProps<T = unknown> {
   data: T;
   onChange: (id: number) => void;
   selected: number;
+  baseUrl: string;
+  groupTitle: string;
+  resourceTitle: string;
 }
 
 export interface DynamicTableProps<T = unknown> {
