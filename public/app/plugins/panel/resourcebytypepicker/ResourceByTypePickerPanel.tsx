@@ -61,6 +61,7 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
     <div className={styles.wrapper}>
       {options.label !== '' && <Label>{options.label}</Label>}
       <ResourceByTypePicker
+        key={resource}
         onChange={onSelect}
         filterFunction={filterFunction}
         resourceId={resourceId}
