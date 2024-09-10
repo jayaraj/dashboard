@@ -53,6 +53,7 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
 
   useEffect(() => {
     if (resource !== '${resource}') {
+      setResourceId(Number(resource));
       refresh();
     }
   }, [resource]);
