@@ -51,13 +51,6 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
     isNotFirstRender.current = true;
   }, [grpPath]);
 
-  useEffect(() => {
-    if (resource !== '${resource}') {
-      setResourceId(Number(resource));
-      refresh();
-    }
-  }, [resource]);
-
   return (
     <div className={styles.wrapper}>
       {options.label !== '' && <Label>{options.label}</Label>}
