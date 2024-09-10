@@ -29,8 +29,8 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
     } else {
       query = { ...query, [`var-resource`]: undefined };
     }
-    refresh();
     updateLocation(query);
+    refresh();
   };
 
   const filterFunction = (r: Resource) => {
