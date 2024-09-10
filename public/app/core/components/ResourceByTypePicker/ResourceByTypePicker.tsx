@@ -14,13 +14,13 @@ export interface Props {
   filterFunction: (resource: Resource) => boolean;
   resourceType: string;
 }
-export const ResourceByTypePicker = ({
+export const ResourceByTypePicker = React.memo(({
   resourceId,
   groupPath,
   resourceType,
   onChange,
   filterFunction,
-}: Props): JSX.Element | null => {
+}: Props) => {
   const [loading, setLoading] = useState(false);
   const [selectedResource, setSelectedResource] = useState<SelectableValue<Resource>>();
   const [defaultResource, setDefaultResource] = useState<Resource>();
@@ -43,7 +43,7 @@ export const ResourceByTypePicker = ({
     },
     [filterFunction, resourceType]
   );
-  const debouncedLoadOptions = debouncePromise(loadOptions, 300, { leading: true });
+  const debouncedLoadOptions = debouncePromise(loadOptions, 100, { leading: true });
   const loadResource = useCallback(
     async (id: number) => {
       const response = await getBackendSrv().get(`/api/resources/${id}`);
@@ -92,7 +92,7 @@ export const ResourceByTypePicker = ({
       <div className={styles.container}>
         <HorizontalGroup>
           <AsyncSelect
-            key={groupPath}
+            key={resourceId} 
             loadingMessage="Loading ..."
             width={25}
             cacheOptions={false}
@@ -108,7 +108,7 @@ export const ResourceByTypePicker = ({
       </div>
     </CustomScrollbar>
   );
-};
+});
 
 const getStyles = stylesFactory(() => ({
   container: css`

@@ -11,7 +11,7 @@ import { Resource } from 'app/types/devicemanagement/resource';
 import { getStyles, ResourceByTypePickerOptions } from './types';
 
 interface Props extends PanelProps<ResourceByTypePickerOptions> {}
-export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVariables }) => {
+export const ResourceByTypePickerPanel: React.FC<Props> = React.memo(({ options, replaceVariables }) => {
   const styles = getStyles();
   const updateLocation = debounce((query) => locationService.partial(query, true), 100);
   const dashboard = getDashboardSrv().getCurrent();
@@ -29,8 +29,9 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
     } else {
       query = { ...query, [`var-resource`]: undefined };
     }
-    updateLocation(query);
+    setResourceId(resource ? resource.id : 0);
     refresh();
+    updateLocation(query);
   };
 
   const filterFunction = (r: Resource) => {
@@ -45,7 +46,6 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
       const query = { [`var-resource`]: undefined };
       updateLocation(query);
       setResourceId(0);
-      //refresh();
       return;
     }
     isNotFirstRender.current = true;
@@ -64,4 +64,4 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
       ></ResourceByTypePicker>
     </div>
   );
-};
+});
