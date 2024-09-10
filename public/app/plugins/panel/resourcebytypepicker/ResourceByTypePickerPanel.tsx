@@ -30,7 +30,6 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
       query = { ...query, [`var-resource`]: undefined };
     }
     updateLocation(query);
-    refresh();
   };
 
   const filterFunction = (r: Resource) => {
@@ -45,7 +44,7 @@ export const ResourceByTypePickerPanel: React.FC<Props> = ({ options, replaceVar
       const query = { [`var-resource`]: undefined };
       updateLocation(query);
       setResourceId(0);
-      refresh();
+      //refresh();
       return;
     }
     isNotFirstRender.current = true;
