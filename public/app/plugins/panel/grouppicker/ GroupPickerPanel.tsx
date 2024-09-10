@@ -5,7 +5,6 @@ import { PanelProps } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
 import { Label } from '@grafana/ui';
 import { GroupPicker } from 'app/core/components/GroupPicker/GroupPicker';
-import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { Group } from 'app/types/devicemanagement/group';
 
 import { getStyles, GroupPickerOptions } from './types';
@@ -13,8 +12,6 @@ import { getStyles, GroupPickerOptions } from './types';
 interface Props extends PanelProps<GroupPickerOptions> {}
 export const GroupPickerPanel: React.FC<Props> = ({ options, replaceVariables }) => {
   const styles = getStyles();
-  const dashboard = getDashboardSrv().getCurrent();
-  const refresh = debounce(() => dashboard?.startRefresh(), 1000);
   const updateLocation = debounce((query) => locationService.partial(query, true), 100);
   let grouppath: string | undefined = replaceVariables('${grouppath}');
   grouppath = grouppath === '${grouppath}' ? '0,' : grouppath;
@@ -29,7 +26,6 @@ export const GroupPickerPanel: React.FC<Props> = ({ options, replaceVariables })
       query = { ...query, [`var-grouppath`]: undefined };
     }
     updateLocation(query);
-    refresh();
   };
 
   const filterFunction = (g: Group) => {
