@@ -5,7 +5,6 @@ import { PanelProps } from '@grafana/data';
 import { locationService } from '@grafana/runtime';
 import { Label } from '@grafana/ui';
 import { ResourceByTypePicker } from 'app/core/components/ResourceByTypePicker/ResourceByTypePicker';
-import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 import { Resource } from 'app/types/devicemanagement/resource';
 
 import { getStyles, ResourceByTypePickerOptions } from './types';
@@ -14,8 +13,6 @@ interface Props extends PanelProps<ResourceByTypePickerOptions> {}
 export const ResourceByTypePickerPanel: React.FC<Props> = React.memo(({ options, replaceVariables }) => {
   const styles = getStyles();
   const updateLocation = debounce((query) => locationService.partial(query, true), 100);
-  const dashboard = getDashboardSrv().getCurrent();
-  const refresh = debounce(() => dashboard?.startRefresh(), 1000);
   let resource: string | undefined = replaceVariables('${resource}');
   const [resourceId, setResourceId] = useState<number>(resource === '${resource}' ? 0 : Number(resource));
   let grpPath: string | undefined = replaceVariables('${grouppath}');
@@ -30,7 +27,6 @@ export const ResourceByTypePickerPanel: React.FC<Props> = React.memo(({ options,
       query = { ...query, [`var-resource`]: undefined };
     }
     setResourceId(resource ? resource.id : 0);
-    refresh();
     updateLocation(query);
   };
 
@@ -55,7 +51,7 @@ export const ResourceByTypePickerPanel: React.FC<Props> = React.memo(({ options,
     <div className={styles.wrapper}>
       {options.label !== '' && <Label>{options.label}</Label>}
       <ResourceByTypePicker
-        key={resource}
+        key={grpPath}
         onChange={onSelect}
         filterFunction={filterFunction}
         resourceId={resourceId}
