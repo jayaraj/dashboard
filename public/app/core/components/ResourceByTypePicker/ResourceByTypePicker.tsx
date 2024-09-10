@@ -1,4 +1,5 @@
 import { css } from '@emotion/css';
+import debouncePromise from 'debounce-promise';
 import React, { useEffect, useState, useCallback } from 'react';
 
 import { SelectableValue } from '@grafana/data';
@@ -42,14 +43,12 @@ export const ResourceByTypePicker = ({
     },
     [filterFunction, resourceType]
   );
+  const debouncedLoadOptions = debouncePromise(loadOptions, 300, { leading: true });
   const loadResource = useCallback(
     async (id: number) => {
       const response = await getBackendSrv().get(`/api/resources/${id}`);
       if (response.type === resourceType) {
         setSelectedResource({ value: response, label: response.name });
-        if (onChange) {
-          onChange(response);
-        }
       }
       return {};
     },
@@ -61,15 +60,17 @@ export const ResourceByTypePicker = ({
       setLoading(true);
       loadResource(resourceId);
       setLoading(false);
-    } else {
-      if (defaultResource) {
-        setSelectedResource({ value: defaultResource, label: defaultResource.name });
+    }
+  }, [resourceId, loadResource]);
+
+  useEffect(() => {
+    if (defaultResource && (!resourceId || resourceId === 0)) {
+      setSelectedResource({ value: defaultResource, label: defaultResource.name });
         if (onChange) {
           onChange(defaultResource);
         }
-      }
     }
-  }, [resourceId, defaultResource, loadResource]);
+  }, [defaultResource]);
 
   const onSelected = (value: SelectableValue<Resource>) => {
     if (value) {
@@ -77,12 +78,6 @@ export const ResourceByTypePicker = ({
       if (onChange) {
         onChange(value.value);
       }
-    }
-  };
-
-  const onMenu = () => {
-    if (defaultResource) {
-      setSelectedResource({ value: defaultResource, label: defaultResource.name });
     }
   };
 
@@ -103,12 +98,11 @@ export const ResourceByTypePicker = ({
             cacheOptions={false}
             value={selectedResource}
             defaultOptions={true}
-            loadOptions={(query: string) => loadOptions(query)}
+            loadOptions={(query: string) => debouncedLoadOptions(query)}
             onChange={(value: SelectableValue<Resource>) => onSelected(value)}
             placeholder="Start typing to search"
             noOptionsMessage="No resources found"
             aria-label="Resource picker"
-            onOpenMenu={() => onMenu()}
           />
         </HorizontalGroup>
       </div>
