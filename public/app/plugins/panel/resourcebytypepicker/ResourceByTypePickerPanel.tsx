@@ -47,6 +47,10 @@ export const ResourceByTypePickerPanel: React.FC<Props> = React.memo(({ options,
     isNotFirstRender.current = true;
   }, [grpPath]);
 
+  useEffect(() => {
+    setResourceId(resource === '${resource}' ? 0 : Number(resource));
+  }, [resource]);
+
   return (
     <div className={styles.wrapper}>
       {options.label !== '' && <Label>{options.label}</Label>}
