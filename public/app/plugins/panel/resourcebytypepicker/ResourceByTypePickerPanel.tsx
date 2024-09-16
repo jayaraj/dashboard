@@ -55,7 +55,7 @@ export const ResourceByTypePickerPanel: React.FC<Props> = React.memo(({ options,
     <div className={styles.wrapper}>
       {options.label !== '' && <Label>{options.label}</Label>}
       <ResourceByTypePicker
-        key={grpPath}
+        key={grpPath+resourceId}
         onChange={onSelect}
         filterFunction={filterFunction}
         resourceId={resourceId}
@@ -65,3 +65,5 @@ export const ResourceByTypePickerPanel: React.FC<Props> = React.memo(({ options,
     </div>
   );
 });
+
+ResourceByTypePickerPanel.displayName = 'ResourceByTypePicker';
