@@ -57,9 +57,11 @@ export const ResourceByTypePicker = React.memo(({
 
   useEffect(() => {
     if (resourceId && resourceId !== 0) {
-      setLoading(true);
-      loadResource(resourceId);
-      setLoading(false);
+      if (!selectedResource || selectedResource.value === undefined || selectedResource.value.id !== resourceId) {
+        setLoading(true);
+        loadResource(resourceId);
+        setLoading(false);
+      }
     }
   }, [resourceId, loadResource]);
 
