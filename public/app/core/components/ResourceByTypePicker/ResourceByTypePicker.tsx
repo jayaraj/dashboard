@@ -65,12 +65,16 @@ export const ResourceByTypePicker = React.memo(({
     }
   }, [resourceId, loadResource]);
 
+  const debouncedSelectResource = debouncePromise((resource)=> {
+    setSelectedResource({ value: resource, label: resource.name });
+        if (onChange) {
+          onChange(resource);
+        }
+  }, 300, { leading: true });
+
   useEffect(() => {
     if (defaultResource && (!resourceId || resourceId === 0)) {
-      setSelectedResource({ value: defaultResource, label: defaultResource.name });
-        if (onChange) {
-          onChange(defaultResource);
-        }
+      debouncedSelectResource(defaultResource);
     }
   }, [defaultResource]);
 
