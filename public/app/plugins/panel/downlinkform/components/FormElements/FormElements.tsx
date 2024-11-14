@@ -192,7 +192,7 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                 <Input
                   value={
                     !element.options?.length
-                      ? element.value
+                      ? element.value !== undefined ? element.value : ''
                       : element.options.find((option) => option.value === element.value)?.label
                   }
                   type="text"
