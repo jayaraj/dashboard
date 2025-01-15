@@ -109,7 +109,7 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                 transparent={!!!element.title}
               >
                 <Input
-                  value={element.value}
+                  value={element.value !== undefined ? element.value : ''}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
                     element.value = event.target.value;
 
@@ -147,7 +147,7 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                 transparent={!!!element.title}
               >
                 <Input
-                  value={element.value}
+                  value={element.value !== undefined ? element.value : ''}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
                     element.value = event.target.value;
                     onOptionsChange(options);
@@ -168,7 +168,7 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                 transparent={!!!element.title}
               >
                 <Input
-                  value={element.value}
+                  value={element.value !== undefined ? element.value : ''}
                   onChange={(event: ChangeEvent<HTMLInputElement>) => {
                     element.value = event.target.value;
                     onOptionsChange(options);
@@ -192,10 +192,11 @@ export const FormElements: React.FC<Props> = ({ options, onOptionsChange, sectio
                 <Input
                   value={
                     !element.options?.length
-                      ? element.value
+                      ? element.value !== undefined ? element.value : ''
                       : element.options.find((option) => option.value === element.value)?.label
                   }
                   type="text"
+                  defaultValue={element.value !== undefined ? element.value : ''}
                   width={element.width}
                 />
               </InlineField>
