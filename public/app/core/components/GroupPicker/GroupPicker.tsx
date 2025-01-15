@@ -80,7 +80,7 @@ export const GroupPicker = ({ groupPath, onChange, filterFunction }: Props): JSX
         onChange(grp.value);
       }
     }
-  }, [selectedGroups]);
+  }, [selectedGroups, parents]);
 
   const onSelected = (value: SelectableValue<Group>, index: number) => {
     setParents([...parents.slice(0, index + 1)]);
