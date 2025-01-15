@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 
 import { SelectableValue } from '@grafana/data';
 import { AsyncSelect, CustomScrollbar, useStyles, stylesFactory, HorizontalGroup, Spinner } from '@grafana/ui';
@@ -15,6 +15,7 @@ export const GroupPicker = ({ groupPath, onChange, filterFunction }: Props): JSX
   const [loading, setLoading] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState<SelectableValue<Group>>({});
   const [parents, setParents] = useState<Array<{ parentId: number; selectedId: number }>>([]);
+  const prevValueRef = useRef(null);
   const loadOptions = useCallback(
     async (query: string, parents: Array<{ parentId: number; selectedId: number }>, parent: number, index: number) => {
       const response = await getBackendSrv().get(
@@ -77,7 +78,10 @@ export const GroupPicker = ({ groupPath, onChange, filterFunction }: Props): JSX
     if (onChange && parents.length > 0) {
       const grp = selectedGroups[parents[parents.length - 1].parentId];
       if (grp) {
-        onChange(grp.value);
+        if (prevValueRef.current !== grp.value.id) {
+          onChange(grp.value);
+          prevValueRef.current = grp.value.id;
+        }
       }
     }
   }, [selectedGroups, parents]);
