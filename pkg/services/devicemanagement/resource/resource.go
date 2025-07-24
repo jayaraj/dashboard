@@ -340,9 +340,10 @@ func (service *Service) DisableResource(c *contextmodel.ReqContext) response.Res
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
 	dto := &resource.UpdateResourceDisableMsg{
+		OrgId:      c.OrgID,
 		ResourceId: id,
 	}
-	if err := web.Bind(c.Req, &dto); err != nil {
+	if err := web.Bind(c.Req, dto); err != nil {
 		return response.Error(http.StatusBadRequest, "bad request data", err)
 	}
 	if id != 0 && !service.IsResourceAccessible(c) {
