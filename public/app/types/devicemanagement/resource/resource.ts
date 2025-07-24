@@ -9,6 +9,7 @@ export interface Resource {
   longitude: number;
   tags: string;
   online_status: boolean;
+  disabled: boolean;
   last_seen: string;
   last_seen_age: string;
 }

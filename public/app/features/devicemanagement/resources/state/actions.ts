@@ -120,6 +120,15 @@ export function cleanResourceData(id: number): ThunkResult<void> {
   };
 }
 
+export function disableResource(id: number, disabled: boolean): ThunkResult<void> {
+  return async (dispatch) => {
+    await getBackendSrv().put(`/api/resources/${id}/disable`, {
+      disabled: disabled,
+    });
+    dispatch(loadResources());
+  };
+}
+
 export function loadResourceConfiguration(type: string): ThunkResult<void> {
   return async (dispatch, getStore) => {
     const resource = getStore().resource.resource;
