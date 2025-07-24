@@ -36,6 +36,7 @@ import {
   changeConnectionResourcesPage,
   changeConnectionResourcesQuery,
   cleanResourceData,
+  disableResource,
   deleteConnectionResource,
   loadConnectionResources,
 } from './state/actions';
@@ -61,6 +62,7 @@ const skeletonData: ConnectionResource[] = new Array(3).fill(null).map((_, index
   resource_type: '',
   resource_tags: '',
   resource_online_status: false,
+  resource_disabled: false,
   resource_last_seen: '',
   resource_last_seen_age: '',
 }));
@@ -75,6 +77,7 @@ export const ConnectionResourceList = ({
   loadConnectionResources,
   deleteConnectionResource,
   cleanResourceData,
+  disableResource,
   changeQuery,
   changePage,
 }: Props) => {
@@ -182,6 +185,16 @@ export const ConnectionResourceList = ({
         },
       },
       {
+        id: 'resource_disabled',
+        header: 'Disabled',
+        cell: ({ cell: { value } }: Cell<'resource_disabled'>) => {
+          if (!hasFetched) {
+            return <Skeleton width={40} />;
+          }
+          return <div className={styles.online}>{value ? <Icon name={'ban'} style={{ color: 'red' }} /> : <></>}</div>;
+        },
+      },
+      {
         id: 'resource_last_seen_age',
         header: 'Last Seen',
         cell: ({ cell: { value } }: Cell<'resource_last_seen_age'>) => {
@@ -207,7 +220,8 @@ export const ConnectionResourceList = ({
           }
           const canDelete = contextSrv.hasPermission('connections:write');
           const canCleanData = contextSrv.hasPermission('resources.data:delete');
-
+          const canWrite = contextSrv.hasPermission('resources:write');
+          
           return (
             <Stack direction="row" justifyContent="flex-end">
               {canCleanData && (
@@ -217,6 +231,7 @@ export const ConnectionResourceList = ({
                   size={'sm'}
                   disabled={!canCleanData}
                   onConfirm={() => cleanResourceData(original.resource_id)}
+                  closeOnConfirm={true}
                 >
                   <Button
                     aria-label={`Clean data of ${original.resource_name}`}
@@ -224,6 +239,18 @@ export const ConnectionResourceList = ({
                     icon="trash-alt"
                     size={'sm'}
                   />
+                </ConfirmButton>
+              )}
+              {canWrite && (
+                <ConfirmButton
+                  confirmText={`${!original.resource_disabled ? 'Disable' : 'Enable'} ${original.resource_name}`}
+                  confirmVariant="primary"
+                  size={'sm'}
+                  disabled={!canWrite}
+                  onConfirm={() => disableResource(original.resource_id, !original.resource_disabled)}
+                  closeOnConfirm={true}
+                >
+                  <Button aria-label={`Disable ${original.resource_name}`} variant="primary" icon="ban" size={'sm'} />
                 </ConfirmButton>
               )}
               <DeleteButton
@@ -366,6 +393,7 @@ const mapDispatchToProps = {
   loadConnectionResources: loadConnectionResources,
   deleteConnectionResource: deleteConnectionResource,
   cleanResourceData: cleanResourceData,
+  disableResource: disableResource,
   changeQuery: changeConnectionResourcesQuery,
   changePage: changeConnectionResourcesPage,
 };

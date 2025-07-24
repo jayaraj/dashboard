@@ -29,6 +29,7 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 		resourcesRoute.Put("/:resourceId/tags", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.UpdateResourceTags))
 		resourcesRoute.Post("/:resourceId/downlink", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.SendResourceDownlink))
 		resourcesRoute.Get("/:resourceId/downlink/:config", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetResourceDownlink))
+		resourcesRoute.Put("/:resourceId/disable", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.DisableResource))
 	})
 
 	routeRegister.Group("api/resources", func(configurationRoute routing.RouteRegister) {

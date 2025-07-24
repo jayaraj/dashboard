@@ -48,6 +48,7 @@ export function getPageNav(pageName: string): NavModel {
     latitude: 0,
     tags: '',
     online_status: false,
+    disabled: false,
     last_seen: '',
     last_seen_age: '',
   });

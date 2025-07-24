@@ -333,3 +333,23 @@ func (service *Service) GetResourcesByType(c *contextmodel.ReqContext) response.
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
+
+func (service *Service) DisableResource(c *contextmodel.ReqContext) response.Response {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	dto := &resource.UpdateResourceDisableMsg{
+		ResourceId: id,
+	}
+	if err := web.Bind(c.Req, &dto); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+	if id != 0 && !service.IsResourceAccessible(c) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	if err := service.devMgmt.RequestTopic(c.Req.Context(), client.ResourcesTopic(resource.UpdateResourceDisable), dto); err != nil {
+		return response.Error(500, "failed to disable: "+err.Error(), err)
+	}
+	return response.Success("success")
+}

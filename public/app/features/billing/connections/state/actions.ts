@@ -235,6 +235,15 @@ export function cleanResourceData(id: number): ThunkResult<void> {
   };
 }
 
+export function disableResource(id: number, disabled: boolean): ThunkResult<void> {
+  return async (dispatch) => {
+    await getBackendSrv().put(`/api/resources/${id}/disable`, {
+      disabled: disabled,
+    });
+    dispatch(loadConnectionResources());
+  };
+}
+
 export function loadInvoices(): ThunkResult<void> {
   return async (dispatch, getStore) => {
     const connection = getStore().connection.connection;
