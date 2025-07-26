@@ -14,6 +14,7 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 	routeRegister.Get("/org/connections/edit/*", authorize(EditPageAccess), httpServer.Index)
 	routeRegister.Get("/org/connections/new", authorize(NewPageAccess), httpServer.Index)
 	routeRegister.Get("/org/connections/:id/invoices/:invoiceId", authorize(ReadPageAccess), httpServer.Index)
+	routeRegister.Get("/org/connections/resources/data", authorize(EditPageAccess), httpServer.Index)
 
 	//APIs
 	routeRegister.Group("api/connections", func(connectionsRoute routing.RouteRegister) {

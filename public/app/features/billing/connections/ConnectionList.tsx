@@ -79,6 +79,7 @@ export const ConnectionList = ({
 }: Props) => {
   const styles = useStyles2(getStyles);
   const canCreate = contextSrv.hasPermission('connections:create');
+  const canUpload = contextSrv.hasPermission('resources.data:delete');
   const totalPages = Math.ceil(connectionsCount / connectionsPageLimit);
   const [adding, setAdding] = useState<boolean>(false);
   const [otp, setOtp] = useState<string>('');
@@ -228,9 +229,14 @@ export const ConnectionList = ({
     <Page
       navId="billing-connections"
       actions={
-        <LinkButton href={canCreate ? 'org/connections/new' : '#'} disabled={!canCreate}>
-          {`New Connection`}
-        </LinkButton>
+        <Stack gap={1} direction="row">
+          <LinkButton href={canCreate ? 'org/connections/new' : '#'} disabled={!canCreate}>
+            {`New Connection`}
+          </LinkButton>
+          <LinkButton href={canUpload ? 'org/connections/resources/data' : '#'} disabled={!canUpload}>
+            {`Upload Data`}
+          </LinkButton>
+        </Stack>
       }
     >
       <Page.Contents isLoading={!hasFetched}>

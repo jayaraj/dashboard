@@ -86,6 +86,13 @@ const routes: RouteDescriptor[] = [
     ),
   },
   {
+    path: '/org/connections/resources/data',
+    roles: evaluateAccess(['resources.data:delete']),
+    component: SafeDynamicImport(
+      () => import(/* webpackChunkName: "ResourcesDataUpload" */ 'app/features/billing/connections/ResourcesDataUpload')
+    ),
+  },
+  {
     path: '/org/connections/:id/resources/new',
     roles: evaluateAccess(['connections:write', 'resources.create']),
     component: SafeDynamicImport(
