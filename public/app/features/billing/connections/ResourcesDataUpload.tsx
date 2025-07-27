@@ -1,8 +1,9 @@
 import { css } from '@emotion/css';
+import { Parser } from 'expr-eval';
 import Papa from 'papaparse';
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useState, useEffect } from 'react';
 
-import { NavModelItem, GrafanaTheme2, SelectableValue } from '@grafana/data';
+import { NavModelItem, GrafanaTheme2 } from '@grafana/data';
 import {
   Button,
   FileUpload,
@@ -11,16 +12,15 @@ import {
   LinkButton,
   CallToActionCard,
   FieldSet,
-  HorizontalGroup,
+  Card,
   VerticalGroup,
   Field,
   InputControl,
-  Segment,
   Form,
-  Icon,
-  SegmentSection,
 } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
+import { VariablePicker, VariableOption } from 'app/core/components/VariablePicker/VariablePicker'; 
+import store from 'app/core/store';
 
 const pageNav: NavModelItem = {
   icon: 'group-type',
@@ -30,17 +30,119 @@ const pageNav: NavModelItem = {
   hideFromBreadcrumbs: true,
 };
 
-function toOption(value: string) {
+function sanitizeHeader(header: string): string {
+  return header
+    .replace(/\(.*?\)/g, '')     // Remove anything inside parentheses
+    .replace(/[^\w\s]/g, '')     // Remove other non-word characters (like punctuation)
+    .trim()                      // Trim whitespace
+    .replace(/\s+/g, '_');       // Replace spaces with underscores
+}
+
+function toOption(value: string): VariableOption {
+  const sanitized = sanitizeHeader(value);
   return {
-    label: `${value}`,
-    value: `{{${value}}}`,
+    label: value,
+    value: `{{${sanitized}}}`,
   };
 }
 
+function cleanExpression(expr: string): string {
+  return expr.replace(/{{\s*(.*?)\s*}}/g, (_, key) => sanitizeHeader(key));
+}
+
+function validateExpression(expr: string, knownHeaders: string[]): true | string {
+  try {
+    
+    if (expr === undefined) {return true};
+    const trimmedExpr = expr.trim();
+    if (trimmedExpr === "") {
+      return true;
+    }
+    const cleaned = cleanExpression(trimmedExpr);
+    const parser = new Parser();
+    const parsed = parser.parse(cleaned);
+
+    const usedVars = parsed.variables();
+    const unknownVars = usedVars.filter(v => !knownHeaders.includes(v));
+    if (unknownVars.length > 0) {
+      return "Unknown header";
+    }
+
+    // Dummy evaluation to check runtime validity
+    const dummyContext: Record<string, number> = {};
+    usedVars.forEach(v => {
+      dummyContext[v] = 1;
+    });
+    parsed.evaluate(dummyContext);
+    return true;
+  } catch (err: any) {
+    return "Invalid expression";
+  }
+}
+
+type HistoricalDataMapping = {
+  time: string;
+  uuid: string;
+  battery: string;
+  batteryvoltage: string;
+  counter: string;
+  drssi: string;
+  dsnr: string;
+  temperature: string;
+  fwdcounter: string;
+  revcounter: string;
+};
+
 export const ResourcesDataUpload = (): JSX.Element => {
   const [fileInfo, setFileInfo] = useState<{ file: File | null; headers: string[] }>({ file: null, headers: [] });
-  const [options, setOptions] = useState<SelectableValue<string>>([]);
+  const [options, setOptions] = useState<VariableOption[]>([]);
+  const [sanitizedHeaders, setSanitizedHeaders] = useState<string[]>([]);
   const styles = useStyles2(getStyles);
+  const CSV_MAPPING_KEY = 'connections.csv.mappings';
+  const mappingKeysLeft: Array<keyof HistoricalDataMapping> = [
+    'time',
+    'uuid',
+    'battery',
+    'batteryvoltage',
+    'counter',
+  ];
+  const mappingKeysRight: Array<keyof HistoricalDataMapping> = [
+    'drssi',
+    'dsnr',
+    'temperature',
+    'fwdcounter',
+    'revcounter',
+  ];
+  const [defaultValues, setDefaultValues] = useState<HistoricalDataMapping>({
+    time: '',
+    uuid: '',
+    battery: '',
+    batteryvoltage: '',
+    counter: '',
+    drssi: '',
+    dsnr:'',
+    temperature: '',
+    fwdcounter: '',
+    revcounter: '',
+  });
+
+  useEffect(() => {
+    const values: HistoricalDataMapping = store.getObject(CSV_MAPPING_KEY, {
+      time: '',
+      uuid: '',
+      battery: '',
+      batteryvoltage: '',
+      counter: '',
+      drssi: '',
+      dsnr:'',
+      temperature: '',
+      fwdcounter: '',
+      revcounter: '',
+    });
+    setDefaultValues(values);
+  }, []);
+
+
 
   const onFileUpload = (event: FormEvent<HTMLInputElement>) => {
     const fileToUpload =
@@ -56,9 +158,11 @@ export const ResourcesDataUpload = (): JSX.Element => {
           skipEmptyLines: true,
           complete: (result) => {
             if (result && result.data && result.data.length) {
-              setFileInfo({ file: fileToUpload, headers: (result.data as string[][])[0] });
-              const opts = (result.data as string[][])[0].map(toOption);
-              setOptions(opts);
+              const rawHeaders = (result.data as string[][])[0];
+              const sanitized = rawHeaders.map(sanitizeHeader);
+              setFileInfo({ file: fileToUpload, headers: rawHeaders }); // for display
+              setOptions(rawHeaders.map(toOption));
+              setSanitizedHeaders(sanitized);
             } else {
               <Alert severity="error" title="Failed to parse the CSV file" />;
             }
@@ -75,7 +179,9 @@ export const ResourcesDataUpload = (): JSX.Element => {
     }
   };
 
-  const onUpdate = (update: string) => {};
+  const onUpdate = (update: HistoricalDataMapping) => {
+    store.setObject(CSV_MAPPING_KEY, update);
+  };
 
   const ctaElement = (
     <FileUpload accept=".csv" onFileUpload={onFileUpload} showFileName={false} className={styles.uploadButton}>
@@ -84,12 +190,6 @@ export const ResourcesDataUpload = (): JSX.Element => {
   );
 
   const footer = <></>;
-
-  const addButton = (
-    <span className="gf-form-label query-part">
-      <Icon name="plus-circle" />
-    </span>
-  );
 
   return (
     <Page
@@ -106,48 +206,63 @@ export const ResourcesDataUpload = (): JSX.Element => {
             callToActionElement={ctaElement}
           />
         ) : (
-          <>
-            <Form defaultValues={{}} onSubmit={onUpdate}>
+          <div>
+            <Card>
+              <Card.Heading><div style={{ textAlign: 'center' }}>Map CSV Column Headers</div></Card.Heading>
+              <Card.Description>
+                {`Map your column headers with required data for each asset. You can add expressions like "{{<Column Header>}} * 100".`}
+              </Card.Description>
+            </Card>
+            <Form<HistoricalDataMapping> defaultValues={defaultValues}  onSubmit={onUpdate}>
               {({ register, control }) => (
                 <FieldSet>
-                  <HorizontalGroup align="normal">
-                    <VerticalGroup>
-                      <Field label="Status">
-                        <InputControl
-                          name="test"
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, width: '100%' }}>
+                    <VerticalGroup style={{ width: '100%' }}>
+                      {mappingKeysLeft.map((key) => (
+                        <InputControl<HistoricalDataMapping>
+                          key={key}
+                          name={key}
                           control={control}
-                          rules={{ required: true }}
-                          render={({ field: { onChange, ...field } }) => (
-                            <SegmentSection label="Segment">
-                              <Segment Component={addButton} onChange={() => {}} options={options} />
-                            </SegmentSection>
+                          rules={{
+                            validate: (value) => validateExpression(value, sanitizedHeaders),
+                          }}
+                          render={({ field: { onChange, ...field }, fieldState }) => (
+                            <Field label={key} key={key} style={{ width: '100%' }} invalid={fieldState.error ? true : undefined} error={fieldState.error?.message}>
+                              <div style={{ width: '100%' }}>
+                                <VariablePicker {...field} onChange={onChange} options={options} />
+                              </div>
+                            </Field>
                           )}
                         />
-                      </Field>
+                      ))}
                     </VerticalGroup>
-                    <div style={{ padding: '0 50px' }} />
-                    <VerticalGroup>
-                      <Field label="Status">
-                        <InputControl
-                          name="test1"
+                    <VerticalGroup style={{ width: '100%' }}>
+                      {mappingKeysRight.map((key) => (
+                        <InputControl<HistoricalDataMapping>
+                          name={key}
+                          key={key}
                           control={control}
-                          rules={{ required: true }}
-                          render={({ field: { onChange, ...field } }) => (
-                            <SegmentSection label="Segment">
-                              <Segment Component={addButton} onChange={() => {}} options={options} />
-                            </SegmentSection>
+                          rules={{
+                            validate: (value) => validateExpression(value, sanitizedHeaders),
+                          }}
+                          render={({ field: { onChange, ...field }, fieldState  }) => (
+                            <Field label={key} key={key} style={{ width: '100%' }} invalid={fieldState.error ? true : undefined} error={fieldState.error?.message}>
+                              <div style={{ width: '100%' }}>
+                                <VariablePicker {...field} onChange={onChange} options={options} />
+                              </div>
+                            </Field>
                           )}
                         />
-                      </Field>
+                      ))}
                     </VerticalGroup>
-                  </HorizontalGroup>
-                  <HorizontalGroup>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
                     <Button type="submit"> Update </Button>
-                  </HorizontalGroup>
+                  </div>
                 </FieldSet>
               )}
             </Form>
-          </>
+          </div>
         )}
       </Page.Contents>
     </Page>
