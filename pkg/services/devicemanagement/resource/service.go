@@ -34,6 +34,7 @@ func ProvideService(cfg *setting.Cfg, devMgmt devicemanagement.DeviceManagementS
 		return service, err
 	}
 	service.registerAPIEndpoints(hs, routeRegister)
+	devMgmt.RegisterBackgroundService(service)
 	service.log.Info("Loaded resoures")
 	return service, nil
 }
