@@ -161,7 +161,7 @@ export const ResourcesDataUpload = (): JSX.Element => {
               const rawHeaders = (result.data as string[][])[0];
               const sanitized = rawHeaders.map(sanitizeHeader);
               setFileInfo({ file: fileToUpload, headers: rawHeaders }); // for display
-              setOptions(rawHeaders.map(toOption));
+              setOptions(sanitized.map(toOption));
               setSanitizedHeaders(sanitized);
             } else {
               <Alert severity="error" title="Failed to parse the CSV file" />;
@@ -180,7 +180,21 @@ export const ResourcesDataUpload = (): JSX.Element => {
   };
 
   const onUpdate = (update: HistoricalDataMapping) => {
+    if (!fileInfo.file) {
+      console.error('No file selected');
+      return;
+    }
     store.setObject(CSV_MAPPING_KEY, update);
+    const formData = new FormData();
+    formData.append('file', fileInfo.file);
+     formData.append('mapping', JSON.stringify(update));
+    fetch('/api/resources/historicaldata', { method: 'POST', body: formData })
+    .then((res) => {
+      if (res.status >= 400) {
+        return;
+      }
+      return res.json();
+    }).catch((err) => console.error(err));
   };
 
   const ctaElement = (
