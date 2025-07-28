@@ -32,10 +32,10 @@ const pageNav: NavModelItem = {
 
 function sanitizeHeader(header: string): string {
   return header
-    .replace(/\(.*?\)/g, '')     // Remove anything inside parentheses
-    .replace(/[^\w\s]/g, '')     // Remove other non-word characters (like punctuation)
-    .trim()                      // Trim whitespace
-    .replace(/\s+/g, '_');       // Replace spaces with underscores
+    .replace(/[()]/g, '')         // Remove only the parentheses characters, not content inside
+    .replace(/[^\w\s]/g, '')      // Remove other non-word characters (punctuation, etc.)
+    .trim()                       // Trim leading/trailing whitespace
+    .replace(/\s+/g, '_');        // Replace internal spaces with underscores
 }
 
 function toOption(value: string): VariableOption {

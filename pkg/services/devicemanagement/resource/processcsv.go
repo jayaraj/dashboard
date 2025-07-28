@@ -152,6 +152,9 @@ func (service *Service) processCsv(ctx context.Context, msg devicemanagement.Upd
 				continue
 			}
 			cleaned := cleanExpression(expr)
+			if cleaned == "" {
+				continue
+			}
 			result, err := service.evaluateExpression(cleaned, varContext)
 			if err != nil {
 				service.log.Warn("Skipping data field", "field", k, "error", err)
