@@ -4,6 +4,8 @@ import (
 	"io"
 	"mime/multipart"
 	"time"
+
+	"github.com/jayaraj/messages/client/resource"
 )
 
 type OrgUser struct {
@@ -72,4 +74,10 @@ type DeleteOrgEvent struct {
 type DeleteOrgUserEvent struct {
 	UserId int64
 	OrgId  int64
+}
+
+type UpdateResourceDataMsg struct {
+	File    multipart.File    `json:"file"`
+	Mapping map[string]string `json:"mapping"`
+	User    resource.User     `json:"user"`
 }

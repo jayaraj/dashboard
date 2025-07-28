@@ -1,7 +1,7 @@
-import { debounce } from 'lodash';
-import React, { useEffect, useState, useMemo } from 'react';
-import { Select, Button } from '@grafana/ui';
+import React, { useEffect, useState, forwardRef } from 'react';
+
 import { SelectableValue } from '@grafana/data';
+import { Select, Button } from '@grafana/ui';
 
 export interface VariableOption {
   value: string;
@@ -17,14 +17,14 @@ export interface VariablePickerProps {
   enableCreate?: boolean;
 }
 
-export const VariablePicker: React.FC<VariablePickerProps> = ({
+export const VariablePicker = forwardRef<HTMLDivElement, VariablePickerProps>(({
   value,
   onChange,
   placeholder = 'Search variables...',
   style,
   options = [],
   enableCreate = false,
-}) => {
+}, ref) => {
   const [variableOptions, setVariableOptions] = useState<Array<SelectableValue<string>>>([]);
   const [inputValue, setInputValue] = useState<string>('');
 
@@ -33,17 +33,13 @@ export const VariablePicker: React.FC<VariablePickerProps> = ({
     setVariableOptions(formattedOptions);
   }, [options]);
 
-  const handleSearch = useMemo(
-    () =>
-      debounce((q: string) => {
-        setInputValue(q);
-      }, 300),
-    []
-  );
-
   const handleChange = (item?: SelectableValue<string>) => {
     onChange?.(item?.value);
     setInputValue('');
+  };
+
+  const handleInputChange = (val: string) => {
+    setInputValue(val);
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<Element>) => {
@@ -73,19 +69,19 @@ export const VariablePicker: React.FC<VariablePickerProps> = ({
   const selectedValue = variableOptions.find((opt) => opt.value === value) ?? { value, label: value };
 
   return (
-    <div style={{ width: '100%', minWidth: 200, ...style }}>
+    <div ref={ref} style={{ width: '100%', ...style }}>
       <Select
+        style={{ width: '100%'}}
         allowCustomValue
         isClearable
         value={selectedValue}
         options={variableOptions}
         onChange={handleChange}
-        onInputChange={handleSearch}
+        onInputChange={handleInputChange}
         inputValue={inputValue}
         placeholder={placeholder}
         onKeyDown={handleInputKeyDown}
         menuPlacement="bottom"
-        width="auto"
       />
 
       {enableCreate &&
@@ -103,6 +99,8 @@ export const VariablePicker: React.FC<VariablePickerProps> = ({
         )}
     </div>
   );
-};
+});
+
+VariablePicker.displayName = 'VariablePicker';
 
 export default VariablePicker;
