@@ -195,6 +195,7 @@ export const ResourcesDataUpload = (): JSX.Element => {
     const info = getTimeZoneInfo(timezone || InternalTimeZones.default, Date.now());
     update.timezone = info?.ianaName || '';
     store.setObject(CSV_MAPPING_KEY, update);
+    setDefaultValues(update);
     store.setObject(CSV_TIMEZONE_KEY, timezone);
     const formData = new FormData();
     formData.append('file', fileInfo.file);
@@ -260,7 +261,7 @@ export const ResourcesDataUpload = (): JSX.Element => {
                           render={({ field: { onChange, ...field }, fieldState }) => (
                             <Field label={key} key={key} style={{ width: '100%' }} invalid={fieldState.error ? true : undefined} error={fieldState.error?.message}>
                               <div style={{ width: '100%' }}>
-                                <VariablePicker {...field} onChange={onChange} options={options} />
+                                <VariablePicker {...field} onChange={(val) => onChange(val ?? "")} options={options} />
                               </div>
                             </Field>
                           )}
@@ -279,7 +280,7 @@ export const ResourcesDataUpload = (): JSX.Element => {
                           render={({ field: { onChange, ...field }, fieldState  }) => (
                             <Field label={key} key={key} style={{ width: '100%' }} invalid={fieldState.error ? true : undefined} error={fieldState.error?.message}>
                               <div style={{ width: '100%' }}>
-                                <VariablePicker {...field} onChange={onChange} options={options} />
+                                <VariablePicker {...field} onChange={(val) => onChange(val ?? "")} options={options} />
                               </div>
                             </Field>
                           )}
