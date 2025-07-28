@@ -3,7 +3,7 @@ import { Parser } from 'expr-eval';
 import Papa from 'papaparse';
 import React, { FormEvent, useState, useEffect } from 'react';
 
-import { NavModelItem, GrafanaTheme2 } from '@grafana/data';
+import { NavModelItem, GrafanaTheme2, InternalTimeZones, getTimeZoneInfo } from '@grafana/data';
 import {
   Button,
   FileUpload,
@@ -17,6 +17,7 @@ import {
   Field,
   InputControl,
   Form,
+  TimeZonePicker,
 } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
 import { VariablePicker, VariableOption } from 'app/core/components/VariablePicker/VariablePicker'; 
@@ -81,6 +82,7 @@ function validateExpression(expr: string, knownHeaders: string[]): true | string
 }
 
 type HistoricalDataMapping = {
+  timezone: string;
   time: string;
   uuid: string;
   battery: string;
@@ -98,7 +100,9 @@ export const ResourcesDataUpload = (): JSX.Element => {
   const [options, setOptions] = useState<VariableOption[]>([]);
   const [sanitizedHeaders, setSanitizedHeaders] = useState<string[]>([]);
   const styles = useStyles2(getStyles);
+  const [timezone, setTimezone] = useState<string | undefined>(InternalTimeZones.default);
   const CSV_MAPPING_KEY = 'connections.csv.mappings';
+  const CSV_TIMEZONE_KEY = 'connections.csv.timezone';
   const mappingKeysLeft: Array<keyof HistoricalDataMapping> = [
     'time',
     'uuid',
@@ -114,6 +118,7 @@ export const ResourcesDataUpload = (): JSX.Element => {
     'revcounter',
   ];
   const [defaultValues, setDefaultValues] = useState<HistoricalDataMapping>({
+    timezone: '',
     time: '',
     uuid: '',
     battery: '',
@@ -128,6 +133,7 @@ export const ResourcesDataUpload = (): JSX.Element => {
 
   useEffect(() => {
     const values: HistoricalDataMapping = store.getObject(CSV_MAPPING_KEY, {
+      timezone: '',
       time: '',
       uuid: '',
       battery: '',
@@ -139,7 +145,9 @@ export const ResourcesDataUpload = (): JSX.Element => {
       fwdcounter: '',
       revcounter: '',
     });
+    const tz: string = store.getObject(CSV_TIMEZONE_KEY, InternalTimeZones.default);
     setDefaultValues(values);
+    setTimezone(tz);
   }, []);
 
 
@@ -184,7 +192,10 @@ export const ResourcesDataUpload = (): JSX.Element => {
       console.error('No file selected');
       return;
     }
+    const info = getTimeZoneInfo(timezone || InternalTimeZones.default, Date.now());
+    update.timezone = info?.ianaName || '';
     store.setObject(CSV_MAPPING_KEY, update);
+    store.setObject(CSV_TIMEZONE_KEY, timezone);
     const formData = new FormData();
     formData.append('file', fileInfo.file);
      formData.append('mapping', JSON.stringify(update));
@@ -193,6 +204,7 @@ export const ResourcesDataUpload = (): JSX.Element => {
       if (res.status >= 400) {
         return;
       }
+      setFileInfo({ file: null, headers: [] });
       return res.json();
     }).catch((err) => console.error(err));
   };
@@ -230,6 +242,11 @@ export const ResourcesDataUpload = (): JSX.Element => {
             <Form<HistoricalDataMapping> defaultValues={defaultValues}  onSubmit={onUpdate}>
               {({ register, control }) => (
                 <FieldSet>
+                  <div style={{ width: '100%', display: 'flex', marginBottom: 16 }}>
+                    <Field label="Timezone" style={{ width: '100%' }}>
+                      <TimeZonePicker onChange={setTimezone} includeInternal={true} value={timezone}/>
+                    </Field>
+                  </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, width: '100%' }}>
                     <VerticalGroup style={{ width: '100%' }}>
                       {mappingKeysLeft.map((key) => (
