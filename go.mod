@@ -497,6 +497,7 @@ require (
 )
 
 require (
+	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible
 	github.com/brocaar/chirpstack-api/go/v3 v3.12.5 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/jayaraj/infra v0.0.0-20231229021549-17195a11cbb9 // indirect

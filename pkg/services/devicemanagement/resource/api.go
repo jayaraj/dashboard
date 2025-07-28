@@ -16,6 +16,8 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 
 	//APIs
 	routeRegister.Group("api/resources", func(resourcesRoute routing.RouteRegister) {
+		resourcesRoute.Post("/historicaldata", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.ResourceDataUpdate))
+
 		resourcesRoute.Post("/", authorize(accesscontrol.EvalPermission(ActionCreate)), routing.Wrap(service.CreateResource))
 		resourcesRoute.Get("/search", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.SearchResources))
 		resourcesRoute.Get("/searchbytype", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetResourcesByType))

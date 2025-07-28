@@ -354,3 +354,28 @@ func (service *Service) DisableResource(c *contextmodel.ReqContext) response.Res
 	}
 	return response.Success("success")
 }
+
+func (service *Service) ResourceDataUpdate(c *contextmodel.ReqContext) response.Response {
+	c.Req.ParseMultipartForm(10 << 20)
+	msg := devicemanagement.UpdateResourceDataMsg{
+		User: resource.User{
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
+		},
+		Mapping: map[string]string{},
+	}
+	var err error
+	msg.File, _, err = c.Req.FormFile("file")
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "error retrieving file", err)
+	}
+	mappingString := c.Req.FormValue("mapping")
+	err = json.Unmarshal([]byte(mappingString), &msg.Mapping)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "error processing mapping", err)
+	}
+
+	service.fileChan <- msg
+	return response.Success("update initiated")
+}
