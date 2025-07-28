@@ -140,7 +140,14 @@ func (service *Service) processCsv(ctx context.Context, msg devicemanagement.Upd
 		}
 		timeStr := fmt.Sprintf("%v", timeEvaluated)
 
-		parsedTime, err := time.ParseInLocation("2006-01-02 15:04:05", timeStr, time.Local)
+		location := time.UTC
+		if timezone, ok := msg.Mapping["timezone"]; ok && timezone != "" {
+			location, err = time.LoadLocation(timezone)
+			if err != nil {
+				location = time.UTC
+			}
+		}
+		parsedTime, err := time.ParseInLocation("2006-01-02 15:04:05", timeStr, location)
 		if err != nil {
 			service.log.Error("time parsing failed", "time", timeStr)
 			continue
@@ -148,10 +155,13 @@ func (service *Service) processCsv(ctx context.Context, msg devicemanagement.Upd
 
 		data := make(map[string]float64)
 		for k, expr := range msg.Mapping {
-			if k == "uuid" || k == "time" {
+			if k == "uuid" || k == "time" || k == "timezone" {
 				continue
 			}
 			cleaned := cleanExpression(expr)
+			if cleaned == "" {
+				continue
+			}
 			result, err := service.evaluateExpression(cleaned, varContext)
 			if err != nil {
 				service.log.Warn("Skipping data field", "field", k, "error", err)
