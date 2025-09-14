@@ -87,13 +87,13 @@ export const ConnectionSettings = ({ connection, updateConnection, updateConnect
                   <Field label="Address1" disabled={!canWrite}>
                     <Input {...register('address1', { required: true })} id="address1-input" width={40} />
                   </Field>
-                  <Field label="city" disabled={!canWrite}>
+                  <Field label="City" disabled={!canWrite}>
                     <Input {...register('city', { required: true })} id="city-input" width={40} />
                   </Field>
                   <Field label="Country" disabled={!canWrite}>
                     <Input {...register('country', { required: true })} id="country-input" width={40} />
                   </Field>
-                  <Field label="latitude" disabled={!canWrite}>
+                  <Field label="Latitude" disabled={!canWrite}>
                     <Input {...register('latitude', { required: true })} id="latitude-input" width={40} />
                   </Field>
                 </VerticalGroup>
@@ -146,13 +146,13 @@ export const ConnectionSettings = ({ connection, updateConnection, updateConnect
                     <Input {...register('address2', { required: false })} id="address2-input" width={40} />
                   </Field>
 
-                  <Field label="state" disabled={!canWrite}>
+                  <Field label="State" disabled={!canWrite}>
                     <Input {...register('state', { required: true })} id="state-input" width={40} />
                   </Field>
                   <Field label="Pincode" disabled={!canWrite}>
                     <Input {...register('pincode', { required: true })} id="pincode-input" width={40} />
                   </Field>
-                  <Field label="longitude" disabled={!canWrite}>
+                  <Field label="Longitude" disabled={!canWrite}>
                     <Input {...register('longitude', { required: true })} id="longitude-input" width={40} />
                   </Field>
                 </VerticalGroup>

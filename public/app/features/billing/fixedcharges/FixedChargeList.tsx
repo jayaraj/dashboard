@@ -39,6 +39,7 @@ const skeletonData: FixedCharge[] = new Array(3).fill(null).map((_, index) => ({
   id: index,
   tax: 0,
   amount: 0,
+  profile: '',
   description: '',
 }));
 
@@ -70,6 +71,17 @@ export const FixedChargeList = ({
 
   const columns: Array<Column<FixedCharge>> = useMemo(
     () => [
+      {
+        id: 'profile',
+        header: 'Profile',
+        cell: ({ cell: { value } }: Cell<'profile'>) => {
+          if (!hasFetched) {
+            return <Skeleton width={100} />;
+          }
+          return value;
+        },
+        sortType: 'string',
+      },
       {
         id: 'description',
         header: 'Description',

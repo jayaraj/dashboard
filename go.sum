@@ -2182,6 +2182,10 @@ github.com/jayaraj/messages v0.0.0-20250724052559-e3bd41cb406d h1:QdiYeZqMuM2U3F
 github.com/jayaraj/messages v0.0.0-20250724052559-e3bd41cb406d/go.mod h1:uG6PXWx+v/pkgUI3ZQlNZI2gP8XE5jR4VGbLGL2hzOg=
 github.com/jayaraj/messages v0.0.0-20250724125602-09a81484789b h1:2PbA3qhcl6H8lgAx2BcmARHaZcceQ+vLFC3FAE0fMwY=
 github.com/jayaraj/messages v0.0.0-20250724125602-09a81484789b/go.mod h1:uG6PXWx+v/pkgUI3ZQlNZI2gP8XE5jR4VGbLGL2hzOg=
+github.com/jayaraj/messages v0.0.0-20250913112412-38e0d5727729 h1:+RE0sCmDGcliAyRvhD3SIHsE9NwAwmvNN2K4yugLXjI=
+github.com/jayaraj/messages v0.0.0-20250913112412-38e0d5727729/go.mod h1:uG6PXWx+v/pkgUI3ZQlNZI2gP8XE5jR4VGbLGL2hzOg=
+github.com/jayaraj/messages v0.0.0-20250914080902-03bb9c262294 h1:9SKV1/JlVTHbAocLeua0oXy7jor7U1YYh8jkYuZHXAs=
+github.com/jayaraj/messages v0.0.0-20250914080902-03bb9c262294/go.mod h1:uG6PXWx+v/pkgUI3ZQlNZI2gP8XE5jR4VGbLGL2hzOg=
 github.com/jcmturner/aescts/v2 v2.0.0/go.mod h1:AiaICIRyfYg35RUkr8yESTqvSy7csK90qZ5xfvvsoNs=
 github.com/jcmturner/dnsutils/v2 v2.0.0/go.mod h1:b0TnjGOvI/n42bZa+hmXL+kFJZsFT7G4t3HTlQ184QM=
 github.com/jcmturner/gofork v1.7.6/go.mod h1:1622LH6i/EZqLloHfE7IeZ0uEJwMSUyQ/nDd82IeqRo=

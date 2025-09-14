@@ -29,6 +29,9 @@ export const FixedChargeSettings = ({ fixedCharge, updateFixedCharge }: Props) =
         {({ register }) => (
           <>
             <FieldSet>
+              <Field label="Profile" disabled={true}>
+                <Input {...register('profile', { required: false })} id="profile" width={40}/>
+              </Field>
               <Field label="Amount" description="Cost of Item" disabled={!canWrite}>
                 <Input {...register('amount', { required: true })} id="amount-input" width={40} />
               </Field>

@@ -28,6 +28,7 @@ export function getPageNav(pageName: string): NavModel {
     id: 1,
     tax: 0,
     amount: 0,
+    profile: '',
     description: '',
   });
 
