@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"github.com/grafana/grafana/pkg/api/response"
+	"github.com/grafana/grafana/pkg/models/roletype"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/devicemanagement"
 	"github.com/grafana/grafana/pkg/web"
@@ -239,6 +240,38 @@ func (service *Service) GetConnectionById(c *contextmodel.ReqContext) response.R
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
 	return response.JSON(http.StatusOK, connection)
+}
+
+func (service *Service) GetConnectionByExt(c *contextmodel.ReqContext) response.Response {
+	//Only for SuperAdmin
+	if !c.GetOrgRole().Includes(roletype.RoleSuperAdmin) && !c.IsGrafanaAdmin {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	number, err := strconv.ParseInt(web.Params(c.Req)[":number"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	dto := billing.GetConnectionByExtMsg{}
+	url := fmt.Sprintf("%sapi/connections/number/%d", service.cfg.BillingHost, number)
+	req := &devicemanagement.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to get connection", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse client.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+	return response.JSON(http.StatusOK, dto.Result)
 }
 
 func (service *Service) DeleteConnection(c *contextmodel.ReqContext) response.Response {
