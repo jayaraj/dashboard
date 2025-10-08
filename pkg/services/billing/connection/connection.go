@@ -342,3 +342,212 @@ func (service *Service) GetConnectionLogs(c *contextmodel.ReqContext) response.R
 	}
 	return response.JSON(http.StatusOK, cmd.Result)
 }
+
+func (service *Service) SubscribeConnectionByExt(c *contextmodel.ReqContext) response.Response {
+	//Only for SuperAdmin
+	if !c.GetOrgRole().Includes(roletype.RoleSuperAdmin) && !c.IsGrafanaAdmin {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	number, err := strconv.ParseInt(web.Params(c.Req)[":number"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	subscribeConnection := SubscribeConnectionMsg{}
+	if err := web.Bind(c.Req, &subscribeConnection); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+
+	getConnection := billing.GetConnectionByExtMsg{}
+	url := fmt.Sprintf("%sapi/connections/number/%d", service.cfg.BillingHost, number)
+	req := &devicemanagement.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to get connection", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse client.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	if err := json.Unmarshal(req.Response, &getConnection.Result); err != nil {
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+
+	updateConnection := &billing.UpdateConnectionMsg{
+		Id:        getConnection.Result.Id,
+		Login:     c.Login,
+		Profile:   getConnection.Result.Profile,
+		Status:    getConnection.Result.Status,
+		Name:      getConnection.Result.Name,
+		Address1:  getConnection.Result.Address1,
+		City:      getConnection.Result.City,
+		State:     getConnection.Result.State,
+		Country:   getConnection.Result.Country,
+		Pincode:   getConnection.Result.Pincode,
+		Address2:  getConnection.Result.Address2,
+		Phone:     getConnection.Result.Phone,
+		Email:     getConnection.Result.Email,
+		Latitude:  getConnection.Result.Latitude,
+		Longitude: getConnection.Result.Longitude,
+		Extras:    getConnection.Result.Extras,
+	}
+	if updateConnection.Extras == nil {
+		updateConnection.Extras = make(map[string]interface{})
+	}
+	if !service.subscribe(updateConnection.Extras, subscribeConnection.Number) {
+		return response.Error(http.StatusBadRequest, "already subscribed", nil)
+	}
+
+	body, err := json.Marshal(updateConnection)
+	if err != nil {
+		return response.Error(500, "failed marshal update", err)
+	}
+	url = fmt.Sprintf("%sapi/connections/%d", service.cfg.BillingHost, getConnection.Result.Id)
+	req = &devicemanagement.RestRequest{
+		Url:        url,
+		Request:    body,
+		HttpMethod: http.MethodPut,
+	}
+	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to update", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse client.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	return response.Success("subscribed")
+}
+
+func (service *Service) UnsubscribeConnectionByExt(c *contextmodel.ReqContext) response.Response {
+	//Only for SuperAdmin
+	if !c.GetOrgRole().Includes(roletype.RoleSuperAdmin) && !c.IsGrafanaAdmin {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	number, err := strconv.ParseInt(web.Params(c.Req)[":number"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	subscribeConnection := SubscribeConnectionMsg{}
+	if err := web.Bind(c.Req, &subscribeConnection); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+
+	getConnection := billing.GetConnectionByExtMsg{}
+	url := fmt.Sprintf("%sapi/connections/number/%d", service.cfg.BillingHost, number)
+	req := &devicemanagement.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to get connection", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse client.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	if err := json.Unmarshal(req.Response, &getConnection.Result); err != nil {
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+
+	updateConnection := &billing.UpdateConnectionMsg{
+		Id:        getConnection.Result.Id,
+		Login:     c.Login,
+		Profile:   getConnection.Result.Profile,
+		Status:    getConnection.Result.Status,
+		Name:      getConnection.Result.Name,
+		Address1:  getConnection.Result.Address1,
+		City:      getConnection.Result.City,
+		State:     getConnection.Result.State,
+		Country:   getConnection.Result.Country,
+		Pincode:   getConnection.Result.Pincode,
+		Address2:  getConnection.Result.Address2,
+		Phone:     getConnection.Result.Phone,
+		Email:     getConnection.Result.Email,
+		Latitude:  getConnection.Result.Latitude,
+		Longitude: getConnection.Result.Longitude,
+		Extras:    getConnection.Result.Extras,
+	}
+	if updateConnection.Extras == nil {
+		return response.Error(http.StatusBadRequest, "not subscribed", nil)
+	}
+	if !service.unsubscribe(updateConnection.Extras, subscribeConnection.Number) {
+		return response.Error(http.StatusBadRequest, "not subscribed", nil)
+	}
+
+	body, err := json.Marshal(updateConnection)
+	if err != nil {
+		return response.Error(500, "failed marshal update", err)
+	}
+	url = fmt.Sprintf("%sapi/connections/%d", service.cfg.BillingHost, getConnection.Result.Id)
+	req = &devicemanagement.RestRequest{
+		Url:        url,
+		Request:    body,
+		HttpMethod: http.MethodPut,
+	}
+	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to update", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse client.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	return response.Success("subscribed")
+}
+
+func (service *Service) subscribe(extras map[string]interface{}, id float64) bool {
+	if extras["wa_id"] == nil {
+		extras["wa_id"] = []interface{}{}
+	}
+	queue, ok := extras["wa_id"].([]interface{})
+	if !ok {
+		return false
+	}
+	for _, v := range queue {
+		if vv, ok := v.(float64); ok && vv == id {
+			extras["wa_id"] = queue
+			return false
+		}
+	}
+	queue = append(queue, id)
+	if len(queue) > 3 {
+		queue = queue[len(queue)-3:]
+	}
+	extras["wa_id"] = queue
+	return true
+}
+
+func (service *Service) unsubscribe(extras map[string]interface{}, id float64) bool {
+	queue, ok := extras["wa_id"].([]interface{})
+	if !ok {
+		return false
+	}
+	found := false
+	newQueue := make([]interface{}, 0, len(queue))
+	for _, v := range queue {
+		if vv, ok := v.(float64); ok && vv == id {
+			found = true
+			continue
+		}
+		newQueue = append(newQueue, v)
+	}
+	if found {
+		extras["wa_id"] = newQueue
+		return true
+	}
+	return false
+}
