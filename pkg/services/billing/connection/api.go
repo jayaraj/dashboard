@@ -48,6 +48,7 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 	routeRegister.Group("api/invoices", func(invoicesRoute routing.RouteRegister) {
 		invoicesRoute.Get("/:invoiceId", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetInvoice))
 		invoicesRoute.Get("/:invoiceId/transactions", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetInvoiceTransactions))
+		invoicesRoute.Get("/number/:number", routing.Wrap(service.GetInvoiceByExt))
 	})
 
 }

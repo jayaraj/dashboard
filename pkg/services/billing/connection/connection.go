@@ -506,7 +506,7 @@ func (service *Service) UnsubscribeConnectionByExt(c *contextmodel.ReqContext) r
 		}
 		return response.Error(req.StatusCode, errResponse.Message, nil)
 	}
-	return response.Success("subscribed")
+	return response.Success("unsubscribed")
 }
 
 func (service *Service) subscribe(extras map[string]interface{}, id float64) bool {
