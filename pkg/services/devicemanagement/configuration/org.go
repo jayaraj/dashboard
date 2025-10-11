@@ -1,6 +1,7 @@
 package configuration
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/devicemanagement"
 	"github.com/grafana/grafana/pkg/web"
+	"github.com/pkg/errors"
 
 	"github.com/jayaraj/messages/client"
 	"github.com/jayaraj/messages/client/resource"
@@ -52,30 +54,39 @@ func (service *Service) GetOrgConfiguration(c *contextmodel.ReqContext) response
 	if !service.IsConfigurationAccessible(c, client.ConvertAssociationToString(client.TYPE_ORG), config) {
 		return response.Error(http.StatusForbidden, "cannot access", nil)
 	}
+
+	configuration, err := service.GetOrgConfigurations(c.Req.Context(), c.OrgID, config)
+	if err != nil {
+		return response.Error(http.StatusInternalServerError, "failed to get org configurations", err)
+	}
+	return response.JSON(http.StatusOK, configuration)
+}
+
+func (service *Service) GetOrgConfigurations(ctx context.Context, orgId int64, config string) ([]byte, error) {
 	dto := &resource.GetOrgConfigurationMsg{
-		OrgId: c.OrgID,
+		OrgId: orgId,
 		Type:  config,
 	}
 	body, err := json.Marshal(dto)
 	if err != nil {
-		return response.Error(500, "failed marshal update", err)
+		return nil, errors.Wrap(err, "failed marshal update")
 	}
-	url := fmt.Sprintf("%sapi/orgs/%d/configurations/%s", service.cfg.ResourceHost, c.OrgID, config)
+	url := fmt.Sprintf("%sapi/orgs/%d/configurations/%s", service.cfg.ResourceHost, orgId, config)
 	req := &devicemanagement.RestRequest{
 		Url:        url,
 		Request:    body,
 		HttpMethod: http.MethodPost,
 	}
-	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
-		return response.Error(500, "failed to get", err)
+	if err := service.devMgmt.RestRequest(ctx, req); err != nil {
+		return nil, errors.Wrap(err, "failed to get org configurations")
 	}
 	if req.StatusCode != http.StatusOK {
 		var errResponse client.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return nil, errors.Wrap(err, "failed unmarshal error ")
 		}
-		return response.Error(req.StatusCode, errResponse.Message, nil)
+		return nil, errors.New(errResponse.Message)
 	}
 
-	return response.JSON(http.StatusOK, req.Response)
+	return req.Response, nil
 }
