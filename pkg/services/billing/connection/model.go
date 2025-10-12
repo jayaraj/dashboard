@@ -7,7 +7,8 @@ type SubscribeConnectionMsg struct {
 type Invoice struct {
 	InvoiceExt        string            `json:"invoice_ext"`
 	ConnectionExt     string            `json:"connection_ext"`
-	UpdatedAt         string            `json:"updated_at"`
+	Created           string            `json:"created"`
+	DueDate           string            `json:"due_date"`
 	Informations      []Info            `json:"informations"`
 	Transactions      []Transaction     `json:"transactions"`
 	TotalCredits      float64           `json:"total_credits"`

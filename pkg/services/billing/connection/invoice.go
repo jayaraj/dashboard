@@ -286,28 +286,23 @@ func (service *Service) GetInvoiceByExt(c *contextmodel.ReqContext) response.Res
 		}
 	}
 
-	orgConfigMap := make(map[string]interface{})
-	if err := json.Unmarshal(orgConfig, &orgConfigMap); err != nil {
-		return response.Error(http.StatusInternalServerError, "failed to unmarshal org configuration", err)
-	}
-
 	orgDetails := OrgDetails{}
-	if name, ok := orgConfigMap["name"].(string); ok {
+	if name, ok := orgConfig.Configuration["name"].(string); ok {
 		orgDetails.Name = name
 	}
-	if address, ok := orgConfigMap["address1"].(string); ok {
-		orgDetails.Address1 = address
+	if address, ok := orgConfig.Configuration["address1"].(string); ok {
+		orgDetails.Address1 = service.truncateWithEllipsis(address, 40)
 	}
-	if address, ok := orgConfigMap["address2"].(string); ok {
-		orgDetails.Address2 = address
+	if address, ok := orgConfig.Configuration["address2"].(string); ok {
+		orgDetails.Address2 = service.truncateWithEllipsis(address, 40)
 	}
 	city := ""
 	zip := ""
-	if city, ok := orgConfigMap["city"].(string); ok {
-		city = city
+	if c, ok := orgConfig.Configuration["city"].(string); ok {
+		city = c
 	}
-	if zip, ok := orgConfigMap["zip"].(string); ok {
-		zip = zip
+	if z, ok := orgConfig.Configuration["pincode"].(string); ok {
+		zip = z
 	}
 	if city != "" && zip != "" {
 		orgDetails.CityZip = city + "-" + zip
@@ -317,10 +312,10 @@ func (service *Service) GetInvoiceByExt(c *contextmodel.ReqContext) response.Res
 		Name: connection.Name,
 	}
 	if connection.Address1 != "" {
-		connectionDetails.Address1 = connection.Address1
+		connectionDetails.Address1 = service.truncateWithEllipsis(connection.Address1, 40)
 	}
 	if connection.Address2 != "" {
-		connectionDetails.Address2 = connection.Address2
+		connectionDetails.Address2 = service.truncateWithEllipsis(connection.Address2, 40)
 	}
 	city = ""
 	zip = ""
@@ -337,7 +332,8 @@ func (service *Service) GetInvoiceByExt(c *contextmodel.ReqContext) response.Res
 	invoice := &Invoice{
 		InvoiceExt:        dto.Result.InvoiceExt,
 		ConnectionExt:     fmt.Sprintf("%d", dto.Result.ConnectionExt),
-		UpdatedAt:         dto.Result.UpdatedAt.Format("02/01/2006"),
+		Created:           dto.Result.UpdatedAt.Format("02/01/2006"),
+		DueDate:           dto.Result.UpdatedAt.AddDate(0, 1, -dto.Result.UpdatedAt.Day()).Format("02/01/2006"),
 		Informations:      infos,
 		Transactions:      invoiceTransactions,
 		TotalCredits:      dto.Result.TotalCredits,
@@ -349,12 +345,22 @@ func (service *Service) GetInvoiceByExt(c *contextmodel.ReqContext) response.Res
 		OrgDetails:        orgDetails,
 		ConnectionDetails: connectionDetails,
 	}
+
 	pdfBytes, err := service.buildInvoicePDF(invoice)
 	if err != nil {
 		return response.Error(http.StatusInternalServerError, "failed to build pdf", err)
 	}
 
-	return response.JSONDownload(http.StatusOK, pdfBytes, fmt.Sprintf("%s.pdf", dto.Result.InvoiceExt))
+	return response.JSONDownload(http.StatusOK, pdfBytes, fmt.Sprintf("invoice-%s.pdf", dto.Result.InvoiceExt))
+}
+func (service *Service) truncateWithEllipsis(s string, max int) string {
+	if len(s) <= max {
+		return s
+	}
+	if max <= 3 {
+		return s[:max]
+	}
+	return s[:max-3] + "..."
 }
 
 func (service *Service) buildInvoicePDF(inv *Invoice) ([]byte, error) {
@@ -381,55 +387,39 @@ func (service *Service) buildInvoicePDF(inv *Invoice) ([]byte, error) {
 	pdf.SetX(rightStartX + 42)
 	pdf.CellFormat(40, 5, inv.ConnectionExt, "", 1, "L", false, 0, "")
 
-	created := inv.UpdatedAt
-	if created == "" {
-		created = time.Now().Format("02/01/2006")
-	}
 	pdf.SetX(rightStartX)
 	pdf.CellFormat(40, 5, "Created:", "", 0, "R", false, 0, "")
 	pdf.SetX(rightStartX + 42)
-	pdf.CellFormat(40, 5, created, "", 1, "L", false, 0, "")
+	pdf.CellFormat(40, 5, inv.Created, "", 1, "L", false, 0, "")
 
-	// Due date = end of month of UpdatedAt (simple heuristic)
-	var dueStr string
-	if t, err := time.Parse(time.RFC3339, inv.UpdatedAt); err == nil {
-		last := time.Date(t.Year(), t.Month()+1, 0, 0, 0, 0, 0, t.Location())
-		dueStr = last.Format("02/01/2006")
-	} else {
-		dueStr = time.Now().AddDate(0, 0, 30).Format("02/01/2006")
-	}
 	pdf.SetX(rightStartX)
 	pdf.CellFormat(40, 5, "Due:", "", 0, "R", false, 0, "")
 	pdf.SetX(rightStartX + 42)
-	pdf.CellFormat(40, 5, dueStr, "", 1, "L", false, 0, "")
+	pdf.CellFormat(40, 5, inv.DueDate, "", 1, "L", false, 0, "")
 
 	pdf.Ln(8)
 
+	// Print names on a single line: left name in fixed left column, right name right-aligned on the same line
 	pdf.SetFont("Arial", "B", 11)
-	pdf.CellFormat(0, 6, inv.OrgDetails.Name, "", 0, "L", false, 0, "")
+	leftColW := 90.0 // width for left column (tune as needed)
+
+	// Left name
+	pdf.CellFormat(leftColW, 6, inv.OrgDetails.Name, "", 0, "L", false, 0, "")
+	// Right name uses the rest of the line; make it right aligned
 	pdf.CellFormat(0, 6, inv.ConnectionDetails.Name, "", 1, "R", false, 0, "")
 
 	pdf.SetFont("Arial", "", 10)
-	if inv.OrgDetails.Address1 != "" {
-		pdf.CellFormat(90, 5, inv.OrgDetails.Address1, "", 0, "L", false, 0, "")
-	} else {
-		pdf.CellFormat(90, 5, "", "", 0, "L", false, 0, "")
-	}
-	if inv.OrgDetails.Address2 != "" {
-		pdf.CellFormat(90, 5, inv.OrgDetails.Address2, "", 0, "L", false, 0, "")
-	} else {
-		pdf.CellFormat(90, 5, "", "", 0, "L", false, 0, "")
-	}
-	if inv.OrgDetails.CityZip != "" {
-		pdf.CellFormat(90, 5, inv.OrgDetails.CityZip, "", 0, "L", false, 0, "")
-	} else {
-		pdf.CellFormat(90, 5, "", "", 0, "L", false, 0, "")
-	}
-	if inv.ConnectionDetails.CityZip != "" {
-		pdf.CellFormat(0, 5, inv.ConnectionDetails.CityZip, "", 1, "R", false, 0, "")
-	} else {
-		pdf.CellFormat(0, 5, "", "", 1, "R", false, 0, "")
-	}
+	// Row: Address1
+	pdf.CellFormat(leftColW, 5, inv.OrgDetails.Address1, "", 0, "L", false, 0, "")
+	pdf.CellFormat(0, 5, inv.ConnectionDetails.Address1, "", 1, "R", false, 0, "")
+
+	// Row: Address2
+	pdf.CellFormat(leftColW, 5, inv.OrgDetails.Address2, "", 0, "L", false, 0, "")
+	pdf.CellFormat(0, 5, inv.ConnectionDetails.Address2, "", 1, "R", false, 0, "")
+
+	// Row: City + Zip
+	pdf.CellFormat(leftColW, 5, inv.OrgDetails.CityZip, "", 0, "L", false, 0, "")
+	pdf.CellFormat(0, 5, inv.ConnectionDetails.CityZip, "", 1, "R", false, 0, "")
 
 	pdf.Ln(6)
 	pdf.SetFont("Arial", "B", 11)
