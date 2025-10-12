@@ -501,6 +501,7 @@ require (
 	github.com/brocaar/chirpstack-api/go/v3 v3.12.5 // indirect
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/jayaraj/infra v0.0.0-20231229021549-17195a11cbb9 // indirect
+	github.com/phpdave11/gofpdf v1.4.3
 )
 
 // Use fork of crewjam/saml with fixes for some issues until changes get merged into upstream

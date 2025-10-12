@@ -1,11 +1,13 @@
 package connection
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/grafana/grafana/pkg/api/response"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
@@ -13,6 +15,7 @@ import (
 	"github.com/grafana/grafana/pkg/web"
 	"github.com/jayaraj/messages/client"
 	"github.com/jayaraj/messages/client/billing"
+	"github.com/phpdave11/gofpdf"
 	"github.com/pkg/errors"
 )
 
@@ -240,17 +243,274 @@ func (service *Service) GetInvoiceByExt(c *contextmodel.ReqContext) response.Res
 		return response.Error(req.StatusCode, "failed unmarshal error ", err)
 	}
 
-	_, err := service.getInvoiceTransactions(c.Req.Context(), dto.Result.Id, 1, 1000)
+	transactions, err := service.getInvoiceTransactions(c.Req.Context(), dto.Result.Id, 1, 1000)
 	if err != nil {
 		return response.Error(http.StatusInternalServerError, "failed to get invoice transactions", err)
 	}
 
-	_, err = service.GetConnection(c.Req.Context(), dto.Result.ConnectionId)
+	connection, err := service.GetConnection(c.Req.Context(), dto.Result.ConnectionId)
 	if err != nil {
 		return response.Error(http.StatusInternalServerError, "failed to get connection", err)
 	}
 
-	return response.JSON(http.StatusOK, dto.Result)
+	configService := service.devMgmt.GetConfiguration()
+	if configService == nil {
+		return response.Error(http.StatusInternalServerError, "failed to get configuration service", nil)
+	}
+	orgConfig, err := configService.GetOrgConfigurations(c.Req.Context(), connection.OrgId, "details")
+	if err != nil {
+		return response.Error(http.StatusInternalServerError, "failed to get org configuration", err)
+	}
+	infos := make([]Info, len(dto.Result.Informations))
+	for i, info := range dto.Result.Informations {
+		infos[i] = Info{
+			Name:            info.Name,
+			UUID:            info.UUID,
+			Type:            info.Type,
+			PreviousReading: fmt.Sprintf("%.0f", info.PreviousReading),
+			CurrentReading:  fmt.Sprintf("%.0f", info.CurrentReading),
+		}
+	}
+
+	invoiceTransactions := make([]Transaction, len(transactions.Transactions))
+	for i, tx := range transactions.Transactions {
+		invoiceTransactions[i] = Transaction{
+			UpdatedAt: tx.UpdatedAt.Format("02/01/2006"),
+			Context:   tx.Context,
+			Tax:       tx.Tax,
+			Type:      string(tx.Type),
+			Amount:    tx.Amount,
+		}
+		if tx.Description != nil {
+			invoiceTransactions[i].Description = *tx.Description
+		}
+	}
+
+	orgConfigMap := make(map[string]interface{})
+	if err := json.Unmarshal(orgConfig, &orgConfigMap); err != nil {
+		return response.Error(http.StatusInternalServerError, "failed to unmarshal org configuration", err)
+	}
+
+	orgDetails := OrgDetails{}
+	if name, ok := orgConfigMap["name"].(string); ok {
+		orgDetails.Name = name
+	}
+	if address, ok := orgConfigMap["address1"].(string); ok {
+		orgDetails.Address1 = address
+	}
+	if address, ok := orgConfigMap["address2"].(string); ok {
+		orgDetails.Address2 = address
+	}
+	city := ""
+	zip := ""
+	if city, ok := orgConfigMap["city"].(string); ok {
+		city = city
+	}
+	if zip, ok := orgConfigMap["zip"].(string); ok {
+		zip = zip
+	}
+	if city != "" && zip != "" {
+		orgDetails.CityZip = city + "-" + zip
+	}
+
+	connectionDetails := ConnectionDetails{
+		Name: connection.Name,
+	}
+	if connection.Address1 != "" {
+		connectionDetails.Address1 = connection.Address1
+	}
+	if connection.Address2 != "" {
+		connectionDetails.Address2 = connection.Address2
+	}
+	city = ""
+	zip = ""
+	if connection.City != "" {
+		city = connection.City
+	}
+	if connection.Pincode != "" {
+		zip = connection.Pincode
+	}
+	if city != "" && zip != "" {
+		connectionDetails.CityZip = city + "-" + zip
+	}
+
+	invoice := &Invoice{
+		InvoiceExt:        dto.Result.InvoiceExt,
+		ConnectionExt:     fmt.Sprintf("%d", dto.Result.ConnectionExt),
+		UpdatedAt:         dto.Result.UpdatedAt.Format("02/01/2006"),
+		Informations:      infos,
+		Transactions:      invoiceTransactions,
+		TotalCredits:      dto.Result.TotalCredits,
+		TotalPayments:     dto.Result.TotalPayments,
+		OldBalance:        dto.Result.OldBalance,
+		Amount:            dto.Result.Amount,
+		From:              dto.Result.From.Format("02/01/2006"),
+		To:                dto.Result.To.Format("02/01/2006"),
+		OrgDetails:        orgDetails,
+		ConnectionDetails: connectionDetails,
+	}
+	pdfBytes, err := service.buildInvoicePDF(invoice)
+	if err != nil {
+		return response.Error(http.StatusInternalServerError, "failed to build pdf", err)
+	}
+
+	return response.JSONDownload(http.StatusOK, pdfBytes, fmt.Sprintf("%s.pdf", dto.Result.InvoiceExt))
+}
+
+func (service *Service) buildInvoicePDF(inv *Invoice) ([]byte, error) {
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf.SetMargins(15, 15, 15)
+	pdf.SetAutoPageBreak(true, 20)
+	pdf.AddPage()
+
+	// Fonts: use built-in fonts for portability
+	pdf.SetFont("Arial", "B", 22)
+	pdf.CellFormat(0, 10, "Invoice", "", 1, "L", false, 0, "")
+
+	// Right-side invoice meta (Invoice #, Account #, Created, Due)
+	pdf.SetFont("Arial", "", 10)
+	rightStartX := 120.0
+	startY := 20.0
+	pdf.SetXY(rightStartX, startY)
+	pdf.CellFormat(40, 5, "Invoice #:", "", 0, "R", false, 0, "")
+	pdf.SetX(rightStartX + 42)
+	pdf.CellFormat(40, 5, inv.InvoiceExt, "", 1, "L", false, 0, "")
+
+	pdf.SetX(rightStartX)
+	pdf.CellFormat(40, 5, "Account #:", "", 0, "R", false, 0, "")
+	pdf.SetX(rightStartX + 42)
+	pdf.CellFormat(40, 5, inv.ConnectionExt, "", 1, "L", false, 0, "")
+
+	created := inv.UpdatedAt
+	if created == "" {
+		created = time.Now().Format("02/01/2006")
+	}
+	pdf.SetX(rightStartX)
+	pdf.CellFormat(40, 5, "Created:", "", 0, "R", false, 0, "")
+	pdf.SetX(rightStartX + 42)
+	pdf.CellFormat(40, 5, created, "", 1, "L", false, 0, "")
+
+	// Due date = end of month of UpdatedAt (simple heuristic)
+	var dueStr string
+	if t, err := time.Parse(time.RFC3339, inv.UpdatedAt); err == nil {
+		last := time.Date(t.Year(), t.Month()+1, 0, 0, 0, 0, 0, t.Location())
+		dueStr = last.Format("02/01/2006")
+	} else {
+		dueStr = time.Now().AddDate(0, 0, 30).Format("02/01/2006")
+	}
+	pdf.SetX(rightStartX)
+	pdf.CellFormat(40, 5, "Due:", "", 0, "R", false, 0, "")
+	pdf.SetX(rightStartX + 42)
+	pdf.CellFormat(40, 5, dueStr, "", 1, "L", false, 0, "")
+
+	pdf.Ln(8)
+
+	pdf.SetFont("Arial", "B", 11)
+	pdf.CellFormat(0, 6, inv.OrgDetails.Name, "", 0, "L", false, 0, "")
+	pdf.CellFormat(0, 6, inv.ConnectionDetails.Name, "", 1, "R", false, 0, "")
+
+	pdf.SetFont("Arial", "", 10)
+	if inv.OrgDetails.Address1 != "" {
+		pdf.CellFormat(90, 5, inv.OrgDetails.Address1, "", 0, "L", false, 0, "")
+	} else {
+		pdf.CellFormat(90, 5, "", "", 0, "L", false, 0, "")
+	}
+	if inv.OrgDetails.Address2 != "" {
+		pdf.CellFormat(90, 5, inv.OrgDetails.Address2, "", 0, "L", false, 0, "")
+	} else {
+		pdf.CellFormat(90, 5, "", "", 0, "L", false, 0, "")
+	}
+	if inv.OrgDetails.CityZip != "" {
+		pdf.CellFormat(90, 5, inv.OrgDetails.CityZip, "", 0, "L", false, 0, "")
+	} else {
+		pdf.CellFormat(90, 5, "", "", 0, "L", false, 0, "")
+	}
+	if inv.ConnectionDetails.CityZip != "" {
+		pdf.CellFormat(0, 5, inv.ConnectionDetails.CityZip, "", 1, "R", false, 0, "")
+	} else {
+		pdf.CellFormat(0, 5, "", "", 1, "R", false, 0, "")
+	}
+
+	pdf.Ln(6)
+	pdf.SetFont("Arial", "B", 11)
+	pdf.CellFormat(0, 6, "Consumption Details:", "", 1, "L", false, 0, "")
+	pdf.Ln(2)
+	pdf.SetFont("Arial", "", 10)
+	for _, info := range inv.Informations {
+		line := fmt.Sprintf("%s   %s", info.Name, info.UUID)
+		pdf.CellFormat(100, 5, line, "", 0, "L", false, 0, "")
+		readings := fmt.Sprintf("Prev: %s  Cur: %s", info.PreviousReading, info.CurrentReading)
+		pdf.CellFormat(0, 5, readings, "", 1, "R", false, 0, "")
+	}
+
+	pdf.Ln(6)
+	pdf.SetFont("Arial", "B", 10)
+	pdf.SetFillColor(230, 230, 230)
+	pdf.CellFormat(35, 8, "Date", "1", 0, "L", true, 0, "")
+	pdf.CellFormat(85, 8, "Item", "1", 0, "L", true, 0, "")
+	pdf.CellFormat(20, 8, "Tax", "1", 0, "C", true, 0, "")
+	pdf.CellFormat(0, 8, "Price", "1", 1, "R", true, 0, "")
+
+	pdf.SetFont("Arial", "", 10)
+	for _, t := range inv.Transactions {
+		date := t.UpdatedAt
+		if date == "" {
+			date = time.Now().Format("02/01/2006")
+		} else if len(date) > 10 {
+			date = date[:10]
+		}
+		pdf.CellFormat(35, 7, date, "1", 0, "L", false, 0, "")
+
+		itemBuf := t.Description
+		if len(t.Context) > 0 {
+			first := true
+			itemBuf += " ("
+			for k, v := range t.Context {
+				if !first {
+					itemBuf += ", "
+				}
+				itemBuf += fmt.Sprintf("%s=%v", k, v)
+				first = false
+			}
+			itemBuf += ")"
+		}
+		x := pdf.GetX()
+		y := pdf.GetY()
+		pdf.MultiCell(85, 7, itemBuf, "1", "L", false)
+		pdf.SetXY(x+85, y)
+		pdf.CellFormat(20, 7, fmt.Sprintf("%.0f", t.Tax), "1", 0, "C", false, 0, "")
+		priceStr := fmt.Sprintf("%.2f", t.Amount)
+		if t.Type != "debit" && t.Amount > 0 {
+			priceStr = "-" + priceStr
+		}
+		pdf.CellFormat(0, 7, priceStr, "1", 1, "R", false, 0, "")
+	}
+
+	// Totals, Credits, Payments, Previous Balance
+	pdf.Ln(4)
+	printKeyValue := func(key string, value float64, bold bool) {
+		if bold {
+			pdf.SetFont("Arial", "B", 10)
+		} else {
+			pdf.SetFont("Arial", "", 10)
+		}
+		pdf.CellFormat(40, 6, key, "", 0, "L", false, 0, "")
+		valStr := fmt.Sprintf("%.2f", value)
+		pdf.CellFormat(0, 6, valStr, "", 1, "R", false, 0, "")
+	}
+
+	printKeyValue("Credits", inv.TotalCredits, false)
+	printKeyValue("Payments", inv.TotalPayments, false)
+	printKeyValue("Previous Balance", inv.OldBalance, false)
+	printKeyValue("Total", inv.Amount, true)
+
+	pdf.Ln(6)
+
+	var buf bytes.Buffer
+	if err := pdf.Output(&buf); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
 }
 
 func (service *Service) getInvoiceTransactions(ctx context.Context, id int64, page int, perPage int) (billing.Transactions, error) {
