@@ -62,14 +62,14 @@ func (service *Service) GetOrgConfiguration(c *contextmodel.ReqContext) response
 	return response.JSON(http.StatusOK, configuration)
 }
 
-func (service *Service) GetOrgConfigurations(ctx context.Context, orgId int64, config string) ([]byte, error) {
+func (service *Service) GetOrgConfigurations(ctx context.Context, orgId int64, config string) (resource.OrgConfiguration, error) {
 	dto := &resource.GetOrgConfigurationMsg{
 		OrgId: orgId,
 		Type:  config,
 	}
 	body, err := json.Marshal(dto)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed marshal update")
+		return resource.OrgConfiguration{}, errors.Wrap(err, "failed marshal update")
 	}
 	url := fmt.Sprintf("%sapi/orgs/%d/configurations/%s", service.cfg.ResourceHost, orgId, config)
 	req := &devicemanagement.RestRequest{
@@ -78,15 +78,19 @@ func (service *Service) GetOrgConfigurations(ctx context.Context, orgId int64, c
 		HttpMethod: http.MethodPost,
 	}
 	if err := service.devMgmt.RestRequest(ctx, req); err != nil {
-		return nil, errors.Wrap(err, "failed to get org configurations")
+		return resource.OrgConfiguration{}, errors.Wrap(err, "failed to get org configurations")
 	}
 	if req.StatusCode != http.StatusOK {
 		var errResponse client.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			return nil, errors.Wrap(err, "failed unmarshal error ")
+			return resource.OrgConfiguration{}, errors.Wrap(err, "failed unmarshal error ")
 		}
-		return nil, errors.New(errResponse.Message)
+		return resource.OrgConfiguration{}, errors.New(errResponse.Message)
 	}
 
-	return req.Response, nil
+	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
+		return resource.OrgConfiguration{}, errors.Wrap(err, "failed unmarshal error ")
+	}
+
+	return dto.Result, nil
 }
