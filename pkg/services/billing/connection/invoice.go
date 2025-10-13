@@ -351,7 +351,9 @@ func (service *Service) GetInvoiceByExt(c *contextmodel.ReqContext) response.Res
 		return response.Error(http.StatusInternalServerError, "failed to build pdf", err)
 	}
 
-	return response.JSONDownload(http.StatusOK, pdfBytes, fmt.Sprintf("invoice-%s.pdf", dto.Result.InvoiceExt))
+	return response.Respond(http.StatusOK, pdfBytes).
+		SetHeader("Content-Type", "application/pdf").
+		SetHeader("Content-Disposition", fmt.Sprintf(`attachment; filename="invoice-%s.pdf"`, dto.Result.InvoiceExt))
 }
 func (service *Service) truncateWithEllipsis(s string, max int) string {
 	if len(s) <= max {
