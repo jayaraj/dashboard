@@ -51,4 +51,8 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 		invoicesRoute.Get("/number/:number", routing.Wrap(service.GetInvoiceByExt))
 	})
 
+	routeRegister.Group("api/reports", func(reportsRoute routing.RouteRegister) {
+		reportsRoute.Get("/connections/:number", routing.Wrap(service.GetReportByConnectionExt))
+	})
+
 }

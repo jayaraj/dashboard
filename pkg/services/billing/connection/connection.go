@@ -251,27 +251,35 @@ func (service *Service) GetConnectionByExt(c *contextmodel.ReqContext) response.
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
-	dto := billing.GetConnectionByExtMsg{}
+	connection, err := service.getConnectionByExt(c.Req.Context(), number)
+	if err != nil {
+		return response.Error(http.StatusInternalServerError, "failed to get connection", err)
+	}
+	return response.JSON(http.StatusOK, connection)
+}
+
+func (service *Service) getConnectionByExt(ctx context.Context, number int64) (billing.Connection, error) {
+	var conn billing.Connection
 	url := fmt.Sprintf("%sapi/connections/number/%d", service.cfg.BillingHost, number)
 	req := &devicemanagement.RestRequest{
 		Url:        url,
 		Request:    nil,
 		HttpMethod: http.MethodGet,
 	}
-	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
-		return response.Error(500, "failed to get connection", err)
+	if err := service.devMgmt.RestRequest(ctx, req); err != nil {
+		return conn, err
 	}
 	if req.StatusCode != http.StatusOK {
 		var errResponse client.ErrorResponse
 		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
-			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+			return conn, err
 		}
-		return response.Error(req.StatusCode, errResponse.Message, nil)
+		return conn, fmt.Errorf("failed to get connection: %s", errResponse.Message)
 	}
-	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
-		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	if err := json.Unmarshal(req.Response, &conn); err != nil {
+		return conn, err
 	}
-	return response.JSON(http.StatusOK, dto.Result)
+	return conn, nil
 }
 
 func (service *Service) DeleteConnection(c *contextmodel.ReqContext) response.Response {

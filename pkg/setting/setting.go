@@ -1312,7 +1312,7 @@ func (cfg *Cfg) Load(args CommandLineArgs) error {
 	cfg.DatabaseInstrumentQueries = databaseSection.Key("instrument_queries").MustBool(false)
 
 	logSection := iniFile.Section("log")
-	cfg.UserFacingDefaultError = logSection.Key("user_facing_default_error").MustString("please inspect Grafana server log for details")
+	cfg.UserFacingDefaultError = logSection.Key("user_facing_default_error").MustString("please inspect  server log for details")
 
 	cfg.readFeatureManagementConfig()
 	cfg.readPublicDashboardsSettings()

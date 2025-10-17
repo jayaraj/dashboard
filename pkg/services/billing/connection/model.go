@@ -1,5 +1,12 @@
 package connection
 
+import (
+	"time"
+
+	"github.com/jayaraj/messages/client/billing"
+	"github.com/jayaraj/messages/client/watermeter"
+)
+
 type SubscribeConnectionMsg struct {
 	Number float64 `json:"number" validate:"required" binding:"required"`
 }
@@ -47,8 +54,58 @@ type OrgDetails struct {
 }
 
 type ConnectionDetails struct {
-	Name     string `json:"name"`
-	Address1 string `json:"address1"`
-	Address2 string `json:"address2"`
-	CityZip  string `json:"city_zip"`
+	OrgId         int64  `json:"org_id"`
+	Name          string `json:"name"`
+	Email         string `json:"email"`
+	Phone         string `json:"phone"`
+	ConnectionExt string `json:"connection_ext"`
+	Status        string `json:"status"`
+	Address1      string `json:"address1"`
+	Address2      string `json:"address2"`
+	City          string `json:"city"`
+	Pincode       string `json:"pincode"`
+	CityZip       string `json:"city_zip"`
+}
+
+type Report struct {
+	Connection       billing.Connection                             `json:"connection"`
+	Alerts           watermeter.AlertStatsResponse                  `json:"alerts"`
+	BillDetails      watermeter.BillDetailsResponse                 `json:"bill_details"`
+	WeeklyComparison watermeter.WeeklyConsumptionComparisonResponse `json:"weekly_comparison"`
+	DailyUsage       ChartData                                      `json:"daily_usage"`
+	MonthlyBills     ChartData                                      `json:"monthly_bills"`
+	MonthlyUsage     ChartData                                      `json:"monthly_usage"`
+	GroupComparison  watermeter.GroupComparisonResponse             `json:"group_comparison"`
+	Assets           watermeter.Series                              `json:"assets"`
+}
+
+type GroupComparison struct {
+	Precent          float64 `json:"percent"`
+	ConnectionsCount int64   `json:"connections_count"`
+	Usage            float64 `json:"usage"`
+	GroupUsage       float64 `json:"group_usage"`
+	UsageUp          bool    `json:"usage_up"`
+}
+
+type BillDetails struct {
+	BillPlan        string    `json:"bill_plan"`
+	BillDate        time.Time `json:"bill_date"`     // report.Billing.BillDate.Format("Jan 2, 2006")
+	BilledAmount    float64   `json:"billed_amount"` // fmt.Sprintf("Rs. %0.0f", report.Billing.Amount)
+	PreviousBalance string    `json:"previous_balance"`
+}
+
+type ChartData struct {
+	Labels     []string    `json:"labels"`
+	Categories []string    `json:"categories"`
+	Data       [][]float64 `json:"data"`
+}
+
+type Alerts struct {
+	Count  int64            `json:"count"`
+	Alerts map[string]int64 `json:"alerts"`
+}
+
+type Header struct {
+	Text  string
+	Index int64
 }

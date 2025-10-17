@@ -15,7 +15,7 @@ import (
 func TestMacroEngine(t *testing.T) {
 	engine := &mySQLMacroEngine{
 		logger:    backend.NewLoggerWith("logger", "test"),
-		userError: "inspect Grafana server log for details",
+		userError: "inspect server log for details",
 	}
 	query := &backend.DataQuery{}
 
@@ -188,7 +188,7 @@ func TestMacroEngine(t *testing.T) {
 
 		for _, tc := range tcs {
 			_, err := engine.Interpolate(&backend.DataQuery{}, backend.TimeRange{}, tc)
-			require.Equal(t, "invalid query - inspect Grafana server log for details", err.Error())
+			require.Equal(t, "invalid query - inspect server log for details", err.Error())
 		}
 	})
 }
