@@ -3,6 +3,7 @@ package connection
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/grafana/grafana/pkg/api"
 	"github.com/grafana/grafana/pkg/api/routing"
@@ -27,6 +28,7 @@ type Service struct {
 	acService     accesscontrol.Service
 	log           log.Logger
 	bus           bus.Bus
+	reportChan    chan TriggerReportGenerationMsg
 }
 
 func ProvideService(
@@ -47,12 +49,14 @@ func ProvideService(
 		acService:     acService,
 		bus:           bus,
 		log:           log.New("connection.service"),
+		reportChan:    make(chan TriggerReportGenerationMsg, 1000),
 	}
 	if err := service.declareFixedRoles(acService); err != nil {
 		return err
 	}
 	service.registerAPIEndpoints(hs, routeRegister)
 	bus.AddEventListener(service.ProcessObjectFromRecord)
+	devMgmt.RegisterBackgroundService(service)
 	service.log.Info("Loaded connection")
 	return nil
 }
@@ -78,4 +82,28 @@ func (service *Service) ProcessObjectFromRecord(ctx context.Context, msg *device
 		return nil
 	}
 	return nil
+}
+
+func (s *Service) Run(ctx context.Context) (err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			switch t := r.(type) {
+			case error:
+				err = serviceerrors.NewServiceError(serviceerrors.ErrExternalError, errors.Wrapf(r.(error), "connections background service panic recovered"))
+			default:
+				err = serviceerrors.NewServiceError(serviceerrors.ErrExternalError, fmt.Errorf("connections background service unknown panic error: %v", t))
+			}
+		}
+	}()
+	for {
+		select {
+		case request := <-s.reportChan:
+			if err := s.TriggerReportGeneration(ctx, &request); err != nil {
+				s.log.Error("failed generating report file", err.Error())
+			}
+		case <-ctx.Done():
+			s.log.Info("connections background service closed")
+			return ctx.Err()
+		}
+	}
 }

@@ -109,3 +109,8 @@ type Header struct {
 	Text  string
 	Index int64
 }
+
+type TriggerReportGenerationMsg struct {
+	Number int64  `json:"number" binding:"Required"`
+	WaId   string `json:"wa_id" binding:"Required"`
+}

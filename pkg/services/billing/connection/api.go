@@ -52,7 +52,8 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 	})
 
 	routeRegister.Group("api/reports", func(reportsRoute routing.RouteRegister) {
-		reportsRoute.Get("/connections/:number", routing.Wrap(service.GetReportByConnectionExt))
+		reportsRoute.Get("/connections/:number", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetReportByConnectionExt))
+		reportsRoute.Post("/generate", routing.Wrap(service.GenerateReport))
 	})
 
 }

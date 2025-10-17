@@ -3,6 +3,7 @@ package connection
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"sort"
@@ -15,6 +16,7 @@ import (
 	"github.com/grafana/grafana/pkg/web"
 	"github.com/jayaraj/infra/utils"
 	"github.com/jayaraj/messages/client"
+	"github.com/jayaraj/messages/client/alerts"
 	"github.com/jayaraj/messages/client/watermeter"
 	"github.com/phpdave11/gofpdf"
 	"github.com/pkg/errors"
@@ -47,7 +49,69 @@ func (service *Service) GetReportByConnectionExt(c *contextmodel.ReqContext) res
 
 	return response.Respond(http.StatusOK, pdfBytes).
 		SetHeader("Content-Type", "application/pdf").
-		SetHeader("Content-Disposition", fmt.Sprintf(`attachment; filename="report-%s.pdf"`, "number"))
+		SetHeader("Content-Disposition", fmt.Sprintf(`attachment; filename="report-%d.pdf"`, connection.ConnectionExt))
+}
+
+func (service *Service) GenerateReport(c *contextmodel.ReqContext) response.Response {
+	dto := TriggerReportGenerationMsg{}
+	if err := web.Bind(c.Req, &dto); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+
+	service.reportChan <- dto
+	return response.Success("generated")
+}
+
+func (service *Service) TriggerReportGeneration(ctx context.Context, msg *TriggerReportGenerationMsg) error {
+	connection, err := service.getConnectionByExt(ctx, msg.Number)
+	if err != nil {
+		return err
+	}
+	found := false
+	if connection.Extras != nil {
+		if waIds, ok := connection.Extras["wa_id"].([]interface{}); ok {
+			for _, w := range waIds {
+				if id, ok := w.(string); ok && id == msg.WaId {
+					found = true
+					break
+				}
+			}
+		}
+	}
+	if !found {
+		service.log.Info("wa_id not subscribed for report generation", "number", msg.Number, "wa_id", msg.WaId)
+		return nil
+	}
+
+	report := Report{
+		Connection: connection,
+	}
+
+	if err := service.runParallelCancelOnError(ctx, &report); err != nil {
+		return err
+	}
+
+	pdfBytes, err := service.buildReportPDF(report)
+	if err != nil {
+		return err
+	}
+
+	triggerGrafo := &alerts.TriggerGrafoMsg{
+		OrgId: connection.OrgId,
+		Topic: "report",
+		Payload: map[string]any{
+			"file":     pdfBytes,
+			"wa_id":    msg.WaId,
+			"filename": fmt.Sprintf(`report-%d.pdf`, connection.ConnectionExt),
+		},
+	}
+	c, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	body, err := json.Marshal(triggerGrafo)
+	if err != nil {
+		return errors.Wrap(err, "failed to marshal trigger grafo msg")
+	}
+	return service.devMgmt.Publish(c, client.ReaderTopic(alerts.TriggerGrafo), body)
 }
 
 func (service *Service) getAlertStats(ctx context.Context, report *Report) error {
@@ -184,7 +248,7 @@ func (service *Service) getDailyConsumption(ctx context.Context, report *Report)
 		OrgId:       uint64(report.Connection.OrgId),
 		Measurement: "wm",
 		UtcOffset:   330,
-		From:        time.Now().AddDate(0, 0, -17),
+		From:        time.Now().AddDate(0, 0, -16),
 		To:          time.Now(),
 		GroupId:     report.Connection.GroupId,
 		GroupPath:   report.Connection.GroupPathId,
