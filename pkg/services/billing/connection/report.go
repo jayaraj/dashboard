@@ -510,11 +510,27 @@ func (service *Service) connectionDetailsSection(pdf *gofpdf.Fpdf, report Report
 	pdf.Ln(1)
 }
 
+func (service *Service) fixSymbols(s string) string {
+	replacements := map[string]string{
+		"µ": string([]byte{0xB5}), // micro symbol (µ)
+		"₹": "Rs.",                // Rupee fallback
+		"°": string([]byte{0xB0}), // degree symbol
+		"–": "-",                  // en dash
+	}
+
+	for k, v := range replacements {
+		s = strings.ReplaceAll(s, k, v)
+	}
+	return s
+}
+
 func (service *Service) formatLiters(liters float64) string {
 	unit := "L"
 	value := liters
 
 	switch {
+	case liters == 0:
+		unit = "L"
 	case liters < 0.001:
 		value = liters * 1_000_000
 		unit = "µL" // microliters
@@ -529,7 +545,7 @@ func (service *Service) formatLiters(liters float64) string {
 		unit = "kL" // kiloliters
 	}
 
-	return fmt.Sprintf("%.3g %s", value, unit)
+	return service.fixSymbols(fmt.Sprintf("%.3g %s", value, unit))
 }
 
 func (service *Service) formatPercentage(percentage float64, indicator watermeter.IndicatorType) string {
