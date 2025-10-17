@@ -121,7 +121,7 @@ func (service *Service) TriggerReportGeneration(ctx context.Context, msg *Trigge
 		Topic: "report",
 		Payload: map[string]any{
 			"file":     pdfBytes,
-			"wa_id":    msg.WaId,
+			"wa_id":    []string{msg.WaId},
 			"filename": fmt.Sprintf(`report-%d.pdf`, connection.ConnectionExt),
 		},
 	}
