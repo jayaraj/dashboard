@@ -71,9 +71,29 @@ func (service *Service) TriggerReportGeneration(ctx context.Context, msg *Trigge
 	if connection.Extras != nil {
 		if waIds, ok := connection.Extras["wa_id"].([]interface{}); ok {
 			for _, w := range waIds {
-				if id, ok := w.(string); ok && id == msg.WaId {
-					found = true
-					break
+				switch id := w.(type) {
+				case int64:
+					x, _ := strconv.Atoi(msg.WaId)
+					if int(id) == x {
+						found = true
+						break
+					}
+				case float64:
+					x, _ := strconv.Atoi(msg.WaId)
+					if int(id) == x {
+						found = true
+						break
+					}
+				case string:
+					if id == msg.WaId {
+						found = true
+						break
+					}
+				default:
+					if fmt.Sprintf("%v", w) == msg.WaId {
+						found = true
+						break
+					}
 				}
 			}
 		}
