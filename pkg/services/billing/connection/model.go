@@ -111,6 +111,7 @@ type Header struct {
 }
 
 type TriggerReportGenerationMsg struct {
-	Number int64  `json:"number" binding:"Required"`
-	WaId   string `json:"wa_id" binding:"Required"`
+	Connection billing.Connection `json:"-"`
+	Number     int64              `json:"number" binding:"Required"`
+	WaId       string             `json:"wa_id" binding:"Required"`
 }

@@ -58,14 +58,9 @@ func (service *Service) GenerateReport(c *contextmodel.ReqContext) response.Resp
 		return response.Error(http.StatusBadRequest, "bad request data", err)
 	}
 
-	service.reportChan <- dto
-	return response.Success("generated")
-}
-
-func (service *Service) TriggerReportGeneration(ctx context.Context, msg *TriggerReportGenerationMsg) error {
-	connection, err := service.getConnectionByExt(ctx, msg.Number)
+	connection, err := service.getConnectionByExt(c.Req.Context(), dto.Number)
 	if err != nil {
-		return err
+		return response.Error(http.StatusBadRequest, "getting connection number failed", err)
 	}
 	found := false
 	if connection.Extras != nil {
@@ -73,24 +68,24 @@ func (service *Service) TriggerReportGeneration(ctx context.Context, msg *Trigge
 			for _, w := range waIds {
 				switch id := w.(type) {
 				case int64:
-					x, _ := strconv.Atoi(msg.WaId)
+					x, _ := strconv.Atoi(dto.WaId)
 					if int(id) == x {
 						found = true
 						break
 					}
 				case float64:
-					x, _ := strconv.Atoi(msg.WaId)
+					x, _ := strconv.Atoi(dto.WaId)
 					if int(id) == x {
 						found = true
 						break
 					}
 				case string:
-					if id == msg.WaId {
+					if id == dto.WaId {
 						found = true
 						break
 					}
 				default:
-					if fmt.Sprintf("%v", w) == msg.WaId {
+					if fmt.Sprintf("%v", w) == dto.WaId {
 						found = true
 						break
 					}
@@ -99,12 +94,17 @@ func (service *Service) TriggerReportGeneration(ctx context.Context, msg *Trigge
 		}
 	}
 	if !found {
-		service.log.Info("wa_id not subscribed for report generation", "number", msg.Number, "wa_id", msg.WaId)
-		return nil
+		return response.Error(http.StatusBadRequest, "wa_id not subscribed for report generation", nil)
 	}
 
+	service.reportChan <- dto
+	return response.Success("generated")
+}
+
+func (service *Service) TriggerReportGeneration(ctx context.Context, msg *TriggerReportGenerationMsg) error {
+
 	report := Report{
-		Connection: connection,
+		Connection: msg.Connection,
 	}
 
 	if err := service.runParallelCancelOnError(ctx, &report); err != nil {
@@ -117,13 +117,13 @@ func (service *Service) TriggerReportGeneration(ctx context.Context, msg *Trigge
 	}
 
 	triggerGrafo := &alerts.TriggerGrafoMsg{
-		OrgId: connection.OrgId,
+		OrgId: msg.Connection.OrgId,
 		Topic: "report",
 		Payload: map[string]any{
 			"command":  "report",
 			"file":     pdfBytes,
 			"wa_id":    []string{msg.WaId},
-			"filename": fmt.Sprintf(`report-%d.pdf`, connection.ConnectionExt),
+			"filename": fmt.Sprintf(`report-%d.pdf`, msg.Connection.ConnectionExt),
 		},
 	}
 	c, cancel := context.WithTimeout(ctx, 5*time.Second)
