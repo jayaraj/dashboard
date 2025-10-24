@@ -62,6 +62,7 @@ func (service *Service) GenerateReport(c *contextmodel.ReqContext) response.Resp
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "getting connection number failed", err)
 	}
+	dto.Connection = connection
 	found := false
 	if connection.Extras != nil {
 		if waIds, ok := connection.Extras["wa_id"].([]interface{}); ok {
