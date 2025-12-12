@@ -35,6 +35,7 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 		connectionsRoute.Put("/number/:number/subscribe", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.SubscribeConnectionByExt))
 		connectionsRoute.Put("/number/:number/unsubscribe", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.UnsubscribeConnectionByExt))
 
+		connectionsRoute.Get("/:connectionId/invoice", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetLatestInvoiceByConnectionId))
 		connectionsRoute.Get("/:connectionId/invoices", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetInvoices))
 		connectionsRoute.Post("/:connectionId/invoices", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.CreateInvoice))
 		connectionsRoute.Post("/:connectionId/transactions", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.CreateTransaction))

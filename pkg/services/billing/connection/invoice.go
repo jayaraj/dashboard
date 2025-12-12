@@ -58,6 +58,35 @@ func (service *Service) GetInvoices(c *contextmodel.ReqContext) response.Respons
 	return response.JSON(http.StatusOK, dto.Result)
 }
 
+func (service *Service) GetLatestInvoiceByConnectionId(c *contextmodel.ReqContext) response.Response {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+
+	url := fmt.Sprintf("%sapi/connections/%d/invoice", service.cfg.BillingHost, id)
+	req := &devicemanagement.RestRequest{
+		Url:        url,
+		Request:    nil,
+		HttpMethod: http.MethodGet,
+	}
+	if err := service.devMgmt.RestRequest(c.Req.Context(), req); err != nil {
+		return response.Error(500, "failed to get", err)
+	}
+	if req.StatusCode != http.StatusOK {
+		var errResponse client.ErrorResponse
+		if err := json.Unmarshal(req.Response, &errResponse); err != nil {
+			return response.Error(req.StatusCode, "failed unmarshal error ", err)
+		}
+		return response.Error(req.StatusCode, errResponse.Message, nil)
+	}
+	dto := billing.GetLatestInvoiceByConnectionIdMsg{}
+	if err := json.Unmarshal(req.Response, &dto.Result); err != nil {
+		return response.Error(req.StatusCode, "failed unmarshal error ", err)
+	}
+	return response.JSON(http.StatusOK, dto.Result)
+}
+
 func (service *Service) CreateInvoice(c *contextmodel.ReqContext) response.Response {
 	connection, access := service.IsConnectionAccessible(c)
 	if !access {
