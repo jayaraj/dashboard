@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/grafana/grafana/pkg/api/response"
+	"github.com/grafana/grafana/pkg/models/roletype"
 	contextmodel "github.com/grafana/grafana/pkg/services/contexthandler/model"
 	"github.com/grafana/grafana/pkg/services/devicemanagement"
 	"github.com/grafana/grafana/pkg/web"
@@ -58,13 +59,20 @@ func (service *Service) GetInvoices(c *contextmodel.ReqContext) response.Respons
 	return response.JSON(http.StatusOK, dto.Result)
 }
 
-func (service *Service) GetLatestInvoiceByConnectionId(c *contextmodel.ReqContext) response.Response {
-	id, err := strconv.ParseInt(web.Params(c.Req)[":connectionId"], 10, 64)
+func (service *Service) GetLatestInvoiceByExt(c *contextmodel.ReqContext) response.Response {
+	if !c.GetOrgRole().Includes(roletype.RoleSuperAdmin) && !c.IsGrafanaAdmin {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	number, err := strconv.ParseInt(web.Params(c.Req)[":number"], 10, 64)
 	if err != nil {
 		return response.Error(http.StatusBadRequest, "id is invalid", err)
 	}
+	connection, err := service.getConnectionByExt(c.Req.Context(), number)
+	if err != nil {
+		return response.Error(http.StatusInternalServerError, "failed to get connection", err)
+	}
 
-	url := fmt.Sprintf("%sapi/connections/%d/invoice", service.cfg.BillingHost, id)
+	url := fmt.Sprintf("%sapi/connections/%d/invoice", service.cfg.BillingHost, connection.Id)
 	req := &devicemanagement.RestRequest{
 		Url:        url,
 		Request:    nil,
