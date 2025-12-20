@@ -56,8 +56,8 @@ COPY pkg/util/xorm/go.* pkg/util/xorm/
 
 RUN go mod download
 RUN if [[ "$BINGO" = "true" ]]; then \
+      go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3 && \
       go install github.com/bwplotka/bingo@v0.9.0 && \
-      bingo get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3 && \
       bingo get -v; \
     fi
 
