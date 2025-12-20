@@ -3,7 +3,7 @@
 ARG BASE_IMAGE=alpine:3.18.3
 ARG JS_IMAGE=node:20-alpine3.18
 ARG JS_PLATFORM=linux/amd64
-ARG GO_IMAGE=golang:1.24.2-alpine3.21
+ARG GO_IMAGE=golang:1.25.0-bookworm
 
 ARG GO_SRC=go-builder
 ARG JS_SRC=js-builder
@@ -56,7 +56,7 @@ COPY pkg/util/xorm/go.* pkg/util/xorm/
 
 RUN go mod download
 RUN if [[ "$BINGO" = "true" ]]; then \
-      go install github.com/bwplotka/bingo@v0.9.0 && \
+      go install github.com/bwplotka/bingo@v0.10.0 && \
       bingo get -v; \
     fi
 
