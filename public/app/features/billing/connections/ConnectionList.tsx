@@ -22,6 +22,8 @@ import {
   Icon,
   Select,
   InteractiveTable,
+  Modal,
+  Field,
 } from '@grafana/ui';
 import { SlideDown } from 'app/core/components/Animations/SlideDown';
 import { CloseButton } from 'app/core/components/CloseButton/CloseButton';
@@ -85,6 +87,9 @@ export const ConnectionList = ({
   const [otp, setOtp] = useState<string>('');
   const [connectionExt, setConnectionExt] = useState<number>(0);
   const [noConnections, setNoConnections] = useState<boolean>(true);
+  const [showDownloadModal, setShowDownloadModal] = useState<boolean>(false);
+  const [downloadPage, setDownloadPage] = useState<number>(1);
+  const [downloadPerPage, setDownloadPerPage] = useState<number>(1000);
 
   useEffect(() => {
     loadConnections();
@@ -225,11 +230,49 @@ export const ConnectionList = ({
     loadConnections();
   };
 
+  const handleDownloadCSV = async () => {
+    try {
+      const response = await fetch(`/api/connections/csvfile?page=${downloadPage}&perPage=${downloadPerPage}`);
+      if (!response.ok) {
+        throw new Error('Failed to download CSV');
+      }
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+
+      // Extract filename from Content-Disposition header if available
+      const contentDisposition = response.headers.get('content-disposition');
+      let filename = `connections_page_${downloadPage}.csv`;
+
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+        if (filenameMatch && filenameMatch[1]) {
+          // Remove any quotes from the filename
+          filename = filenameMatch[1].replace(/['"]/g, '');
+        }
+      }
+
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      setShowDownloadModal(false);
+      appEvents.emit(AppEvents.alertSuccess, ['CSV downloaded successfully']);
+    } catch (error) {
+      appEvents.emit(AppEvents.alertError, ['Failed to download CSV']);
+    }
+  };
+
   return (
     <Page
       navId="billing-connections"
       actions={
         <Stack gap={1} direction="row">
+          <Button variant="secondary" onClick={() => setShowDownloadModal(true)}>
+            Download CSV
+          </Button>
           <LinkButton href={canCreate ? 'org/connections/new' : '#'} disabled={!canCreate}>
             {`New Connection`}
           </LinkButton>
@@ -239,6 +282,38 @@ export const ConnectionList = ({
         </Stack>
       }
     >
+      <Modal title="Download Connections CSV" isOpen={showDownloadModal} onDismiss={() => setShowDownloadModal(false)}>
+        <Form maxWidth="none" onSubmit={handleDownloadCSV}>
+          {() => (
+            <Stack direction="column" gap={2}>
+              <Field label="Page Number">
+                <Input
+                  type="number"
+                  value={downloadPage}
+                  onChange={(e) => setDownloadPage(Number(e.currentTarget.value))}
+                  min={1}
+                />
+              </Field>
+              <Field label="Items Per Page">
+                <Input
+                  type="number"
+                  value={downloadPerPage}
+                  onChange={(e) => setDownloadPerPage(Number(e.currentTarget.value))}
+                  min={1}
+                />
+              </Field>
+              <Stack gap={1} direction="row" justifyContent="flex-end">
+                <Button variant="secondary" onClick={() => setShowDownloadModal(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary">
+                  Download
+                </Button>
+              </Stack>
+            </Stack>
+          )}
+        </Form>
+      </Modal>
       <Page.Contents isLoading={!hasFetched}>
         {noConnections ? (
           <>

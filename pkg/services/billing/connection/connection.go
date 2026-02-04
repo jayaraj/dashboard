@@ -1,7 +1,9 @@
 package connection
 
 import (
+	"bytes"
 	"context"
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -97,6 +99,93 @@ func (service *Service) IsConnectionGroupAccessible(c *contextmodel.ReqContext, 
 	//SetCache
 	service.devMgmt.SetCache(c.Req.Context(), cacheKey, access)
 	return access
+}
+
+func (service *Service) GetOrgConnectionsCSV(c *contextmodel.ReqContext) response.Response {
+	perPage := c.QueryInt("perPage")
+	if perPage <= 0 {
+		perPage = 20
+	}
+	page := c.QueryInt("page")
+	if page <= 0 {
+		page = 1
+	}
+	msg := &billing.GetAllOrgConnectionsMsg{
+		OrgId:   c.OrgID,
+		Page:    int64(page),
+		PerPage: int64(perPage),
+	}
+
+	if err := service.devMgmt.RequestTopic(c.Req.Context(), client.BillingTopic(billing.GetAllOrgConnections), msg); err != nil {
+		return response.Error(500, "failed to get org connections", err)
+	}
+
+	// Generate CSV from connections data
+	csvData, err := service.generateConnectionsCSV(msg.Result.Connections)
+	if err != nil {
+		return response.Error(500, "failed to generate csv", err)
+	}
+
+	// Return CSV as a downloadable file
+	return response.Respond(http.StatusOK, csvData.Bytes()).
+		SetHeader("Content-Type", "text/csv").
+		SetHeader("Content-Disposition", "attachment; filename=connections.csv")
+}
+
+func (service *Service) generateConnectionsCSV(connections []billing.Connection) (*bytes.Buffer, error) {
+	var buf bytes.Buffer
+	writer := csv.NewWriter(&buf)
+
+	// Write CSV header
+	header := []string{
+		"connection",
+		"profile",
+		"status",
+		"name",
+		"phone",
+		"email",
+		"address1",
+		"address2",
+		"city",
+		"state",
+		"country",
+		"pincode",
+		"latitude",
+		"longitude",
+	}
+	if err := writer.Write(header); err != nil {
+		return nil, err
+	}
+
+	// Write data rows
+	for _, conn := range connections {
+		record := []string{
+			strconv.FormatInt(conn.ConnectionExt, 10),
+			conn.Profile,
+			conn.Status,
+			conn.Name,
+			conn.Phone,
+			conn.Email,
+			conn.Address1,
+			conn.Address2,
+			conn.City,
+			conn.State,
+			conn.Country,
+			conn.Pincode,
+			fmt.Sprintf("%f", conn.Latitude),
+			fmt.Sprintf("%f", conn.Longitude),
+		}
+		if err := writer.Write(record); err != nil {
+			return nil, err
+		}
+	}
+
+	writer.Flush()
+	if err := writer.Error(); err != nil {
+		return nil, err
+	}
+
+	return &buf, nil
 }
 
 func (service *Service) CreateConnection(c *contextmodel.ReqContext) response.Response {

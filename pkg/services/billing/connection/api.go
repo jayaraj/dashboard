@@ -19,6 +19,7 @@ func (service *Service) registerAPIEndpoints(httpServer *api.HTTPServer, routeRe
 	//APIs
 	routeRegister.Group("api/connections", func(connectionsRoute routing.RouteRegister) {
 		connectionsRoute.Post("/", authorize(accesscontrol.EvalPermission(ActionCreate)), routing.Wrap(service.CreateConnection))
+		connectionsRoute.Get("/csvfile", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetOrgConnectionsCSV))
 		connectionsRoute.Get("/", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.SearchConnections))
 		connectionsRoute.Put("/:connectionId", authorize(accesscontrol.EvalPermission(ActionWrite)), routing.Wrap(service.UpdateConnection))
 		connectionsRoute.Get("/:connectionId", authorize(accesscontrol.EvalPermission(ActionRead)), routing.Wrap(service.GetConnectionById))
