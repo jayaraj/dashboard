@@ -206,7 +206,7 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       )}
 
       <div className={styles.wrapper}>
-        <Button onClick={downloadCsv} disabled={downloading} variant="primary" size="lg">
+        <Button onClick={downloadCsv} disabled={downloading} variant="primary">
           {downloading ? 'Downloading...' : options.heading || 'Download CSV'}
         </Button>
 
