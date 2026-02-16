@@ -3,8 +3,10 @@ import { PanelPlugin } from '@grafana/data';
 import { ApplicationApiEditor } from './components/ApplicationApiEditor';
 import { CsvDownloadPanel } from './components/CsvDownloadPanel';
 import { DatasourceEditor } from './components/DatasourceEditor';
+import { FieldFilterEditor } from './components/FieldFilterEditor';
 import { QueryArgumentsEditor } from './components/QueryArgumentsEditor';
-import { CsvDownloadOptions, QueryArgument, AppApiValue } from './types';
+import { TransformOptionsEditor } from './components/TransformOptionsEditor';
+import { CsvDownloadOptions, QueryArgument, AppApiValue, FieldFilterOptions, TransformOptions } from './types';
 
 export const plugin = new PanelPlugin<CsvDownloadOptions>(CsvDownloadPanel)
   .useFieldConfig()
@@ -56,5 +58,21 @@ export const plugin = new PanelPlugin<CsvDownloadOptions>(CsvDownloadPanel)
         description: 'Additional query arguments (key-value pairs)',
         editor: QueryArgumentsEditor,
         defaultValue: [] as QueryArgument[],
+      })
+      .addCustomEditor({
+        id: 'fieldFilter',
+        path: 'fieldFilter',
+        name: 'Field Filtering',
+        description: 'Filter fields to include or exclude in the CSV export',
+        editor: FieldFilterEditor,
+        defaultValue: { mode: 'include', fieldNames: [] } as FieldFilterOptions,
+      })
+      .addCustomEditor({
+        id: 'transformations',
+        path: 'transformations',
+        name: 'Data Transformations',
+        description: 'Sort, rename, and convert field types before export',
+        editor: TransformOptionsEditor,
+        defaultValue: {} as TransformOptions,
       });
   });

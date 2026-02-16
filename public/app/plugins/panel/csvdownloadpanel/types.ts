@@ -12,6 +12,43 @@ export interface CsvDownloadOptions extends ui.SingleStatBaseOptions {
   datasource: string;
   appApi: AppApiValue;
   queryArguments: QueryArgument[];
+  // Field filtering options
+  fieldFilter?: FieldFilterOptions;
+  // Data transformation options
+  transformations?: TransformOptions;
+}
+
+export interface FieldFilterOptions {
+  // Filter mode: 'include' keeps only selected fields, 'exclude' removes selected fields
+  mode: 'include' | 'exclude';
+  // List of field names to include/exclude
+  fieldNames: string[];
+  // Regex pattern for filtering (alternative to fieldNames)
+  pattern?: string;
+}
+
+export interface TransformOptions {
+  // Sort options
+  sortBy?: SortByOption;
+  // Rename fields options
+  renameFields?: FieldRename[];
+  // Convert field types
+  convertTypes?: FieldTypeConversion[];
+}
+
+export interface SortByOption {
+  field: string;
+  order: 'asc' | 'desc';
+}
+
+export interface FieldRename {
+  from: string;
+  to: string;
+}
+
+export interface FieldTypeConversion {
+  field: string;
+  type: 'string' | 'number' | 'time' | 'boolean';
 }
 
 // Keep these for backwards compatibility - values are read from appApi

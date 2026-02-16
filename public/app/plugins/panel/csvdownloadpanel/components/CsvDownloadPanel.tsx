@@ -2,13 +2,24 @@ import { saveAs } from 'file-saver';
 import React, { useState, useRef } from 'react';
 import { lastValueFrom, isObservable } from 'rxjs';
 
-import { PanelProps, dateTimeFormat, toCSV, DataFrame, CSVConfig, DataQueryRequest, CoreApp } from '@grafana/data';
+import {
+  PanelProps,
+  dateTimeFormat,
+  toCSV,
+  DataFrame,
+  CSVConfig,
+  DataQueryRequest,
+  CoreApp,
+  FieldType,
+  getFieldDisplayName,
+  stringToJsRegex,
+} from '@grafana/data';
 import { getTemplateSrv, getDataSourceSrv } from '@grafana/runtime';
 import { Button, useTheme2, Icon, Tooltip } from '@grafana/ui';
 import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 
 import { Query } from '../../../datasource/grafoservice/types';
-import { CsvDownloadOptions, getStyles } from '../types';
+import { CsvDownloadOptions, getStyles, FieldFilterOptions, TransformOptions } from '../types';
 
 interface Props extends PanelProps<CsvDownloadOptions> {}
 
@@ -25,6 +36,174 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
   const isDownloadingRef = useRef(false);
 
   const PER_PAGE = options.perPage || 100;
+
+  // Apply field filtering to a dataframe
+  const applyFieldFilter = (dataFrame: DataFrame, filter?: FieldFilterOptions): DataFrame => {
+    if (!filter || (!filter.fieldNames?.length && !filter.pattern)) {
+      return dataFrame;
+    }
+
+    const fieldsToInclude: string[] = [];
+
+    if (filter.pattern) {
+      // Use regex pattern for filtering
+      try {
+        const regex = stringToJsRegex(filter.pattern);
+        for (const field of dataFrame.fields) {
+          const fieldName = getFieldDisplayName(field, dataFrame);
+          const matches = regex.test(fieldName);
+          if ((filter.mode === 'include' && matches) || (filter.mode === 'exclude' && !matches)) {
+            fieldsToInclude.push(field.name);
+          }
+        }
+      } catch (e) {
+        console.error('Invalid regex pattern:', e);
+        return dataFrame;
+      }
+    } else {
+      // Use field names list for filtering
+      for (const field of dataFrame.fields) {
+        const fieldName = getFieldDisplayName(field, dataFrame);
+        const isInList = filter.fieldNames.includes(fieldName);
+        if ((filter.mode === 'include' && isInList) || (filter.mode === 'exclude' && !isInList)) {
+          fieldsToInclude.push(field.name);
+        }
+      }
+    }
+
+    // Create new dataframe with filtered fields
+    const filteredFields = dataFrame.fields.filter((f) => fieldsToInclude.includes(f.name));
+
+    return {
+      ...dataFrame,
+      fields: filteredFields,
+    };
+  };
+
+  // Apply transformations to a dataframe
+  const applyTransformations = (dataFrame: DataFrame, transforms?: TransformOptions): DataFrame => {
+    if (!transforms) {
+      return dataFrame;
+    }
+
+    let transformedFrame = { ...dataFrame, fields: [...dataFrame.fields] };
+
+    // Apply field renames
+    if (transforms.renameFields?.length) {
+      for (const rename of transforms.renameFields) {
+        if (rename.from && rename.to) {
+          const field = transformedFrame.fields.find((f) => {
+            const displayName = getFieldDisplayName(f, transformedFrame);
+            return displayName === rename.from || f.name === rename.from;
+          });
+          if (field) {
+            field.name = rename.to;
+            if (field.config) {
+              field.config = { ...field.config, displayName: rename.to };
+            }
+          }
+        }
+      }
+    }
+
+    // Apply type conversions
+    if (transforms.convertTypes?.length) {
+      for (const convert of transforms.convertTypes) {
+        if (convert.field && convert.type) {
+          const fieldIndex = transformedFrame.fields.findIndex((f) => {
+            const displayName = getFieldDisplayName(f, transformedFrame);
+            return displayName === convert.field || f.name === convert.field;
+          });
+          if (fieldIndex >= 0) {
+            const field = transformedFrame.fields[fieldIndex];
+            const newValues = field.values.map((v: any) => {
+              switch (convert.type) {
+                case 'string':
+                  return String(v ?? '');
+                case 'number':
+                  return Number(v);
+                case 'boolean':
+                  return Boolean(v);
+                case 'time':
+                  if (typeof v === 'string' || typeof v === 'number') {
+                    return new Date(v).getTime();
+                  }
+                  return v;
+                default:
+                  return v;
+              }
+            });
+
+            let newType = FieldType.string;
+            switch (convert.type) {
+              case 'number':
+                newType = FieldType.number;
+                break;
+              case 'boolean':
+                newType = FieldType.boolean;
+                break;
+              case 'time':
+                newType = FieldType.time;
+                break;
+            }
+
+            transformedFrame.fields[fieldIndex] = {
+              ...field,
+              values: newValues,
+              type: newType,
+            };
+          }
+        }
+      }
+    }
+
+    return transformedFrame;
+  };
+
+  // Apply sorting to dataframes
+  const applySorting = (dataFrames: DataFrame[], sortBy?: { field: string; order: 'asc' | 'desc' }): DataFrame[] => {
+    if (!sortBy?.field) {
+      return dataFrames;
+    }
+
+    // For sorting, we need to merge all dataframes into one, sort, then potentially split
+    // For simplicity, we'll sort each dataframe individually
+    return dataFrames.map((frame) => {
+      const fieldIndex = frame.fields.findIndex((f) => {
+        const displayName = getFieldDisplayName(f, frame);
+        return displayName === sortBy.field || f.name === sortBy.field;
+      });
+
+      if (fieldIndex < 0) {
+        return frame;
+      }
+
+      const sortField = frame.fields[fieldIndex];
+      const indices = Array.from({ length: sortField.values.length }, (_, i) => i);
+
+      indices.sort((a, b) => {
+        const valA = sortField.values[a];
+        const valB = sortField.values[b];
+        let comparison = 0;
+
+        if (valA < valB) comparison = -1;
+        if (valA > valB) comparison = 1;
+
+        return sortBy.order === 'desc' ? -comparison : comparison;
+      });
+
+      // Reorder all fields based on sorted indices
+      const sortedFields = frame.fields.map((field) => ({
+        ...field,
+        values: indices.map((i) => field.values[i]),
+      }));
+
+      return {
+        ...frame,
+        fields: sortedFields,
+      };
+    });
+  };
 
   const fetchDataPage = async (page: number, scopedVars: Record<string, any>): Promise<DataFrame[]> => {
     const dataSourceSrv = getDataSourceSrv();
@@ -109,7 +288,6 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
     let consecutiveEmptyPages = 0;
     const maxEmptyPages = 2; // Safety limit for consecutive empty pages
     let totalRecordCount = 0;
-    const progressUpdateInterval = 5; // Update progress every 5 pages to reduce re-renders
 
     try {
       // Get panel scoped variables for template replacement
@@ -117,6 +295,11 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       const scopedVars = panel?.scopedVars || {};
 
       while (hasMoreData) {
+        // Update progress before fetching
+        setCurrentPage(page);
+        setTotalRecords(totalRecordCount);
+        setProgress(Math.min((page / (page + 10)) * 100, 95));
+
         const dataFrames = await fetchDataPage(page, scopedVars);
 
         if (!dataFrames || dataFrames.length === 0) {
@@ -156,13 +339,6 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
           hasMoreData = false;
         }
 
-        // Only update UI state periodically to reduce re-renders and improve speed
-        if (page % progressUpdateInterval === 0 || !hasMoreData) {
-          setCurrentPage(page);
-          setTotalRecords(totalRecordCount);
-          setProgress(Math.min((page / (page + 10)) * 100, 95));
-        }
-
         page++;
       }
 
@@ -172,9 +348,20 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
         return;
       }
 
-      // Generate CSV from all dataframes
+      // Apply field filtering to all dataframes
+      let processedFrames = allDataFrames.map((frame) => applyFieldFilter(frame, options.fieldFilter));
+
+      // Apply transformations to all dataframes
+      processedFrames = processedFrames.map((frame) => applyTransformations(frame, options.transformations));
+
+      // Apply sorting if configured
+      if (options.transformations?.sortBy) {
+        processedFrames = applySorting(processedFrames, options.transformations.sortBy);
+      }
+
+      // Generate CSV from processed dataframes
       const csvConfig: CSVConfig = { useExcelHeader: options.useExcelHeader };
-      const csvContent = toCSV(allDataFrames, csvConfig);
+      const csvContent = toCSV(processedFrames, csvConfig);
 
       // Create and download the file
       const blob = new Blob([String.fromCharCode(0xfeff), csvContent], {
