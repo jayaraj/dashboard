@@ -24,7 +24,7 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
   // Ref to prevent duplicate download calls
   const isDownloadingRef = useRef(false);
 
-  const PER_PAGE = options.perPage || 200;
+  const PER_PAGE = options.perPage || 100;
 
   const fetchDataPage = async (page: number, scopedVars: Record<string, any>): Promise<DataFrame[]> => {
     const dataSourceSrv = getDataSourceSrv();
@@ -48,8 +48,8 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       }));
 
     // Add pagination arguments
-    queryArguments.push({ key: 'page', value: String(page) });
-    queryArguments.push({ key: 'perPage', value: String(PER_PAGE) });
+    queryArguments.push({ key: 'Page', value: String(page) });
+    queryArguments.push({ key: 'PerPage', value: String(PER_PAGE) });
 
     // Get application and API from appApi object
     const appApi = options.appApi || { queryApplication: '', queryAPI: '' };
@@ -108,6 +108,8 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
     let hasMoreData = true;
     let consecutiveEmptyPages = 0;
     const maxEmptyPages = 2; // Safety limit for consecutive empty pages
+    let totalRecordCount = 0;
+    const progressUpdateInterval = 5; // Update progress every 5 pages to reduce re-renders
 
     try {
       // Get panel scoped variables for template replacement
@@ -115,7 +117,6 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       const scopedVars = panel?.scopedVars || {};
 
       while (hasMoreData) {
-        setCurrentPage(page);
         const dataFrames = await fetchDataPage(page, scopedVars);
 
         if (!dataFrames || dataFrames.length === 0) {
@@ -124,9 +125,8 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
             hasMoreData = false;
           } else {
             page++;
-            continue;
           }
-          break;
+          continue;
         }
 
         // Check if we have actual data in the dataframes
@@ -137,7 +137,7 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
             if (fieldLength > 0) {
               hasRecords = true;
               allDataFrames.push(df);
-              setTotalRecords((prev) => prev + fieldLength);
+              totalRecordCount += fieldLength;
             }
           }
         }
@@ -151,13 +151,19 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
           consecutiveEmptyPages = 0;
         }
 
-        // Safety limit: max 10000 pages (2 million records with 200 per page)
+        // Safety limit: max 10000 pages (2 million records with 100 per page)
         if (page >= 10000) {
           hasMoreData = false;
         }
 
+        // Only update UI state periodically to reduce re-renders and improve speed
+        if (page % progressUpdateInterval === 0 || !hasMoreData) {
+          setCurrentPage(page);
+          setTotalRecords(totalRecordCount);
+          setProgress(Math.min((page / (page + 10)) * 100, 95));
+        }
+
         page++;
-        setProgress(Math.min((page / (page + 10)) * 100, 95)); // Progressive progress indicator
       }
 
       if (allDataFrames.length === 0) {
