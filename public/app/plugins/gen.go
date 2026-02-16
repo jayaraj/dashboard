@@ -26,6 +26,7 @@ import (
 var skipPlugins = map[string]bool{
 	"grafoservice":       true,
 	"csvbutton":          true,
+	"csvdownloadpanel":   true,
 	"downlinkform":       true,
 	"grouppicker":        true,
 	"grafoalerts":        true,

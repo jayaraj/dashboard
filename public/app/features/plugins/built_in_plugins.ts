@@ -50,6 +50,7 @@ import * as barChartPanel from 'app/plugins/panel/barchart/module';
 import * as barGaugePanel from 'app/plugins/panel/bargauge/module';
 import * as candlestickPanel from 'app/plugins/panel/candlestick/module';
 import * as csvButton from 'app/plugins/panel/csvbutton/module';
+import * as csvDownloadPanel from 'app/plugins/panel/csvdownloadpanel/module';
 import * as dashListPanel from 'app/plugins/panel/dashlist/module';
 import * as dataGridPanel from 'app/plugins/panel/datagrid/module';
 import * as debugPanel from 'app/plugins/panel/debug/module';
@@ -150,6 +151,7 @@ const builtInPlugins: Record<string, System.Module | (() => Promise<System.Modul
   'core:plugin/histogram': histogramPanel,
   'core:plugin/alertGroups': alertGroupsPanel,
   'core:plugin/csvbutton': csvButton,
+  'core:plugin/csvdownloadpanel': csvDownloadPanel,
   'core:plugin/downlinkform': downlinkform,
   'core:plugin/grouppicker': grouppicker,
   'core:plugin/grafoalerts': grafoalerts,
