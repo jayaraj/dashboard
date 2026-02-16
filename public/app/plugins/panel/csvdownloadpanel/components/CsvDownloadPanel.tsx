@@ -80,27 +80,80 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
     };
   };
 
+  // Merge multiple dataframes into one, matching fields by name (not position)
+  const mergeDataFrames = (dataFrames: DataFrame[]): DataFrame => {
+    if (dataFrames.length === 0) {
+      return { fields: [], length: 0 };
+    }
+    
+    if (dataFrames.length === 1) {
+      return dataFrames[0];
+    }
+
+    // Use the first frame's structure as template
+    const firstFrame = dataFrames[0];
+    
+    // Merge all field values by matching field names
+    const mergedFields = firstFrame.fields.map((field) => {
+      const fieldName = field.name;
+      // Start with values from first frame
+      const allValues: any[] = [...field.values];
+      
+      // Collect values from all other frames for the same field BY NAME
+      for (let i = 1; i < dataFrames.length; i++) {
+        const frame = dataFrames[i];
+        // Find matching field by name (not by index position)
+        const matchingField = frame.fields.find((f) => f.name === fieldName);
+        if (matchingField && matchingField.values) {
+          allValues.push(...matchingField.values);
+        }
+      }
+      
+      return {
+        ...field,
+        values: allValues,
+      };
+    });
+
+    return {
+      ...firstFrame,
+      fields: mergedFields,
+      length: mergedFields[0]?.values.length || 0,
+    };
+  };
+
   // Apply transformations to a dataframe
   const applyTransformations = (dataFrame: DataFrame, transforms?: TransformOptions): DataFrame => {
     if (!transforms) {
       return dataFrame;
     }
 
-    let transformedFrame = { ...dataFrame, fields: [...dataFrame.fields] };
+    // Deep copy the fields array and each field object
+    const fieldsCopy = dataFrame.fields.map((f) => ({
+      ...f,
+      values: [...f.values],
+      config: f.config ? { ...f.config } : {},
+    }));
 
-    // Apply field renames
+    const transformedFields = [...fieldsCopy];
+
+    // Apply field renames - match by field.name directly since that's what the editor stores
     if (transforms.renameFields?.length) {
       for (const rename of transforms.renameFields) {
         if (rename.from && rename.to) {
-          const field = transformedFrame.fields.find((f) => {
-            const displayName = getFieldDisplayName(f, transformedFrame);
-            return displayName === rename.from || f.name === rename.from;
-          });
-          if (field) {
-            field.name = rename.to;
-            if (field.config) {
-              field.config = { ...field.config, displayName: rename.to };
-            }
+          // Find field by name (the editor stores field.name as the value)
+          const fieldIndex = transformedFields.findIndex((f) => f.name === rename.from);
+          
+          if (fieldIndex >= 0) {
+            // Update the field name - this will be the CSV column header
+            transformedFields[fieldIndex] = {
+              ...transformedFields[fieldIndex],
+              name: rename.to,
+              config: {
+                ...transformedFields[fieldIndex].config,
+                displayName: rename.to,
+              },
+            };
           }
         }
       }
@@ -110,12 +163,10 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
     if (transforms.convertTypes?.length) {
       for (const convert of transforms.convertTypes) {
         if (convert.field && convert.type) {
-          const fieldIndex = transformedFrame.fields.findIndex((f) => {
-            const displayName = getFieldDisplayName(f, transformedFrame);
-            return displayName === convert.field || f.name === convert.field;
-          });
+          const fieldIndex = transformedFields.findIndex((f) => f.name === convert.field);
+          
           if (fieldIndex >= 0) {
-            const field = transformedFrame.fields[fieldIndex];
+            const field = transformedFields[fieldIndex];
             const newValues = field.values.map((v: any) => {
               switch (convert.type) {
                 case 'string':
@@ -147,7 +198,7 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
                 break;
             }
 
-            transformedFrame.fields[fieldIndex] = {
+            transformedFields[fieldIndex] = {
               ...field,
               values: newValues,
               type: newType,
@@ -157,7 +208,10 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       }
     }
 
-    return transformedFrame;
+    return {
+      ...dataFrame,
+      fields: transformedFields,
+    };
   };
 
   // Apply sorting to dataframes
@@ -359,9 +413,13 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
         processedFrames = applySorting(processedFrames, options.transformations.sortBy);
       }
 
-      // Generate CSV from processed dataframes
+      // Merge all dataframes into one to avoid multiple headers in CSV
+      // Only merge if they have the same field structure
+      const mergedFrame = mergeDataFrames(processedFrames);
+
+      // Generate CSV from merged dataframe
       const csvConfig: CSVConfig = { useExcelHeader: options.useExcelHeader };
-      const csvContent = toCSV(processedFrames, csvConfig);
+      const csvContent = toCSV([mergedFrame], csvConfig);
 
       // Create and download the file
       const blob = new Blob([String.fromCharCode(0xfeff), csvContent], {

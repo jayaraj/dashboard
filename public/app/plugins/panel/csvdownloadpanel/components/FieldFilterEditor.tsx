@@ -51,11 +51,12 @@ export const FieldFilterEditor: React.FC<Props> = ({ value, onChange, context })
     }
   }, [context?.data, value?.fieldNames, value?.pattern]);
 
-  const updateOptions = (newSelected: string[], newPattern?: string, newMode?: 'include' | 'exclude') => {
+  const updateOptions = (newSelected: string[], newPattern?: string, newMode?: 'include' | 'exclude', newUsePattern?: boolean) => {
+    const actualUsePattern = newUsePattern !== undefined ? newUsePattern : usePattern;
     const opts: FieldFilterOptions = {
       mode: newMode || mode,
-      fieldNames: newSelected,
-      pattern: usePattern ? (newPattern !== undefined ? newPattern : pattern) : undefined,
+      fieldNames: actualUsePattern ? [] : newSelected,
+      pattern: actualUsePattern ? (newPattern !== undefined ? newPattern : pattern) : undefined,
     };
     onChange(opts);
   };
@@ -107,7 +108,11 @@ export const FieldFilterEditor: React.FC<Props> = ({ value, onChange, context })
     const val = e.currentTarget.checked;
     setUsePattern(val);
     if (!val) {
-      updateOptions(selected, '', mode);
+      // Switching to field selection mode - use current selected fields
+      updateOptions(selected, '', mode, false);
+    } else {
+      // Switching to pattern mode - clear field names and use pattern
+      updateOptions([], pattern, mode, true);
     }
   };
 
