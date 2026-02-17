@@ -129,23 +129,18 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
     }
 
     // Deep copy the fields array and each field object
-    const fieldsCopy = dataFrame.fields.map((f) => ({
+    const transformedFields = dataFrame.fields.map((f) => ({
       ...f,
       values: [...f.values],
       config: f.config ? { ...f.config } : {},
     }));
 
-    const transformedFields = [...fieldsCopy];
-
-    // Apply field renames - match by either field.name or displayName since editor uses getFieldDisplayName
+    // Apply field renames - match by field.name directly (case-sensitive, exact match)
     if (transforms.renameFields?.length) {
       for (const rename of transforms.renameFields) {
         if (rename.from && rename.to) {
-          // Find field by name or display name (the editor uses getFieldDisplayName which may differ from field.name)
-          const fieldIndex = transformedFields.findIndex((f) => {
-            const displayName = getFieldDisplayName(f, dataFrame);
-            return f.name === rename.from || displayName === rename.from;
-          });
+          // Find field by exact name match
+          const fieldIndex = transformedFields.findIndex((f) => f.name === rename.from);
           
           if (fieldIndex >= 0) {
             // Update the field name - this will be the CSV column header

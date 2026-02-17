@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { StandardEditorProps, getFieldDisplayName, SelectableValue } from '@grafana/data';
+import { StandardEditorProps, SelectableValue } from '@grafana/data';
 import { Input, InlineFieldRow, InlineField, Select, Button, IconButton } from '@grafana/ui';
 
 import { CsvDownloadOptions, TransformOptions, SortByOption, FieldRename, FieldTypeConversion } from '../types';
@@ -25,6 +25,7 @@ export const TransformOptionsEditor: React.FC<Props> = ({ value, onChange, conte
   const [convertTypes, setConvertTypes] = useState<FieldTypeConversion[]>(value?.convertTypes || []);
 
   // Extract field names from data when context changes
+  // Use field.name (actual field name) instead of display name for proper matching in transformations
   useEffect(() => {
     if (context?.data) {
       const allNames: FieldNameInfo[] = [];
@@ -32,10 +33,11 @@ export const TransformOptionsEditor: React.FC<Props> = ({ value, onChange, conte
 
       for (const frame of context.data) {
         for (const field of frame.fields) {
-          const displayName = getFieldDisplayName(field, frame, context.data);
-          if (!byName[displayName]) {
-            byName[displayName] = { name: displayName };
-            allNames.push(byName[displayName]);
+          // Use field.name (actual internal name) for matching
+          const fieldName = field.name;
+          if (!byName[fieldName]) {
+            byName[fieldName] = { name: fieldName };
+            allNames.push(byName[fieldName]);
           }
         }
       }
