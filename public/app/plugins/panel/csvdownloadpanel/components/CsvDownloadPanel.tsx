@@ -137,10 +137,16 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
 
     // Apply field renames - match by field.name directly (case-sensitive, exact match)
     if (transforms.renameFields?.length) {
+      console.log('Rename Fields config:', JSON.stringify(transforms.renameFields));
+      console.log('Field names before rename:', transformedFields.map((f) => f.name));
+      
       for (const rename of transforms.renameFields) {
         if (rename.from && rename.to) {
+          console.log(`Trying to rename: "${rename.from}" -> "${rename.to}"`);
           // Find field by exact name match
           const fieldIndex = transformedFields.findIndex((f) => f.name === rename.from);
+          
+          console.log(`Field index found: ${fieldIndex}`);
           
           if (fieldIndex >= 0) {
             // Update the field name - this will be the CSV column header
@@ -152,9 +158,12 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
                 displayName: rename.to,
               },
             };
+            console.log(`Renamed field ${fieldIndex} from "${rename.from}" to "${rename.to}"`);
           }
         }
       }
+      
+      console.log('Field names after rename:', transformedFields.map((f) => f.name));
     }
 
     // Apply type conversions
@@ -407,6 +416,13 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       // This ensures all frames have the same field names for proper merging
       const mergedFrame = mergeDataFrames(processedFrames);
 
+      // Debug: Log the options to see what transformations are configured
+      console.log('=== CSV Download Debug ===');
+      console.log('Full options object:', JSON.stringify(options));
+      console.log('Transformations config:', JSON.stringify(options.transformations));
+      console.log('Rename Fields:', JSON.stringify(options.transformations?.renameFields));
+      alert('Check console for debug info - transformations: ' + JSON.stringify(options.transformations?.renameFields));
+      
       // Apply transformations AFTER merging (so rename affects the final merged frame)
       let transformedFrame = applyTransformations(mergedFrame, options.transformations);
 
