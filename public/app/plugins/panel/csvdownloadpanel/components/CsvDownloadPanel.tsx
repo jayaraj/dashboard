@@ -137,12 +137,15 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
 
     const transformedFields = [...fieldsCopy];
 
-    // Apply field renames - match by field.name directly since that's what the editor stores
+    // Apply field renames - match by either field.name or displayName since editor uses getFieldDisplayName
     if (transforms.renameFields?.length) {
       for (const rename of transforms.renameFields) {
         if (rename.from && rename.to) {
-          // Find field by name (the editor stores field.name as the value)
-          const fieldIndex = transformedFields.findIndex((f) => f.name === rename.from);
+          // Find field by name or display name (the editor uses getFieldDisplayName which may differ from field.name)
+          const fieldIndex = transformedFields.findIndex((f) => {
+            const displayName = getFieldDisplayName(f, dataFrame);
+            return f.name === rename.from || displayName === rename.from;
+          });
           
           if (fieldIndex >= 0) {
             // Update the field name - this will be the CSV column header
@@ -417,9 +420,29 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       // Only merge if they have the same field structure
       const mergedFrame = mergeDataFrames(processedFrames);
 
+      // Format numbers to 3 decimal places before generating CSV
+      const formattedFrame = {
+        ...mergedFrame,
+        fields: mergedFrame.fields.map((field) => {
+          // Only format number fields
+          if (field.type === FieldType.number) {
+            return {
+              ...field,
+              values: field.values.map((v: any) => {
+                if (v !== null && v !== undefined && !isNaN(v)) {
+                  return Number(v).toFixed(3);
+                }
+                return v;
+              }),
+            };
+          }
+          return field;
+        }),
+      };
+
       // Generate CSV from merged dataframe
       const csvConfig: CSVConfig = { useExcelHeader: options.useExcelHeader };
-      const csvContent = toCSV([mergedFrame], csvConfig);
+      const csvContent = toCSV([formattedFrame], csvConfig);
 
       // Create and download the file
       const blob = new Blob([String.fromCharCode(0xfeff), csvContent], {
