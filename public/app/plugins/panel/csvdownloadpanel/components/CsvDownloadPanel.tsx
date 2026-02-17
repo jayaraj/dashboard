@@ -451,9 +451,16 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
         }),
       };
 
+      // Debug: Check field names before CSV generation
+      console.log('=== Before toCSV ===');
+      console.log('formattedFrame field names:', formattedFrame.fields.map((f) => ({ name: f.name, displayName: f.config?.displayName })));
+      
       // Generate CSV from merged dataframe
       const csvConfig: CSVConfig = { useExcelHeader: options.useExcelHeader };
       const csvContent = toCSV([formattedFrame], csvConfig);
+      
+      // Debug: Check first line of CSV (headers)
+      console.log('CSV first line (headers):', csvContent.split('\n')[0]);
 
       // Create and download the file
       const blob = new Blob([String.fromCharCode(0xfeff), csvContent], {
