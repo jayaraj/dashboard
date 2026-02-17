@@ -403,22 +403,22 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       // Apply field filtering to all dataframes
       let processedFrames = allDataFrames.map((frame) => applyFieldFilter(frame, options.fieldFilter));
 
-      // Apply transformations to all dataframes
-      processedFrames = processedFrames.map((frame) => applyTransformations(frame, options.transformations));
+      // Merge all dataframes into one FIRST (before transformations)
+      // This ensures all frames have the same field names for proper merging
+      const mergedFrame = mergeDataFrames(processedFrames);
+
+      // Apply transformations AFTER merging (so rename affects the final merged frame)
+      let transformedFrame = applyTransformations(mergedFrame, options.transformations);
 
       // Apply sorting if configured
       if (options.transformations?.sortBy) {
-        processedFrames = applySorting(processedFrames, options.transformations.sortBy);
+        transformedFrame = applySorting([transformedFrame], options.transformations.sortBy)[0];
       }
-
-      // Merge all dataframes into one to avoid multiple headers in CSV
-      // Only merge if they have the same field structure
-      const mergedFrame = mergeDataFrames(processedFrames);
 
       // Format numbers to 3 decimal places before generating CSV
       const formattedFrame = {
-        ...mergedFrame,
-        fields: mergedFrame.fields.map((field) => {
+        ...transformedFrame,
+        fields: transformedFrame.fields.map((field) => {
           // Only format number fields
           if (field.type === FieldType.number) {
             return {
