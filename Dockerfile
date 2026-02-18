@@ -3,7 +3,7 @@
 ARG BASE_IMAGE=alpine:3.18.3
 ARG JS_IMAGE=node:20-alpine3.18
 ARG JS_PLATFORM=linux/amd64
-ARG GO_IMAGE=golang:1.24.0-alpine3.21
+ARG GO_IMAGE=golang:1.24.2-alpine3.21
 
 ARG GO_SRC=go-builder
 ARG JS_SRC=js-builder
@@ -38,7 +38,19 @@ ARG GO_BUILD_TAGS="oss"
 ARG WIRE_TAGS="oss"
 ARG BINGO="true"
 ARG TOKEN
+RUN apk add --no-cache \
+    git \
+    gcc \
+    g++ \
+    make \
+    musl-dev \
+    sqlite-dev \
+    ca-certificates
 RUN git config --global url."https://${TOKEN}:@github.com/".insteadOf "https://github.com/"
+
+ENV CGO_ENABLED=1
+ENV CGO_CFLAGS="-D_LARGEFILE64_SOURCE"
+ENV CC=gcc
 
 # Install build dependencies
 RUN if grep -i -q alpine /etc/issue; then \
@@ -55,7 +67,9 @@ COPY pkg/util/xorm/go.* pkg/util/xorm/
 
 RUN go mod download
 RUN if [[ "$BINGO" = "true" ]]; then \
-      go install github.com/bwplotka/bingo@latest && \
+      go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.53.3 && \
+      rm -f .bingo/golangci-lint.mod && \
+      go install github.com/bwplotka/bingo@v0.9.0 && \
       bingo get -v; \
     fi
 
