@@ -46,4 +46,5 @@ type UserService interface {
 
 type ConfigurationService interface {
 	IsConfigurationAccessible(c *contextmodel.ReqContext, association string, config string) bool
+	GetOrgConfigurations(ctx context.Context, orgId int64, config string) (resource.OrgConfiguration, error)
 }

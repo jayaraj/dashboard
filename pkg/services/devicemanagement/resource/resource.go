@@ -333,3 +333,49 @@ func (service *Service) GetResourcesByType(c *contextmodel.ReqContext) response.
 	}
 	return response.JSON(http.StatusOK, dto.Result)
 }
+
+func (service *Service) DisableResource(c *contextmodel.ReqContext) response.Response {
+	id, err := strconv.ParseInt(web.Params(c.Req)[":resourceId"], 10, 64)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "id is invalid", err)
+	}
+	dto := &resource.UpdateResourceDisableMsg{
+		OrgId:      c.OrgID,
+		ResourceId: id,
+	}
+	if err := web.Bind(c.Req, dto); err != nil {
+		return response.Error(http.StatusBadRequest, "bad request data", err)
+	}
+	if id != 0 && !service.IsResourceAccessible(c) {
+		return response.Error(http.StatusForbidden, "cannot access", nil)
+	}
+	if err := service.devMgmt.RequestTopic(c.Req.Context(), client.ResourcesTopic(resource.UpdateResourceDisable), dto); err != nil {
+		return response.Error(500, "failed to disable: "+err.Error(), err)
+	}
+	return response.Success("success")
+}
+
+func (service *Service) ResourceDataUpdate(c *contextmodel.ReqContext) response.Response {
+	c.Req.ParseMultipartForm(10 << 20)
+	msg := devicemanagement.UpdateResourceDataMsg{
+		User: resource.User{
+			UserId: c.UserID,
+			OrgId:  c.OrgID,
+			Role:   devicemanagement.ConvertRoleToStringFromCtx(c),
+		},
+		Mapping: map[string]string{},
+	}
+	var err error
+	msg.File, _, err = c.Req.FormFile("file")
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "error retrieving file", err)
+	}
+	mappingString := c.Req.FormValue("mapping")
+	err = json.Unmarshal([]byte(mappingString), &msg.Mapping)
+	if err != nil {
+		return response.Error(http.StatusBadRequest, "error processing mapping", err)
+	}
+
+	service.fileChan <- msg
+	return response.Success("update initiated")
+}

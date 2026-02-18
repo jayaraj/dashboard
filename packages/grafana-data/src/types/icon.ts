@@ -1,5 +1,6 @@
 export const availableIconsIndex = {
   'bell-edit': true,
+  ban: true,
   inventory: true,
   'upload-files': true,
   'group-type': true,

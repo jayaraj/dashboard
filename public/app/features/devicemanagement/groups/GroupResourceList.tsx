@@ -58,6 +58,7 @@ const skeletonData: GroupResource[] = new Array(3).fill(null).map((_, index) => 
   resource_type: '',
   resource_tags: '',
   resource_online_status: false,
+  resource_disabled: false,
   resource_last_seen: '',
   resource_last_seen_age: '',
 }));
@@ -175,6 +176,16 @@ export const GroupResourceList = ({
               )}
             </div>
           );
+        },
+      },
+      {
+        id: 'resource_disabled',
+        header: 'Disabled',
+        cell: ({ cell: { value } }: Cell<'resource_disabled'>) => {
+          if (!hasFetched) {
+            return <Skeleton width={40} />;
+          }
+          return <div className={styles.online}>{value ? <Icon name={'ban'} style={{ color: 'red' }} /> : <></>}</div>;
         },
       },
       {
