@@ -510,6 +510,7 @@ require (
 	github.com/go-macaron/inject v0.0.0-20160627170012-d8a0b8677191 // indirect
 	github.com/go-playground/validator v9.31.0+incompatible // indirect
 	github.com/goccy/go-yaml v1.18.0 // indirect
+	github.com/google/subcommands v1.2.0 // indirect
 	github.com/quic-go/qpack v0.5.1 // indirect
 	github.com/quic-go/quic-go v0.54.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
