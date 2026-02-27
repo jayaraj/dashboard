@@ -5,14 +5,14 @@ import { lastValueFrom, isObservable } from 'rxjs';
 import {
   PanelProps,
   dateTimeFormat,
-  toCSV,
   DataFrame,
-  CSVConfig,
   DataQueryRequest,
   CoreApp,
   FieldType,
   getFieldDisplayName,
   stringToJsRegex,
+  RawTimeRange,
+  dateMath,
 } from '@grafana/data';
 import { getTemplateSrv, getDataSourceSrv } from '@grafana/runtime';
 import { Button, useTheme2, Icon, Tooltip } from '@grafana/ui';
@@ -20,6 +20,8 @@ import { getDashboardSrv } from 'app/features/dashboard/services/DashboardSrv';
 
 import { Query } from '../../../datasource/grafoservice/types';
 import { CsvDownloadOptions, getStyles, FieldFilterOptions, TransformOptions } from '../types';
+
+import { TimeRangeModal } from './TimeRangeModal';
 
 interface Props extends PanelProps<CsvDownloadOptions> {}
 
@@ -31,6 +33,11 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
   const [currentPage, setCurrentPage] = useState(0);
   const [totalRecords, setTotalRecords] = useState(0);
   const [error, setError] = useState<string | null>(null);
+
+  // Time range modal state
+  const [showTimeRangeModal, setShowTimeRangeModal] = useState(false);
+  const [selectedTimeRange, setSelectedTimeRange] = useState<RawTimeRange | null>(null);
+  const [selectedTimeRangeLabel, setSelectedTimeRangeLabel] = useState<string>('');
 
   // Ref to prevent duplicate download calls
   const isDownloadingRef = useRef(false);
@@ -85,20 +92,20 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
     if (dataFrames.length === 0) {
       return { fields: [], length: 0 };
     }
-    
+
     if (dataFrames.length === 1) {
       return dataFrames[0];
     }
 
     // Use the first frame's structure as template
     const firstFrame = dataFrames[0];
-    
+
     // Merge all field values by matching field names
     const mergedFields = firstFrame.fields.map((field) => {
       const fieldName = field.name;
       // Start with values from first frame
       const allValues: any[] = [...field.values];
-      
+
       // Collect values from all other frames for the same field BY NAME
       for (let i = 1; i < dataFrames.length; i++) {
         const frame = dataFrames[i];
@@ -108,7 +115,7 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
           allValues.push(...matchingField.values);
         }
       }
-      
+
       return {
         ...field,
         values: allValues,
@@ -137,12 +144,11 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
 
     // Apply field renames - match by field.name directly (case-sensitive, exact match)
     if (transforms.renameFields?.length) {
-      
       for (const rename of transforms.renameFields) {
         if (rename.from && rename.to) {
           // Find field by exact name match
           const fieldIndex = transformedFields.findIndex((f) => f.name === rename.from);
-          
+
           if (fieldIndex >= 0) {
             // Update the field name - this will be the CSV column header
             transformedFields[fieldIndex] = {
@@ -163,7 +169,7 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       for (const convert of transforms.convertTypes) {
         if (convert.field && convert.type) {
           const fieldIndex = transformedFields.findIndex((f) => f.name === convert.field);
-          
+
           if (fieldIndex >= 0) {
             const field = transformedFields[fieldIndex];
             const newValues = field.values.map((v: any) => {
@@ -239,8 +245,12 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
         const valB = sortField.values[b];
         let comparison = 0;
 
-        if (valA < valB) comparison = -1;
-        if (valA > valB) comparison = 1;
+        if (valA < valB) {
+          comparison = -1;
+        }
+        if (valA > valB) {
+          comparison = 1;
+        }
 
         return sortBy.order === 'desc' ? -comparison : comparison;
       });
@@ -258,7 +268,11 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
     });
   };
 
-  const fetchDataPage = async (page: number, scopedVars: Record<string, any>): Promise<DataFrame[]> => {
+  const fetchDataPage = async (
+    page: number,
+    scopedVars: Record<string, any>,
+    customTimeRange?: RawTimeRange
+  ): Promise<DataFrame[]> => {
     const dataSourceSrv = getDataSourceSrv();
     const datasourceName = options.datasource;
 
@@ -293,15 +307,32 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       queryArguments: queryArguments,
     };
 
-    // Use the timeRange directly - pass raw values that dateMath.parse can handle
-    // Ensure rangeRaw contains values that dateMath.parse can handle (strings or DateTime)
-    const rangeRawFrom = typeof timeRange.raw.from === 'string' ? timeRange.raw.from : timeRange.from.toISOString();
-    const rangeRawTo = typeof timeRange.raw.to === 'string' ? timeRange.raw.to : timeRange.to.toISOString();
+    // Use custom time range from modal if provided, otherwise use panel timeRange
+    const effectiveRange = customTimeRange || timeRange.raw;
+
+    // Parse the time range values to create proper range objects
+    const fromParsed = dateMath.parse(effectiveRange.from);
+    const toParsed = dateMath.parse(effectiveRange.to);
+
+    // Build the range object for the request
+    const rangeForRequest = {
+      from: fromParsed || timeRange.from,
+      to: toParsed || timeRange.to,
+      raw: effectiveRange,
+    };
+
+    // Use the effective range - pass raw values that dateMath.parse can handle
+    const rangeRawFrom =
+      typeof effectiveRange.from === 'string'
+        ? effectiveRange.from
+        : fromParsed?.toISOString() || timeRange.from.toISOString();
+    const rangeRawTo =
+      typeof effectiveRange.to === 'string' ? effectiveRange.to : toParsed?.toISOString() || timeRange.to.toISOString();
 
     const request: DataQueryRequest<Query> = {
       requestId: `csvdownload-${id}-${page}`,
       targets: [query],
-      range: timeRange,
+      range: rangeForRequest,
       rangeRaw: {
         from: rangeRawFrom,
         to: rangeRawTo,
@@ -322,7 +353,14 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
     return response.data;
   };
 
-  const downloadCsv = async () => {
+  // Handle time range selection from modal
+  const handleTimeRangeSelect = (range: RawTimeRange, label: string) => {
+    setSelectedTimeRange(range);
+    setSelectedTimeRangeLabel(label);
+  };
+
+  // Start download with selected time range
+  const startDownload = async () => {
     // Prevent duplicate calls by checking if already downloading
     if (downloading || isDownloadingRef.current) {
       return;
@@ -347,13 +385,16 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       const panel = getDashboardSrv().getCurrent()?.getPanelById(id);
       const scopedVars = panel?.scopedVars || {};
 
+      // Use the selected time range from modal if available
+      const timeRangeToUse = selectedTimeRange || undefined;
+
       while (hasMoreData) {
         // Update progress before fetching
         setCurrentPage(page);
         setTotalRecords(totalRecordCount);
         setProgress(Math.min((page / (page + 10)) * 100, 95));
 
-        const dataFrames = await fetchDataPage(page, scopedVars);
+        const dataFrames = await fetchDataPage(page, scopedVars, timeRangeToUse);
 
         if (!dataFrames || dataFrames.length === 0) {
           consecutiveEmptyPages++;
@@ -407,7 +448,7 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       // Merge all dataframes into one FIRST (before transformations)
       // This ensures all frames have the same field names for proper merging
       const mergedFrame = mergeDataFrames(processedFrames);
-      
+
       // Apply transformations AFTER merging (so rename affects the final merged frame)
       let transformedFrame = applyTransformations(mergedFrame, options.transformations);
 
@@ -440,11 +481,11 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       // Grafana's toCSV doesn't respect field.name changes
       const generateCSV = (frame: DataFrame): string => {
         const lines: string[] = [];
-        
+
         // Header row - use field.name which contains our renames
         const headers = frame.fields.map((f) => `"${f.name}"`);
         lines.push(headers.join(','));
-        
+
         // Data rows
         const rowCount = frame.fields[0]?.values.length || 0;
         for (let i = 0; i < rowCount; i++) {
@@ -459,10 +500,10 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
           });
           lines.push(row.join(','));
         }
-        
+
         return lines.join('\n');
       };
-      
+
       const csvContent = generateCSV(formattedFrame);
 
       // Create and download the file
@@ -484,6 +525,11 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
     }
   };
 
+  // Open modal to select time range before download
+  const handleDownloadClick = () => {
+    setShowTimeRangeModal(true);
+  };
+
   return (
     <div className={styles.resultsContainer}>
       {error && (
@@ -495,9 +541,13 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
       )}
 
       <div className={styles.wrapper}>
-        <Button onClick={downloadCsv} disabled={downloading} variant="primary">
+        <Button onClick={handleDownloadClick} disabled={downloading} variant="primary">
           {downloading ? 'Downloading...' : options.heading || 'Download CSV'}
         </Button>
+
+        {selectedTimeRangeLabel && !downloading && (
+          <div className={styles.progressText}>Time range: {selectedTimeRangeLabel}</div>
+        )}
 
         {downloading && (
           <div className={styles.progressContainer}>
@@ -514,6 +564,14 @@ export const CsvDownloadPanel: React.FC<Props> = ({ id, options, data, height, t
           <div className={styles.progressText}>Last download: {totalRecords} records</div>
         )}
       </div>
+
+      <TimeRangeModal
+        isOpen={showTimeRangeModal}
+        onClose={() => setShowTimeRangeModal(false)}
+        onSelect={handleTimeRangeSelect}
+        onDownload={startDownload}
+        currentTimeRangeLabel={selectedTimeRangeLabel}
+      />
     </div>
   );
 };
