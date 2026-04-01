@@ -147,9 +147,38 @@ func (service *Service) processCsv(ctx context.Context, msg devicemanagement.Upd
 				location = time.UTC
 			}
 		}
-		parsedTime, err := time.ParseInLocation("2006-01-02 15:04:05", timeStr, location)
-		if err != nil {
-			service.log.Error("time parsing failed", "time", timeStr)
+		timeFormats := []string{
+			"2006-01-02 15:04:05",     // "2026-03-31 18:36:00"
+			"2006-01-02T15:04:05",     // ISO 8601 without timezone
+			"2006-01-02T15:04:05.999", // ISO 8601 with milliseconds, no timezone
+			time.RFC3339,              // "2006-01-02T15:04:05Z07:00"
+			"2006-01-02",              // Date only
+			"15:04:05",                // Time only
+			"02/01/06 15:04",          // "31/03/26 18:36"
+			"02/01/2006 15:04",        // "31/03/2026 18:36"
+			"02/01/06 15:04:05",       // "31/03/26 18:36:00"
+			"02/01/2006 15:04:05",     // "31/03/2026 18:36:00"
+			"01/02/06 15:04",          // "03/31/26 18:36" (US format)
+			"01/02/2006 15:04",        // "03/31/2026 18:36" (US format)
+			"01/02/06 15:04:05",       // "03/31/26 18:36:00" (US format)
+			"01/02/2006 15:04:05",     // "03/31/2026 18:36:00" (US format)
+			"02-Jan-2006 15:04:05",    // "31-Mar-2026 18:36:00"
+			"02-Jan-2006 15:04",       // "31-Mar-2026 18:36"
+			"Jan 02, 2006 15:04:05",   // "Mar 31, 2026 18:36:00"
+			"Jan 02, 2006 15:04",      // "Mar 31, 2026 18:36"
+			"2006-01-02 15:04",        // "2026-03-31 18:36"
+		}
+		var parsedTime time.Time
+		parsed := false
+		for _, format := range timeFormats {
+			parsedTime, err = time.ParseInLocation(format, timeStr, location)
+			if err == nil {
+				parsed = true
+				break
+			}
+		}
+		if !parsed {
+			service.log.Error("time parsing failed: no matching format", "time", timeStr)
 			continue
 		}
 
@@ -182,7 +211,7 @@ func (service *Service) processCsv(ctx context.Context, msg devicemanagement.Upd
 			Data: data,
 		}
 		if err := service.devMgmt.RequestTopic(ctx, client.WriterTopic(client.HistoryData), dto); err != nil {
-			service.log.Error("failed to write", "err", err)
+			service.log.Error("failed to write", "payload", dto, "err", err.Error())
 			continue
 		}
 	}

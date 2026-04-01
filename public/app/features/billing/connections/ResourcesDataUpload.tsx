@@ -20,7 +20,7 @@ import {
   TimeZonePicker,
 } from '@grafana/ui';
 import { Page } from 'app/core/components/Page/Page';
-import { VariablePicker, VariableOption } from 'app/core/components/VariablePicker/VariablePicker'; 
+import { VariablePicker, VariableOption } from 'app/core/components/VariablePicker/VariablePicker';
 import store from 'app/core/store';
 
 const pageNav: NavModelItem = {
@@ -33,10 +33,10 @@ const pageNav: NavModelItem = {
 
 function sanitizeHeader(header: string): string {
   return header
-    .replace(/[()]/g, '')         // Remove only the parentheses characters, not content inside
-    .replace(/[^\w\s]/g, '')      // Remove other non-word characters (punctuation, etc.)
-    .trim()                       // Trim leading/trailing whitespace
-    .replace(/\s+/g, '_');        // Replace internal spaces with underscores
+    .replace(/[()]/g, '') // Remove only the parentheses characters, not content inside
+    .replace(/[^\w\s]/g, '') // Remove other non-word characters (punctuation, etc.)
+    .trim() // Trim leading/trailing whitespace
+    .replace(/\s+/g, '_'); // Replace internal spaces with underscores
 }
 
 function toOption(value: string): VariableOption {
@@ -53,10 +53,11 @@ function cleanExpression(expr: string): string {
 
 function validateExpression(expr: string, knownHeaders: string[]): true | string {
   try {
-    
-    if (expr === undefined) {return true};
+    if (expr === undefined) {
+      return true;
+    }
     const trimmedExpr = expr.trim();
-    if (trimmedExpr === "") {
+    if (trimmedExpr === '') {
       return true;
     }
     const cleaned = cleanExpression(trimmedExpr);
@@ -64,20 +65,20 @@ function validateExpression(expr: string, knownHeaders: string[]): true | string
     const parsed = parser.parse(cleaned);
 
     const usedVars = parsed.variables();
-    const unknownVars = usedVars.filter(v => !knownHeaders.includes(v));
+    const unknownVars = usedVars.filter((v) => !knownHeaders.includes(v));
     if (unknownVars.length > 0) {
-      return "Unknown header";
+      return 'Unknown header';
     }
 
     // Dummy evaluation to check runtime validity
     const dummyContext: Record<string, number> = {};
-    usedVars.forEach(v => {
+    usedVars.forEach((v) => {
       dummyContext[v] = 1;
     });
     parsed.evaluate(dummyContext);
     return true;
   } catch (err: any) {
-    return "Invalid expression";
+    return 'Invalid expression';
   }
 }
 
@@ -88,11 +89,12 @@ type HistoricalDataMapping = {
   battery: string;
   batteryvoltage: string;
   counter: string;
+  counterm3: string;
   drssi: string;
   dsnr: string;
   temperature: string;
-  fwdcounter: string;
-  revcounter: string;
+  fwdm3: string;
+  revm3: string;
 };
 
 export const ResourcesDataUpload = (): JSX.Element => {
@@ -109,14 +111,9 @@ export const ResourcesDataUpload = (): JSX.Element => {
     'battery',
     'batteryvoltage',
     'counter',
+    'counterm3',
   ];
-  const mappingKeysRight: Array<keyof HistoricalDataMapping> = [
-    'drssi',
-    'dsnr',
-    'temperature',
-    'fwdcounter',
-    'revcounter',
-  ];
+  const mappingKeysRight: Array<keyof HistoricalDataMapping> = ['drssi', 'dsnr', 'temperature', 'fwdm3', 'revm3'];
   const [defaultValues, setDefaultValues] = useState<HistoricalDataMapping>({
     timezone: '',
     time: '',
@@ -125,10 +122,11 @@ export const ResourcesDataUpload = (): JSX.Element => {
     batteryvoltage: '',
     counter: '',
     drssi: '',
-    dsnr:'',
+    dsnr: '',
     temperature: '',
-    fwdcounter: '',
-    revcounter: '',
+    counterm3: '',
+    fwdm3: '',
+    revm3: '',
   });
 
   useEffect(() => {
@@ -140,17 +138,16 @@ export const ResourcesDataUpload = (): JSX.Element => {
       batteryvoltage: '',
       counter: '',
       drssi: '',
-      dsnr:'',
+      dsnr: '',
       temperature: '',
-      fwdcounter: '',
-      revcounter: '',
+      counterm3: '',
+      fwdm3: '',
+      revm3: '',
     });
     const tz: string = store.getObject(CSV_TIMEZONE_KEY, InternalTimeZones.default);
     setDefaultValues(values);
     setTimezone(tz);
   }, []);
-
-
 
   const onFileUpload = (event: FormEvent<HTMLInputElement>) => {
     const fileToUpload =
@@ -199,15 +196,16 @@ export const ResourcesDataUpload = (): JSX.Element => {
     store.setObject(CSV_TIMEZONE_KEY, timezone);
     const formData = new FormData();
     formData.append('file', fileInfo.file);
-     formData.append('mapping', JSON.stringify(update));
+    formData.append('mapping', JSON.stringify(update));
     fetch('/api/resources/historicaldata', { method: 'POST', body: formData })
-    .then((res) => {
-      if (res.status >= 400) {
-        return;
-      }
-      setFileInfo({ file: null, headers: [] });
-      return res.json();
-    }).catch((err) => console.error(err));
+      .then((res) => {
+        if (res.status >= 400) {
+          return;
+        }
+        setFileInfo({ file: null, headers: [] });
+        return res.json();
+      })
+      .catch((err) => console.error(err));
   };
 
   const ctaElement = (
@@ -235,17 +233,19 @@ export const ResourcesDataUpload = (): JSX.Element => {
         ) : (
           <div>
             <Card>
-              <Card.Heading><div style={{ textAlign: 'center' }}>Map CSV Column Headers</div></Card.Heading>
+              <Card.Heading>
+                <div style={{ textAlign: 'center' }}>Map CSV Column Headers</div>
+              </Card.Heading>
               <Card.Description>
                 {`Map your column headers with required data for each asset. You can add expressions like "{{<Column Header>}} * 100".`}
               </Card.Description>
             </Card>
-            <Form<HistoricalDataMapping> defaultValues={defaultValues}  onSubmit={onUpdate}>
+            <Form<HistoricalDataMapping> defaultValues={defaultValues} onSubmit={onUpdate}>
               {({ register, control }) => (
                 <FieldSet>
                   <div style={{ width: '100%', display: 'flex', marginBottom: 16 }}>
                     <Field label="Timezone" style={{ width: '100%' }}>
-                      <TimeZonePicker onChange={setTimezone} includeInternal={true} value={timezone}/>
+                      <TimeZonePicker onChange={setTimezone} includeInternal={true} value={timezone} />
                     </Field>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, width: '100%' }}>
@@ -259,9 +259,15 @@ export const ResourcesDataUpload = (): JSX.Element => {
                             validate: (value) => validateExpression(value, sanitizedHeaders),
                           }}
                           render={({ field: { onChange, ...field }, fieldState }) => (
-                            <Field label={key} key={key} style={{ width: '100%' }} invalid={fieldState.error ? true : undefined} error={fieldState.error?.message}>
+                            <Field
+                              label={key}
+                              key={key}
+                              style={{ width: '100%' }}
+                              invalid={fieldState.error ? true : undefined}
+                              error={fieldState.error?.message}
+                            >
                               <div style={{ width: '100%' }}>
-                                <VariablePicker {...field} onChange={(val) => onChange(val ?? "")} options={options} />
+                                <VariablePicker {...field} onChange={(val) => onChange(val ?? '')} options={options} />
                               </div>
                             </Field>
                           )}
@@ -277,10 +283,16 @@ export const ResourcesDataUpload = (): JSX.Element => {
                           rules={{
                             validate: (value) => validateExpression(value, sanitizedHeaders),
                           }}
-                          render={({ field: { onChange, ...field }, fieldState  }) => (
-                            <Field label={key} key={key} style={{ width: '100%' }} invalid={fieldState.error ? true : undefined} error={fieldState.error?.message}>
+                          render={({ field: { onChange, ...field }, fieldState }) => (
+                            <Field
+                              label={key}
+                              key={key}
+                              style={{ width: '100%' }}
+                              invalid={fieldState.error ? true : undefined}
+                              error={fieldState.error?.message}
+                            >
                               <div style={{ width: '100%' }}>
-                                <VariablePicker {...field} onChange={(val) => onChange(val ?? "")} options={options} />
+                                <VariablePicker {...field} onChange={(val) => onChange(val ?? '')} options={options} />
                               </div>
                             </Field>
                           )}
